@@ -1,0 +1,49 @@
+:idprefix:
+:idseparator: -
+
+:contribution_testing:      xref:documentation:onecx-portal-ui-libs:contribution-testing/index.adoc[Contribution & Testing]
+:integration_testing:       xref:documentation:onecx-portal-ui-libs:contribution-testing/integration.adoc[Integration testing]
+:application_only_testing:  xref:documentation:onecx-portal-ui-libs:contribution-testing/application-only.adoc[Application-only testing]
+
+[#local-only-testing]
+= Local-only Testing
+
+If a change is confined to a library, verify logic with the library's unit tests and UI surfaces with Storybook. Library-local verification therefore uses unit tests for logic and Storybook for UI; no shell, no application, and no local OneCX environment are required when those suffice. Verify in the *onecx-portal-ui-libs* repository alone.
+
+If the library change later needs shell or application verification, continue with Integration testing. If the source change is confined to a single OneCX application, use Application-only testing instead.
+
+[#running-the-tests]
+== Running the tests
+
+. Run the unit tests. The repository root exposes an `nx` test target that runs the tests of the affected projects:
++
+[source, bash]
+----
+npm test
+----
+
+. If the change affects how a component looks or behaves, also open the Storybook for the affected library to inspect it manually. Every Angular library exposes a `storybook` `nx` target:
++
+[source, bash]
+----
+nx run <library>:storybook
+----
++
+For example, to open the Storybook of `angular-accelerator`:
++
+[source, bash]
+----
+nx run angular-accelerator:storybook
+----
+
+[#next]
+== When the change needs more than the library's own tests
+
+If the source change is a library and it has to run inside the OneCX Shell and one or more local applications, continue with the {integration_testing} guide. If the source change is confined to a single OneCX application, use the {application_only_testing} guide.
+
+[#related]
+== Related
+
+* {contribution_testing} — the overview and the other verification tiers.
+* {integration_testing} — building the libraries locally and copying them into the shell and apps.
+* {application_only_testing} — testing a change confined to a single application.

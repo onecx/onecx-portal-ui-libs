@@ -42,6 +42,11 @@
             "input": "./libs/build-utils",
             "glob": "migrations.json",
             "output": "."
+          },
+          {
+            "input": "./libs/build-utils/src/lib/plugins",
+            "glob": "*.cjs",
+            "output": "plugins"
           }
         ]
       }

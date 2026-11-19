@@ -19,9 +19,18 @@
         "parallel": false
       }
     },
+    "build:styles": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx @tailwindcss/cli -i libs/angular-accelerator/tailwind.css -o libs/angular-accelerator/assets/tailwind.css --minify"
+        ],
+        "parallel": false
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
-      "dependsOn": ["^build", "copyOptimuslocaleTranslations"],
+      "dependsOn": ["^build", "copyOptimuslocaleTranslations", "build:styles"],
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "defaultConfiguration": "production",
       "options": {
@@ -70,6 +79,7 @@
     },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
+      "dependsOn": ["build:styles"],
       "options": {
         "port": 4400,
         "configDir": "libs/angular-accelerator/.storybook",
@@ -77,7 +87,7 @@
         "compodoc": false,
         "styles": [
           "node_modules/@openng/icons/openng-icons.css",
-          "libs/angular-accelerator/assets/styles.scss",
+          "libs/angular-accelerator/assets/tailwind.css",
           "libs/angular-accelerator/.storybook/theme_defaults.scss",
           "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss",
           "libs/angular-accelerator/src/lib/directives/content.directive.scss"
@@ -91,6 +101,7 @@
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
+      "dependsOn": ["build:styles"],
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook/angular-accelerator",
@@ -99,7 +110,7 @@
         "compodoc": false,
         "styles": [
           "node_modules/@openng/icons/openng-icons.css",
-          "libs/angular-accelerator/assets/styles.scss",
+          "libs/angular-accelerator/assets/tailwind.css",
           "libs/angular-accelerator/.storybook/theme_defaults.scss",
           "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss",
           "libs/angular-accelerator/src/lib/directives/content.directive.scss"

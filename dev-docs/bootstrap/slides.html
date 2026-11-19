@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Bootstrap &amp; Navigation — Area Showcase</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/white.css">
+<style>
+  :root {
+    --shell: #475569; --shell-bg: #f1f5f9;
+    --app: #2563eb;   --app-bg: #eff6ff;
+    --rc: #ea580c;    --rc-bg: #fff7ed;
+    --slot: #7c3aed;  --slot-bg: #f5f3ff;
+    --topic: #0d9488; --topic-bg: #f0fdfa;
+    --ok: #16a34a; --bad: #dc2626; --muted: #64748b;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .reveal { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 26px; color: #1e293b; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: inherit; color: #0f172a; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1 { font-size: 2.1em; }
+  .reveal h2 { font-size: 1.35em; margin-bottom: 0.5em; }
+  .reveal h3 { font-size: 0.9em; margin: 0 0 0.3em; }
+  .reveal section { text-align: left; height: 100%; }
+  .reveal section.center { text-align: center; }
+  .reveal ul { margin: 0 0 0 1em; }
+  .reveal li { margin-bottom: 0.25em; }
+  .reveal code, .mono { font-family: var(--mono); font-size: 0.85em; }
+  .reveal p code, .reveal li code, .reveal td code { color: #9a3412; background: #fff7ed; padding: 0 0.2em; border-radius: 4px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 0.7em; }
+  .tiny { font-size: 0.55em; }
+  .kicker { font-size: 0.55em; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--slot); margin-bottom: 0.2em; }
+  .row { display: flex; gap: 24px; align-items: stretch; }
+  .col { flex: 1; min-width: 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .note { font-size: 0.55em; color: var(--muted); position: absolute; bottom: 10px; left: 0; right: 0; }
+
+  /* colour helpers */
+  .c-shell { color: var(--shell); } .c-app { color: var(--app); } .c-rc { color: var(--rc); }
+  .c-slot { color: var(--slot); } .c-topic { color: var(--topic); } .c-ok { color: var(--ok); } .c-bad { color: var(--bad); }
+  .b-shell { border-color: var(--shell) !important; background: var(--shell-bg); }
+  .b-app   { border-color: var(--app) !important;   background: var(--app-bg); }
+  .b-rc    { border-color: var(--rc) !important;    background: var(--rc-bg); }
+  .b-slot  { border-color: var(--slot) !important;  background: var(--slot-bg); border-style: dashed !important; }
+  .b-topic { border-color: var(--topic) !important; background: var(--topic-bg); }
+
+  .box { border: 2px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; background: white; position: relative; }
+  .box > .lbl { position: absolute; top: -0.75em; left: 10px; background: white; padding: 0 6px; font-size: 0.5em; font-weight: 700; letter-spacing: 0.04em; border-radius: 4px; }
+  .chip { display: inline-block; font-size: 0.55em; font-weight: 600; padding: 2px 10px; border-radius: 999px; border: 1.5px solid currentColor; white-space: nowrap; }
+  .pill { display: inline-block; font-size: 0.6em; padding: 3px 12px; border-radius: 999px; color: white; font-weight: 600; }
+  .bg-shell { background: var(--shell); } .bg-app { background: var(--app); } .bg-rc { background: var(--rc); } .bg-slot { background: var(--slot); } .bg-topic { background: var(--topic); }
+
+  /* code cards */
+  pre.code { font-family: var(--mono); font-size: 0.5em; line-height: 1.45; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 0; box-shadow: none; width: auto; white-space: pre; overflow: hidden; }
+  pre.code .k { color: #c084fc; } pre.code .s { color: #86efac; } pre.code .c { color: #64748b; } pre.code .t { color: #fdba74; } pre.code .a { color: #93c5fd; } pre.code .hl { background: rgba(250, 204, 21, 0.18); border-radius: 3px; }
+  pre.code.light { background: #f8fafc; color: #1e293b; border: 1px solid #e2e8f0; }
+  pre.code.light .k { color: #7c3aed; } pre.code.light .s { color: #15803d; } pre.code.light .c { color: #94a3b8; } pre.code.light .t { color: #c2410c; } pre.code.light .a { color: #1d4ed8; }
+
+  /* section dividers */
+  section.divider { display: flex !important; flex-direction: column; justify-content: center; }
+  section.divider .num { font-size: 3.2em; font-weight: 800; color: var(--slot); line-height: 1; opacity: 0.25; }
+  section.divider h1 { margin: 0.1em 0 0.3em; font-size: 1.9em; }
+
+  /* step engine: elements with data-from / data-until are shown depending on how many .step fragments are visible */
+  [data-from], [data-until] { transition: opacity 0.45s ease, visibility 0.45s ease; }
+  .off { opacity: 0 !important; visibility: hidden !important; }
+  [data-lit] { transition: all 0.45s ease; }
+  .fragment.step { display: none; }
+  .stack { display: grid; } .stack > * { grid-area: 1 / 1; }
+  :root { --lib: #7c3aed; --lib-bg: #f5f3ff; --guard: #be123c; --guard-bg: #fff1f2; --mf: #a16207; --mf-bg: #fefce8; }
+  .c-lib { color: var(--lib); } .c-guard { color: var(--guard); } .c-mf { color: var(--mf); }
+  .b-lib { border-color: var(--lib) !important; background: var(--lib-bg); }
+  .b-guard { border-color: var(--guard) !important; background: var(--guard-bg); }
+  .b-mf { border-color: var(--mf) !important; background: var(--mf-bg); }
+  .bg-lib { background: var(--lib); } .bg-guard { background: var(--guard); } .bg-mf { background: var(--mf); }
+  .kicker.k-nav { color: var(--app); } .kicker.k-guard { color: var(--guard); } .kicker.k-shell { color: var(--shell); }
+  /* generic "lit" highlight for step builds */
+  .hlbox { transition: all 0.45s ease; opacity: 0.35; }
+  .hlbox.lit { opacity: 1; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.25); }
+  .seq { display: flex; flex-direction: column; gap: 8px; }
+  .seq > div { display: flex; gap: 10px; align-items: center; font-size: 0.6em; }
+  .seq .n { flex: none; width: 30px; height: 30px; border-radius: 50%; color: white; display: grid; place-items: center; font-weight: 700; font-size: 0.9em; }
+  .cap { font-size: 0.6em; padding: 10px 14px; border-left: 5px solid var(--lib); background: var(--lib-bg); border-radius: 0 8px 8px 0; min-height: 56px; }
+  .cap.nav { border-color: var(--app); background: var(--app-bg); } .cap.guard { border-color: var(--guard); background: var(--guard-bg); } .cap.shell { border-color: var(--shell); background: var(--shell-bg); }
+  .url { font-family: var(--mono); font-size: 0.6em; background: white; border: 2px solid #cbd5e1; border-radius: 999px; padding: 6px 16px; }
+  .chev { display: flex; gap: 6px; }
+  .chev > div { flex: 1; padding: 14px 8px 14px 24px; color: white; font-weight: 700; font-size: 0.5em; clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%, 12% 50%); min-height: 84px; display: flex; flex-direction: column; justify-content: center; }
+  .chev > div:first-child { clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%); padding-left: 12px; }
+  .chev small { display: block; font-weight: 400; opacity: 0.9; margin-top: 4px; }
+  table.t { border-collapse: collapse; width: 100%; font-size: 0.5em; }
+  table.t th, table.t td { border-bottom: 1px solid #e2e8f0; padding: 7px 10px; text-align: left; vertical-align: top; }
+  table.t th { background: #f8fafc; font-weight: 700; }
+  .hypo { border: 3px dashed #f59e0b !important; background: repeating-linear-gradient(135deg, #fffbeb, #fffbeb 14px, #fef3c7 14px, #fef3c7 28px); }
+  .stamp { display: inline-block; transform: rotate(-4deg); border: 3px solid #b45309; color: #b45309; font-weight: 800; padding: 2px 12px; border-radius: 6px; font-size: 0.6em; letter-spacing: 0.08em; }
+  .demo button { font: inherit; font-size: 0.55em; padding: 6px 14px; border-radius: 8px; border: 2px solid var(--app); background: white; color: var(--app); cursor: pointer; font-weight: 600; }
+  .demo button:hover { background: var(--app-bg); }
+  .demo button:disabled { opacity: 0.4; cursor: default; }
+  .demo select, .demo input[type=text] { font: inherit; font-size: 0.55em; padding: 5px 8px; border-radius: 6px; border: 2px solid #cbd5e1; }
+  .log { font-family: var(--mono); font-size: 0.45em; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 10px 14px; height: 300px; overflow: auto; line-height: 1.5; }
+  .log .ok { color: #86efac; } .log .bad { color: #fca5a5; } .log .req { color: #c4b5fd; } .log .sync { color: #93c5fd; } .log .dim { color: #64748b; }
+  .toggle { display: flex; align-items: center; gap: 8px; font-size: 0.5em; cursor: pointer; user-select: none; }
+  .toggle input { width: 18px; height: 18px; }
+  pre.code .hl[data-lit] { background: transparent; transition: background 0.45s ease; }
+  pre.code .hl[data-lit].lit { background: rgba(250, 204, 21, 0.28); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ============ TITLE ============ -->
+<section class="center" style="display:flex!important;flex-direction:column;justify-content:center;">
+  <div class="kicker">OneCX Dev Docs · Area 2 + Area 7</div>
+  <h1 style="margin:0.2em 0;">Bootstrap <span class="c-lib">&amp;</span> Navigation</h1>
+  <p class="muted" style="margin-top:0">What really happens between "load remote" and "user clicks a link"</p>
+  <svg viewBox="0 0 700 260" style="width:620px;margin:16px auto 0;display:block">
+    <defs><marker id="t-ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker></defs>
+    <rect x="10" y="10" width="680" height="34" rx="17" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="30" y="33" font-family="monospace" font-size="16" fill="#475569">https://portal/admin/workspace/search</text>
+    <rect x="10" y="56" width="680" height="194" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+    <text x="24" y="80" font-size="15" font-weight="700" fill="#475569">Shell</text>
+    <rect x="30" y="92" width="150" height="140" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <text x="105" y="166" text-anchor="middle" font-size="14" fill="#ea580c" font-weight="700">RC · menu</text>
+    <rect x="200" y="92" width="470" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="435" y="120" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">&lt;ocx-workspace-component&gt;</text>
+    <rect x="290" y="140" width="290" height="44" rx="22" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="435" y="168" text-anchor="middle" font-family="monospace" font-size="15" fill="#7c3aed">bootstrapModule(...)</text>
+    <g font-size="20"><text x="96" y="210">🧭</text><text x="640" y="222">🧭</text><text x="30" y="80" dx="620">🧭</text></g>
+    <path d="M435 140 C 435 90, 560 60, 600 46" fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#t-ar)"/>
+  </svg>
+  <p class="small" style="margin-top:12px">
+    <span class="chip c-shell">Shell</span> <span class="chip c-app">App</span> <span class="chip c-rc">Remote Component</span>
+    <span class="chip c-lib">libs (bootstrap)</span> <span class="chip c-topic">Topic</span> <span class="chip c-guard">Guards</span>
+  </p>
+</section>
+
+<!-- ============ AGENDA ============ -->
+<section>
+  <h2>Today</h2>
+  <p class="small muted">Primer first — how <b>web components</b> work, the primitives behind every part below.</p>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:40px">
+    <div class="box b-lib" style="padding:18px"><div class="pill bg-lib">1</div><h3 style="margin-top:12px">Why bootstrap?</h3><p class="small muted">one line, many jobs</p></div>
+    <div class="box b-shell" style="padding:18px"><div class="pill bg-shell">2</div><h3 style="margin-top:12px">Startup timeline</h3><p class="small muted">stage by stage</p></div>
+    <div class="box b-lib" style="padding:18px"><div class="pill bg-lib">3</div><h3 style="margin-top:12px">Inside the bootstrap</h3><p class="small muted">every patch &amp; why</p></div>
+    <div class="box b-app" style="padding:18px"><div class="pill bg-app">4</div><h3 style="margin-top:12px">Navigation</h3><p class="small muted">many routers, one URL</p></div>
+    <div class="box b-guard" style="padding:18px"><div class="pill bg-guard">5</div><h3 style="margin-top:12px">Guards</h3><p class="small muted">asking everybody first</p></div>
+  </div>
+  <div style="margin-top:50px;display:flex;align-items:center;gap:10px" class="small muted">
+    <span>Area 2 · Bootstrap</span><div style="flex:1;height:4px;background:linear-gradient(90deg,var(--lib),var(--app) 70%,var(--guard))"></div><span>Area 7 · Navigation</span>
+  </div>
+</section>
+
+<!-- ============ PRIMER ============ -->
+<section class="divider">
+  <div class="num">P</div>
+  <h1>How web components work</h1>
+  <p class="muted">The browser-native primitives every part of this talk stands on</p>
+</section>
+
+<!-- what a custom element is -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker">Primer · the primitive</div>
+  <h2>A tag with a brain</h2>
+  <div class="row" style="margin-top:20px;align-items:center">
+    <div class="col">
+      <div class="box b-app" style="height:340px;display:flex;flex-direction:column;justify-content:center">
+        <span class="lbl c-app">how it looks in the DOM</span>
+<pre class="code light" style="margin:10px 0;font-size:0.5em">&lt;ocx-workspace-component&gt;
+  <span class="c">… the whole workspace app,
+      rendered right here …</span>
+&lt;/ocx-workspace-component&gt;</pre>
+        <div class="tiny muted" style="text-align:center">an ordinary DOM node — like a <code>&lt;div&gt;</code>, but with behavior</div>
+      </div>
+    </div>
+    <div style="font-size:2em;align-self:center" data-from="1">→</div>
+    <div class="col" data-from="1">
+      <div class="box b-lib"><span class="lbl c-lib">what it really is</span>
+<pre class="code light" style="margin-top:8px;font-size:0.5em"><span class="k">class</span> <span class="t">OcxWorkspaceComponent</span> <span class="k">extends</span> <span class="t">HTMLElement</span> {
+  <span class="a">connectedCallback</span>() {  }    <span class="c">// "I'm in the DOM"</span>
+  <span class="a">disconnectedCallback</span>() { }  <span class="c">// "I left the DOM"</span>
+}</pre>
+        <div class="tiny" style="margin-top:10px">The browser builds this class <b>for you</b> whenever it sees the tag.</div>
+      </div>
+      <div class="cap" style="margin-top:16px" data-from="2">No framework needed to <b>use</b> it. To the Shell it's just a node: <code>createElement</code> · <code>append</code> · <code>remove</code>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- define -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker">Primer · step 1 of 2</div>
+  <h2><code>customElements.define</code> — teach the browser a tag</h2>
+  <div class="row" style="align-items:center;margin-top:10px">
+    <div class="col">
+<pre class="code" style="font-size:0.5em"><span class="hl"><span class="a">customElements</span>.<span class="a">define</span>(
+  <span class="s">'ocx-workspace-component'</span>,
+  OcxWorkspaceComponent
+)</span>
+<span class="c">// register the name + the class</span>
+<span class="c">// the name must contain a "-"</span></pre>
+    </div>
+    <div style="width:440px">
+      <div class="box" style="text-align:center"><b class="small">After this…</b><div class="tiny muted">the tag <b>exists</b> — but nothing is running yet</div></div>
+      <div class="stack" style="margin-top:16px">
+        <div class="cap" data-until="1">Define ≠ instantiate. <code>define</code> runs <b>once per page, per name</b>.</div>
+        <div class="cap off" data-from="1">Register the same name twice → <code class="c-bad">NotSupportedError</code>.<br><span class="muted">so element names must be unique per page.</span></div>
+      </div>
+      <div class="box" style="margin-top:16px;border-color:var(--ok)" data-from="2"><b class="tiny c-ok">The app owns this.</b><div class="tiny">It happens once, during bootstrap (Part 3 · Patches 6+7).</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- instantiate / lifecycle -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker">Primer · step 2 of 2</div>
+  <h2><code>createElement</code> + <code>append</code> — the app comes alive</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+<pre class="code" style="font-size:0.5em"><span class="c">// the Shell does this — it's all it does:</span>
+<span class="k">const</span> el = <span class="hl">document.<span class="a">createElement</span>(
+  <span class="s">'ocx-workspace-component'</span>)</span>
+<span class="c">// → plain node, nothing runs yet</span>
+
+<span class="hl">wrapper.<span class="a">appendChild</span>(el)</span>
+<span class="c">// → connectedCallback() fires</span>
+<span class="c">//   → the app starts (ngOnInit → connect)</span></pre>
+    </div>
+    <div style="width:470px">
+      <div class="box b-app"><span class="lbl c-app">the element's lifecycle</span>
+        <div class="seq" style="margin-top:10px">
+          <div><span class="n bg-app">1</span><span><code>createElement</code> → node made, <b>not yet connected</b></span></div>
+          <div data-from="1"><span class="n bg-app">2</span><span><code>append</code> into the DOM → <code>connectedCallback</code> → <b>app boots</b></span></div>
+          <div data-from="2"><span class="n bg-shell">3</span><span><code>remove</code> from the DOM → <code>disconnectedCallback</code> → app torn down</span></div>
+        </div>
+      </div>
+      <div class="cap" style="margin-top:16px" data-from="3"><b>The app's whole lifetime = the element's time in the DOM.</b> In → <code>connectedCallback</code> · out → <code>disconnectedCallback</code>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- define vs instantiate -->
+<section>
+  <div class="kicker">Primer · why this matters</div>
+  <h2>The app <span class="c-lib">defines</span> · the Shell <span class="c-shell">instantiates</span></h2>
+  <svg viewBox="0 0 1180 360" style="width:100%;margin-top:10px">
+    <defs><marker id="pv" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    <rect x="40" y="60" width="340" height="240" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5"/>
+    <text x="210" y="95" text-anchor="middle" font-weight="800" font-size="20" fill="#7c3aed">App (libs)</text>
+    <text x="210" y="120" text-anchor="middle" font-size="14" fill="#64748b">once, at bootstrap</text>
+    <rect x="70" y="150" width="280" height="58" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/><text x="210" y="178" text-anchor="middle" font-family="monospace" font-size="15" fill="#7c3aed">customElements.define(name, El)</text><text x="210" y="199" text-anchor="middle" font-size="13" fill="#64748b">teaches the browser the tag</text>
+    <text x="210" y="248" text-anchor="middle" font-size="14">defines the <tspan font-weight="700">class</tspan></text>
+    <rect x="800" y="60" width="340" height="240" rx="16" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/>
+    <text x="970" y="95" text-anchor="middle" font-weight="800" font-size="20" fill="#475569">Shell</text>
+    <text x="970" y="120" text-anchor="middle" font-size="14" fill="#64748b">every navigation</text>
+    <rect x="830" y="150" width="280" height="58" rx="10" fill="white" stroke="#475569" stroke-width="2"/><text x="970" y="178" text-anchor="middle" font-family="monospace" font-size="15" fill="#475569">createElement + append</text><text x="970" y="199" text-anchor="middle" font-size="13" fill="#64748b">→ connectedCallback → app boots</text>
+    <text x="970" y="248" text-anchor="middle" font-size="14">instantiates a <tspan font-weight="700">living instance</tspan></text>
+    <path d="M385 179 C 560 179, 620 179, 825 179" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#pv)"/>
+    <text x="605" y="158" text-anchor="middle" font-size="15" fill="#64748b">reuses the registered class</text>
+  </svg>
+  <p class="small" style="text-align:center;margin-top:4px">The Shell never touches the app's framework — it just makes a DOM node. <b>Insertion is the boot signal.</b></p>
+  <p class="tiny muted" style="text-align:center;margin-top:2px">There's a third web-component tool — Shadow DOM (style isolation). OneCX apps instead render into the light DOM and let the Shell scope their styles to the element.</p>
+</section>
+
+<!-- demo -->
+<section class="demo">
+  <div class="kicker">Primer · try it</div>
+  <h2>Watch it come alive</h2>
+  <div class="row" style="margin-top:16px">
+    <div style="width:360px">
+      <div class="box" style="text-align:center"><b class="small">The Shell</b>
+        <div class="tiny muted" style="margin:8px 0 12px">it only creates &amp; removes a node</div>
+        <button id="wc-mount">createElement + append</button>
+        <div style="margin-top:8px"><button id="wc-unmount" disabled>remove</button></div>
+      </div>
+      <div class="tiny muted" style="margin-top:12px">The element is <b>defined once</b>. Each button just moves the node in / out of the DOM — that's the whole boot / shutdown.</div>
+    </div>
+    <div class="col">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="box b-app" style="min-height:230px"><span class="lbl c-app">the page (DOM)</span>
+          <div id="wc-stage" style="margin-top:14px;min-height:160px;display:grid;place-items:center;color:var(--muted)">&lt;wrapper&gt; — empty</div></div>
+        <div class="box" style="min-height:230px"><span class="lbl">lifecycle log</span>
+          <div class="log" id="wc-log" style="height:196px;margin-top:8px"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PART 1 ============ -->
+<section class="divider">
+  <div class="num">1</div>
+  <h1>Why bootstrap?</h1>
+  <p class="muted">An app is not alone on the page</p>
+</section>
+
+<!-- One page, many strangers -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <h2>One page, many strangers</h2>
+  <div class="row">
+    <div style="flex:1.4">
+      <div class="box b-shell" style="height:480px;display:grid;grid-template-columns:150px 1fr;grid-template-rows:56px 1fr;gap:10px;padding:14px">
+        <span class="lbl c-shell">Shell · Angular 20</span>
+        <div class="box b-rc" style="grid-column:1/3;display:flex;gap:10px;align-items:center;justify-content:flex-end"><span class="tiny c-rc">RC · Angular 19</span><span class="tiny c-rc">RC · React 19</span></div>
+        <div class="box b-rc"><span class="tiny c-rc">RC · menu<br>Angular 20</span></div>
+        <div class="box b-app"><b class="c-app small">App · Angular 21</b>
+          <div class="tiny muted" style="margin-top:8px">own build · own release · own router</div>
+          <div class="box" style="margin-top:20px;border-style:dashed"><span class="tiny muted">dialog / overlay</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="col" style="display:flex;flex-direction:column;gap:12px;justify-content:center">
+      <div class="box" data-from="1"><b class="small">Built separately</b><div class="tiny muted">the Shell knows nothing at build time</div></div>
+      <div class="box" data-from="1"><b class="small">Mixed versions &amp; frameworks</b><div class="tiny muted">one JS context, one document</div></div>
+      <div class="box" data-from="2" style="border-color:var(--bad)"><b class="small c-bad">So who…</b>
+        <ul class="tiny" style="margin-top:6px"><li>shares the Angular platform &amp; zone?</li><li>gives each app an identity?</li><li>decides where overlays go?</li><li>knows when the app is mounted?</li><li>keeps N routers on one URL?</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- Without vs with -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <h2>Every app does it… <span class="c-lib" data-from="1">or one function does it</span></h2>
+  <div class="row" style="margin-top:20px">
+    <div class="col">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div class="box b-app tiny"><b class="c-app">App A</b><ul style="margin-top:4px"><li>platform</li><li>zone</li><li>APP_ID</li><li>container</li><li>element</li><li>router sync</li><li>guards</li></ul></div>
+        <div class="box b-app tiny"><b class="c-app">App B</b><ul style="margin-top:4px"><li>platform</li><li>zone</li><li>APP_ID</li><li><s>container</s> ?</li><li>element</li><li>router sync</li><li class="c-bad">guards ✗</li></ul></div>
+        <div class="box b-app tiny"><b class="c-app">App C</b><ul style="margin-top:4px"><li>platform</li><li class="c-bad">zone v1</li><li>APP_ID</li><li>container</li><li>element</li><li class="c-bad">sync v2</li><li>guards</li></ul></div>
+        <div class="box b-rc tiny"><b class="c-rc">RC D</b><ul style="margin-top:4px"><li>platform</li><li>zone</li><li class="c-bad">APP_ID ✗</li><li>container</li><li>element</li><li>…</li></ul></div>
+      </div>
+      <p class="small c-bad" style="text-align:center;margin-top:16px">copy-paste · drift · every fix = N releases</p>
+    </div>
+    <div style="font-size:2em;align-self:center" data-from="1">→</div>
+    <div class="col" data-from="1">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div class="box b-app tiny" style="text-align:center"><b class="c-app">A</b></div><div class="box b-app tiny" style="text-align:center"><b class="c-app">B</b></div>
+        <div class="box b-app tiny" style="text-align:center"><b class="c-app">C</b></div><div class="box b-rc tiny" style="text-align:center"><b class="c-rc">D</b></div>
+      </div>
+      <div style="text-align:center;margin:6px 0" class="small">↓ ↓ ↓ ↓</div>
+      <div class="box b-lib" style="text-align:center"><b class="c-lib mono small">bootstrapModule · createAppEntrypoint · bootstrapRemoteComponent</b>
+        <div class="tiny" style="margin-top:6px">platform · zone · APP_ID · container · element · router sync · guards</div></div>
+      <p class="small c-ok" style="text-align:center;margin-top:16px" data-from="2">fix once in libs → every app gets it on upgrade</p>
+    </div>
+  </div>
+</section>
+
+<!-- Interception -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker">The key idea</div>
+  <h2>Bootstrap = <span class="c-lib">interception point</span></h2>
+  <svg viewBox="0 0 1180 400" style="width:100%;margin-top:10px">
+    <defs><marker id="i-ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    <rect x="10" y="150" width="200" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+    <text x="110" y="190" text-anchor="middle" font-weight="700" font-size="20" fill="#2563eb">App code</text>
+    <text x="110" y="215" text-anchor="middle" font-size="14" fill="#2563eb">"please start me"</text>
+    <rect x="260" y="40" width="680" height="320" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="9 5"/>
+    <text x="600" y="72" text-anchor="middle" font-weight="800" font-size="20" fill="#7c3aed">libs bootstrap</text>
+    <g data-from="1"><rect x="285" y="100" width="200" height="230" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/>
+      <text x="385" y="130" text-anchor="middle" font-weight="700" font-size="17" fill="#7c3aed">before create</text>
+      <text x="385" y="170" text-anchor="middle" font-size="15">rewrite providers</text><text x="385" y="200" text-anchor="middle" font-size="15">add providers</text><text x="385" y="230" text-anchor="middle" font-size="15">pick platform</text><text x="385" y="260" text-anchor="middle" font-size="15">pick NgZone</text></g>
+    <g data-from="2"><rect x="500" y="100" width="200" height="230" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/>
+      <text x="600" y="130" text-anchor="middle" font-weight="700" font-size="17" fill="#7c3aed">create</text>
+      <text x="600" y="185" text-anchor="middle" font-size="15">Angular bootstraps</text><text x="600" y="215" text-anchor="middle" font-size="15">with <tspan font-weight="700">our</tspan> setup</text></g>
+    <g data-from="3"><rect x="715" y="100" width="200" height="230" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/>
+      <text x="815" y="130" text-anchor="middle" font-weight="700" font-size="17" fill="#7c3aed">wrap the result</text>
+      <text x="815" y="170" text-anchor="middle" font-size="15">patch lifecycle</text><text x="815" y="200" text-anchor="middle" font-size="15">connect router</text><text x="815" y="230" text-anchor="middle" font-size="15">patch element</text><text x="815" y="260" text-anchor="middle" font-size="15">define element</text></g>
+    <rect x="990" y="150" width="180" height="90" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/>
+    <text x="1080" y="190" text-anchor="middle" font-weight="700" font-size="18" fill="#475569">ready for</text><text x="1080" y="214" text-anchor="middle" font-weight="700" font-size="18" fill="#475569">the Shell</text>
+    <line x1="212" y1="195" x2="282" y2="195" stroke="#64748b" stroke-width="3" marker-end="url(#i-ar)"/>
+    <line x1="942" y1="195" x2="986" y2="195" stroke="#64748b" stroke-width="3" marker-end="url(#i-ar)"/>
+  </svg>
+  <p class="small" style="text-align:center;margin:0">App writes <b>one line</b>. Everything in the purple box is <b class="c-lib">ours</b>.</p>
+</section>
+
+<!-- Real usage -->
+<section>
+  <div class="kicker">Real app · onecx-workspace-ui</div>
+  <h2>What the app actually writes</h2>
+  <div class="grid2">
+<pre class="code"><span class="c">// main.ts</span>
+<span class="k">import</span>(<span class="s">'./bootstrap'</span>)
+
+<span class="c">// bootstrap.ts</span>
+<span class="hl"><span class="a">bootstrapModule</span>(OneCXWorkspaceModule,
+  <span class="s">'microfrontend'</span>, environment.production)</span></pre>
+<pre class="code"><span class="t">@NgModule</span>({
+  imports: [ RouterModule.<span class="a">forRoot</span>([
+    { <span class="hl">matcher: <span class="a">startsWith</span>(<span class="s">''</span>)</span>, loadChildren: … }
+  ]) ],
+  providers: [ { provide: APP_INITIALIZER,
+    <span class="hl">useFactory: <span class="a">initializeRouter</span></span>, multi: <span class="k">true</span>,
+    deps: [Router, AppStateService] } ]
+})
+<span class="k">export class</span> OneCXWorkspaceModule <span class="k">implements</span> DoBootstrap {
+  <span class="a">ngDoBootstrap</span>() {
+    <span class="hl"><span class="a">createAppEntrypoint</span>(AppEntrypointComponent,
+      <span class="s">'ocx-workspace-component'</span>, <span class="k">this</span>.injector)</span>
+  }
+}</pre>
+  </div>
+  <p class="small muted" style="margin-top:24px;text-align:center">4 highlighted calls. The rest of this talk = what hides behind them.</p>
+</section>
+
+<!-- ============ PART 2 ============ -->
+<section class="divider">
+  <div class="num">2</div>
+  <h1>Startup timeline</h1>
+  <p class="muted">From empty tab to a mounted app, one stage at a time</p>
+</section>
+
+<section>
+  <h2>The stages</h2>
+  <div class="chev" style="margin-top:30px">
+    <div class="bg-shell">0 · main.ts<small>MF instance</small></div>
+    <div class="bg-mf">1 · Preloaders<small>share scopes</small></div>
+    <div class="bg-lib">2 · Shell bootstrap<small>platform · zone</small></div>
+    <div class="bg-shell">3 · Initializers<small>workspace</small></div>
+    <div class="bg-shell">4 · History patch<small>URL → Topic</small></div>
+    <div class="bg-shell">5 · Route table<small>apps as routes</small></div>
+    <div class="bg-shell">6 · Match &amp; load<small>loadChildren</small></div>
+    <div class="bg-lib">7 · App bootstrap<small>element</small></div>
+    <div class="bg-app">8 · Navigation<small>→ Part 4</small></div>
+  </div>
+  <div class="grid2" style="margin-top:44px">
+    <div class="box b-shell"><b class="small">Stages 0 – 6: the Shell</b><p class="tiny muted" style="margin:6px 0 0">once per page load · prepares everything an app needs</p></div>
+    <div class="box b-lib"><b class="small">Stage 7: the app (via libs)</b><p class="tiny muted" style="margin:6px 0 0">once per app · Shell only calls <code>createElement</code></p></div>
+  </div>
+  <p class="small muted" style="text-align:center;margin-top:30px">Same function, two callers: the Shell bootstraps with <code>bootstrapModule(…, 'shell')</code> too.</p>
+</section>
+
+<!-- Stage 0 -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-shell">Stage 0 · main.ts</div>
+  <h2>Nothing Angular yet</h2>
+  <div class="row" style="align-items:center;margin-top:20px">
+    <div class="box b-shell" style="flex:1;height:340px">
+      <span class="lbl c-shell">main.ts</span>
+      <div class="seq" style="margin-top:14px">
+        <div><span class="n bg-mf">1</span><span><code>globalThis.onecxFederationInstance</code> = MF runtime</span></div>
+        <div><span class="n bg-mf">2</span><span><code>window.onecxPreloaders ??= {}</code></span></div>
+        <div><span class="n bg-mf">3</span><span>load preloaders → <b>wait</b> <span class="muted">(Stage 1)</span></span></div>
+        <div data-from="1"><span class="n bg-shell">4</span><span><code>import('./bootstrap')</code> — <b>dynamic</b></span></div>
+      </div>
+    </div>
+    <div style="font-size:2em" data-from="1">→</div>
+    <div class="box b-lib" style="flex:1;height:340px" data-from="1">
+      <span class="lbl c-lib">bootstrap.ts</span>
+      <div class="small" style="margin-top:20px">first Angular import happens <b>here</b></div>
+      <div class="cap" style="margin-top:20px" data-from="2">Why the split? Shared deps (Angular, libs) are <b>negotiated first</b>, then evaluated once from the share scope.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MF in one picture -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker" style="color:var(--mf)">Stage 1 · background</div>
+  <h2>Module Federation in one picture</h2>
+  <svg viewBox="0 0 1180 450" style="width:100%">
+    <defs><marker id="mf-ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#a16207"/></marker></defs>
+    <g font-family="monospace" font-size="14">
+      <rect x="20" y="20" width="400" height="200" rx="16" fill="#fefce8" stroke="#a16207" stroke-width="2.5"/>
+      <text x="220" y="52" text-anchor="middle" font-weight="800" font-size="18" fill="#a16207" font-family="system-ui">scope "default"</text>
+      <rect x="40" y="70" width="170" height="30" rx="6" fill="white" stroke="#a16207"/><text x="125" y="90" text-anchor="middle">@angular/* 18</text>
+      <rect x="40" y="108" width="170" height="30" rx="6" fill="white" stroke="#a16207"/><text x="125" y="128" text-anchor="middle">@angular/* 19</text>
+      <rect x="40" y="146" width="170" height="30" rx="6" fill="white" stroke="#a16207"/><text x="125" y="166" text-anchor="middle">@angular/* 20</text>
+      <rect x="230" y="70" width="170" height="30" rx="6" fill="white" stroke="#a16207"/><text x="315" y="90" text-anchor="middle">@onecx/* …</text>
+      <rect x="230" y="108" width="170" height="30" rx="6" fill="white" stroke="#a16207"/><text x="315" y="128" text-anchor="middle">rxjs · primeng</text>
+      <rect x="460" y="20" width="330" height="200" rx="16" fill="#fefce8" stroke="#a16207" stroke-width="2.5"/>
+      <text x="625" y="52" text-anchor="middle" font-weight="800" font-size="18" fill="#a16207" font-family="system-ui">scope "angular_21"</text>
+      <rect x="480" y="70" width="170" height="30" rx="6" fill="white" stroke="#a16207"/><text x="565" y="90" text-anchor="middle">@angular/* 21</text>
+      <rect x="830" y="20" width="330" height="200" rx="16" fill="#fefce8" stroke="#a16207" stroke-width="2.5"/>
+      <text x="995" y="52" text-anchor="middle" font-weight="800" font-size="18" fill="#a16207" font-family="system-ui">scope "react_19"</text>
+      <rect x="850" y="70" width="170" height="30" rx="6" fill="white" stroke="#a16207"/><text x="935" y="90" text-anchor="middle">react 19</text>
+    </g>
+    <rect x="40" y="330" width="200" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="140" y="370" text-anchor="middle" font-weight="700" font-size="17" fill="#2563eb">App · Ng 19</text><text x="140" y="395" text-anchor="middle" font-size="13" font-family="monospace">shareScope: default</text>
+    <rect x="290" y="330" width="200" height="90" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/><text x="390" y="370" text-anchor="middle" font-weight="700" font-size="17" fill="#475569">Shell · Ng 20</text><text x="390" y="395" text-anchor="middle" font-size="13" font-family="monospace">default</text>
+    <rect x="520" y="330" width="200" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="620" y="370" text-anchor="middle" font-weight="700" font-size="17" fill="#2563eb">App · Ng 21</text><text x="620" y="395" text-anchor="middle" font-size="13" font-family="monospace">angular_21</text>
+    <rect x="890" y="330" width="200" height="90" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="990" y="370" text-anchor="middle" font-weight="700" font-size="17" fill="#ea580c">RC · React 19</text><text x="990" y="395" text-anchor="middle" font-size="13" font-family="monospace">react_19</text>
+    <g data-from="1">
+      <line x1="140" y1="328" x2="125" y2="140" stroke="#a16207" stroke-width="2.5" marker-end="url(#mf-ar)"/>
+      <line x1="390" y1="328" x2="160" y2="178" stroke="#a16207" stroke-width="2.5" marker-end="url(#mf-ar)"/>
+      <line x1="620" y1="328" x2="565" y2="102" stroke="#a16207" stroke-width="2.5" marker-end="url(#mf-ar)"/>
+      <line x1="990" y1="328" x2="935" y2="102" stroke="#a16207" stroke-width="2.5" marker-end="url(#mf-ar)"/>
+      <text x="590" y="280" text-anchor="middle" font-size="15" fill="#a16207">each app resolves its <tspan font-weight="700">own major</tspan> from the scope it was <tspan font-weight="700">built for</tspan></text>
+    </g>
+    <g data-from="2"><rect x="760" y="250" width="400" height="44" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+      <text x="960" y="278" text-anchor="middle" font-size="15" fill="#dc2626">empty scope → app may not bootstrap</text></g>
+  </svg>
+  <p class="tiny muted" style="text-align:center;margin:0">Scope is chosen at build time by <code>getOneCXSharedLibraryConfig</code> (React ≥ 19 → <span class="mono">react_N</span>, Angular ≥ 21 → <span class="mono">angular_N</span>, else <span class="mono">default</span>).</p>
+</section>
+
+<!-- Stage 1 preloaders -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker" style="color:var(--mf)">Stage 1 · preloaders</div>
+  <h2>Fill the scopes, then wait</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+      <div class="box b-shell" style="text-align:center"><b class="c-shell small">Shell main.ts</b></div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px">
+        <div class="box b-mf tiny" style="text-align:center"><b>angular18</b><br><span class="mono">default</span></div>
+        <div class="box b-mf tiny" style="text-align:center"><b>angular19</b><br><span class="mono">default</span></div>
+        <div class="box b-mf tiny" style="text-align:center"><b>angular20</b><br><span class="mono">default</span></div>
+        <div class="box b-mf tiny" style="text-align:center"><b>angular21</b><br><span class="mono">angular_21</span></div>
+        <div class="box b-mf tiny" style="text-align:center"><b>react19</b><br><span class="mono">react_19</span></div>
+      </div>
+      <div class="tiny muted" style="text-align:center;margin-top:8px"><span class="mono">pre_loaders/onecx-*-loader/mf-manifest.json</span></div>
+      <div class="box" style="margin-top:22px;text-align:center" data-from="1"><b class="small">Barrier</b>
+        <div class="mono tiny" style="margin-top:6px">Promise.all([ ...loadRemote, ...ensureLoaded ])</div>
+        <div class="tiny muted">ensureLoaded polls <code>window.onecxPreloaders[key]</code> every 50 ms</div></div>
+    </div>
+    <div style="width:400px;display:flex;flex-direction:column;gap:14px">
+      <div class="cap" data-from="1">One preloader per scope/major → no scope is empty when the first app arrives.</div>
+      <div class="cap" data-from="2" style="border-color:var(--bad);background:#fef2f2">Load failed? <b>warn</b> + set flag anyway.<br><span class="muted">"done" ≠ "succeeded" — startup never blocks.</span></div>
+      <div class="cap shell" data-from="3">Then: <code>import('./bootstrap')</code> → Stage 2</div>
+    </div>
+  </div>
+</section>
+
+<!-- Stage 2 Shell bootstrap -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Stage 2 · Shell bootstrap.ts</div>
+  <h2>The Shell bootstraps like an app</h2>
+  <div class="row" style="align-items:center;margin-top:16px">
+    <div class="col">
+<pre class="code"><span class="a">ShellCapabilityService</span>.<span class="a">setCapabilities</span>([
+  Capability.PARAMETERS_TOPIC,
+  Capability.CURRENT_LOCATION_TOPIC,
+  Capability.ACTIVENESS_AWARE_MENUS,
+])
+<span class="hl"><span class="a">bootstrapModule</span>(AppModule, <span class="s">'shell'</span>, production)</span></pre>
+      <div class="cap shell" style="margin-top:16px">Capabilities = "what this Shell supports" — apps check before relying on a feature.</div>
+    </div>
+    <div style="width:470px">
+      <div class="box" style="padding:16px;border-style:dashed"><span class="lbl mono">window['@onecx/angular-webcomponents']</span>
+        <div class="box b-lib tiny" style="margin-top:8px" data-from="1"><b>platformCache</b> <span class="mono">Map&lt;version, PlatformRef&gt;</span><div class="mono" style="margin-top:4px">'20.x' → PlatformRef</div></div>
+        <div class="box b-lib tiny" style="margin-top:10px" data-from="2"><b>ngZone</b> = Shell's NgZone <span class="muted">(setShellZone)</span></div>
+      </div>
+      <p class="tiny muted" style="margin-top:12px" data-from="2">First bootstrapper seeds the shared state. Apps <b>reuse</b> it (Part 3).</p>
+    </div>
+  </div>
+</section>
+
+<!-- Stage 3 initializers -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-shell">Stage 3 · APP_INITIALIZERs</div>
+  <h2>Loading the workspace</h2>
+  <svg viewBox="0 0 1180 400" style="width:100%">
+    <defs><marker id="s3" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    <rect x="10" y="150" width="170" height="80" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/><text x="95" y="185" text-anchor="middle" font-weight="700" font-size="17">auth ready?</text><text x="95" y="208" text-anchor="middle" font-size="13" font-family="monospace">isAuthenticated$</text>
+    <g data-from="1"><line x1="182" y1="190" x2="236" y2="190" stroke="#64748b" stroke-width="2.5" marker-end="url(#s3)"/>
+      <rect x="240" y="140" width="220" height="100" rx="12" fill="white" stroke="#475569" stroke-width="2.5"/><text x="350" y="175" text-anchor="middle" font-weight="700" font-size="17">loadWorkspaceConfig</text><text x="350" y="200" text-anchor="middle" font-size="14">Shell BFF · retry 3×500 ms</text><text x="350" y="222" text-anchor="middle" font-size="13" fill="#dc2626">fail → error page</text></g>
+    <g data-from="2"><line x1="462" y1="190" x2="530" y2="60" stroke="#64748b" stroke-width="2" marker-end="url(#s3)"/><line x1="462" y1="190" x2="530" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#s3)"/><line x1="462" y1="190" x2="530" y2="240" stroke="#64748b" stroke-width="2" marker-end="url(#s3)"/><line x1="462" y1="190" x2="530" y2="330" stroke="#64748b" stroke-width="2" marker-end="url(#s3)"/>
+      <rect x="535" y="30" width="300" height="56" rx="28" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/><text x="685" y="64" text-anchor="middle" font-size="16" fill="#0d9488" font-weight="700">currentWorkspace$</text>
+      <rect x="535" y="120" width="300" height="56" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/><text x="685" y="154" text-anchor="middle" font-size="16" font-weight="700">routes → Router (Stage 5)</text>
+      <rect x="535" y="210" width="300" height="56" rx="10" fill="white" stroke="#475569" stroke-width="2"/><text x="685" y="244" text-anchor="middle" font-size="16">apply theme</text>
+      <rect x="535" y="300" width="300" height="56" rx="28" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/><text x="685" y="334" text-anchor="middle" font-size="16" fill="#0d9488" font-weight="700">remoteComponents$</text>
+      <text x="880" y="198" font-size="34" fill="#64748b">}</text><text x="900" y="196" font-size="15" fill="#64748b">in parallel</text></g>
+    <g data-from="3"><rect x="980" y="150" width="190" height="80" rx="12" fill="white" stroke="#475569" stroke-width="2"/><text x="1075" y="186" text-anchor="middle" font-size="16" font-weight="700">parameters</text><text x="1075" y="208" text-anchor="middle" font-size="13">initialize()</text>
+      <line x1="840" y1="148" x2="976" y2="180" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#s3)"/></g>
+  </svg>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center" class="c-shell">
+    <span class="chip">permission proxy</span><span class="chip">configuration</span><span class="chip">user profile</span><span class="chip">slots</span><span class="chip">styles</span><span class="chip">style-change listener</span><span class="chip">dynamic content</span><span class="chip">image repo</span><span class="chip">icons</span>
+  </div>
+  <p class="tiny muted" style="text-align:center;margin-top:6px">…plus more initializers. The ones in grey here run beside the workspace one.</p>
+</section>
+
+<!-- Stage 4 history patch -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-shell">Stage 4 · history patch</div>
+  <h2>Every URL change becomes an event</h2>
+  <div class="row" style="align-items:center;margin-top:30px">
+    <div class="box" style="width:300px;text-align:center"><b class="small">any router</b><div class="mono tiny" style="margin-top:6px">history.pushState(…)</div><div class="mono tiny">history.replaceState(…)</div></div>
+    <div style="font-size:2em">→</div>
+    <div class="box b-shell" style="flex:1">
+      <span class="lbl c-shell">Shell wrapper · installed when app.module.ts is evaluated</span>
+      <div class="seq" style="margin-top:12px">
+        <div><span class="n bg-shell">1</span>call the <b>original</b></div>
+        <div data-from="1"><span class="n bg-topic">2</span>publish <code>CurrentLocationTopic {url, isFirst:false}</code></div>
+        <div data-from="2"><span class="n bg-guard">3</span>…unless <code>state.isRouterSync</code> <span class="muted">(echo breaker, Part 4)</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="small muted" style="text-align:center;margin-top:40px">Routers don't know about each other. <b>The browser API</b> is the one place all of them pass through.</p>
+</section>
+
+<!-- Stage 5 route table -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-shell">Stage 5 · RoutesService.init</div>
+  <h2>Apps become Shell routes</h2>
+  <div class="row" style="margin-top:10px">
+    <div style="width:330px">
+      <div class="tiny muted" style="margin-bottom:6px">from workspace config</div>
+      <div class="box mono tiny">/admin/ → shell-admin<br>/admin/workspace/ → workspace<br>/help/ → help<br>/admin/user-profile/ → profile<br>/welcome$ → welcome</div>
+    </div>
+    <div style="font-size:2em;align-self:center">→</div>
+    <div class="col">
+      <div class="tiny muted" style="margin-bottom:6px">Angular Router config (Shell)</div>
+      <table class="t mono">
+        <tr><th>path</th><th>pathMatch</th><th>loadChildren</th></tr>
+        <tr data-lit="1" class="hlbox"><td>admin/user-profile</td><td>prefix</td><td>profile</td></tr>
+        <tr data-lit="1" class="hlbox"><td>admin/workspace</td><td>prefix</td><td>workspace</td></tr>
+        <tr data-lit="1" class="hlbox"><td>admin</td><td>prefix</td><td>shell-admin</td></tr>
+        <tr data-lit="2" class="hlbox"><td>welcome</td><td><b>full</b> <span class="muted">($)</span></td><td>welcome</td></tr>
+        <tr data-lit="1" class="hlbox"><td>help</td><td>prefix</td><td>help</td></tr>
+        <tr data-lit="3" class="hlbox"><td>**</td><td></td><td class="c-bad">not-found</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="stack" style="margin-top:20px">
+    <div class="cap shell" data-until="1">Each app = one lazy route with <code>canActivateChild: [updateAppEnvironment]</code></div>
+    <div class="cap shell off" data-from="1" data-until="2"><b>Longest first</b> — <code>/admin/workspace</code> must win over <code>/admin</code></div>
+    <div class="cap shell off" data-from="2" data-until="3">Trailing <code>$</code> → exact match only</div>
+    <div class="cap shell off" data-from="3">Fallback route if workspace base is uncovered · <code>**</code> → not-found · <span class="mono">🧭 Adding Workspace routes</span></div>
+  </div>
+</section>
+
+<!-- Stage 6 match & load -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-shell">Stage 6 · loadChildren</div>
+  <h2>URL matched → load the app</h2>
+  <div class="url" style="display:inline-block">/admin/workspace/search</div> <span class="small">→ route <code>admin/workspace</code></span>
+  <div class="row" style="margin-top:20px">
+    <div class="col seq" style="gap:14px">
+      <div class="hlbox" data-lit="0"><span class="n bg-shell">1</span><span><b>go dark</b> · <code>globalLoading$ = true</code></span></div>
+      <div class="hlbox" data-lit="1"><span class="n bg-topic">2</span><span><b>publish env</b> · app styles · <code>currentMfe$</code> · permissions</span></div>
+      <div class="hlbox" data-lit="2"><span class="n bg-mf">3</span><span><b>register + loadRemote</b> · <span class="mono">type module|script, name, shareScope</span></span></div>
+      <div class="hlbox" data-lit="3"><span class="n bg-lib">4</span><span><b>mount</b> · Angular module <i>or</i> <code>WebcomponentLoaderModule</code></span></div>
+      <div class="hlbox" data-lit="4"><span class="n bg-shell">5</span><span><b>finally</b> · <code>globalLoading$ = false</code></span></div>
+    </div>
+    <div style="width:430px">
+      <div class="stack">
+        <div class="box b-topic" data-until="2"><b class="c-topic small">currentMfe$</b>
+<pre class="code light" style="margin-top:8px;font-size:0.45em">{ baseHref: <span class="s">'/admin/workspace/'</span>,
+  remoteBaseUrl: <span class="s">'/mfe/workspace/'</span>,
+  appId, productName,
+  elementName: <span class="s">'ocx-workspace-component'</span> }</pre>
+          <div class="tiny muted" style="margin-top:6px">only if the app changed · also on <code>canActivateChild</code></div></div>
+        <div class="box b-mf off" data-from="2" data-until="3"><b class="c-mf small">Module Federation</b><div class="tiny" style="margin-top:6px">evaluates the remote's <code>main.ts</code> → <b>app bootstrap runs now</b> (Stage 7)</div></div>
+        <div class="box b-lib off" data-from="3"><b class="c-lib small">WebcomponentLoader</b><div class="tiny mono" style="margin-top:6px">route '**' → component<br>wait currentMfe$<br>createElement(elementName)<br>+ style data keys<br>append to #wrapper</div>
+          <div class="tiny c-bad" style="margin-top:8px">error → Portal message + <span class="mono">remote-loading-error-page</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stage 7 app bootstrap -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Stage 7 · inside the remote</div>
+  <h2>App bootstrap, from the outside</h2>
+  <svg viewBox="0 0 1180 430" style="width:100%">
+    <defs><marker id="s7" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    <g font-size="16" font-weight="700" text-anchor="middle"><text x="140" y="30" fill="#475569">Shell</text><text x="470" y="30" fill="#a16207">MF runtime</text><text x="820" y="30" fill="#7c3aed">App + libs</text><text x="1080" y="30" fill="#0f172a">DOM</text></g>
+    <g stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4 4"><line x1="140" y1="40" x2="140" y2="420"/><line x1="470" y1="40" x2="470" y2="420"/><line x1="820" y1="40" x2="820" y2="420"/><line x1="1080" y1="40" x2="1080" y2="420"/></g>
+    <g font-size="14">
+      <line x1="140" y1="70" x2="466" y2="70" stroke="#64748b" stroke-width="2.5" marker-end="url(#s7)"/><text x="300" y="62" text-anchor="middle">loadRemote('workspace/OneCXWorkspaceModule')</text>
+      <g data-from="1"><line x1="470" y1="110" x2="816" y2="110" stroke="#64748b" stroke-width="2.5" marker-end="url(#s7)"/><text x="645" y="102" text-anchor="middle">evaluate main.ts → bootstrap.ts</text>
+        <rect x="700" y="125" width="240" height="40" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/><text x="820" y="151" text-anchor="middle" font-family="monospace">bootstrapModule()</text>
+        <rect x="700" y="172" width="240" height="40" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/><text x="820" y="198" text-anchor="middle" font-family="monospace">ngDoBootstrap → entrypoint</text></g>
+      <g data-from="2"><line x1="820" y1="235" x2="1076" y2="235" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#s7)"/><text x="950" y="227" text-anchor="middle" fill="#7c3aed">customElements.define(…)</text></g>
+      <g data-from="3"><line x1="140" y1="285" x2="1076" y2="285" stroke="#475569" stroke-width="2.5" marker-end="url(#s7)"/><text x="610" y="277" text-anchor="middle" fill="#475569">createElement('ocx-workspace-component') + append</text></g>
+      <g data-from="4"><line x1="1080" y1="330" x2="824" y2="330" stroke="#2563eb" stroke-width="2.5" marker-end="url(#s7)"/><text x="950" y="322" text-anchor="middle" fill="#2563eb">connectedCallback</text>
+        <rect x="660" y="345" width="320" height="64" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/><text x="820" y="370" text-anchor="middle">component created → ngOnInit</text><text x="820" y="394" text-anchor="middle" fill="#7c3aed" font-weight="700">→ connector.connect() → router sync</text></g>
+    </g>
+  </svg>
+  <p class="tiny muted" style="text-align:center;margin:0">The Shell never touches the app's Angular. It only <b>creates an element</b>.</p>
+</section>
+
+<!-- Stage 8 teaser -->
+<section>
+  <div class="kicker k-nav">Stage 8 · navigation</div>
+  <h2>…and then the app needs a URL</h2>
+  <div class="row" style="align-items:center;justify-content:center;margin-top:60px;gap:40px">
+    <div class="box b-app" style="width:300px;text-align:center"><b class="c-app">App just mounted</b><div class="tiny" style="margin-top:6px">its router is at <span class="mono">/</span></div></div>
+    <div style="font-size:2.5em">?</div>
+    <div class="url">/admin/workspace/search?id=7</div>
+  </div>
+  <p class="small" style="text-align:center;margin-top:60px">Keep that question. We first open the bootstrap function — <span class="c-app">navigation is Part 4</span>.</p>
+</section>
+
+<!-- ============ PART 3 ============ -->
+<section class="divider">
+  <div class="num">3</div>
+  <h1>Inside the bootstrap</h1>
+  <p class="muted">Every patch, and the problem behind it</p>
+</section>
+
+<!-- Three entry points -->
+<section>
+  <h2>Three doors, one core</h2>
+  <div class="row" style="margin-top:20px;align-items:center">
+    <div style="width:420px;display:flex;flex-direction:column;gap:14px">
+      <div class="box b-shell"><b class="mono small">bootstrapModule(module, type, prod)</b><div class="tiny muted">Shell &amp; NgModule apps · prepares providers, platform, zone</div></div>
+      <div class="box b-app"><b class="mono small">createAppEntrypoint(cmp, name, injector)</b><div class="tiny muted">called by the app in <code>ngDoBootstrap</code></div></div>
+      <div class="box b-rc"><b class="mono small">bootstrapRemoteComponent(cmp, name, prod, providers)</b><div class="tiny muted">standalone RC · does both halves</div></div>
+    </div>
+    <div style="font-size:2em">→</div>
+    <div class="col">
+      <div class="box b-lib" style="text-align:center;padding:24px"><b class="mono c-lib">createEntrypoint(…, 'microfrontend' | 'component')</b><div class="small" style="margin-top:8px">the element-defining core</div></div>
+      <table class="t" style="margin-top:20px">
+        <tr><th></th><th>module</th><th>app entry</th><th>RC</th></tr>
+        <tr><td>APP_ID → DynamicAppId</td><td>✓</td><td></td><td>✓</td></tr>
+        <tr><td>dynamic container proxy</td><td>✓</td><td></td><td>✓</td></tr>
+        <tr><td>platform cache + NgZone</td><td>✓</td><td></td><td>✓</td></tr>
+        <tr><td><code>**</code> fallback route</td><td></td><td></td><td>✓</td></tr>
+        <tr><td>createEntrypoint</td><td></td><td>✓</td><td>✓</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- X-ray map -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">X-ray</div>
+  <h2>What runs, in order</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+      <div class="tiny muted" style="margin-bottom:6px">bootstrapModule — <b>before</b> Angular starts</div>
+      <div class="seq">
+        <div class="hlbox" data-lit="1"><span class="n bg-lib">1</span><span><code>APP_ID</code> → <code>DynamicAppId</code></span></div>
+        <div class="hlbox" data-lit="2"><span class="n bg-lib">2</span><span>add <code>DYNAMIC_CONTAINER</code> (+ proxy)</span></div>
+        <div class="hlbox" data-lit="3"><span class="n bg-lib">3</span><span>shared <b>platform</b> per Angular version</span></div>
+        <div class="hlbox" data-lit="3"><span class="n bg-lib">4</span><span>shared <b>NgZone</b></span></div>
+      </div>
+      <div class="tiny muted" style="margin:16px 0 6px">Angular bootstraps → <code>ngDoBootstrap</code></div>
+    </div>
+    <div class="col">
+      <div class="tiny muted" style="margin-bottom:6px">createEntrypoint — <b>wrap</b> the result</div>
+      <div class="seq">
+        <div class="hlbox" data-lit="4"><span class="n bg-lib">5</span><span><code>appId.appElementName = name</code> · fill container proxy</span></div>
+        <div class="hlbox" data-lit="5"><span class="n bg-lib">6</span><span>patch <code>ngOnInit</code> / <code>ngOnDestroy</code></span></div>
+        <div class="hlbox" data-lit="6"><span class="n bg-lib">7</span><span><code>createCustomElement</code> + patch <code>connectedCallback</code></span></div>
+        <div class="hlbox" data-lit="6"><span class="n bg-lib">8</span><span><code>customElements.define(name)</code></span></div>
+        <div class="hlbox" data-lit="7"><span class="n bg-app">9</span><span><code>WebcomponentConnector</code> → <b>router</b> <span class="muted">(Part 4)</span></span></div>
+      </div>
+    </div>
+  </div>
+  <p class="small muted" style="text-align:center;margin-top:24px">Next slides: one box at a time.</p>
+</section>
+
+<!-- 1 DynamicAppId -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Patch 1 · APP_ID</div>
+  <h2>"Which app am I?"</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+      <div class="box"><span class="lbl">the problem</span>
+        <div class="tiny" style="margin-top:6px">Angular code that runs <b>later</b> (styles host, translations) only has the injector — not the DOM element it belongs to.</div>
+        <div style="display:flex;gap:8px;margin-top:12px"><span class="chip c-app">APP_ID 'ng'</span><span class="chip c-app">APP_ID 'ng'</span><span class="chip c-rc">APP_ID 'ng'</span></div>
+        <div class="tiny muted" style="margin-top:8px">→ which element should get these styles?</div>
+      </div>
+      <div class="box b-lib" style="margin-top:16px" data-from="1"><span class="lbl c-lib">the patch</span>
+<pre class="code light" style="font-size:0.45em;margin-top:6px"><span class="k">class</span> <span class="t">DynamicAppId</span> {          <span class="c">// behaves like a String</span>
+  appElementName = <span class="s">''</span>     <span class="c">// set in createEntrypoint</span>
+  valueOf() { <span class="k">return</span> <span class="k">this</span>.value }
+}</pre>
+        <div class="tiny" style="margin-top:6px"><code>replaceOrAddAppId</code> wraps the app's <code>useValue</code> APP_ID <span class="muted">(other provider shapes → warn, fallback 'ng')</span></div>
+      </div>
+    </div>
+    <div class="col" data-from="2">
+      <div class="tiny muted" style="margin-bottom:8px">who reads <code>appElementName</code></div>
+      <div class="box b-shell"><b class="small c-shell">Shell styles host</b><div class="tiny mono">document.createElementFromSharedStylesHost</div><div class="tiny">→ scope the app's component CSS to its element</div></div>
+      <div class="box b-app" style="margin-top:12px"><b class="small c-app">Translation handler</b><div class="tiny">→ "which app's translations are missing?"</div></div>
+      <div class="box b-lib" style="margin-top:12px"><b class="small c-lib">Dynamic container</b><div class="tiny mono">onecx-dynamic-&lt;appElementName&gt;</div></div>
+      <p class="small c-lib" style="margin-top:16px;text-align:center">An injector token that knows its <b>element</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 Dynamic container -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Patch 2 · dynamic container</div>
+  <h2>Where does a dialog go?</h2>
+  <div class="row" style="margin-top:6px">
+    <div class="col">
+      <div class="tiny muted" style="margin-bottom:4px">&lt;body&gt;</div>
+      <div class="box" style="height:420px;display:flex;flex-direction:column;gap:12px">
+        <div class="box b-shell" style="flex:1"><span class="tiny c-shell">Shell</span>
+          <div class="box b-app" style="height:110px;margin-top:6px"><span class="tiny mono c-app">&lt;ocx-workspace-component&gt;</span><div class="tiny muted">scoped app styles apply <b>here</b></div></div></div>
+        <div class="stack">
+          <div class="box" style="border-color:var(--bad);background:#fef2f2" data-until="1"><span class="tiny mono">&lt;div class="cdk-overlay-container"&gt;</span><div class="tiny c-bad">dialog · <b>unstyled</b> · whose is it? · left behind on destroy</div></div>
+          <div class="box b-lib off" data-from="1"><span class="tiny mono c-lib">&lt;onecx-dynamic-ocx-workspace-component data-onecx-dynamic-container&gt;</span><div class="tiny c-ok">dialog · <b>styled as the app</b> · removed with the app</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="width:470px">
+      <div class="stack">
+        <div class="cap" data-until="1">Overlays render <b>outside</b> the app element → outside its style scope.</div>
+        <div class="cap off" data-from="1">A per-app container on <code>body</code>, carrying the app's style data.</div>
+      </div>
+      <div class="seq" style="margin-top:18px">
+        <div data-from="2"><span class="n bg-lib">a</span><span><b>bootstrap:</b> provide <code>DYNAMIC_CONTAINER</code> via a proxy that <b>throws</b> <span class="muted">(tripwire: too early)</span></span></div>
+        <div data-from="2"><span class="n bg-lib">b</span><span><b>createEntrypoint:</b> proxy → <code>getDynamicContainer('onecx-dynamic-'+name)</code></span></div>
+        <div data-from="2"><span class="n bg-shell">c</span><span><b>Shell:</b> <code>document.createOnecxDynamicContainer</code> creates it, copies style data</span></div>
+        <div data-from="2"><span class="n bg-lib">d</span><span><b>ngOnDestroy:</b> container removed</span></div>
+      </div>
+      <div class="box b-app" style="margin-top:18px" data-from="3"><b class="tiny c-app">App opts in</b>
+        <div class="tiny">CDK: provide <code>OnecxOverlayContainer</code> as <code>OverlayContainer</code><br>PrimeNG: point <code>appendTo</code> at the container</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3+4 platform & zone -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Patches 3 + 4 · platform &amp; NgZone</div>
+  <h2>Share what must be shared</h2>
+  <svg viewBox="0 0 1180 420" style="width:100%">
+    <defs><marker id="pz" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker></defs>
+    <rect x="300" y="20" width="580" height="230" rx="16" fill="white" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="8 5"/>
+    <text x="590" y="50" text-anchor="middle" font-family="monospace" font-size="17" fill="#7c3aed">window['@onecx/angular-webcomponents']</text>
+    <rect x="325" y="70" width="330" height="160" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="490" y="98" text-anchor="middle" font-weight="700" font-size="17" fill="#7c3aed">platformCache</text>
+    <g font-family="monospace" font-size="15"><text x="345" y="135">'20.x' → PlatformRef</text>
+      <text x="345" y="170" data-from="2">'21.x' → PlatformRef</text></g>
+    <rect x="680" y="70" width="180" height="160" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="770" y="98" text-anchor="middle" font-weight="700" font-size="17" fill="#7c3aed">ngZone</text>
+    <text x="770" y="150" text-anchor="middle" font-size="15">Shell's zone</text>
+    <rect x="20" y="300" width="230" height="90" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/><text x="135" y="340" text-anchor="middle" font-weight="700" font-size="17" fill="#475569">Shell · Ng 20</text><text x="135" y="365" text-anchor="middle" font-size="13">creates + sets zone</text>
+    <line x1="135" y1="298" x2="420" y2="232" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#pz)"/>
+    <line x1="200" y1="298" x2="740" y2="232" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#pz)"/>
+    <g data-from="1"><rect x="330" y="300" width="230" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="445" y="340" text-anchor="middle" font-weight="700" font-size="17" fill="#2563eb">App · Ng 20</text><text x="445" y="365" text-anchor="middle" font-size="13">reuses both</text>
+      <line x1="445" y1="298" x2="460" y2="232" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#pz)"/><line x1="480" y1="298" x2="760" y2="232" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#pz)"/></g>
+    <g data-from="2"><rect x="640" y="300" width="230" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="755" y="340" text-anchor="middle" font-weight="700" font-size="17" fill="#2563eb">App · Ng 21</text><text x="755" y="365" text-anchor="middle" font-size="13">new platform · same zone</text>
+      <line x1="700" y1="298" x2="560" y2="178" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#pz)"/><line x1="790" y1="298" x2="790" y2="232" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#pz)"/></g>
+    <g data-from="3"><rect x="930" y="300" width="230" height="90" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="1045" y="340" text-anchor="middle" font-weight="700" font-size="17" fill="#ea580c">React RC</text><text x="1045" y="365" text-anchor="middle" font-size="13">not involved</text>
+      <rect x="910" y="40" width="250" height="190" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+      <text x="1035" y="75" text-anchor="middle" font-size="15" font-weight="700">why?</text>
+      <text x="925" y="110" font-size="14">· one platform per major</text><text x="925" y="135" font-size="14">  = one per share scope</text>
+      <text x="925" y="170" font-size="14">· one zone → change</text><text x="925" y="195" font-size="14">  detection page-wide</text></g>
+  </svg>
+  <p class="tiny muted" style="text-align:center;margin:0">Zone shared only if the Shell set it first · platform never torn down</p>
+</section>
+
+<!-- 5 lifecycle patch -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Patch 5 · lifecycle</div>
+  <h2>Hook into "mounted" and "gone"</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+<pre class="code" style="font-size:0.5em"><span class="c">// createEntrypoint (simplified)</span>
+<span class="k">const</span> connector = <span class="k">new</span> <span class="t">WebcomponentConnector</span>(injector, type)
+
+<span class="k">const</span> origInit = component.prototype.ngOnInit
+component.prototype.<span class="a">ngOnInit</span> = <span class="k">function</span> () {
+  <span class="hl">connector.<span class="a">connect</span>()</span>
+  origInit?.<span class="a">call</span>(<span class="k">this</span>)
+}
+
+<span class="k">const</span> origDestroy = component.prototype.ngOnDestroy
+component.prototype.<span class="a">ngOnDestroy</span> = <span class="k">function</span> () {
+  <span class="hl">connector.<span class="a">disconnect</span>()</span>
+  <span class="hl"><span class="a">removeDynamicContainer</span>()</span>
+  origDestroy?.<span class="a">call</span>(<span class="k">this</span>)
+}</pre>
+    </div>
+    <div style="width:440px;display:flex;flex-direction:column;gap:14px">
+      <div class="box" style="text-align:center"><b class="small">The app's entry component</b><div class="tiny muted">no OneCX code inside</div></div>
+      <div class="cap" data-from="1">Router sync &amp; guards <b>live only while the element is in the DOM</b>.</div>
+      <div class="cap" data-from="2">Leave the app → subscriptions closed · gatherer off · container removed.<br><span class="muted">Come back → connect again.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 custom element -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Patches 6 + 7 · the element</div>
+  <h2>Turn a component into a tag</h2>
+  <div class="row" style="align-items:center;margin-top:30px">
+    <div class="box b-app" style="width:240px;text-align:center"><b class="c-app">AppEntrypoint­Component</b></div>
+    <div style="font-size:1.6em">→</div>
+    <div class="box b-lib" style="width:240px;text-align:center" data-from="1"><b class="mono small c-lib">createCustomElement</b><div class="tiny">Angular Elements</div></div>
+    <div style="font-size:1.6em" data-from="2">→</div>
+    <div class="box b-lib" style="flex:1" data-from="2"><b class="mono small c-lib">connectedCallback</b> <span class="tiny">patched</span>
+      <div class="tiny mono" style="margin-top:6px">this.dataset.noPortalLayoutStyles = ''</div>
+      <div class="tiny muted">"don't apply portal layout styles inside me"</div></div>
+  </div>
+  <div class="row" style="margin-top:40px" data-from="3">
+    <div class="box b-lib col"><b class="mono small c-lib">customElements.define('ocx-workspace-component', El)</b>
+      <div class="tiny" style="margin-top:6px">now the Shell's <code>createElement</code> gives a living app</div></div>
+    <div class="box col" style="border-color:var(--bad);background:#fef2f2"><b class="small c-bad">⚠ one name, one define</b>
+      <div class="tiny" style="margin-top:6px">same element name twice → <code>NotSupportedError</code><br>→ element names must be unique per page</div></div>
+  </div>
+</section>
+
+<!-- RC variant -->
+<section>
+  <div class="kicker c-rc">Remote Component variant</div>
+  <h2><code>bootstrapRemoteComponent</code></h2>
+  <div class="row" style="margin-top:20px">
+    <div class="col">
+<pre class="code"><span class="a">bootstrapRemoteComponent</span>(
+  OneCXUserAvatarMenuComponent,
+  <span class="s">'ocx-user-avatar-menu-component'</span>,
+  environment.production,
+  [ provideRouter(<span class="t">routes</span>), … ]
+)</pre>
+      <ul class="small" style="margin-top:20px">
+        <li>same APP_ID + container patches</li>
+        <li><code>createApplication</code> with shared NgZone</li>
+        <li><code>createEntrypoint(…, 'component')</code></li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="box b-rc"><b class="c-rc small">Extra: <code>**</code> fallback route</b>
+<pre class="code light" style="font-size:0.45em;margin-top:8px">routes.push({ path: <span class="s">'**'</span>, children: [] })</pre>
+        <div class="tiny" style="margin-top:8px">An RC has a router too (e.g. menu <code>routerLink</code>s) — but the URL is <b>never "its"</b>.<br>Any URL → match → render nothing → no errors.</div></div>
+      <div class="box" style="margin-top:16px"><b class="small">No router?</b> <span class="tiny muted">fine for RCs · apps get a warning</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- React -->
+<section>
+  <div class="kicker">Same idea, different plumbing</div>
+  <h2>React apps</h2>
+  <div class="grid2" style="margin-top:20px">
+    <div class="box b-lib"><b class="c-lib small">Angular</b>
+      <ul class="tiny" style="margin-top:8px"><li>APP_ID, container, platform, zone</li><li>lifecycle patch → connector</li><li><code>createCustomElement</code> + define</li><li>router sync + guards via connector</li></ul></div>
+    <div class="box b-rc"><b class="c-rc small">React</b>
+      <ul class="tiny" style="margin-top:8px"><li><span class="muted">no platform / zone step</span></li><li><code>createViteAppWebComponent</code> → <code>r2wc</code></li><li><code>connectedCallback</code>: <code>mfeElement</code> + <code>noPortalLayoutStyles</code></li><li>router: <code>withSyncedRouter</code> / <code>SyncedRouterProvider</code></li><li>guards: hooks, app calls them</li></ul></div>
+  </div>
+<pre class="code" style="margin-top:24px"><span class="a">createViteAppWebComponent</span>(<span class="a">withSyncedRouter</span>(App), <span class="s">'ocx-my-react-app'</span>)</pre>
+</section>
+
+<!-- Patch catalogue -->
+<section>
+  <h2>Patch catalogue</h2>
+  <table class="t" style="font-size:0.46em">
+    <tr><th>What</th><th>Where</th><th>Why</th></tr>
+    <tr><td><code>APP_ID</code> → <code>DynamicAppId</code></td><td>libs · bootstrapModule / RC</td><td>injector knows its element → styles, translations</td></tr>
+    <tr><td><code>DYNAMIC_CONTAINER</code> proxy</td><td>libs · bootstrap + createEntrypoint</td><td>overlays land in an app-owned, styled container</td></tr>
+    <tr><td>platform cache · NgZone</td><td>libs · window state</td><td>one platform per major, one zone per page</td></tr>
+    <tr><td><code>ngOnInit</code> / <code>ngOnDestroy</code></td><td>libs · entry component prototype</td><td>connect / disconnect with the element's life</td></tr>
+    <tr><td><code>connectedCallback</code></td><td>libs · custom element</td><td>stamp dataset keys for style handling</td></tr>
+    <tr><td><code>**</code> route</td><td>libs · RC / initializeRouter</td><td>foreign URLs match quietly</td></tr>
+    <tr><td>route guards → wrapper</td><td>libs · connector on <code>RoutesRecognized</code></td><td>cross-app guards (Part 5)</td></tr>
+    <tr><td><code>history.pushState/replaceState</code></td><td>Shell · app.module.ts</td><td>every URL change → <code>CurrentLocationTopic</code></td></tr>
+    <tr><td><code>createOnecxDynamicContainer</code></td><td>Shell · on <code>document</code></td><td>creates the per-app container</td></tr>
+    <tr><td><code>createElementFromSharedStylesHost</code></td><td>Shell · on <code>document</code></td><td>scope app component styles</td></tr>
+  </table>
+</section>
+
+<!-- Part 3 summary: everything bootstrap touches -->
+<section>
+  <div class="kicker c-lib">Part 3 · the whole picture</div>
+  <h2>Everything the bootstrap touches</h2>
+  <table class="t" style="font-size:0.44em;margin-top:8px">
+    <tr><th style="width:24%">Area</th><th style="width:34%">What gets wired</th><th>So the app doesn't have to</th></tr>
+    <tr><td><b class="c-lib">Element identity</b></td><td><code>APP_ID</code> → <code>DynamicAppId</code>, with <code>appElementName</code> as an injectable</td><td>the injector knows its own element → styles &amp; translations target the right app</td></tr>
+    <tr><td><b class="c-lib">Dynamic container</b></td><td><code>DYNAMIC_CONTAINER</code> proxy → per-app container on <code>body</code></td><td>dialogs / overlays render <b>inside</b> the app's style scope and are removed with it</td></tr>
+    <tr><td><b class="c-lib">Shared platform &amp; zone</b></td><td>one <code>PlatformRef</code> per Angular version + one <code>NgZone</code> (Shell's)</td><td>change detection stays consistent across apps on the page</td></tr>
+    <tr><td><b class="c-lib">Router + guards setup</b></td><td>patched <code>ngOnInit</code> → <code>connect()</code>: router sync + guard wrapper</td><td>the app writes <b>no</b> navigation-sync or guard-bridging code (Parts 4–5)</td></tr>
+    <tr><td><b class="c-lib">Style scoping</b></td><td><code>noPortalLayoutStyles</code> stamp + Shell styles host</td><td>component CSS reaches the app element; portal layout doesn't bleed in</td></tr>
+    <tr><td><b class="c-lib">Lifecycle &amp; teardown</b></td><td>patched <code>ngOnDestroy</code> → <code>disconnect()</code> + container removed</td><td>leaving the app closes subscriptions and cleans up automatically</td></tr>
+  </table>
+  <div class="cap lib" style="margin-top:16px"><b>One bootstrap, every concern.</b> The app's own code is just the entrypoint + routes — everything above rides along centrally.</div>
+</section>
+
+<!-- Bridge: connector -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">The last thing bootstrap does</div>
+  <h2><code>connect()</code> → <span class="c-app">the router</span></h2>
+  <div class="row" style="align-items:center;margin-top:30px">
+    <div class="box b-lib" style="width:300px;text-align:center"><b class="mono c-lib">connector.connect()</b><div class="tiny muted">from patched ngOnInit</div></div>
+    <div style="font-size:2em">→</div>
+    <div class="col" style="display:flex;flex-direction:column;gap:12px">
+      <div class="box b-guard"><b class="small c-guard">guardsGatherer.activate()</b> <span class="tiny muted">Part 5</span></div>
+      <div class="box b-guard" data-from="1"><b class="small c-guard">wrap guards · listen to router events</b> <span class="tiny muted">Part 5</span></div>
+      <div class="box b-app" data-from="2"><b class="small c-app">initial router sync + follow the URL</b> <span class="tiny muted">Part 4</span></div>
+    </div>
+  </div>
+  <p class="small" style="text-align:center;margin-top:50px" data-from="2">Bootstrap ends where <b class="c-app">navigation</b> starts.</p>
+</section>
+
+<!-- ============ PART 4 ============ -->
+<section class="divider">
+  <div class="num" style="color:var(--app)">4</div>
+  <h1>Navigation</h1>
+  <p class="muted">Many routers, one address bar · going one level deeper each time</p>
+  <div style="display:flex;gap:10px;margin-top:20px">
+    <span class="pill bg-app">L1 · the problem</span><span class="pill bg-shell">L2 · Shell</span><span class="pill bg-app">L3 · apps</span><span class="pill bg-lib">L4 · bootstrap</span><span class="pill bg-guard">L5 · guards</span>
+  </div>
+</section>
+
+<!-- L1 multi-router problem -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-nav">Level 1 · the problem</div>
+  <h2>One address bar, many routers</h2>
+  <div class="stack" style="margin:6px 0 18px">
+    <div class="url" data-until="1">/admin/workspace/search</div>
+    <div class="url off" data-from="1" style="border-color:var(--app)">/admin/workspace/<b>detail/7</b></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <div class="box b-shell" style="height:260px"><span class="lbl c-shell">Shell router</span>
+      <div class="small" style="margin-top:20px">🧭 thinks:</div>
+      <div class="mono tiny" style="margin-top:6px">/admin/workspace/search</div>
+      <div class="tiny c-bad" style="margin-top:16px" data-from="2">stale · breadcrumbs, title, current app?</div></div>
+    <div class="box b-app" style="height:260px"><span class="lbl c-app">App router (workspace)</span>
+      <div class="small" style="margin-top:20px">🧭 thinks:</div>
+      <div class="stack"><div class="mono tiny" style="margin-top:6px" data-until="1">/admin/workspace/search</div><div class="mono tiny off" style="margin-top:6px" data-from="1"><b>…/detail/7</b> ← user clicked here</div></div></div>
+    <div class="box b-rc" style="height:260px"><span class="lbl c-rc">RC router (menu)</span>
+      <div class="small" style="margin-top:20px">🧭 thinks:</div>
+      <div class="mono tiny" style="margin-top:6px">/admin/workspace/search</div>
+      <div class="tiny c-bad" style="margin-top:16px" data-from="2">stale · wrong item highlighted</div></div>
+  </div>
+  <p class="small" style="text-align:center;margin-top:24px" data-from="3">Routers <b>write</b> to <code>history</code> — but nobody <b>tells the others</b>.</p>
+</section>
+
+<!-- L1 four sub problems -->
+<section>
+  <div class="kicker k-nav">Level 1 · the problem, split up</div>
+  <h2>Four questions to answer</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px">
+    <div class="box b-app" style="height:330px"><div class="pill bg-app">A · Drift</div>
+      <svg viewBox="0 0 200 110" style="width:100%;margin-top:12px"><circle cx="40" cy="55" r="22" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/><circle cx="160" cy="55" r="22" fill="#f1f5f9" stroke="#475569" stroke-width="3"/><text x="100" y="62" text-anchor="middle" font-size="26" fill="#dc2626">≠</text></svg>
+      <div class="tiny">One router moved. How do the others hear about it?</div></div>
+    <div class="box b-app" style="height:330px"><div class="pill bg-app">B · Echo</div>
+      <svg viewBox="0 0 200 110" style="width:100%;margin-top:12px"><path d="M50 40 C 90 0, 110 0, 150 40" fill="none" stroke="#dc2626" stroke-width="3"/><path d="M150 70 C 110 110, 90 110, 50 70" fill="none" stroke="#dc2626" stroke-width="3"/><text x="100" y="62" text-anchor="middle" font-size="22" fill="#dc2626">∞</text></svg>
+      <div class="tiny">A tells B, B navigates, B tells A, …</div></div>
+    <div class="box b-app" style="height:330px"><div class="pill bg-app">C · Mount path</div>
+      <div class="mono tiny" style="margin-top:22px;text-align:center"><span style="background:#e2e8f0;padding:2px 4px">/admin/workspace/</span><b>search</b><br><br><span style="background:#e2e8f0;padding:2px 4px">/ws/</span><b>search</b></div>
+      <div class="tiny" style="margin-top:22px">App doesn't know where the workspace mounts it.</div></div>
+    <div class="box b-app" style="height:330px"><div class="pill bg-app">D · Late arrival</div>
+      <svg viewBox="0 0 200 110" style="width:100%;margin-top:12px"><line x1="10" y1="60" x2="190" y2="60" stroke="#94a3b8" stroke-width="3"/><circle cx="40" cy="60" r="9" fill="#475569"/><text x="40" y="40" text-anchor="middle" font-size="14">URL set</text><circle cx="150" cy="60" r="9" fill="#2563eb"/><text x="150" y="40" text-anchor="middle" font-size="14">app ready</text></svg>
+      <div class="tiny">The app starts after the URL was already decided.</div></div>
+  </div>
+  <p class="small muted" style="text-align:center;margin-top:24px">A, B → <b class="c-shell">Shell</b> · C → <b class="c-app">app routes</b> · D → <b class="c-lib">bootstrap</b></p>
+</section>
+
+<!-- L2 Shell: history = bus -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-shell">Level 2 · what the Shell does · answers A</div>
+  <h2><code>history</code> becomes a broadcast</h2>
+  <svg viewBox="0 0 1180 420" style="width:100%">
+    <defs><marker id="l2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+      <marker id="l2t" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0d9488"/></marker></defs>
+    <rect x="20" y="40" width="220" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="130" y="80" text-anchor="middle" font-weight="700" font-size="18" fill="#2563eb">App router</text><text x="130" y="105" text-anchor="middle" font-size="14" font-family="monospace">navigate('detail/7')</text>
+    <line x1="242" y1="85" x2="336" y2="85" stroke="#64748b" stroke-width="2.5" marker-end="url(#l2)"/>
+    <rect x="340" y="20" width="360" height="140" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/>
+    <text x="520" y="50" text-anchor="middle" font-weight="700" font-size="17" fill="#475569">patched history.pushState</text>
+    <rect x="365" y="68" width="150" height="70" rx="8" fill="white" stroke="#475569"/><text x="440" y="100" text-anchor="middle" font-size="14">original</text><text x="440" y="120" text-anchor="middle" font-size="14">pushState</text>
+    <g data-from="1"><rect x="530" y="68" width="150" height="70" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/><text x="605" y="100" text-anchor="middle" font-size="14" fill="#0d9488">publish</text><text x="605" y="120" text-anchor="middle" font-size="14" fill="#0d9488">location</text></g>
+    <g data-from="1"><rect x="780" y="50" width="380" height="70" rx="35" fill="#f0fdfa" stroke="#0d9488" stroke-width="2.5"/><text x="970" y="82" text-anchor="middle" font-weight="700" font-size="18" fill="#0d9488">CurrentLocationTopic</text><text x="970" y="104" text-anchor="middle" font-size="14" font-family="monospace" fill="#0d9488">{ url: '/admin/workspace/detail/7', isFirst: false }</text>
+      <line x1="702" y1="85" x2="776" y2="85" stroke="#0d9488" stroke-width="2.5" marker-end="url(#l2t)"/></g>
+    <g data-from="2">
+      <rect x="300" y="290" width="240" height="90" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/><text x="420" y="330" text-anchor="middle" font-weight="700" font-size="18" fill="#475569">Shell router</text><text x="420" y="355" text-anchor="middle" font-size="13">follows</text>
+      <rect x="600" y="290" width="240" height="90" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="720" y="330" text-anchor="middle" font-weight="700" font-size="18" fill="#ea580c">RC router</text><text x="720" y="355" text-anchor="middle" font-size="13">follows</text>
+      <rect x="900" y="290" width="240" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="1020" y="330" text-anchor="middle" font-weight="700" font-size="18" fill="#2563eb">App router</text><text x="1020" y="355" text-anchor="middle" font-size="13">follows (already there)</text>
+      <line x1="900" y1="122" x2="430" y2="286" stroke="#0d9488" stroke-width="2.5" marker-end="url(#l2t)"/><line x1="960" y1="122" x2="730" y2="286" stroke="#0d9488" stroke-width="2.5" marker-end="url(#l2t)"/><line x1="1010" y1="122" x2="1020" y2="286" stroke="#0d9488" stroke-width="2.5" marker-end="url(#l2t)"/></g>
+    <g data-from="3"><rect x="20" y="200" width="250" height="70" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/><text x="145" y="230" text-anchor="middle" font-size="15" fill="#dc2626" font-weight="700">…and they navigate</text><text x="145" y="252" text-anchor="middle" font-size="14" fill="#dc2626">→ pushState again? (B)</text></g>
+  </svg>
+</section>
+
+<!-- L2 echo breaker -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-shell">Level 2 · answers B</div>
+  <h2><code>isRouterSync</code> — the echo breaker</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+      <svg viewBox="0 0 560 380" style="width:100%">
+        <defs><marker id="eb" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+        <rect x="190" y="20" width="180" height="60" rx="30" fill="#f0fdfa" stroke="#0d9488" stroke-width="2.5"/><text x="280" y="56" text-anchor="middle" font-weight="700" font-size="16" fill="#0d9488">location topic</text>
+        <rect x="20" y="160" width="160" height="70" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="100" y="200" text-anchor="middle" font-weight="700" fill="#ea580c" font-size="16">RC router</text>
+        <rect x="200" y="290" width="160" height="70" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/><text x="280" y="322" text-anchor="middle" font-size="15" font-weight="700">history</text><text x="280" y="342" text-anchor="middle" font-size="13">(patched)</text>
+        <path d="M200 70 C 120 90, 100 120, 100 156" fill="none" stroke="#64748b" stroke-width="2.5" marker-end="url(#eb)"/><text x="70" y="110" font-size="13">1 hear</text>
+        <path d="M120 232 C 140 280, 170 310, 196 320" fill="none" stroke="#64748b" stroke-width="2.5" marker-end="url(#eb)"/><text x="60" y="290" font-size="13">2 navigate</text>
+        <g data-until="1"><path d="M360 320 C 470 300, 470 120, 372 60" fill="none" stroke="#dc2626" stroke-width="3" marker-end="url(#eb)"/><text x="440" y="200" font-size="15" fill="#dc2626" font-weight="700">3 publish again ∞</text></g>
+        <g data-from="1"><path d="M360 320 C 470 300, 470 120, 420 100" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="6 5"/>
+          <rect x="420" y="170" width="110" height="50" rx="8" fill="#16a34a"/><text x="475" y="200" text-anchor="middle" fill="white" font-weight="700" font-size="15">valve ✋</text></g>
+      </svg>
+    </div>
+    <div style="width:470px">
+<pre class="code" style="font-size:0.48em" data-from="1"><span class="c">// follower (Shell or connector)</span>
+router.<span class="a">navigateByUrl</span>(url, {
+  replaceUrl: <span class="k">true</span>,
+  state: { <span class="hl">isRouterSync: <span class="k">true</span></span> },
+})
+
+<span class="c">// Shell history patch</span>
+<span class="k">if</span> (!data?.isRouterSync) <span class="a">publish</span>({ url, isFirst: <span class="k">false</span> })
+<span class="c">// flag is stripped before the real call</span></pre>
+      <div class="cap shell" style="margin-top:16px" data-from="2">Rule: <b>only real navigations publish</b>. Followers move silently, with <code>replaceUrl</code> (no extra history entry).</div>
+    </div>
+  </div>
+</section>
+
+<!-- L2 Shell router -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-shell">Level 2 · Shell router</div>
+  <h2>The Shell follows too — and picks the app</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col seq" style="gap:16px">
+      <div><span class="n bg-shell">1</span><span>startup: publish <code>{url, isFirst: true}</code></span></div>
+      <div data-from="1"><span class="n bg-topic">2</span><span>subscribe <code>currentLocation$</code> (skip first) → <code>navigateByUrl(url, {replaceUrl, isRouterSync})</code></span></div>
+      <div data-from="2"><span class="n bg-shell">3</span><span>Shell route matches <b>which app</b> → load / switch app → <code>currentMfe$</code> <span class="muted">(Stages 5–6)</span></span></div>
+      <div data-from="3"><span class="n bg-guard">4</span><span><code>EventsTopic</code> <b>revertNavigation</b> → <code>history.back()</code> <span class="muted">(Part 5)</span></span></div>
+    </div>
+    <div style="width:420px">
+      <div class="box b-shell"><span class="lbl c-shell">URL → current app</span>
+        <div class="mono tiny" style="margin-top:8px">/admin/workspace/detail/7</div>
+        <div class="tiny" style="margin:8px 0">↓ longest-first match</div>
+        <div class="mono tiny"><b>admin/workspace</b> → onecx-workspace</div>
+        <div class="tiny" style="margin:8px 0">↓ same app as before?</div>
+        <div class="tiny"><b class="c-ok">yes</b> → nothing to load · <b>no</b> → loadChildren</div>
+        <div class="tiny" style="margin-top:10px">no match → <b>not-found</b> page (neutral <code>currentMfe$</code>)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- L3 apps: matcher -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-nav">Level 3 · what apps do · answers C</div>
+  <h2><code>matcher: startsWith('')</code> instead of <code>path</code></h2>
+  <div class="grid2" style="margin-top:10px">
+<pre class="code light" style="font-size:0.5em"><span class="c">// ✗ standalone Angular habit</span>
+{ path: <span class="s">''</span>, loadChildren: … }
+<span class="c">// router sees: admin/workspace/search</span>
+<span class="c">// → '' + 'search'? no match.</span></pre>
+<pre class="code" style="font-size:0.5em"><span class="c">// ✓ OneCX</span>
+{ <span class="hl">matcher: <span class="a">startsWith</span>(<span class="s">''</span>)</span>, loadChildren: … }
+<span class="c">// cut baseHref first, then match</span></pre>
+  </div>
+  <div style="margin-top:26px">
+    <div style="display:flex;gap:6px;font-family:var(--mono);font-size:0.6em;align-items:center">
+      <div class="box" style="padding:6px 12px">admin</div><div class="box" style="padding:6px 12px">workspace</div><div class="box" style="padding:6px 12px">search</div><div class="box" style="padding:6px 12px">7</div>
+      <span class="small" style="font-family:inherit;margin-left:12px">URL segments</span>
+    </div>
+    <div style="display:flex;gap:6px;font-family:var(--mono);font-size:0.6em;margin-top:10px;align-items:center" data-from="1">
+      <div class="box b-shell" style="padding:6px 12px;width:236px;text-align:center">baseHref /admin/workspace/</div>
+      <span class="small" style="font-family:inherit;margin-left:12px">from <code>route.data.mfeInfo</code> → <b>consumed</b></span>
+    </div>
+    <div style="display:flex;gap:6px;font-family:var(--mono);font-size:0.6em;margin-top:10px;align-items:center" data-from="2">
+      <div style="width:242px"></div><div class="box b-app" style="padding:6px 12px">search</div><div class="box b-app" style="padding:6px 12px">7</div>
+      <span class="small" style="font-family:inherit;margin-left:12px">→ child routes match <code>search/:id</code> as usual</span>
+    </div>
+  </div>
+  <div class="cap nav" style="margin-top:20px" data-from="3">URL outside the baseHref → no match → <code>**</code> (empty) → app renders nothing. Same build, any mount path.</div>
+</section>
+
+<!-- L3 initializeRouter -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-nav">Level 3 · where does the matcher get baseHref?</div>
+  <h2><code>initializeRouter</code> — an APP_INITIALIZER</h2>
+  <div class="row" style="margin-top:10px;align-items:center">
+<pre class="code light col" style="font-size:0.5em"><span class="c">// app's routes, as written</span>
+[
+  { matcher: startsWith(<span class="s">''</span>),
+    loadChildren: … },
+  { path: <span class="s">'old'</span>, redirectTo: <span class="s">'search'</span> },
+]</pre>
+    <div style="font-size:2em">→</div>
+<pre class="code col" style="font-size:0.5em"><span class="c">// after initializeRouter → resetConfig</span>
+[
+  { matcher: startsWith(<span class="s">''</span>), loadChildren: …,
+    <span class="hl" data-lit="1">data: { mfeInfo: {baseHref: <span class="s">'/admin/workspace/'</span>, …} }</span> },
+  { path: <span class="s">'old'</span>,
+    <span class="hl" data-lit="2">redirectTo: <span class="s">'/admin/workspace/search'</span></span> },
+  <span class="hl" data-lit="3">{ path: <span class="s">'**'</span>, children: [] }</span>,
+]</pre>
+  </div>
+  <div class="stack" style="margin-top:20px">
+    <div class="cap nav" data-until="1">Waits for <code>currentMfe$</code> (published by the Shell in Stage 6).</div>
+    <div class="cap nav off" data-from="1" data-until="2">Stamps <code>mfeInfo</code> into every route → <code>startsWith</code> reads it. Missing → warning <i>"initializeRouter … required"</i>.</div>
+    <div class="cap nav off" data-from="2" data-until="3">String <code>redirectTo</code> gets the mount path in front.</div>
+    <div class="cap nav off" data-from="3">Catch-all for foreign URLs — stay quiet, don't error.</div>
+  </div>
+</section>
+
+<!-- L3 interactive matcher demo -->
+<section class="demo">
+  <div class="kicker k-nav">Try it</div>
+  <h2>Who matches this URL?</h2>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <input type="text" id="mx-url" value="/admin/workspace/search" style="width:420px;font-family:var(--mono)">
+    <button data-url="/admin/workspace/search">workspace/search</button>
+    <button data-url="/admin/workspace/detail/7">workspace/detail/7</button>
+    <button data-url="/admin/user-profile/account">user-profile</button>
+    <button data-url="/admin">admin</button>
+    <button data-url="/nope">/nope</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:22px">
+    <div class="box b-shell" style="min-height:300px"><span class="lbl c-shell">Shell router</span>
+      <div class="tiny mono muted" style="margin-top:6px">admin/user-profile · admin/workspace · admin · **</div>
+      <div id="mx-shell" class="small" style="margin-top:18px"></div></div>
+    <div class="box b-app" style="min-height:300px"><span class="lbl c-app">Workspace app router</span>
+      <div class="tiny mono muted" style="margin-top:6px">baseHref /admin/workspace/ · '' · search · detail/:id · **</div>
+      <div id="mx-app" class="small" style="margin-top:18px"></div></div>
+    <div class="box b-rc" style="min-height:300px"><span class="lbl c-rc">Menu RC router</span>
+      <div class="tiny mono muted" style="margin-top:6px">routes: ** only</div>
+      <div id="mx-rc" class="small" style="margin-top:18px"></div></div>
+  </div>
+</section>
+
+<!-- L4 bootstrap for apps -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Level 4 · what bootstrap does for the app · answers D</div>
+  <h2>The connector syncs the router</h2>
+  <svg viewBox="0 0 1180 300" style="width:100%">
+    <defs><marker id="l4" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    <line x1="30" y1="150" x2="1150" y2="150" stroke="#cbd5e1" stroke-width="4" marker-end="url(#l4)"/>
+    <circle cx="90" cy="150" r="12" fill="#475569"/><text x="90" y="120" text-anchor="middle" font-size="15">URL set</text><text x="90" y="190" text-anchor="middle" font-size="13" font-family="monospace">…/detail/7</text>
+    <circle cx="300" cy="150" r="12" fill="#7c3aed"/><text x="300" y="120" text-anchor="middle" font-size="15">ngOnInit → connect()</text>
+    <g data-from="1"><rect x="390" y="40" width="360" height="90" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="570" y="70" text-anchor="middle" font-weight="700" font-size="16" fill="#7c3aed">initial sync</text>
+      <text x="570" y="95" text-anchor="middle" font-size="13" font-family="monospace">navigateByUrl(pathname − deploymentPath</text><text x="570" y="115" text-anchor="middle" font-size="13" font-family="monospace">+ search + hash)</text>
+      <circle cx="570" cy="150" r="12" fill="#7c3aed"/>
+      <text x="570" y="190" text-anchor="middle" font-size="13" font-family="monospace">{ replaceUrl, isRouterSync, isInitialRouterSync }</text></g>
+    <g data-from="2"><rect x="800" y="40" width="340" height="90" rx="10" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+      <text x="970" y="70" text-anchor="middle" font-weight="700" font-size="16" fill="#0d9488">follow</text>
+      <text x="970" y="95" text-anchor="middle" font-size="13">currentLocation$ → navigate</text><text x="970" y="115" text-anchor="middle" font-size="13">if URL ≠ lastUrl · isRouterSync</text>
+      <circle cx="900" cy="150" r="9" fill="#0d9488"/><circle cx="990" cy="150" r="9" fill="#0d9488"/><circle cx="1080" cy="150" r="9" fill="#0d9488"/></g>
+    <g data-from="3"><rect x="800" y="215" width="340" height="70" rx="10" fill="#fefce8" stroke="#a16207" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="970" y="243" text-anchor="middle" font-size="14" fill="#a16207">older Shell without</text><text x="970" y="265" text-anchor="middle" font-size="14" fill="#a16207">CURRENT_LOCATION_TOPIC → EventsTopic 'navigated'</text></g>
+  </svg>
+  <p class="small" style="text-align:center;margin:0">The app wrote <b>zero</b> sync code. The patched <code>ngOnInit</code> did it.</p>
+</section>
+
+<!-- L4 full round trip -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker c-lib">Level 4 · everything together</div>
+  <h2>Round trip: click in the menu</h2>
+  <svg viewBox="0 0 1180 470" style="width:100%">
+    <defs><marker id="rt" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
+    <rect x="20" y="40" width="210" height="80" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="125" y="75" text-anchor="middle" font-weight="700" font-size="17" fill="#ea580c">Menu RC router</text><text x="125" y="100" text-anchor="middle" font-size="13">click "User profile"</text>
+    <rect x="360" y="40" width="230" height="80" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/><text x="475" y="75" text-anchor="middle" font-weight="700" font-size="17">history (patched)</text>
+    <rect x="720" y="40" width="300" height="80" rx="40" fill="#f0fdfa" stroke="#0d9488" stroke-width="2.5"/><text x="870" y="86" text-anchor="middle" font-weight="700" font-size="17" fill="#0d9488">CurrentLocationTopic</text>
+    <rect x="120" y="300" width="230" height="90" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/><text x="235" y="340" text-anchor="middle" font-weight="700" font-size="17" fill="#475569">Shell router</text>
+    <rect x="470" y="300" width="230" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="585" y="335" text-anchor="middle" font-weight="700" font-size="17" fill="#2563eb">old app</text><text x="585" y="360" text-anchor="middle" font-size="13">workspace</text>
+    <rect x="820" y="300" width="230" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="935" y="335" text-anchor="middle" font-weight="700" font-size="17" fill="#2563eb">new app</text><text x="935" y="360" text-anchor="middle" font-size="13">user-profile</text>
+    <g font-size="14" fill="#334155">
+      <g data-from="1"><line x1="232" y1="80" x2="356" y2="80" stroke="#334155" stroke-width="2.5" marker-end="url(#rt)"/><text x="294" y="70" text-anchor="middle">① pushState</text></g>
+      <g data-from="2"><line x1="592" y1="80" x2="716" y2="80" stroke="#0d9488" stroke-width="2.5" marker-end="url(#rt)"/><text x="654" y="70" text-anchor="middle" fill="#0d9488">② publish</text></g>
+      <g data-from="3"><path d="M760 122 C 600 200, 300 220, 245 296" fill="none" stroke="#0d9488" stroke-width="2.5" marker-end="url(#rt)"/><text x="430" y="210" fill="#0d9488">③ Shell follows (isRouterSync) → new app route</text></g>
+      <g data-from="4"><line x1="352" y1="345" x2="466" y2="345" stroke="#dc2626" stroke-width="2.5" marker-end="url(#rt)"/><text x="410" y="335" text-anchor="middle" fill="#dc2626">④ unmount</text><text x="585" y="410" text-anchor="middle" fill="#dc2626">ngOnDestroy → disconnect</text></g>
+      <g data-from="5"><path d="M350 380 C 500 450, 700 450, 840 392" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#rt)"/><text x="700" y="455" text-anchor="middle">⑤ load + createElement</text>
+        <text x="935" y="410" text-anchor="middle" fill="#7c3aed">connect → initial sync</text></g>
+      <g data-from="6"><path d="M900 122 C 980 160, 220 160, 140 124" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-dasharray="6 4"/><text x="560" y="168" fill="#0d9488">⑥ other followers sync silently</text></g>
+    </g>
+  </svg>
+</section>
+
+<!-- L4 React -->
+<section>
+  <div class="kicker c-lib">Level 4 · React</div>
+  <h2>Same contract, React-shaped</h2>
+  <div class="grid2" style="margin-top:10px">
+    <div class="box b-lib"><b class="c-lib small">Angular · WebcomponentConnector</b>
+      <ul class="tiny" style="margin-top:8px"><li>initial <code>navigateByUrl</code> with sync flags</li><li>follows topic → <code>navigateByUrl</code></li><li>echo: <code>isRouterSync</code> in history state</li><li>publishing done by the <b>Shell patch</b></li></ul></div>
+    <div class="box b-rc"><b class="c-rc small">React · SyncedRouterProvider</b>
+      <ul class="tiny" style="margin-top:8px"><li><code>BrowserRouter</code> + <code>RouterSync</code></li><li>follows topic → updates <b>context</b>, no <code>navigate()</code></li><li>ignores URLs outside its <code>&lt;base href&gt;</code></li><li>publishes own <code>pathname</code> (useLayoutEffect)</li><li>echo: <code>skipPublishUntil</code></li></ul></div>
+  </div>
+  <div class="grid2" style="margin-top:20px">
+<pre class="code" style="font-size:0.45em"><span class="c">// automatic via createAppEntrypoint</span>
+<span class="a">createAppEntrypoint</span>(Cmp, <span class="s">'ocx-app'</span>, injector)</pre>
+<pre class="code" style="font-size:0.45em"><span class="c">// opt in by wrapping</span>
+<span class="a">withSyncedRouter</span>(App)
+<span class="a">useSyncedLocation</span>() · <span class="a">useAppHref</span>()</pre>
+  </div>
+</section>
+
+<!-- L4 topics -->
+<section>
+  <div class="kicker k-nav">Level 4 · on the wire</div>
+  <h2>Topics during one navigation</h2>
+  <div style="display:flex;flex-direction:column;gap:14px;margin-top:20px">
+    <div class="row" style="align-items:center"><div class="box b-shell" style="width:200px;text-align:center"><b class="small c-shell">Shell patch</b></div><div>→</div>
+      <div class="box b-topic" style="width:330px;border-radius:40px;text-align:center"><b class="small c-topic">CurrentLocationTopic</b><div class="tiny mono">{ url, isFirst }</div></div><div>→</div><div class="tiny col">every router follows</div></div>
+    <div class="row" style="align-items:center"><div class="box b-shell" style="width:200px;text-align:center"><b class="small c-shell">Shell route</b></div><div>→</div>
+      <div class="box b-topic" style="width:330px;border-radius:40px;text-align:center"><b class="small c-topic">CurrentMfeTopic</b><div class="tiny mono">baseHref · appId · elementName …</div></div><div>→</div><div class="tiny col"><code>initializeRouter</code>, app scoping</div></div>
+    <div class="row" style="align-items:center"><div class="box b-app" style="width:200px;text-align:center"><b class="small c-app">App page</b></div><div>→</div>
+      <div class="box b-topic" style="width:330px;border-radius:40px;text-align:center"><b class="small c-topic">CurrentPageTopic</b><div class="tiny mono">page info</div></div><div>→</div><div class="tiny col">help · breadcrumb · permissions</div></div>
+    <div class="row" style="align-items:center"><div class="box b-lib" style="width:200px;text-align:center"><b class="small c-lib">connector</b></div><div>→</div>
+      <div class="box b-topic" style="width:330px;border-radius:40px;text-align:center"><b class="small c-topic">EventsTopic</b><div class="tiny mono">revertNavigation · navigated (legacy)</div></div><div>→</div><div class="tiny col">Shell <code>history.back()</code></div></div>
+  </div>
+</section>
+
+<!-- Part 4 summary: navigation utilities — central vs in-app -->
+<section>
+  <div class="kicker k-nav">Part 4 · summary</div>
+  <h2>The navigation utilities — who owns what</h2>
+  <div class="grid2" style="margin-top:16px">
+    <div class="box b-lib"><div class="pill bg-lib" style="margin-bottom:10px">Done centrally · you write none</div>
+      <ul class="tiny" style="margin-top:4px">
+        <li><b>Patched <code>history</code></b> → every URL change publishes <code>CurrentLocationTopic</code> <span class="muted">(Shell)</span></li>
+        <li><b><code>isRouterSync</code></b> → the echo breaker; followers move silently with <code>replaceUrl</code></li>
+        <li><b>Shell follows</b> → longest-first match picks the app, loads it, sets <code>currentMfe$</code></li>
+        <li><b><code>WebcomponentConnector</code></b> → initial router sync + follows the topic <span class="muted">(via patched <code>ngOnInit</code>)</span></li>
+        <li>Route <b>guards</b> bridged across apps <span class="muted">(Part 5)</span></li>
+      </ul>
+    </div>
+    <div class="box b-app"><div class="pill bg-app" style="margin-bottom:10px">You wire into the app</div>
+      <ul class="tiny" style="margin-top:4px">
+        <li><b><code>startsWith('')</code></b> route matcher → makes your routes mount-path agnostic</li>
+        <li><b><code>initializeRouter</code></b> (APP_INITIALIZER) → stamps <code>mfeInfo</code>/baseHref, prefixes string <code>redirectTo</code>, adds the <code>**</code> catch-all</li>
+        <li>Your routes &amp; <code>provideRouter</code> — the ordinary Angular setup</li>
+        <li><span class="muted">React:</span> <b><code>withSyncedRouter(App)</code></b>, <code>SyncedRouterProvider</code>, <code>useSyncedLocation()</code> / <code>useAppHref()</code></li>
+      </ul>
+    </div>
+  </div>
+  <div class="cap nav" style="margin-top:16px"><b>The split is the point.</b> Apps ship only their routes + two small helpers; <b>all the cross-router sync stays in the Shell and the connector</b>, so a new app inherits it for free.</div>
+</section>
+
+<!-- ============ PART 5 ============ -->
+<section class="divider">
+  <div class="num" style="color:var(--guard)">5</div>
+  <h1>Guards across apps</h1>
+  <p class="muted">The deepest level: ask everybody before the URL moves</p>
+</section>
+
+<!-- G1 why local guards fail -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-guard">Level 5 · the problem</div>
+  <h2>"You have unsaved changes" — from another router</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+      <div class="box b-shell" style="height:400px;display:grid;grid-template-columns:170px 1fr;gap:12px;padding:14px">
+        <span class="lbl c-shell">page</span>
+        <div class="box b-rc hlbox" data-lit="1"><b class="tiny c-rc">Menu RC</b><div class="tiny" style="margin-top:10px">• Search<br>• <b>User profile</b> 👆</div></div>
+        <div class="box b-app hlbox lit"><b class="tiny c-app">Workspace app</b>
+          <div class="box" style="margin-top:10px"><div class="tiny">Edit form</div><div class="tiny c-bad">● unsaved</div></div>
+          <div class="mono tiny" style="margin-top:10px">canDeactivate: [unsavedGuard]</div></div>
+      </div>
+    </div>
+    <div style="width:470px" class="seq">
+      <div data-from="1"><span class="n bg-rc">1</span><span>user clicks in <b>Menu RC</b> → <b>its</b> router navigates</span></div>
+      <div data-from="2"><span class="n bg-rc">2</span><span>Menu RC has no guards → <b>commit</b> → URL changes</span></div>
+      <div data-from="3"><span class="n bg-app">3</span><span>Workspace hears it → <code>ROUTER_SYNC</code> → <code>unsavedGuard</code> runs…</span></div>
+      <div data-from="4"><span class="n bg-guard">4</span><span class="c-bad"><b>too late.</b> URL already moved, Shell already switching. A "no" here = routers out of sync → sync guards <b>must</b> return true.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- G2 idea -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-guard">Level 5 · the idea</div>
+  <h2>Ask first, move later</h2>
+  <svg viewBox="0 0 1180 420" style="width:100%">
+    <defs><marker id="g2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#be123c"/></marker></defs>
+    <rect x="40" y="160" width="230" height="100" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="155" y="200" text-anchor="middle" font-weight="700" font-size="18" fill="#ea580c">Menu RC</text><text x="155" y="226" text-anchor="middle" font-size="14">wants /admin/user-profile</text>
+    <rect x="330" y="40" width="330" height="70" rx="35" fill="white" stroke="#be123c" stroke-width="2"/><text x="495" y="82" text-anchor="middle" font-size="17" fill="#be123c">"may I go to /admin/user-profile?"</text>
+    <rect x="800" y="40" width="300" height="100" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="950" y="80" text-anchor="middle" font-weight="700" font-size="18" fill="#2563eb">Workspace app</text><text x="950" y="106" text-anchor="middle" font-size="14">unsaved form</text>
+    <rect x="800" y="280" width="300" height="100" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="950" y="320" text-anchor="middle" font-weight="700" font-size="18" fill="#ea580c">Avatar RC</text><text x="950" y="346" text-anchor="middle" font-size="14">no guards</text>
+    <line x1="272" y1="190" x2="796" y2="95" stroke="#be123c" stroke-width="2.5" marker-end="url(#g2)"/><line x1="272" y1="230" x2="796" y2="320" stroke="#be123c" stroke-width="2.5" marker-end="url(#g2)"/>
+    <g data-from="1"><rect x="560" y="150" width="120" height="50" rx="25" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/><text x="620" y="182" text-anchor="middle" font-size="18" fill="#dc2626" font-weight="700">no ✋</text>
+      <rect x="560" y="265" width="120" height="50" rx="25" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/><text x="620" y="297" text-anchor="middle" font-size="18" fill="#16a34a" font-weight="700">yes ✓</text></g>
+    <g data-from="2"><rect x="40" y="300" width="230" height="70" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2.5"/><text x="155" y="330" text-anchor="middle" font-weight="700" font-size="16" fill="#dc2626">any "no" → cancel</text><text x="155" y="352" text-anchor="middle" font-size="14" fill="#dc2626">URL never moves</text></g>
+  </svg>
+  <p class="small muted" style="text-align:center;margin:0">Needs: a request/response broadcast · a way to "dry-run" guards · a way to tell sync from real navigations</p>
+</section>
+
+<!-- G3 gatherer -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-guard">Level 5 · tool 1 · request/response broadcast</div>
+  <h2>The <code>Gatherer</code></h2>
+  <div class="row" style="margin-top:6px">
+    <div class="col">
+      <svg viewBox="0 0 760 420" style="width:100%">
+        <defs><marker id="g3" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
+        <rect x="10" y="20" width="200" height="80" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="110" y="55" text-anchor="middle" font-weight="700" fill="#ea580c" font-size="16">requester</text><text x="110" y="80" text-anchor="middle" font-family="monospace" font-size="13">gather({url})</text>
+        <rect x="260" y="20" width="250" height="80" rx="40" fill="#f0fdfa" stroke="#0d9488" stroke-width="2.5"/><text x="385" y="55" text-anchor="middle" font-weight="700" fill="#0d9488" font-size="16">topic "GuardGatherer"</text><text x="385" y="80" text-anchor="middle" font-family="monospace" font-size="13">{ id: 42, request }</text>
+        <line x1="212" y1="60" x2="256" y2="60" stroke="#475569" stroke-width="2.5" marker-end="url(#g3)"/>
+        <rect x="200" y="170" width="300" height="90" rx="10" fill="white" stroke="#7c3aed" stroke-width="2" stroke-dasharray="7 4"/><text x="350" y="198" text-anchor="middle" font-size="14" fill="#7c3aed" font-family="monospace">shared window state</text><text x="350" y="228" text-anchor="middle" font-size="15" font-family="monospace">promises[42] = [</text>
+        <g data-from="1"><text x="350" y="250" text-anchor="middle" font-size="15" font-family="monospace">p₁, p₂ ]</text>
+          <rect x="560" y="140" width="130" height="60" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/><text x="625" y="176" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">app B</text>
+          <rect x="560" y="230" width="130" height="60" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/><text x="625" y="266" text-anchor="middle" font-size="15" fill="#ea580c" font-weight="700">RC C</text>
+          <path d="M500 80 C 560 90, 600 110, 620 136" fill="none" stroke="#0d9488" stroke-width="2" marker-end="url(#g3)"/><path d="M510 72 C 740 100, 740 210, 672 228" fill="none" stroke="#0d9488" stroke-width="2" marker-end="url(#g3)"/>
+          <line x1="558" y1="175" x2="502" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#g3)"/><line x1="558" y1="258" x2="502" y2="240" stroke="#475569" stroke-width="2" marker-end="url(#g3)"/></g>
+        <g data-from="2"><text x="110" y="150" text-anchor="middle" font-size="14" fill="#64748b">own id → ignored</text><line x1="110" y1="104" x2="110" y2="130" stroke="#cbd5e1" stroke-width="2"/></g>
+        <g data-from="3"><rect x="10" y="320" width="440" height="80" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/><text x="230" y="352" text-anchor="middle" font-size="15" font-family="monospace">await publish → Promise.all(p₁, p₂)</text><text x="230" y="380" text-anchor="middle" font-size="15" font-family="monospace" fill="#be123c">→ [false, true]</text>
+          <line x1="350" y1="262" x2="300" y2="316" stroke="#475569" stroke-width="2" marker-end="url(#g3)"/></g>
+      </svg>
+    </div>
+    <div style="width:380px;align-self:flex-start" class="stack">
+      <div class="cap guard" data-until="1">Generic accelerator primitive: <b>ask all, collect all</b>.</div>
+      <div class="cap guard off" data-from="1" data-until="2">Every <i>other</i> instance pushes a promise <b>synchronously</b>, then answers via its callback.</div>
+      <div class="cap guard off" data-from="2" data-until="3">The requester never answers itself.</div>
+      <div class="cap guard off" data-from="3" data-until="4">Awaiting the publish guarantees all promises are registered before <code>Promise.all</code>.</div>
+      <div class="cap guard off" data-from="4"><b>GuardsGatherer</b> = Gatherer named <span class="mono">GuardGatherer</span><br>request <code>{url}</code> · response <code>boolean</code><br><span class="muted">activated in <code>connect()</code>, off in <code>disconnect()</code></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- G4 modes -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-guard">Level 5 · tool 2 · "why is this navigation happening?"</div>
+  <h2>Four guard modes</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+      <div class="tiny muted" style="margin-bottom:8px">read from <code>navigation.extras.state</code> — checked in this order</div>
+      <div class="seq" style="gap:14px">
+        <div><span class="n bg-lib">?</span><code>isInitialRouterSync</code> → <span class="pill bg-lib">INITIAL_ROUTER_SYNC</span></div>
+        <div><span class="n bg-topic">?</span><code>isRouterSync</code> → <span class="pill bg-topic">ROUTER_SYNC</span></div>
+        <div><span class="n bg-guard">?</span><code>guardCheck</code> → <span class="pill bg-guard">GUARD_CHECK</span></div>
+        <div><span class="n bg-app">∅</span>none of them → <span class="pill bg-app">NAVIGATION_REQUESTED</span></div>
+      </div>
+    </div>
+    <div style="width:480px" data-from="1">
+      <table class="t">
+        <tr><th>mode</th><th>who sets it</th></tr>
+        <tr><td><span class="c-lib">INITIAL</span></td><td>connector, first sync after mount</td></tr>
+        <tr><td><span class="c-topic">ROUTER_SYNC</span></td><td>connector / Shell following the topic</td></tr>
+        <tr><td><span class="c-guard">GUARD_CHECK</span></td><td>GuardsGatherer fake navigation</td></tr>
+        <tr><td><span class="c-app">REQUESTED</span></td><td>nobody → a real click / <code>router.navigate</code></td></tr>
+      </table>
+      <p class="small" style="margin-top:20px" data-from="2">The app code doesn't change. <b>The state flag</b> tells the wrapper how to behave.</p>
+    </div>
+  </div>
+</section>
+
+<!-- G5 wrapGuards -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-guard">Level 5 · tool 3 · the patch</div>
+  <h2><code>wrapGuards</code> — every route gets one wrapper</h2>
+  <div class="row" style="margin-top:10px;align-items:center">
+<pre class="code light col" style="font-size:0.5em"><span class="c">// app wrote</span>
+{
+  path: <span class="s">'edit/:id'</span>,
+  canActivate: [authGuard, FeatureGuard],
+  canDeactivate: [unsavedGuard],
+}</pre>
+    <div style="font-size:2em">→</div>
+<pre class="code col" style="font-size:0.5em"><span class="c">// after connector, on RoutesRecognized</span>
+{
+  path: <span class="s">'edit/:id'</span>,
+  <span class="hl" data-lit="1">canActivateGuardList: [authGuard, FeatureGuard],</span>
+  <span class="hl" data-lit="1">canDeactivateGuardList: [unsavedGuard],</span>
+  <span class="hl" data-lit="2">canActivate: [<span class="t">wrapper⚑</span>],</span>
+  <span class="hl" data-lit="2">canDeactivate: [<span class="t">wrapper⚑</span>],</span>
+  <span class="hl" data-lit="3">runGuardsAndResolvers: <span class="s">'always'</span>,</span>
+}</pre>
+  </div>
+  <div class="stack" style="margin-top:20px">
+    <div class="cap guard" data-until="1">Applied at <code>RoutesRecognized</code> → lazy child routes are wrapped too.</div>
+    <div class="cap guard off" data-from="1" data-until="2">Originals saved (functions <b>and</b> class guards). Recursive into <code>children</code>.</div>
+    <div class="cap guard off" data-from="2" data-until="3">One wrapper per hook · tagged with <code>WRAPPED_GUARD_TAG</code> → idempotent. Routes <b>without</b> guards get one too.</div>
+    <div class="cap guard off" data-from="3">Guards run even when the route is already active → fake checks to the same URL still work.</div>
+  </div>
+</section>
+
+<!-- G6 wrapper behaviour -->
+<section>
+  <div class="kicker k-guard">Level 5 · the wrapper</div>
+  <h2>One wrapper, four behaviours</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px">
+    <div class="box b-lib" style="height:380px"><div class="pill bg-lib">INITIAL_ROUTER_SYNC</div>
+      <div class="small" style="margin-top:14px">run <b>own</b> guards</div><div class="tiny muted" style="margin-top:6px">boolean result</div>
+      <div class="tiny" style="margin-top:20px">false → navigation fails → connector publishes <b>revertNavigation</b></div></div>
+    <div class="box b-topic" style="height:380px"><div class="pill bg-topic">ROUTER_SYNC</div>
+      <div class="small" style="margin-top:14px">run own guards, then <b>always true</b></div><div class="tiny muted" style="margin-top:6px"><code>executeRouterSyncGuard</code></div>
+      <div class="tiny" style="margin-top:20px">already agreed — side effects may run, veto not allowed</div></div>
+    <div class="box b-guard" style="height:380px"><div class="pill bg-guard">GUARD_CHECK</div>
+      <div class="small" style="margin-top:14px">dry-run own guards</div>
+      <div class="tiny" style="margin-top:20px">false → <code>resolveRoute(url, false)</code> immediately</div>
+      <div class="tiny" style="margin-top:10px">true → connector answers on <code>GuardsCheckEnd</code></div></div>
+    <div class="box b-app" style="height:380px"><div class="pill bg-app">NAVIGATION_REQUESTED</div>
+      <div class="small" style="margin-top:14px"><b>await</b> <code>guardCheckPromise</code></div>
+      <div class="tiny" style="margin-top:14px">others said no → <b>false</b></div>
+      <div class="tiny" style="margin-top:10px">else run own guards → <code>UrlTree</code> / <code>RedirectCommand</code> pass through</div>
+      <div class="tiny muted" style="margin-top:10px">no promise → warn, allow</div></div>
+  </div>
+</section>
+
+<!-- G7 router events -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-guard">Level 5 · where the connector hooks in</div>
+  <h2>Angular router events</h2>
+  <svg viewBox="0 0 1180 400" style="width:100%">
+    <defs><marker id="g7" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
+    <line x1="20" y1="110" x2="1160" y2="110" stroke="#94a3b8" stroke-width="4" marker-end="url(#g7)"/>
+    <g font-size="15" text-anchor="middle" font-family="monospace">
+      <circle cx="90" cy="110" r="10" fill="#94a3b8"/><text x="90" y="80">NavigationStart</text>
+      <circle cx="310" cy="110" r="12" fill="#be123c"/><text x="310" y="80" font-weight="700">RoutesRecognized</text>
+      <circle cx="560" cy="110" r="12" fill="#be123c"/><text x="560" y="80" font-weight="700">GuardsCheckStart</text>
+      <rect x="650" y="95" width="160" height="30" rx="6" fill="#fff1f2" stroke="#be123c"/><text x="730" y="116">wrappers run</text>
+      <circle cx="900" cy="110" r="12" fill="#be123c"/><text x="900" y="80" font-weight="700">GuardsCheckEnd</text>
+      <circle cx="1080" cy="110" r="10" fill="#94a3b8"/><text x="1080" y="80">NavigationEnd</text>
+    </g>
+    <g data-from="1"><rect x="200" y="160" width="220" height="80" rx="10" fill="#fff1f2" stroke="#be123c" stroke-width="2"/><text x="310" y="195" text-anchor="middle" font-size="15" font-weight="700">wrapGuards(tree)</text><text x="310" y="220" text-anchor="middle" font-size="13">every mode</text><line x1="310" y1="124" x2="310" y2="158" stroke="#be123c" stroke-width="2"/></g>
+    <g data-from="2"><rect x="450" y="160" width="230" height="80" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/><text x="565" y="190" text-anchor="middle" font-size="14" font-weight="700">REQUESTED only:</text><text x="565" y="215" text-anchor="middle" font-size="13" font-family="monospace">p = gather({url})</text><text x="565" y="233" text-anchor="middle" font-size="13">→ state.guardCheckPromise</text><line x1="560" y1="124" x2="560" y2="158" stroke="#2563eb" stroke-width="2"/></g>
+    <g data-from="3">
+      <rect x="760" y="160" width="400" height="90" rx="10" fill="#fff1f2" stroke="#be123c" stroke-width="2"/><text x="960" y="188" text-anchor="middle" font-size="14" font-weight="700">GUARD_CHECK + shouldActivate:</text><text x="960" y="212" text-anchor="middle" font-size="13" font-family="monospace">resolveRoute(url, true)</text><text x="960" y="234" text-anchor="middle" font-size="13" font-family="monospace">navigateByUrl(router.url, {skipLocationChange, isRouterSync})</text>
+      <rect x="760" y="270" width="400" height="70" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/><text x="960" y="298" text-anchor="middle" font-size="14" font-weight="700">INITIAL + !shouldActivate:</text><text x="960" y="322" text-anchor="middle" font-size="13" font-family="monospace">EventsTopic.publish({type:'revertNavigation'})</text>
+      <line x1="900" y1="124" x2="900" y2="158" stroke="#be123c" stroke-width="2"/></g>
+    <text x="590" y="380" text-anchor="middle" font-size="15" fill="#64748b" data-from="3">The fake navigation is "cancelled" by starting another one back to the current URL — it never commits.</text>
+  </svg>
+</section>
+
+<!-- G8 full sequence -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-guard">Level 5 · all together</div>
+  <h2>One click, three routers</h2>
+  <svg viewBox="0 0 1180 520" style="width:100%">
+    <defs><marker id="g8" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
+    <g font-size="16" font-weight="700" text-anchor="middle"><text x="170" y="26" fill="#ea580c">Menu RC (requester)</text><text x="590" y="26" fill="#2563eb">Workspace app</text><text x="1000" y="26" fill="#ea580c">Avatar RC</text></g>
+    <g stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4 4"><line x1="170" y1="36" x2="170" y2="510"/><line x1="590" y1="36" x2="590" y2="510"/><line x1="1000" y1="36" x2="1000" y2="510"/></g>
+    <g font-size="14">
+      <rect x="40" y="50" width="260" height="44" rx="8" fill="#eff6ff" stroke="#2563eb"/><text x="170" y="77" text-anchor="middle">click → <tspan font-weight="700">NAVIGATION_REQUESTED</tspan></text>
+      <g data-from="1"><rect x="40" y="110" width="260" height="44" rx="8" fill="#fff1f2" stroke="#be123c"/><text x="170" y="137" text-anchor="middle" font-family="monospace">GuardsCheckStart → gather</text>
+        <line x1="300" y1="140" x2="586" y2="176" stroke="#be123c" stroke-width="2.5" marker-end="url(#g8)"/><line x1="300" y1="140" x2="996" y2="176" stroke="#be123c" stroke-width="2.5" marker-end="url(#g8)"/></g>
+      <g data-from="2"><rect x="460" y="180" width="260" height="44" rx="8" fill="#fff1f2" stroke="#be123c"/><text x="590" y="207" text-anchor="middle">fake nav · <tspan font-weight="700">GUARD_CHECK</tspan></text>
+        <rect x="870" y="180" width="260" height="44" rx="8" fill="#fff1f2" stroke="#be123c"/><text x="1000" y="207" text-anchor="middle">fake nav · <tspan font-weight="700">GUARD_CHECK</tspan></text></g>
+      <g data-from="3"><rect x="460" y="240" width="260" height="44" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/><text x="590" y="267" text-anchor="middle" fill="#dc2626">unsavedGuard → <tspan font-weight="700">false</tspan></text>
+        <rect x="870" y="240" width="260" height="44" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/><text x="1000" y="267" text-anchor="middle" fill="#16a34a">no guards → <tspan font-weight="700">true</tspan> · cancel fake</text></g>
+      <g data-from="4"><line x1="586" y1="300" x2="304" y2="330" stroke="#dc2626" stroke-width="2.5" marker-end="url(#g8)"/><text x="450" y="300" text-anchor="middle" fill="#dc2626">resolveRoute(false)</text>
+        <line x1="996" y1="300" x2="304" y2="345" stroke="#16a34a" stroke-width="2.5" marker-end="url(#g8)"/><text x="800" y="318" text-anchor="middle" fill="#16a34a">resolveRoute(true)</text>
+        <rect x="40" y="340" width="260" height="44" rx="8" fill="white" stroke="#334155"/><text x="170" y="367" text-anchor="middle" font-family="monospace">[false, true] → false</text></g>
+      <g data-from="5"><rect x="40" y="400" width="260" height="50" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="2.5"/><text x="170" y="422" text-anchor="middle" fill="#dc2626" font-weight="700">wrapper returns false</text><text x="170" y="442" text-anchor="middle" fill="#dc2626">navigation cancelled</text></g>
+      <g data-from="6"><rect x="400" y="430" width="740" height="64" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/><text x="770" y="458" text-anchor="middle" font-weight="700">URL never changed · nobody switched · form still there</text><text x="770" y="482" text-anchor="middle" fill="#64748b">all true instead → own guards → commit → pushState → everyone follows with ROUTER_SYNC</text></g>
+    </g>
+  </svg>
+</section>
+
+<!-- G9 initial sync revert -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker k-guard">Level 5 · the one case the Shell reacts to</div>
+  <h2>Target app not loaded yet → can't be asked</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col seq" style="gap:16px">
+      <div><span class="n bg-app">1</span><span>navigate to <code>/admin/user-profile</code> → all others say yes → URL moves</span></div>
+      <div data-from="1"><span class="n bg-shell">2</span><span>Shell loads user-profile → mount → connector initial sync <span class="pill bg-lib">INITIAL_ROUTER_SYNC</span></span></div>
+      <div data-from="2"><span class="n bg-guard">3</span><span>its own <code>canActivate</code> → <b>false</b> → <code>GuardsCheckEnd</code> with <code>!shouldActivate</code></span></div>
+      <div data-from="3"><span class="n bg-topic">4</span><span><code>EventsTopic</code> <b>revertNavigation</b> → Shell <code>history.back()</code> → previous URL → everyone follows</span></div>
+    </div>
+    <div style="width:420px">
+      <div class="box" style="text-align:center;padding:20px">
+        <div class="url" style="display:inline-block">/admin/workspace/search</div>
+        <div style="font-size:1.4em;margin:8px 0">↓</div>
+        <div class="url" style="display:inline-block;border-color:var(--app)">/admin/user-profile</div>
+        <div data-from="3"><div style="font-size:1.4em;margin:8px 0" class="c-bad">↩ back</div>
+        <div class="url" style="display:inline-block;border-color:var(--ok)">/admin/workspace/search</div></div>
+      </div>
+      <div class="tiny muted" style="margin-top:16px" data-from="3">Typical console sign: <code>navigationId === -1</code> warning from the history patch.</div>
+    </div>
+  </div>
+</section>
+
+<!-- G10 React -->
+<section>
+  <div class="kicker k-guard">Level 5 · React</div>
+  <h2>Same protocol, hooks instead of a connector</h2>
+  <div class="grid2" style="margin-top:10px">
+    <div class="box b-lib"><b class="c-lib small">Angular</b>
+      <ul class="tiny" style="margin-top:8px"><li>guards in route config</li><li>connector wraps + gathers automatically</li><li>revert published by connector</li></ul></div>
+    <div class="box b-rc"><b class="c-rc small">React</b>
+      <ul class="tiny" style="margin-top:8px"><li>guards in route <code>handle</code>: <code>canMatch · canActivate · canActivateChild · canDeactivate</code></li><li><code>useGuardsGatherer</code> · <code>useWrappedGuards</code> · <code>useGuardCheck</code> · <code>useGuardDeactivation</code></li><li>app calls <code>gather</code> itself (no connector)</li><li><code>guardCheckKey</code> forces re-check on same URL</li><li>no <code>revertNavigation</code> publisher in React libs</li></ul></div>
+  </div>
+  <p class="small muted" style="text-align:center;margin-top:30px">Both speak the same <span class="mono">GuardGatherer</span> topic → Angular and React apps can veto each other.</p>
+</section>
+
+<!-- G11 simulation -->
+<section class="demo">
+  <div class="kicker k-guard">Try it</div>
+  <h2 style="margin-bottom:10px">Guard round-trip simulator</h2>
+  <div class="row">
+    <div style="width:560px">
+      <div class="url" id="gs-url" style="margin-bottom:10px">/admin/workspace/search</div>
+      <div class="box b-shell" style="display:grid;grid-template-columns:150px 1fr;gap:10px;padding:12px;height:300px">
+        <span class="lbl c-shell">page</span>
+        <div class="box b-rc" id="gs-menu" style="transition:box-shadow .3s"><b class="tiny c-rc">Menu RC</b>
+          <div style="margin-top:10px"><button id="gs-go-profile" style="font-size:0.45em;padding:4px 8px">User profile</button></div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="box b-app" id="gs-app" style="flex:1;transition:box-shadow .3s"><b class="tiny c-app" id="gs-app-name">Workspace app</b>
+            <div id="gs-app-body">
+              <label class="toggle" style="margin-top:8px"><input type="checkbox" id="gs-dirty"> unsaved changes <span class="muted">(canDeactivate)</span></label>
+              <label class="toggle"><input type="checkbox" id="gs-detail-deny"> detail page denies <span class="muted">(canActivate)</span></label>
+              <div style="margin-top:8px"><button id="gs-go-detail" style="font-size:0.45em;padding:4px 8px">open detail/7</button></div>
+            </div></div>
+          <div class="box b-rc" id="gs-avatar" style="transition:box-shadow .3s"><b class="tiny c-rc">Avatar RC</b> <span class="tiny muted">no guards</span></div>
+        </div>
+      </div>
+      <label class="toggle" style="margin-top:12px"><input type="checkbox" id="gs-profile-deny"> User-profile app's <code>canActivate</code> denies <span class="muted">(not loaded yet!)</span></label>
+      <div style="margin-top:10px"><button id="gs-reset">reset</button></div>
+    </div>
+    <div class="col"><div class="log" id="gs-log" style="height:470px"></div></div>
+  </div>
+</section>
+
+<!-- G12 debugging -->
+<section>
+  <div class="kicker k-guard">Level 5 · when it doesn't work</div>
+  <h2>Debugging &amp; gotchas</h2>
+  <div class="grid2" style="margin-top:10px">
+    <div>
+<pre class="code"><span class="c">// DevTools console, then reload</span>
+localStorage.debug = <span class="s">'@onecx/angular-utils:guards*'</span>
+localStorage.debug = <span class="s">'@onecx/react-utils:guards*'</span>
+<span class="c">// gatherer traffic</span>
+<span class="s">'@onecx/accelerator:Gatherer:GuardGatherer'</span></pre>
+      <p class="tiny muted" style="margin-top:12px">Shell console: <span class="mono">🧭 Adding Workspace routes</span> · <span class="mono">➡ Load remote module</span></p>
+    </div>
+    <ul class="small">
+      <li><b>String guards</b> (DI tokens) are dropped by the wrapper</li>
+      <li><code>Guards gatherer is not active</code> → used before <code>connect()</code> / after <code>disconnect()</code></li>
+      <li>Target app's <code>canActivate</code> runs only <b>after</b> it loads → revert path</li>
+      <li>Sync guards can't veto — side effects only</li>
+      <li>Missing <code>initializeRouter</code> → matcher warns, nothing matches</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ RECAP ============ -->
+<section>
+  <h2>Recap</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    <div class="box b-lib"><h3 class="c-lib">Bootstrap</h3><ul class="tiny"><li>one call = interception point</li><li>APP_ID · container · platform · zone</li><li>lifecycle + element patches</li><li>central fixes, no app releases</li></ul></div>
+    <div class="box b-app"><h3 class="c-app">Navigation</h3><ul class="tiny"><li>history patch → location topic</li><li><code>isRouterSync</code> breaks echoes</li><li><code>startsWith</code> + <code>initializeRouter</code></li><li>connector: initial sync + follow</li></ul></div>
+    <div class="box b-guard"><h3 class="c-guard">Guards</h3><ul class="tiny"><li>ask everybody first (Gatherer)</li><li>4 modes from state flags</li><li>wrapper per route</li><li>revert if the new app says no</li></ul></div>
+  </div>
+  <div class="small" style="margin-top:26px"><b>Read more</b></div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+    <a class="chip c-lib" href="README.adoc">bootstrap/README</a>
+    <a class="chip c-lib" href="startup-timeline.adoc">startup-timeline</a>
+    <a class="chip c-mf" href="module-federation.adoc">module-federation</a>
+    <a class="chip c-mf" href="shared-dependencies.adoc">shared-dependencies</a>
+    <a class="chip c-mf" href="preloaders.adoc">preloaders</a>
+    <a class="chip c-shell" href="loading-matched-remote.adoc">loading-matched-remote</a>
+    <a class="chip c-lib" href="web-component-bootstrap.adoc">web-component-bootstrap</a>
+    <a class="chip c-app" href="multiple-routers.adoc">multiple-routers</a>
+    <a class="chip c-app" href="../navigation/url-to-every-router.adoc">url-to-every-router</a>
+    <a class="chip c-app" href="../navigation/shell-routes-and-current-app.adoc">shell-routes-and-current-app</a>
+    <a class="chip c-topic" href="../navigation/navigation-topics.adoc">navigation-topics</a>
+    <a class="chip c-guard" href="../navigation/why-cross-app-guards.adoc">why-cross-app-guards</a>
+    <a class="chip c-guard" href="../navigation/angular-guards.adoc">angular-guards</a>
+    <a class="chip c-guard" href="../navigation/react-guards.adoc">react-guards</a>
+    <a class="chip c-slot" href="../styling/dynamic-content-via-container.adoc">dynamic-content-via-container</a>
+  </div>
+</section>
+
+<!-- ============ Q&A ============ -->
+<section class="divider">
+  <div class="num">Q</div>
+  <h1>Questions &amp; ideas</h1>
+  <p class="muted">Open the floor</p>
+</section>
+
+<!-- Ideas (moved here from Part 3) -->
+<section>
+  <div style="display:flex;align-items:center;gap:20px"><h2 style="margin:0">What else could live here?</h2><span class="stamp">IDEAS · NOT IMPLEMENTED</span></div>
+  <p class="small muted">Because every app passes through the same function, a new central concern costs <b>one libs release</b>, not N app releases.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px">
+    <div class="box hypo"><b class="small">Default providers</b><div class="tiny">HTTP interceptors, error handler, translation defaults added to every app</div></div>
+    <div class="box hypo"><b class="small">Telemetry</b><div class="tiny">bootstrap duration, mount/unmount per element</div></div>
+    <div class="box hypo"><b class="small">Compatibility checks</b><div class="tiny">warn when a Shell capability the app needs is missing</div></div>
+    <div class="box hypo"><b class="small">Error boundary</b><div class="tiny">bootstrap failure → friendly fallback instead of empty area</div></div>
+    <div class="box hypo"><b class="small">Debug hooks</b><div class="tiny">one switch to log router / guard / topic traffic per app</div></div>
+    <div class="box hypo"><b class="small">Your idea?</b><div class="tiny">anything every app would otherwise copy-paste</div></div>
+  </div>
+</section>
+
+<section class="center" style="display:flex!important;flex-direction:column;justify-content:center;">
+  <h1>Questions?</h1>
+  <p class="muted">Bootstrap <span class="c-lib">&amp;</span> Navigation</p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>
+  // Step engine: count visible ".fragment.step" markers on the slide and toggle
+  // [data-from]/[data-until]/[data-lit] elements accordingly.
+  function applySteps(slide) {
+    if (!slide) return;
+    const n = slide.querySelectorAll('.fragment.step.visible').length;
+    slide.dataset.step = n;
+    slide.querySelectorAll('[data-from],[data-until]').forEach((el) => {
+      const from = el.dataset.from !== undefined ? +el.dataset.from : -Infinity;
+      const until = el.dataset.until !== undefined ? +el.dataset.until : Infinity;
+      el.classList.toggle('off', !(n >= from && n < until));
+    });
+    slide.querySelectorAll('[data-lit]').forEach((el) => el.classList.toggle('lit', n >= +el.dataset.lit));
+  }
+
+  Reveal.initialize({ hash: true, slideNumber: 'c/t', width: 1280, height: 760, margin: 0.04, center: false, transition: 'slide' })
+    .then(() => {
+      document.querySelectorAll('.reveal .slides section').forEach(applySteps);
+      applySteps(Reveal.getCurrentSlide());
+    });
+  Reveal.on('slidechanged', (e) => applySteps(e.currentSlide));
+  Reveal.on('fragmentshown', () => applySteps(Reveal.getCurrentSlide()));
+  Reveal.on('fragmenthidden', () => applySteps(Reveal.getCurrentSlide()));
+
+  // Web-component demo: define a tag once, then the "Shell" just creates / removes the node.
+  (function () {
+    if (!customElements.get('demo-element')) {
+      customElements.define('demo-element', class extends HTMLElement {
+        connectedCallback() {
+          this.textContent = '✓ the app is alive (connectedCallback ran)';
+        }
+        disconnectedCallback() { this.textContent = ''; }
+      });
+    }
+    const stage = document.getElementById('wc-stage');
+    const log = document.getElementById('wc-log');
+    const mount = document.getElementById('wc-mount');
+    const unmount = document.getElementById('wc-unmount');
+    if (!stage) return;
+    let el = null;
+    const line = (cls, html) => { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; log.appendChild(d); log.scrollTop = log.scrollHeight; };
+    const reset = () => { if (el) { el.remove(); el = null; } stage.innerHTML = '&lt;wrapper&gt; — empty'; log.innerHTML = ''; unmount.disabled = true; };
+    mount.onclick = () => {
+      if (el) return;
+      log.innerHTML = '';
+      el = document.createElement('demo-element');
+      line('dim', 'createElement(&#39;demo-element&#39;)');
+      stage.innerHTML = '';
+      stage.appendChild(el);                 // → connectedCallback fires
+      line('ok', '✓ appended → <b>connectedCallback()</b>');
+      mount.disabled = true; unmount.disabled = false;
+    };
+    unmount.onclick = () => {
+      if (!el) return;
+      el.remove();                           // → disconnectedCallback fires
+      el = null;
+      stage.innerHTML = '&lt;wrapper&gt; — empty';
+      line('bad', '✗ removed → <b>disconnectedCallback()</b>');
+      mount.disabled = false; unmount.disabled = true;
+    };
+    reset();
+  })();
+
+  // Keep Reveal from hijacking keys typed into demo inputs.
+  document.querySelectorAll('.demo input, .demo select').forEach((el) => el.addEventListener('keydown', (e) => e.stopPropagation()));
+
+  // Matcher demo: Shell longest-first prefix routes, app startsWith(baseHref) matcher, RC '**' only.
+  (function () {
+    const input = document.getElementById('mx-url');
+    const shellRoutes = ['admin/user-profile', 'admin/workspace', 'admin'];
+    const apps = { 'admin/user-profile': 'onecx-user-profile', 'admin/workspace': 'onecx-workspace', admin: 'shell-admin' };
+    const baseHref = '/admin/workspace/';
+    const appRoutes = [
+      { name: "''", test: (r) => r === '' },
+      { name: 'search', test: (r) => r === 'search' },
+      { name: 'detail/:id', test: (r) => /^detail\/[^/]+$/.test(r) },
+    ];
+    const ok = (t) => '<span class="c-ok">✓</span> ' + t;
+    const no = (t) => '<span class="muted">∅ ' + t + '</span>';
+    function render() {
+      const url = input.value.trim() || '/';
+      const path = url.replace(/^\/+|\/+$/g, '');
+      const hit = shellRoutes.find((r) => path === r || path.startsWith(r + '/'));
+      document.getElementById('mx-shell').innerHTML = hit
+        ? ok('route <code>' + hit + '</code><br><br>→ app <b>' + apps[hit] + '</b>') + (hit !== 'admin/workspace' ? '<div class="tiny muted" style="margin-top:12px">workspace app would be unmounted</div>' : '')
+        : '<span class="c-bad">✗</span> <code>**</code> → not-found page';
+      const norm = url.endsWith('/') ? url : url + '/';
+      let app;
+      if (!norm.startsWith(baseHref)) {
+        app = no('baseHref not a prefix') + '<br><br>→ <code>**</code> (children: []) · renders nothing';
+      } else {
+        const rest = url.slice(baseHref.length).replace(/\/+$/, '');
+        const r = appRoutes.find((x) => x.test(rest));
+        app = '<div class="tiny mono">cut <b>' + baseHref + '</b> → "' + rest + '"</div><br>' + (r ? ok('child <code>' + r.name + '</code>') : no('no child') + ' → <code>**</code>');
+      }
+      document.getElementById('mx-app').innerHTML = app;
+      document.getElementById('mx-rc').innerHTML = ok('<code>**</code> — always') + '<br><br><span class="tiny muted">follows the URL, renders nothing route-specific</span>';
+    }
+    input.addEventListener('input', render);
+    document.querySelectorAll('[data-url]').forEach((b) => b.addEventListener('click', () => { input.value = b.dataset.url; render(); }));
+    render();
+  })();
+
+  // Guard simulator: replays the cross-app guard protocol with the real mode names.
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    const log = $('gs-log');
+    const START = '/admin/workspace/search';
+    let busy = false;
+    let currentApp = 'workspace';
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const glow = (id, color) => { ['gs-menu', 'gs-app', 'gs-avatar'].forEach((x) => ($(x).style.boxShadow = '')); if (id) $(id).style.boxShadow = '0 0 0 5px ' + color; };
+    async function line(text, cls, who) { if (who) glow(who.id, who.color); const d = document.createElement('div'); d.className = cls || ''; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; await sleep(550); }
+    const MENU = { id: 'gs-menu', color: 'rgba(234,88,12,.35)' };
+    const APP = { id: 'gs-app', color: 'rgba(37,99,235,.35)' };
+    const AVATAR = { id: 'gs-avatar', color: 'rgba(234,88,12,.35)' };
+    const setButtons = (d) => ['gs-go-profile', 'gs-go-detail', 'gs-reset'].forEach((x) => ($(x).disabled = d));
+    function showApp(name) {
+      currentApp = name;
+      $('gs-app-name').textContent = name === 'workspace' ? 'Workspace app' : 'User-profile app';
+      $('gs-app-body').style.display = name === 'workspace' ? '' : 'none';
+    }
+
+    async function navigate(requester, url) {
+      if (busy) return;
+      busy = true; setButtons(true);
+      const dirty = $('gs-dirty').checked;
+      const detailDeny = $('gs-detail-deny').checked;
+      const profileDeny = $('gs-profile-deny').checked;
+      const req = requester === 'menu' ? MENU : APP;
+      const reqName = requester === 'menu' ? 'Menu RC' : 'Workspace';
+      log.innerHTML = '';
+      await line('[' + reqName + '] navigateByUrl(' + url + ') · mode NAVIGATION_REQUESTED', 'req', req);
+      await line('[' + reqName + '] RoutesRecognized → wrapGuards', 'dim', req);
+      await line('[' + reqName + "] GuardsCheckStart → gather({ url: '" + url + "' })", 'req', req);
+      const answers = [];
+      if (requester !== 'workspace') {
+        await line('[Workspace] fake navigation · GUARD_CHECK', 'req', APP);
+        if (dirty) { await line('[Workspace] canDeactivate(unsaved) → false → resolveRoute(false)', 'bad', APP); answers.push(false); }
+        else { await line('[Workspace] guards ok → GuardsCheckEnd → resolveRoute(true) + cancel fake nav', 'ok', APP); answers.push(true); }
+      }
+      if (requester !== 'menu') {
+        await line('[Menu RC] fake navigation · GUARD_CHECK → no guards → true', 'ok', MENU); answers.push(true);
+      }
+      await line('[Avatar RC] fake navigation · GUARD_CHECK → no guards → true', 'ok', AVATAR); answers.push(true);
+      const others = answers.every(Boolean);
+      await line('[' + reqName + '] gathered [' + answers.join(', ') + '] → ' + others, others ? 'ok' : 'bad', req);
+      if (!others) {
+        await line('[' + reqName + '] wrapper returns false → navigation cancelled · URL unchanged', 'bad', req);
+        return done();
+      }
+      if (requester === 'workspace') {
+        if (dirty) { await line('[Workspace] own canDeactivate(unsaved) → false → cancelled', 'bad', APP); return done(); }
+        if (detailDeny) { await line('[Workspace] own canActivate(detail) → false → cancelled', 'bad', APP); return done(); }
+        await line('[Workspace] own guards → true → commit', 'ok', APP);
+      } else {
+        await line('[Menu RC] own guards → true → commit', 'ok', MENU);
+      }
+      await line('history.pushState(' + url + ') → Shell patch publishes CurrentLocationTopic', 'sync', null);
+      $('gs-url').textContent = url;
+      await line('[Shell] follows · ROUTER_SYNC (isRouterSync, replaceUrl)', 'sync', null);
+      if (url.startsWith('/admin/workspace/')) {
+        await line('[Menu RC] [Avatar RC] follow · ROUTER_SYNC → guards cannot veto', 'sync', AVATAR);
+        await line('✓ everyone on ' + url, 'ok', APP);
+        return done();
+      }
+      await line('[Shell] new app route → Workspace ngOnDestroy → disconnect', 'sync', APP);
+      showApp('profile');
+      await line('[Shell] load user-profile → createElement → connect()', 'sync', APP);
+      await line('[User-profile] initial sync · INITIAL_ROUTER_SYNC → own canActivate', 'req', APP);
+      if (profileDeny) {
+        await line('[User-profile] canActivate → false → GuardsCheckEnd !shouldActivate', 'bad', APP);
+        await line("[User-profile] EventsTopic.publish({ type: 'revertNavigation' })", 'bad', APP);
+        await line('[Shell] history.back()', 'sync', null);
+        $('gs-url').textContent = START;
+        showApp('workspace');
+        await line('[Shell] back on ' + START + ' → workspace loaded again', 'ok', APP);
+      } else {
+        await line('[User-profile] canActivate → true', 'ok', APP);
+        await line('[Menu RC] [Avatar RC] follow · ROUTER_SYNC', 'sync', AVATAR);
+        await line('✓ everyone on ' + url, 'ok', APP);
+      }
+      return done();
+    }
+    function done() { glow(null); busy = false; setButtons(false); if (currentApp !== 'workspace') $('gs-go-detail').disabled = true; }
+    $('gs-go-profile').addEventListener('click', () => navigate('menu', '/admin/user-profile'));
+    $('gs-go-detail').addEventListener('click', () => navigate('workspace', '/admin/workspace/detail/7'));
+    $('gs-reset').addEventListener('click', () => { if (busy) return; log.innerHTML = ''; $('gs-url').textContent = START; showApp('workspace'); $('gs-go-detail').disabled = false; });
+  })();
+</script>
+</body>
+</html>

@@ -398,7 +398,7 @@ const objectDetailsWithIcons: ObjectDetailItem[] = [
     label: 'Status with style',
     value: 'Completed',
     icon: OpenngIcons.CHECK_SQUARE,
-    valueCssClass: 'bg-green-400 text-white border-round-sm p-1',
+    valueCssClass: 'bg-green-400 text-white rounded-sm p-1',
   },
 ]
 

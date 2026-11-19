@@ -1,0 +1,95 @@
+= Multiple-router problem & router wiring
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+Why does every App have its own router, and how is each App's router wired to the shared URL at startup (while the runtime URL fan-out is owned by Navigation)?
+
+== Why it exists
+
+A OneCX page is one document shared by the Shell and by every App and Remote Component on it, but it is not one application. The Shell plus several Angular and React apps each bring their *own* router: each App has its own framework (`@angular/router` or `react-router`), its own route table, and its own base `href` scoped to the slice of the shared URL it owns (from `currentMfe$`, Area 3). Yet the browser has exactly one URL, and it is the single source of truth for the whole page. That is the multiple-router problem: many independent routers, one shared URL.
+
+The consequence is that no router can be left to boot on its own against the full URL. Each App's router has to be *wired at startup* to (1) see only the slice of the URL it owns (its `baseHref`), and (2) keep following the shared URL as it changes. This Unit covers the wiring that happens once, at bootstrap. The fan-out of a single URL change to *every* router at runtime is the job of link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7).
+
+== How it works
+
+Framework-agnostic, the wiring has the same shape in both frameworks, because the constraint is the same:
+
+. *Scope the router to the app's URL slice.* The App's router must interpret only the part of the shared URL under its own `baseHref`, not the whole `window.location`. The slice it owns is the shared URL minus the Shell's `deploymentPath`; the App's own routes are declared relative to its `baseHref`.
+. *Drive the router from the shared location, not from its own history.* At startup the router is navigated to the current shared URL, then it is kept in step with that URL through the shared location channel (the `CurrentLocationTopic`, or the Shell's `navigated` event when the capability is absent). Navigation is flagged with a *router-sync* state so the App's own guards and history can tell an external sync apart from a user-initiated navigation.
+. *Make the router always activatable.* A catch-all route is added so that, even for a URL the App does not declare (or a Remote Component with no routes of its own), the router resolves instead of erroring and can still answer guard requests.
+
+Both frameworks reach the same endpoint by different machinery: Angular does it with an app initializer plus a `WebcomponentConnector`; React does it with a `BrowserRouter` wrapped by a sync provider. Runtime propagation of a URL change to all routers is deferred to Area 7.
+
+== Libs side / Shell side
+
+=== Libs side: Angular
+
+The Angular side has two parts that must both run for a router to come up correctly.
+
+* *`initializeRouter` stamps the routes with the app's `baseHref`.* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router-initializer.utils.ts[`initializeRouter(router, appStateService)`] is meant to be registered as an app initializer. It waits for `currentMfe$`, then walks `router.config` and, for each route, (a) stores `mfeInfo` (which carries `baseHref`) into `route.data`, and (b) prefixes a string `redirectTo` with `Location.joinWithSlash(mfeInfo.baseHref, …)`. It then appends a `{ path: '**', children: [] }` fallback and calls `router.resetConfig(routes)`. This is why an App's route table, declared relative to its `baseHref`, matches the shared URL: the initializer is what teaches each route where its `baseHref` is.
+* *`startsWith` / `getBaseHrefOfRoute` slice the `baseHref` off incoming URLs.* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router.utils.ts[`getBaseHrefOfRoute(route)`] reads `route.data['mfeInfo'].baseHref` and `startsWith(prefix)` builds a `UrlMatcher` that only matches once the incoming segments start with that `baseHref`, then hands the URL with the `baseHref` removed (`sliceBaseHref`) to the prefix match. Without the initializer having stamped `mfeInfo`, `getBaseHrefOfRoute` has nothing to read and logs a warning that `initializeRouter` must be registered as an app initializer.
+* *`WebcomponentConnector.connect()` drives the router from the shared location.* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector`] is what keeps the router in step. On `connect()` it activates the guards gatherer and, in `connectLocationChange`, computes the current app-relative URL as `location.pathname.substring(getLocation().deploymentPath.length)` plus `search` and `hash`, navigates the router to it with `replaceUrl` and a `{ IS_ROUTER_SYNC, IS_INITIAL_ROUTER_SYNC }` state, and then subscribes to the shared location source to repeat that navigation whenever the URL differs. The source is `appStateService.currentLocation$` when the Shell advertises the `CURRENT_LOCATION_TOPIC` capability, otherwise it falls back to the `EventsTopic` filtered to `navigated`. Each navigation is marked with the `isRouterSync` state; the `GUARD_MODE` handling on `GuardsCheckStart` / `GuardsCheckEnd` distinguishes `NAVIGATION_REQUESTED`, `INITIAL_ROUTER_SYNC`, `GUARD_CHECK` and `ROUTER_SYNC` so guards run only when appropriate.
+* *The connector is hooked into the element's lifecycle.* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`createEntrypoint`] constructs a `WebcomponentConnector`, monkey-patches the component's `ngOnInit` to call `connector.connect()` and `ngOnDestroy` to call `connector.disconnect()`. So the router wiring switches on exactly when the App's root element is created and destroyed by the Shell (Unit 6 / Unit 5).
+* *`getLocation` splits the URL into deployment vs application path.* link:{libs}/accelerator/src/lib/utils/path.utils.ts[`getLocation()`] returns `window.location` enriched with `deploymentPath` (the sub-folder the Shell is deployed under, derived from the `<base href>`) and `applicationPath` (the rest, which identifies workspace and app). The connector strips the `deploymentPath` length off `location.pathname` before feeding the router, so the router only ever sees the application path.
+
+=== Libs side: React
+
+The React side wraps the standard `BrowserRouter` in a sync provider so it follows the shared location the same way.
+
+* *`withSyncedRouter` / `SyncedRouterProvider`.* link:{libs}/react-webcomponents/src/lib/wrapper/withSyncedRouter.tsx[`withSyncedRouter(Component)`] is the higher-order component an App wraps its root in; it renders the app inside link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`SyncedRouterProvider`], which is simply `BrowserRouter` → `RouterSync` → children.
+* *`RouterSync` subscribes to the shared location and republishes its own navigations.* In link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`syncedLocationContext.tsx`], `RouterSync` uses `useTopic(undefined, CurrentLocationTopic)`. On a topic message whose URL is `/`/empty or starts with the `<base href>`, and that differs from the current `pathname`, it sets a `skipPublishUntil` guard and updates the local location (it does *not* call `navigate()`, because the Shell has already moved `window.location` and the `BrowserRouter` will pick that up). A `useLayoutEffect` then publishes the app's own `pathname` changes back onto `CurrentLocationTopic` so the Shell can update the browser URL: the `skipPublishUntil` guard suppresses publishing a URL that just arrived *from* the topic, which is what breaks the echo loop.
+* *`useSyncedLocation` reads the synced payload.* link:{libs}/react-webcomponents/src/lib/hooks/useSyncedLocation.ts[`useSyncedLocation()`] returns the current `SyncedLocationContext` payload and throws if the app is not inside a `SyncedRouterProvider` (i.e. not wrapped with the HOC).
+* *`useAppHref` / `normalizeHref` build the app's href.* link:{libs}/react-webcomponents/src/lib/hooks/useAppHref.ts[`useAppHref()`] reads `currentMfe$` (for `baseHref`) and `currentWorkspace$` (for `baseUrl`), combines the configured `APP_BASE_HREF` with the MFE `baseHref` through link:{libs}/react-webcomponents/src/lib/utils/href.utils.ts[`normalizeHref`] / `removeTrailingSlash`, and exposes the normalized href the app uses to build links into its own slice.
+
+=== Shell side
+
+The Shell does not wire an App's router. It bootstraps its own module with the libs `bootstrapModule(AppModule, 'shell', …)` (link:{shell}/src/bootstrap.ts[`bootstrap.ts`]) and, for the non-Angular case, mounts the App by creating its element (link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent`]): which is what instantiates the App and therefore runs the Angular `connect()` / the React `RouterSync`. The actual router wiring described above lives in the App's own bootstrap code (its app initializer / `WebcomponentConnector`, or its `withSyncedRouter` wrapper); the Shell only provides the shared location the routers follow and mounts the element that turns the wiring on.
+
+== Angular / React
+
+Where the two genuinely differ:
+
+* *How the router is scoped.* Angular scopes it declaratively: the `initializeRouter` initializer stamps `mfeInfo`/`baseHref` onto `route.data` and the `startsWith`/`getBaseHrefOfRoute` matcher slices the `baseHref` off each incoming URL. React does not rewrite its routes; the `RouterSync` provider filters topic messages against the `<base href>` and lets the `BrowserRouter` read the shared `window.location` directly.
+* *How the router is driven.* Angular drives `router.navigateByUrl` imperatively from the `WebcomponentConnector`, marking each sync with `IS_ROUTER_SYNC` / `IS_INITIAL_ROUTER_SYNC` state and gating guards on `GUARD_MODE`. React drives it reactively: it never calls `navigate()` for topic-driven changes (the Shell already moved the URL) and instead republishes the app's own `pathname` back onto the topic.
+* *The catch-all.* Angular adds the `**` fallback in the initializer (and in `adaptRemoteComponentRoutes` for Remote Components, Unit 6); a React App relies on its own route table and `BrowserRouter`.
+* *The echo guard.* React needs the `skipPublishUntil` ref to avoid republishing a URL it just received; Angular's sync state + `GUARD_MODE` serve the same role on that side.
+
+== Edge cases & pitfalls
+
+* *`initializeRouter` must be registered as an app initializer.* If the App does not register it, routes carry no `mfeInfo`, so `getBaseHrefOfRoute` logs the warning and the `startsWith` matcher cannot slice the `baseHref`: the App's routes will not line up with the shared URL.
+* *The `**` fallback is load-bearing, not cosmetic.* It keeps the router activatable for URLs the App does not declare (including a Remote Component that has no routes of its own) and lets it always respond to guard requests scattered across the page.
+* *React's `skipPublishUntil` must be honoured.* If the guard is skipped, a topic-driven navigation is published right back, producing an echo loop between the App and the Shell over `CurrentLocationTopic`.
+* *The initial sync can be reverted.* On `GuardsCheckEnd` in `INITIAL_ROUTER_SYNC` mode, if the first URL does not activate (e.g. it landed on a guarded route), the connector publishes a `revertNavigation` event. This is expected behaviour when the App loads directly onto a route that guards reject.
+* *The shared-location source depends on a Shell capability.* When the Shell does not advertise `CURRENT_LOCATION_TOPIC`, the Angular connector falls back to the `EventsTopic` `navigated` event; code that assumes the topic always exists will stop receiving updates on a Shell that lacks the capability.
+
+== Debugging
+
+Log namespaces are `WebcomponentConnector` (Angular sync + guard-state decisions, including the "Initial router sync failed, reverting" warning) and `RouterSync` (React topic subscription and the `publish failed` path). The shared location to watch is `CurrentLocationTopic` (or the Shell's `navigated` event), and the guard-state machine is `GUARD_MODE`. See Area 13 (Diagnostics) for general tools.
+
+== Related Units
+
+* link:web-component-bootstrap.adoc[App bootstrap as web component] (Unit 6): the element/lifecycle step that calls `WebcomponentConnector.connect()` and mounts the React provider.
+* link:module-federation.adoc[Module Federation in OneCX] (Unit 2): how the App whose router is wired here is exposed and loaded as a remote.
+* link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7): the runtime fan-out this Unit defers: how a single shared-URL change reaches every router on the page.
+
+== Sources
+
+Code::
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router-initializer.utils.ts[`initializeRouter`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router.utils.ts[`startsWith`, `getBaseHrefOfRoute`, `sliceBaseHref`, `baseHrefSegmentAmount`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector` (`connect` / `disconnect` / `connectLocationChange` / `connectRouterGuards`)]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`createEntrypoint` (connector `connect`/`disconnect` hooks), `adaptRemoteComponentRoutes`]
+* link:{libs}/accelerator/src/lib/utils/path.utils.ts[`getLocation` (`deploymentPath` / `applicationPath`)]
+* link:{libs}/react-webcomponents/src/lib/wrapper/withSyncedRouter.tsx[`withSyncedRouter`]
+* link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`SyncedRouterProvider`, `RouterSync`, `SyncedLocationContext`]
+* link:{libs}/react-webcomponents/src/lib/hooks/useSyncedLocation.ts[`useSyncedLocation`]
+* link:{libs}/react-webcomponents/src/lib/hooks/useAppHref.ts[`useAppHref`]
+* link:{libs}/react-webcomponents/src/lib/utils/href.utils.ts[`normalizeHref`, `removeTrailingSlash`]
+* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`Capability.CURRENT_LOCATION_TOPIC`]
+* link:{shell}/src/bootstrap.ts[`bootstrap.ts` (`bootstrapModule(AppModule, 'shell', …)`)] (Shell)
+* link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent` (mounts the element that turns the wiring on)] (Shell)

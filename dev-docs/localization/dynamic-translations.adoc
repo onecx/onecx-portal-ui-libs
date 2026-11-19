@@ -1,0 +1,95 @@
+= Dynamic translations
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+toc::[]
+
+== Question answered
+
+What is the *dynamic-translations* mechanism, the topic, its capability gate and its shared cache, and how does it fit into the translation fallback?
+
+== Why it exists
+
+Static translation files (link:./app-translations.adoc[App translations load & sharing]) cover the strings each App and library ships. But some strings are not shipped as files at all; they are produced at runtime by the Shell and handed to the page on demand. The mechanism for that is *dynamic translations*: a page-wide, capability-gated request/response channel on a Topic, shared by both Angular and React. This Unit documents the mechanism itself; the *place* it plugs in, the static → dynamic → raw-key fallback when a key is missing, is link:./missing-translation-fallback.adoc[Missing-translation fallback].
+
+== How it works
+
+A framework-agnostic link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`DynamicTranslationService`] resolves a set of *translation contexts* (namespaces, e.g. `{name, version?}`) for one locale from a page-wide cache and, on a miss, from the Shell over a Topic.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant App as App (Angular or React)
+  participant D as DynamicTranslationService
+  participant S as Shell (capability + Topic)
+  App->>D: getTranslations(locale, contexts)
+  D->>D: hasShellCapability(DYNAMIC_TRANSLATIONS_TOPIC)?
+  alt capability not advertised
+    D-->>App: empty records (dynamic leg is a no-op)
+  else advertised
+    D->>D: read page-wide cache (locale -> context -> version)
+    D->>S: REQUESTED {locale, contexts} (for any missing context)
+    S-->>D: RECEIVED (requested contexts cached)
+    D-->>App: context-keyed translation map
+  end
+----
+
+* **The Topic and its messages.** link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`DynamicTranslationsTopic`] is a `Topic` named `dynamicTranslations` (v1). Its messages (link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.model.ts[`dynamic-translations.model.ts`]) are a `REQUESTED` pair: `TranslationsRequested { type, locale, contexts: [{ name, version? }] }`, the App asks for these contexts in this locale, and a `RECEIVED` acknowledgement: `TranslationsReceived { type }`.
+* **The capability gate.** Before anything else, `getTranslations` calls `hasShellCapability(ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC)` (link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`shell-capability.utils.ts`] over link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC`]). The capability list lives page-wide on `globalThis['onecx-shell-capabilities']`; if the Shell does not advertise `dynamicTranslationsTopic`, the service returns empty records immediately and the dynamic leg never runs. This is what makes the fallback in link:./missing-translation-fallback.adoc[Missing-translation fallback] degrade gracefully to the static leg and then the raw key.
+* **The page-wide cache.** Resolved contexts are cached on `globalThis` under `@onecx/integration-interface.dynamicTranslationsCache` (via `getDynamicTranslationsCache`), shaped as `locale -> context name -> version -> table`. A context already resolved for a locale is returned with no Topic traffic; only genuinely missing contexts are marked in-flight and published as a `REQUESTED`, after which the service waits for a `RECEIVED` and collects. The full resolution rules (version matching, the explicit `null` "known empty", the no-timeout wait) and the per-locale fallback walk are documented once, in link:./missing-translation-fallback.adoc[Missing-translation fallback].
+
+== Libs side / Shell side
+
+=== Libs side
+
+The mechanism is framework-agnostic in `@onecx/integration-interface`: the `DynamicTranslationService`, the `dynamicTranslations` Topic and its `REQUESTED`/`RECEIVED` model, and the `ShellCapability` check. Angular wires that mechanism into an automatic missing-key path: `@onecx/angular-integration-interface` exposes a `providedIn: 'root'` wrapper service, records advertised capabilities via `ShellCapabilityService.setCapabilities`, and feeds the shared service into the Angular fallback handler described in link:./missing-translation-fallback.adoc[Missing-translation fallback]. React is lighter: link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`shellCapability.ts`] only sets and checks capability values (`setCapabilities`, `useShellCapability`); the React libraries shown here do not automatically call `getTranslations()` or consume the shared service.
+
+=== Shell side
+
+The Shell owns the *supply*. For the dynamic leg to do anything it must (a) advertise `dynamicTranslationsTopic` (page-wide under `onecx-shell-capabilities`) and (b) answer `REQUESTED` messages by publishing the requested contexts and a `RECEIVED`. Its own static translations are loaded like any App (link:./app-translations.adoc[App translations load & sharing]); the *dynamic* supply is a separate Shell responsibility: and, as of today, is not wired up. See link:#known-issues[Known issues].
+
+== Angular / React
+
+The service, the Topic and the capability model are shared, but the framework integration is not symmetrical. Angular has the automatic wrapper + missing-translation-handler path. React has capability plumbing only; an App can still call the framework-agnostic `DynamicTranslationService` explicitly, but that is app code rather than built-in library wiring.
+
+== Edge cases & pitfalls
+
+* **The dynamic leg is silent unless the capability is advertised.** `hasShellCapability` reads a page-global the Shell must set; a page that never registers it skips the dynamic leg entirely, with no per-key error. Angular's automatic fallback then drops to the next fallback step; React code sees nothing unless an App explicitly calls the shared service (link:./missing-translation-fallback.adoc#known-issues[see the related Known issues]).
+* **A `RECEIVED` that never comes.** The service waits for a `RECEIVED` with no built-in timeout, so if the Shell advertises the capability but never answers, the wait can stay pending, documented in link:./missing-translation-fallback.adoc#known-issues[Missing-translation fallback, Known issues].
+* **Versioned vs unversioned contexts.** An unversioned context resolves to the first cached version; a versioned one matches an exact version, else the highest cached version that satisfies the requested semver. See link:./missing-translation-fallback.adoc[Missing-translation fallback] for the full rules.
+
+== Debugging
+
+* The service logs under `DynamicTranslationService`, including the capability check, the cache categorisation (missing/pending), the `REQUESTED` message and each `RECEIVED`.
+* `globalThis['@onecx/integration-interface'].dynamicTranslationsCache` and `window.onecx-shell-capabilities` are both inspectable from the console to confirm whether the dynamic leg is even active.
+* The `dynamicTranslations` Topic (v1) traffic is visible with the general Topic tooling in link:../diagnostics/tracing-communication.adoc[13. Diagnostics].
+
+[#known-issues]
+== Known issues
+
+* **The Shell does not advertise or answer the dynamic-translations Topic.** As of the current `main` code of the Shell repository, the Shell neither sets `dynamicTranslationsTopic` in `onecx-shell-capabilities` nor answers the `dynamicTranslations` Topic's `REQUESTED` messages, so `getTranslations` short-circuits to empty records and the dynamic leg is a no-op today. Notably, the Shell's generated translation BFF client, `TranslationBffService` (link:{shell}/src/app/shared/generated/api/translation.service.ts[`src/app/shared/generated/api/translation.service.ts`], `getTranslations`, `POST /translations`), exists but is **unused**: it is neither wired into link:{shell}/src/app/app.module.ts[`app.module.ts`] nor called anywhere, so the dynamic supply it would provide is never invoked. The end-to-end consequence, per-locale dynamic lookup always misses, so only the static walk and the raw key ever fire, is documented from the fallback side in link:./missing-translation-fallback.adoc#known-issues[Missing-translation fallback, Known issues]; the follow-up (the Shell must advertise the capability and answer the Topic) is recorded there and in this Unit. Sources: link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`hasShellCapability`], link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`getTranslations` capability gate], link:{shell}/src/app/app.module.ts[Shell `app.module.ts`], and link:{shell}/src/app/shared/generated/api/translation.service.ts[the unused `TranslationBffService`].
+
+== Related Units
+
+* link:./missing-translation-fallback.adoc[Missing-translation fallback]: the static → dynamic → raw-key chain this mechanism is the *dynamic* leg of; it owns the full resolution rules and the end-to-end known-issue.
+* link:./app-translations.adoc[App translations load & sharing]: the static files this mechanism supplements.
+* link:./profile-and-language.adoc[Profile load & language decision]: the `profile.settings.locales` the dynamic requests are keyed by.
+* link:../integration-contract/versioning-and-capabilities.adoc[1. Integration Contract & Topics, Versioning & Shell capability negotiation], how the `onecx-shell-capabilities` list is meant to be populated.
+* link:../integration-contract/message-delivery.adoc[1. Integration Contract & Topics, Topic message delivery], the `REQUESTED`/`RECEIVED` Topic traffic.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`DynamicTranslationService`, `getDynamicTranslationsCache`, `TranslationContext` (dynamic-translation.service.ts)]
+* link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`DynamicTranslationsTopic` (dynamic-translations.topic.ts)]
+* link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.model.ts[`DynamicTranslationsMessageType`, `TranslationsRequested`, `TranslationsReceived` (dynamic-translations.model.ts)]
+* link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`hasShellCapability` (shell-capability.utils.ts)]
+* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC` (shell-capability.model.ts)]
+* link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`setCapabilities`, `useShellCapability` (shellCapability.ts)]
+* link:{shell}/src/app/app.module.ts[Shell capability wiring / absence (Shell)]
+* link:{shell}/src/app/shared/generated/api/translation.service.ts[unused `TranslationBffService` (Shell)]

@@ -1,0 +1,34 @@
+/*
+ * Tailwind CSS v4 source entry for the @onecx/angular-accelerator layout utilities.
+ *
+ * Compiled (by the `build:styles` target, via `@tailwindcss/cli`) into
+ * `assets/tailwind.css`, which the published package exposes through its `style`
+ * export and which consumers import for the utility classes the library
+ * templates and directives emit.
+ *
+ * Notes:
+ * - The `tailwindcss/preflight` reset is intentionally NOT imported. The library
+ *   ships utilities only; it must not reset the consumer application's global
+ *   element styles.
+ * - `@layer` ordering is declared explicitly so that generated `utilities`
+ *   win over Optimus UI's `optimus` layer while the Optimus theme `@theme`
+ *   block still feeds the `--color-*`/`--radius-*` values the utilities read.
+ * - `@source` is scoped to this library so generated utilities only reflect
+ *   classes the library itself owns (templates, directives, components,
+ *   stories). Consumers add their own `@source` for their own markup.
+ * - `@source inline(...)` force-generates the small number of class names that
+ *   are built by string interpolation at runtime (`:flex-row` breakpoints in
+ *   `[ocxContentContainer]`, `lg:col-span-*` in `ocx-page-header`) and would
+ *   otherwise be invisible to static class detection.
+ */
+@layer theme, base, optimus, components, utilities;
+
+@import "tailwindcss/theme";
+@import "@openng/optimus-ui-tailwindcss";
+@import "tailwindcss/utilities";
+
+@source "./src";
+@source "./.storybook";
+
+@source inline("sm:flex-row md:flex-row lg:flex-row xl:flex-row");
+@source inline("lg:col-span-1 lg:col-span-2 lg:col-span-3 lg:col-span-4 lg:col-span-6 lg:col-span-12");

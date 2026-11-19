@@ -1,0 +1,125 @@
+= Shell responsibilities & routing boundary
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+What does the Shell do for every App, which of those duties must keep working for Apps to run, and where does the Shell's routing responsibility stop?
+
+== Why it exists
+
+Apps run in a page they do not own. They assume the Shell has already set up configuration, the Workspace, the Current App, permissions and the top-level route. Breaking the Topic contract of any of these duties breaks every App at once, so this Unit lists them in one place.
+
+== How it works
+
+The Shell registers its duties as Angular app initializers in link:{shell}/src/app/app.module.ts[`app.module.ts`]. Each duty publishes on a Topic (see link:context-readiness.adoc[Context overview & readiness]):
+
+[cols="2,2,3", options="header"]
+|===
+|Duty |Published on / acts on |What Apps rely on
+
+|Runtime configuration (`configurationServiceInitializer`)
+|`configuration` Topic
+|Reading deployment settings; see link:runtime-configuration.adoc[Runtime configuration].
+
+|Authentication state
+|`isAuthenticated` Topic
+|Gate for everything below; the Workspace and user profile initializers wait for it.
+
+|Workspace config (`workspaceConfigInitializer`)
+|`current-workspace` Topic
+|Workspace model and routes; see link:workspace-config-loading.adoc[Workspace config load & distribution].
+
+|Parameters (`parametersService.initialize()`)
+|`parameters` Topic
+|Parameter values per App; see link:parameters.adoc[Parameters].
+
+|Current App (route activation in `RoutesService`)
+|`current-mfe` Topic
+|The `MfeInfo` of the App that owns the URL; see link:current-app-and-api-base-url.adoc[Current App & API base URL resolution].
+
+|Permissions (`RoutesService.updatePermissions`)
+|`permissions` Topic
+|Permissions of the Current App, refreshed on every App change.
+
+|User profile (`userProfileInitializer`), theme, remote components and slots
+|their own Topics / services
+|Profile and `i18n` data, theme properties, and Remote Component and slot registrations.
+
+|Location (`urlChangeListenerInitializer`, patched `history.pushState` / `replaceState`)
+|`current-location` Topic
+|The browser URL as the single source of truth for every router.
+|===
+
+=== Routing boundary
+
+Only the Shell router owns the top-level path. `RoutesService.init` sorts the Workspace routes by URL length (longest first) and resets the router configuration to:
+
+. the Shell's own routes (`app.routes.ts`);
+. one lazy route per Workspace route;
+. a catch-all `not-found` route.
+
+It adds a fallback route when no Workspace route matches the Workspace base path.
+
+*The Shell does:*
+
+* match the URL to one Workspace route and load that App's remote module (Angular) or web component;
+* publish the Current App (`current-mfe`) and its permissions on activation;
+* apply the Current App's styles and show the global loading indicator while loading;
+* show an error page when a remote cannot be loaded, and the `not-found` page when no route matches;
+* publish every URL change (including `pushState`/`replaceState` calls) on `current-location`, and keep its own router in sync with URL changes made by Apps.
+
+*The Shell does not:*
+
+* route inside an App: below its mount path, the App's own router decides;
+* call Apps' guards or resolve their sub-routes;
+* decide what the App shows: Apps follow the URL via the `current-location` Topic (see link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation] for the full flow).
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libs only carry the contract: the Topics and models linked above. They never produce Shell context.
+
+=== Shell side
+
+The Shell is the sole producer. Initializers are in link:{shell}/src/app/app.module.ts[`app.module.ts`]; route handling is in link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`].
+
+== Angular / React
+
+Both frameworks consume the same Topics; only the wrapper differs (services in Angular, hooks and providers in React).
+
+== Edge cases & pitfalls
+
+* *Do not rename or re-version Topics.* An App that reads another Topic name or version never receives the data (for example `currentPortal` for the Workspace).
+* *Keep the publish order.* The Workspace must be published before `parameters` and the Current App; Apps resolve `productName`/`appId` from `current-mfe`.
+* *Internal Shell routes skip Workspace loading.* Paths under `/onecx-shell/` (such as `about-shell`) return early from `workspaceConfigInitializer`, so no Workspace context exists there.
+* *Do not block or drop `current-location` updates.* The `pushState` / `replaceState` patch keeps Apps' routers in sync; changing it affects routing in every App.
+* *Initialization failure.* If the Workspace config cannot be loaded after retries, the Shell routes to the initialization error page and publishes no Workspace context.
+
+== Debugging
+
+* Look for the Shell log lines `🧭 Adding Workspace routes` (route table) and `➡ Load remote module` (activation).
+* If an App sees no context, check the readiness steps in link:context-readiness.adoc[Context overview & readiness].
+
+== Known issues
+
+None found in the code reviewed for this Unit.
+
+== Related Units
+
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: the Workspace and parameter distribution step.
+* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution]: what `current-mfe` carries.
+* link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation]: the full routing flow (Navigation Area).
+* link:../bootstrap/startup-timeline.adoc[Startup timeline]: when these initializers run relative to bootstrap.
+
+== Sources
+
+Code::
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (`workspaceConfigInitializer`, `configurationServiceInitializer`, `userProfileInitializer`, `urlChangeListenerInitializer`) (Shell)
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`] (Shell)
+* link:{shell}/src/app/app.routes.ts[`app.routes.ts`] (`internalShellRoute`, `appRoutes`) (Shell)
