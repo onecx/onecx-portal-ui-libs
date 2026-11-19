@@ -41,11 +41,13 @@ const itemCardStateShape = z.object({
   focusRing: borderWithShadow.optional(),
 })
 
-export const dataListGridItemCardShape = z.object({
-  defaultState: itemCardStateShape.optional(),
-  hover: itemCardStateShape.partial().optional(),
-  focus: itemCardStateShape.partial().optional(),
-})
+export const dataListGridItemCardShape = z
+  .object({
+    defaultState: itemCardStateShape.optional(),
+    hover: itemCardStateShape.partial().optional(),
+    focus: itemCardStateShape.partial().optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'dataListGridItemCardShape', axis: 'state', child: true })
 
 export const dataListGridItemCardDefaults = {
   defaultState: {

@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { border } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { accordionContentDefaults, accordionContentShape } from './content'
 import { accordionHeaderDefaults, accordionHeaderShape } from './header'
 
@@ -9,15 +10,21 @@ const accordionPanelStateShape = z.object({
   content: accordionContentShape.prefault({}),
 })
 
-export const accordionPanelShape = z.object({
-  defaultVariant: z
-    .object({
-      defaultState: accordionPanelStateShape.prefault({}),
-      active: accordionPanelStateShape.prefault({}),
-      disabled: accordionPanelStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+const accordionPanelStateSlot = z
+  .object({
+    defaultState: accordionPanelStateShape.prefault({}),
+    active: accordionPanelStateShape.prefault({}),
+    disabled: accordionPanelStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'accordion.panel.defaultVariant', axis: 'state' })
+
+// The panel is a child component: it re-roots the fallback (child) and its single `defaultVariant`
+// key is the default variant member (variant), so its states can fall back within the panel scope.
+export const accordionPanelShape = z
+  .object({
+    defaultVariant: accordionPanelStateSlot.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'accordion.panel', axis: 'variant', child: true })
 
 export const accordionPanelDefaults = {
   defaultVariant: {

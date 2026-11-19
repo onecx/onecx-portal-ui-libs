@@ -8,18 +8,22 @@ const toggleSwitchStateShape = z.object({
   slider: toggleSwitchSliderShape.prefault({}),
 })
 
-const toggleSwitchVariantShape = z.object({
-  defaultState: toggleSwitchStateShape.prefault({}),
-  hover: toggleSwitchStateShape.prefault({}),
-  disabled: toggleSwitchStateShape.prefault({}),
-  invalid: toggleSwitchStateShape.prefault({}),
-})
+// The keys are the switch's named states; the per-state content (slider) stays unmarked so its
+// tokens fall back within the enclosing variant's state scope.
+const toggleSwitchVariantShape = z
+  .object({
+    defaultState: toggleSwitchStateShape.prefault({}),
+    hover: toggleSwitchStateShape.prefault({}),
+    disabled: toggleSwitchStateShape.prefault({}),
+    invalid: toggleSwitchStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'toggleSwitchVariantShape', axis: 'state' })
 
 const toggleSwitchSettingsShape = z
   .object({
     autoload: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'toggleSwitchSettingsShape' })
+  .register(themeSchemaRegistry, { id: 'toggleSwitchSettingsShape', axis: 'setting' })
 
 export const toggleSwitchShape = z.object({
   settings: toggleSwitchSettingsShape.prefault({}),
@@ -81,7 +85,10 @@ export const toggleswitchDefaults = {
   checked: checkedDefaults,
 }
 
+// The root's keys are the switch's variants (`defaultVariant`, `checked`); `settings` opts out.
+// The marker sits on the final export because `applyDefaultsRecursive` rebuilds the root object
+// fresh, so a marker registered on `toggleSwitchShape` would be discarded.
 export const toggleswitch = applyDefaultsRecursive(toggleSwitchShape, toggleswitchDefaults).register(
   themeSchemaRegistry,
-  { id: 'toggleswitch' }
+  { id: 'toggleswitch', axis: 'variant' }
 )

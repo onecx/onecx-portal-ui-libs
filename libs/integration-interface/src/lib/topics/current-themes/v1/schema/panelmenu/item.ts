@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * PanelMenu item (a recursive menu row inside the panel's expanded content).
@@ -21,21 +22,31 @@ const panelMenuItemStateShape = z.object({
   submenuIcon: panelMenuItemIconShape.prefault({}),
 })
 
-const panelMenuItemSubmenuShape = z.object({
-  indent: withRef(z.string()).optional(),
-})
+// `submenu` is a static token group (the child-menu `indent`) that sits next to `defaultVariant`
+// at the item root; it does not vary by state, so it opts out of the item's axis (axis: 'none').
+const panelMenuItemSubmenuShape = z
+  .object({
+    indent: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'panelmenu.item.submenu', axis: 'none' })
 
-export const panelMenuItemShape = z.object({
-  defaultVariant: z
-    .object({
-      defaultState: panelMenuItemStateShape.prefault({}),
-      hover: panelMenuItemStateShape.prefault({}),
-      selected: panelMenuItemStateShape.prefault({}),
-      disabled: panelMenuItemStateShape.prefault({}),
-    })
-    .prefault({}),
-  submenu: panelMenuItemSubmenuShape.prefault({}),
-})
+// The item is a child component (re-roots the fallback) whose single `defaultVariant` key is the
+// default variant member. Its `defaultVariant` slot holds the states (axis: 'state'); the
+// per-state content shape stays unmarked so its tokens fall back within the item's state scope.
+export const panelMenuItemShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: panelMenuItemStateShape.prefault({}),
+        hover: panelMenuItemStateShape.prefault({}),
+        selected: panelMenuItemStateShape.prefault({}),
+        disabled: panelMenuItemStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'panelmenu.item.defaultVariant', axis: 'state' })
+      .prefault({}),
+    submenu: panelMenuItemSubmenuShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'panelmenu.item', axis: 'variant', child: true })
 
 /**
  * Default tokens for the panelmenu item row.

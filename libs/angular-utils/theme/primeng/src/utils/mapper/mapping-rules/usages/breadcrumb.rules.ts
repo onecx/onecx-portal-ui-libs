@@ -20,56 +20,56 @@ export const breadcrumbRules: MappingRule[] = [
     to: 'components.breadcrumb.root.transitionDuration',
   },
   {
-    from: 'usages.breadcrumb.item.color',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.color',
     to: 'components.breadcrumb.colorScheme.{mode}.item.color',
     transform: toColorString,
   },
   {
-    from: 'usages.breadcrumb.item.hover.color',
+    from: 'usages.breadcrumb.item.defaultVariant.hover.defaultSeverity.color',
     to: 'components.breadcrumb.colorScheme.{mode}.item.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.breadcrumb.item.border.radius',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.border.radius',
     to: 'components.breadcrumb.item.borderRadius',
   },
   {
-    from: 'usages.breadcrumb.item.gap',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.gap',
     to: 'components.breadcrumb.item.gap',
   },
   {
-    from: 'usages.breadcrumb.item.icon.color',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.icon.color',
     to: 'components.breadcrumb.colorScheme.{mode}.item.icon.color',
     transform: toColorString,
   },
   {
-    from: 'usages.breadcrumb.item.hover.icon.color',
+    from: 'usages.breadcrumb.item.defaultVariant.hover.defaultSeverity.icon.color',
     to: 'components.breadcrumb.colorScheme.{mode}.item.icon.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.breadcrumb.item.icon.size',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.icon.size',
     to: 'components.breadcrumb.item.icon',
   },
   {
-    from: 'usages.breadcrumb.item.focusRing.width',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.focusRing.width',
     to: 'components.breadcrumb.item.focusRing.width',
   },
   {
-    from: 'usages.breadcrumb.item.focusRing.style',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.focusRing.style',
     to: 'components.breadcrumb.item.focusRing.style',
   },
   {
-    from: 'usages.breadcrumb.item.focusRing.color',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.focusRing.color',
     to: 'components.breadcrumb.item.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.breadcrumb.item.focusRing.offset',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.focusRing.offset',
     to: 'components.breadcrumb.item.focusRing.offset',
   },
   {
-    from: 'usages.breadcrumb.item.focusRing.shadow',
+    from: 'usages.breadcrumb.item.defaultVariant.defaultState.defaultSeverity.focusRing.shadow',
     to: 'components.breadcrumb.item.focusRing.shadow',
   },
   {

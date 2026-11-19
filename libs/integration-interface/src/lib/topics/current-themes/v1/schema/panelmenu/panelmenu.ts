@@ -28,8 +28,10 @@ const panelMenuShape = z.object({
 
   defaultVariant: panelMenuVariantContentShape.prefault({}),
 
-  gap: withRef(z.string()).optional(),
-  transitionDuration: withRef(z.number()).optional(),
+  gap: withRef(z.string().register(themeSchemaRegistry, { id: 'panelmenuGap', axis: 'none' })).optional(),
+  transitionDuration: withRef(
+    z.number().register(themeSchemaRegistry, { id: 'panelmenuTransitionDuration', axis: 'none' })
+  ).optional(),
 })
 
 /**
@@ -85,8 +87,11 @@ export const panelMenuDefaults = {
  * Only keys present in `panelMenuDefaults` get `.default()`.
  * All other keys stay optional (filled by fallback mechanism).
  */
+// Only `defaultVariant` is a variant key; `settings` (axis: 'setting') and the static root
+// tokens `gap`/`transitionDuration` (axis: 'none') opt out of the root's variant axis.
 export const panelmenu = applyDefaultsRecursive(panelMenuShape, panelMenuDefaults).register(themeSchemaRegistry, {
   id: 'panelmenu',
+  axis: 'variant',
 })
 
 // Backward-compatible facade for consumers that import `PanelMenuSchema.schema`

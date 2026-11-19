@@ -8,7 +8,7 @@ const buttonShape = z.object({
   hover: z.object({ background: z.union([bg, withRef(z.string())]).optional(), color: color.optional() }).optional(),
   active: z.object({ background: z.union([bg, withRef(z.string())]).optional(), color: color.optional() }).optional(),
   disabled: z.object({ background: z.union([bg, withRef(z.string())]).optional(), color: color.optional() }).optional(),
-})
+}).register(themeSchemaRegistry, { id: 'customGroupColumnSelectorButtonShape', axis: 'state', child: true })
 
 export const customGroupColumnSelectorShape = z.object({
   button: buttonShape.optional(),

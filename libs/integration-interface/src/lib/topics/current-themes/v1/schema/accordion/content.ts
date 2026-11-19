@@ -1,6 +1,8 @@
 import * as z from 'zod'
 import { bg, border, color, withRef } from '../primitives'
 
+// Static token group carried inside each panel state (unmarked, so its tokens fall back within
+// the panel's state scope, like the input's per-state static tokens).
 export const accordionContentShape = z.object({
   color: color.optional(),
   background: bg.pick({ color: true }).optional(),

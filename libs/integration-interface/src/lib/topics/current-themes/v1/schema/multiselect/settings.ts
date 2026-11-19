@@ -22,4 +22,4 @@ export const multiselectSettingsShape = z
     display: withRef(z.enum(['chip', 'comma'])).optional(),
     maxSelectedLabels: withRef(z.number()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'multiselectSettingsShape' })
+  .register(themeSchemaRegistry, { id: 'multiselectSettingsShape', axis: 'setting' })

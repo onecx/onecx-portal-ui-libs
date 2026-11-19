@@ -33,7 +33,9 @@ export const carouselShape = z.object({
 
   defaultVariant: carouselVariantContentShape.prefault({}),
 
-  transitionDuration: withRef(z.number()).optional(),
+  transitionDuration: withRef(
+    z.number().register(themeSchemaRegistry, { id: 'carouselTransitionDuration', axis: 'none' })
+  ).optional(),
 })
 
 /**
@@ -91,9 +93,15 @@ export const carouselDefaults = {
  * Carousel schema: shape with defaults applied.
  * Only keys present in `carouselDefaults` get `.default()`.
  * All other keys stay optional (filled by the fallback mechanism).
+ *
+ * Root marker goes on the final applied export (`applyDefaultsRecursive` rebuilds the root object
+ * fresh, so a marker on `carouselShape` would be discarded). `defaultVariant` is the single variant
+ * member; `settings` (axis: 'setting') and `transitionDuration` (axis: 'none') opt out. The
+ * navigationButton and indicator sub-shapes re-root as child components (see their shapes).
  */
 export const carousel = applyDefaultsRecursive(carouselShape, carouselDefaults).register(themeSchemaRegistry, {
   id: 'carousel',
+  axis: 'variant',
 })
 
 // Backward-compatible facade for consumers that import `CarouselSchema.schema`

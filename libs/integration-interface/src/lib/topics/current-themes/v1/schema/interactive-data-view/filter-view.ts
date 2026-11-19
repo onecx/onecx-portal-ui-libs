@@ -4,11 +4,14 @@ import { themeSchemaRegistry } from '../registry'
 import { applyDefaultsRecursive } from '../defaults-helper'
 import { interactiveDataViewContainerDefaults, interactiveDataViewContainerShape } from './container'
 
-const filterViewSettingsShape = z.object({
-  filterViewEnabled: withRef(z.boolean()).optional(),
-  filterViewDisplayMode: withRef(z.enum(['chips', 'button'])).optional(),
-  maxDisplayedChips: withRef(z.number()).optional(),
-})
+// Behavioral options with no visual tokens; `axis: 'setting'` opts the block out of any enclosing axis.
+const filterViewSettingsShape = z
+  .object({
+    filterViewEnabled: withRef(z.boolean()).optional(),
+    filterViewDisplayMode: withRef(z.enum(['chips', 'button'])).optional(),
+    maxDisplayedChips: withRef(z.number()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'filterViewSettingsShape', axis: 'setting' })
 
 export const filterViewShape = interactiveDataViewContainerShape.extend({
   settings: filterViewSettingsShape.optional(),

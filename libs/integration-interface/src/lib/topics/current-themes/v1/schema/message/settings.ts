@@ -5,8 +5,8 @@ import { themeSchemaRegistry } from '../registry'
 /**
  * Message component settings shape. No `.default()` on any field — left to the underlying
  * component's own defaults, matching the `add-theme-usage` skill's settings convention.
- * Registered as a structural pass-through (no `axis`) so build-time axis introspection treats
- * its keys as non-axis members, like the other component settings shapes.
+ * Registered `axis: 'setting'` so build-time axis introspection skips it entirely (never an axis
+ * member of the root's variant axis, and never a scope), like the other component settings shapes.
  */
 export const messageSettingsShape = z
   .object({
@@ -15,4 +15,4 @@ export const messageSettingsShape = z
     size: withRef(z.enum(['small', 'large'])).optional(),
     variant: withRef(z.enum(['text', 'outlined', 'simple'])).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'messageSettings' })
+  .register(themeSchemaRegistry, { id: 'messageSettings', axis: 'setting' })

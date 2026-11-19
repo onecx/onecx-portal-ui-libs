@@ -3,6 +3,7 @@
  */
 import * as z from 'zod'
 import { bg, border, color, focusRingShape, font, icon, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { tabsActiveBarDefaults, tabsActiveBarShape } from './activeBar'
 
 const tabBorderCommonTokens = {
@@ -26,13 +27,19 @@ const tabStateShape = z.object({
     font: font.pick({ weight: true }).optional(),
 })
 
-export const tabsTabShape = z.object({
-    defaultState: tabStateShape.prefault({}),
-    hover: tabStateShape.prefault({}),
-    focus: tabStateShape.prefault({}),
-    active: tabStateShape.prefault({}),
-    disabled: tabStateShape.prefault({}),
-})
+// The tab is a child component whose own keys are the interaction states (defaultState, hover,
+// focus, active, disabled). `child: true` re-roots the fallback so the states fall back within the
+// tab's own scope; `axis: 'state'` classifies its keys as state members. The per-state content
+// (background, color, activeBar, ...) is left unmarked so its tokens carry the state fallback.
+export const tabsTabShape = z
+    .object({
+        defaultState: tabStateShape.prefault({}),
+        hover: tabStateShape.prefault({}),
+        focus: tabStateShape.prefault({}),
+        active: tabStateShape.prefault({}),
+        disabled: tabStateShape.prefault({}),
+    })
+    .register(themeSchemaRegistry, { id: 'tabs.tab', axis: 'state', child: true })
 
 export const tabsTabDefaults = {
     defaultState: {

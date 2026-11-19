@@ -11,7 +11,8 @@ export const dialogSettingsShape = z
     resizable: withRef(z.boolean()).optional(),
     dismissableMask: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'dialogSettings' })
+  // Behavioral options with no visual tokens; `axis: 'setting'` opts the block out of any enclosing axis.
+  .register(themeSchemaRegistry, { id: 'dialogSettings', axis: 'setting' })
 
 export const dialogSettingsDefaults = {
   closable: true,
@@ -69,12 +70,17 @@ const dialogButtonStateShape = z
   })
   .register(themeSchemaRegistry, { id: 'dialogButtonStateShape' })
 
+// The dialog's buttons (closeButton / primaryActionButton / secondaryActionButton) are the usage's
+// only axis: a state slot (`defaultState`/`hover`). It is a nested component (re-roots the fallback,
+// `child: true`) and its keys are the states themselves (no `defaultVariant` wrapper), so it is
+// marked `axis: 'state'` — otherwise only `defaultState` would be recognised and `hover` would
+// carry no fallback. The per-state content (`dialogButtonStateShape`) stays unmarked.
 export const dialogButtonShape = z
   .object({
     defaultState: dialogButtonStateShape.prefault({}),
     hover: dialogButtonStateShape.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'dialogButtonShape' })
+  .register(themeSchemaRegistry, { id: 'dialogButtonShape', axis: 'state', child: true })
 
 const dialogCloseButtonDefaults = {
   defaultState: {

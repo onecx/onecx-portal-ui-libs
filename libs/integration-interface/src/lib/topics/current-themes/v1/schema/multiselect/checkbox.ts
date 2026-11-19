@@ -28,7 +28,7 @@ export const multiselectCheckboxShape = z
     focus: multiselectCheckboxStateShape.prefault({}),
     selected: multiselectCheckboxSelectedShape.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'multiselectCheckboxShape', axis: 'state' })
+  .register(themeSchemaRegistry, { id: 'multiselectCheckboxShape', axis: 'state', child: true })
 
 const commonBorder = {
   width: '{{primitives.border.width.none}}',
