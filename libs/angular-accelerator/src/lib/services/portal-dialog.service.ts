@@ -537,7 +537,7 @@ export class PortalDialogService implements OnDestroy {
     )
   }
 
-   private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
     const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
     if (hasOnCloseFocus) return
 
