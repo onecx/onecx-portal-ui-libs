@@ -422,44 +422,73 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   describe('[a11y] - filter', () => {
-      it('announces NO_FILTERS when filters are empty', async () => {
-        const translateService = TestBed.inject(TranslateService)
-        const liveAnnouncer = TestBed.inject(LiveAnnouncer)
-  
-        jest.spyOn(translateService, 'get').mockReturnValue(of('no-results'))
-        const announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
-  
-        component.filters = []
-        fixture.detectChanges()
-  
-        await Promise.resolve()
-  
-        expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.NO_FILTERS')
-        expect(announceSpy).toHaveBeenCalledWith('no-results')
+    it('does not announce filter changes inside a data view, where the data component announces the result count', async () => {
+      const announceSpy = jest.spyOn(TestBed.inject(LiveAnnouncer), 'announce').mockResolvedValue()
 
-        component.filters = undefined as any
-        fixture.detectChanges()
-  
-        await Promise.resolve()
-  
-        expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.NO_FILTERS')
-        expect(announceSpy).toHaveBeenCalledWith('no-results')
-      })
-  
-      it('announces SELECTED_FILTERS_COUNT when filters are active', async () => {
-        const translateService = TestBed.inject(TranslateService)
-        const liveAnnouncer = TestBed.inject(LiveAnnouncer)
-  
-        jest.spyOn(translateService, 'get').mockReturnValue(of('some-results'))
-        const announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()        
-  
-        component.filters = [{ columnId: 'c1', filterType: 'equals', value: 'v1' } as Filter]
-        fixture.detectChanges()
-  
-        await Promise.resolve()
-  
-        expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: 1 })
-        expect(announceSpy).toHaveBeenCalledWith('some-results')
-      })
+      component.filters = []
+      fixture.detectChanges()
+      component.filters = [{ columnId: 'c1', filterType: FilterType.EQUALS, value: 'v1' } as Filter]
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(announceSpy).not.toHaveBeenCalled()
     })
+  })
+})
+
+describe('FilterViewComponent (standalone announcements)', () => {
+  let fixture: ComponentFixture<FilterViewComponent>
+  let component: FilterViewComponent
+  let translateService: TranslateService
+  let announceSpy: jest.SpyInstance
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [FilterViewComponent],
+      imports: [CommonModule, FormsModule, TranslateModule.forRoot(), ButtonModule, PopoverModule, TooltipModule],
+      providers: [
+        provideTranslateTestingService({}),
+        { provide: PortalDialogService, useValue: { openDialog: jest.fn().mockReturnValue(of(null)) } },
+      ],
+    }).compileComponents()
+
+    translateService = TestBed.inject(TranslateService)
+    announceSpy = jest.spyOn(TestBed.inject(LiveAnnouncer), 'announce').mockResolvedValue()
+    fixture = TestBed.createComponent(FilterViewComponent)
+    component = fixture.componentInstance
+    component.filters = [{ columnId: 'c1', filterType: FilterType.EQUALS, value: 'v1' } as Filter]
+    fixture.detectChanges()
+    await fixture.whenStable()
+  })
+
+  it('does not announce the initial filters at page load', () => {
+    expect(announceSpy).not.toHaveBeenCalled()
+  })
+
+  it('announces NO_FILTERS once when the filters are cleared', async () => {
+    jest.spyOn(translateService, 'get').mockReturnValue(of('no-filters'))
+
+    component.filters = []
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.NO_FILTERS')
+    expect(announceSpy).toHaveBeenCalledTimes(1)
+    expect(announceSpy).toHaveBeenCalledWith('no-filters')
+  })
+
+  it('announces SELECTED_FILTERS_COUNT once when a filter is added', async () => {
+    jest.spyOn(translateService, 'get').mockReturnValue(of('two-filters'))
+
+    component.filters = [
+      { columnId: 'c1', filterType: FilterType.EQUALS, value: 'v1' } as Filter,
+      { columnId: 'c2', filterType: FilterType.EQUALS, value: 'v2' } as Filter,
+    ]
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: 2 })
+    expect(announceSpy).toHaveBeenCalledTimes(1)
+    expect(announceSpy).toHaveBeenCalledWith('two-filters')
+  })
 })

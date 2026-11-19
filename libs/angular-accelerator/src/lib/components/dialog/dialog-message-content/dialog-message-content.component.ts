@@ -4,6 +4,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
   standalone: false,
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: `./dialog-message-content.component.html`,
+  styleUrls: ['./dialog-message-content.component.scss'],
 })
 export class DialogMessageContentComponent {
   @Input() message = 'message'
