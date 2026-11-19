@@ -1134,6 +1134,25 @@ describe('PortalDialogService', () => {
     })
     describe('opening and closing', () => {
       const flush = () => new Promise((resolve) => setTimeout(resolve, 20))
+      const waitForFocus = (selector: string, timeoutMs: number) =>
+        new Promise<boolean>((resolve) => {
+          const startedAt = performance.now()
+          const onFocus = (event: FocusEvent) => {
+            if (event.target instanceof HTMLElement && event.target.matches(selector)) {
+              cleanup(performance.now() - startedAt <= timeoutMs)
+            }
+          }
+          const timeout = setTimeout(() => cleanup(false), timeoutMs)
+          const cleanup = (focusedWithinTimeout: boolean) => {
+            clearTimeout(timeout)
+            document.removeEventListener('focus', onFocus, true)
+            resolve(focusedWithinTimeout)
+          }
+          document.addEventListener('focus', onFocus, true)
+          if (document.activeElement instanceof HTMLElement && document.activeElement.matches(selector)) {
+            cleanup(performance.now() - startedAt <= timeoutMs)
+          }
+        })
       let opener: HTMLButtonElement
 
       beforeEach(() => {
@@ -1141,8 +1160,6 @@ describe('PortalDialogService', () => {
         document.body.appendChild(fixture.debugElement.nativeElement)
         opener.focus()
       })
-
-      const openRef = () => [...pDialogService.dialogComponentRefMap.keys()].pop()
 
       it('should hand initial focus to a footer button for message-only dialogs', async () => {
         jest.spyOn(pDialogService, 'open')
@@ -1162,6 +1179,14 @@ describe('PortalDialogService', () => {
           DialogContentComponent,
           expect.objectContaining({ focusOnShow: true })
         )
+      })
+
+      it('should focus the first form field within 300 ms', async () => {
+        const firstFieldFocused = waitForFocus('#name', 300)
+        fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2')
+
+        expect(await firstFieldFocused).toBe(true)
+        expect(document.activeElement).toBe(document.querySelector('#name'))
       })
 
       it('should respect an explicit focusOnShow false (spread order)', async () => {
@@ -1212,6 +1237,24 @@ describe('PortalDialogService', () => {
         expect(document.activeElement?.textContent).toContain('button1')
       })
 
+      it('should focus an explicitly requested secondary button', async () => {
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2', { autoFocusButton: 'secondary' })
+        await rootLoader.getHarness(DialogFooterHarness)
+        await flush()
+        expect(document.activeElement?.id).toBe('buttonDialogSecondaryButton')
+      })
+
+      it('should focus the explicitly requested custom button', async () => {
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2', {
+          customButtons: [{ id: 'customButton', alignment: 'right', key: 'customButton' }],
+          autoFocusButton: 'custom',
+          autoFocusButtonCustomId: 'customButton',
+        })
+        await rootLoader.getHarness(DialogFooterHarness)
+        await flush()
+        expect(document.activeElement?.id).toBe('customButton')
+      })
+
       it('should return focus to the opener when closed with the primary button', async () => {
         fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
         await closeBasicDialog('primary')
@@ -1224,12 +1267,12 @@ describe('PortalDialogService', () => {
         expect(document.activeElement).toBe(opener)
       })
 
-      it('should return focus to the opener when closed with Escape (close path)', async () => {
+      it('should return focus to the opener when closed with the Escape key', async () => {
         fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
         await rootLoader.getHarness(DialogFooterHarness)
         await flush()
         expect(document.activeElement).not.toBe(opener)
-        openRef()?.close()
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
         await flush()
         expect(document.activeElement).toBe(opener)
       })
