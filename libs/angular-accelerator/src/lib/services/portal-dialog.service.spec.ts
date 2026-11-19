@@ -289,6 +289,10 @@ describe('PortalDialogService', () => {
     pDialogService = TestBed.inject(DialogService)
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(fixture)
     jest.clearAllMocks()
+    // The afterEach wipes the document, which recreates document.body. The removeChild spy was bound
+    // once above, so rebind it to the current body (the one the dialog is appended to) and drop any
+    // call history left by a previous test.
+    Object.defineProperty(document.body, 'removeChild', { value: removeChildSpy })
   })
 
   // Clean up the DOM after each test

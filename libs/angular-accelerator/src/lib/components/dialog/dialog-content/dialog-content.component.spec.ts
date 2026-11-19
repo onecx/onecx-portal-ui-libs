@@ -2,7 +2,7 @@ import { Component, EventEmitter } from '@angular/core'
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { Observable } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 import { DialogContentHarness, provideTranslateTestingService } from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import {
@@ -119,7 +119,9 @@ describe('DialogContentComponent', () => {
       providers: [DynamicDialogConfig, DynamicDialogRef, provideTranslateTestingService({})],
     }).compileComponents()
 
-    jest.resetAllMocks()
+    // Clear call history only: resetAllMocks() would also drop the implementation of the
+    // global ResizeObserver mock (installed in test-setup.ts), which ngAfterViewInit relies on.
+    jest.clearAllMocks()
   })
 
   it('should ue ng-content', async () => {
