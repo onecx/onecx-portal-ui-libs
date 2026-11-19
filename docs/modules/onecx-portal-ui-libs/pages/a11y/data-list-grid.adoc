@@ -7,3 +7,35 @@ This component displays data as a list or grid and allows you to switch between 
 * `listitem` role on each item element
 
 To ensure the component is accessible, please add `role="listitem"` to each `item` element rendered in the template. This helps screen readers properly identify and navigate through the list or grid items.
+
+[#data-list-grid-a11y-grid-title]
+=== Grid item title
+
+The title of a grid card is rendered as a native `<button type="button" name="data-grid-item-title-button">` only when all of the following are true:
+
+* the `viewItem` output is observed (a handler is bound),
+* the user has the `viewPermission`,
+* the resolved title (`titleLineId`) is not empty.
+
+Otherwise the title is rendered as plain text in a `<span>`, so no focusable element without an accessible name or action is exposed. The button is reachable with kbd:[Tab] and activated with kbd:[Enter] or kbd:[Space].
+
+NOTE: Earlier versions rendered the title as `<a>` inside `.item-name`. Tests or page objects that used the selector `.item-name a` must switch to `button[name=data-grid-item-title-button]`.
+
+[#data-list-grid-a11y-list-values]
+=== List item values
+
+In the list layout the column values of an item are rendered as a description list: one `<dl>` per item, with a `<div>` per column that contains a `<dt>` (translated column name) and a `<dd>` (value). Screen readers announce each value together with its column name. The deferred-loading placeholder is hidden from assistive technology (`aria-hidden="true"`) so it does not break the `list`/`listitem` structure.
+
+[#data-table-a11y-overview]
+== Data Table Accessibility
+
+The `<table>` rendered by `ocx-data-table` always has an accessible name. By default it uses the translated key `OCX_DATA_TABLE.TABLE_ARIA_LABEL` ("Data table"). Set the `tableAriaLabel` input to give the table a more specific name, for example:
+
+[source,html]
+----
+<ocx-interactive-data-view [tableAriaLabel]="'Orders overview'" ...></ocx-interactive-data-view>
+----
+
+The input exists on `ocx-data-table` and is forwarded by `ocx-data-view` and `ocx-interactive-data-view`.
+
+The row expansion toggle sets `aria-expanded` and only references the expanded row with `aria-controls` while that row is rendered, so the reference always points to an existing element.
