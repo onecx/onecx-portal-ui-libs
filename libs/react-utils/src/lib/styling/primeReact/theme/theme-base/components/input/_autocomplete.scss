@@ -1,18 +1,20 @@
+@use "sass:list";
+
 @use "sass:math";
 
 .p-autocomplete {
   .p-autocomplete-loader {
-    right: nth($inputPadding, 2);
+    right: list.nth($inputPadding, 2);
   }
 
   &.p-autocomplete-dd {
     .p-autocomplete-loader {
-      right: nth($inputPadding, 2) + $buttonIconOnlyWidth;
+      right: list.nth($inputPadding, 2) + $buttonIconOnlyWidth;
     }
   }
 
   .p-autocomplete-multiple-container {
-    padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
+    padding: math.div(list.nth($inputPadding, 1), 2) list.nth($inputPadding, 2);
     gap: $inlineSpacing;
 
     &:not(.p-disabled):hover {
@@ -24,7 +26,7 @@
     }
 
     .p-autocomplete-input-token {
-      padding: math.div(nth($inputPadding, 1), 2) 0;
+      padding: math.div(list.nth($inputPadding, 1), 2) 0;
 
       input {
         font-family: var(--font-family);
@@ -37,7 +39,7 @@
     }
 
     .p-autocomplete-token {
-      padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
+      padding: math.div(list.nth($inputPadding, 1), 2) list.nth($inputPadding, 2);
       margin-right: $inlineSpacing;
       background: $highlightBg;
       color: $highlightTextColor;
