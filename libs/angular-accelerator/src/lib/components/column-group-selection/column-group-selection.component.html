@@ -4,6 +4,7 @@
     class="p-inputwrapper-filled"
     [inputId]="'columnGroupSelectionDropdown' + idSuffix"
     [id]="'columnGroupSelectionDropdownElement' + idSuffix"
+    autofocus="false"
     (onChange)="changeGroupSelection($event)"
     [options]="allGroupKeys()"
     [placeholder]="placeholderKey() | translate"

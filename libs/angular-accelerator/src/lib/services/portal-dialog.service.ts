@@ -544,6 +544,7 @@ export class PortalDialogService implements OnDestroy {
           focusOnShow: focusOnShow && !autoFocusButton,
           // The close button always has a (translated) name. A caller-provided closeAriaLabel is used as is.
           closeAriaLabel: dialogOptions.closeAriaLabel || defaultCloseAriaLabel,
+          contentStyle: { display: 'flex', flexDirection: 'column' },
           duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,

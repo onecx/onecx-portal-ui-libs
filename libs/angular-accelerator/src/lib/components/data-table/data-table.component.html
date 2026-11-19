@@ -52,8 +52,8 @@
         [attr.name]="'data-table-action-button'"
       ></button>
       } @for (action of inlineActions(); track action) { @if (!action.actionVisibleField || fieldIsTruthy(rowObject,
-      action.actionVisibleField)) {
-      @if (typeof action.routerLink === 'string' && !(action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField)))) {
+      action.actionVisibleField)) { @if (typeof action.routerLink === 'string' && !(action.disabled ||
+      (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField)))) {
       <a
         [id]="resolveFieldData(rowObject, 'id') + '-' + (action.id ? action.id.concat('ActionButton') : 'inlineActionButton') + idSuffix"
         *ocxIfPermission="action.permission"
@@ -83,8 +83,7 @@
           "
         [attr.name]="'data-table-action-button'"
       ></button>
-      }
-      } } @if (hasVisibleOverflowMenuItems(rowObject) | async) {
+      } } } @if (hasVisibleOverflowMenuItems(rowObject) | async) {
       <p-menu #menu [model]="(overflowMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
       <button
         pButton
@@ -115,7 +114,7 @@
     scope="col"
   >
     <span class="sr-only">{{ 'OCX_DATA_TABLE.EXPAND_COLLAPSE_COLUMN' | translate }}</span>
-</th>
+  </th>
   }
 </ng-template>
 
@@ -137,7 +136,7 @@
 @if (displayedPageSize(); as displayedPageSize) { @if ((columnTemplates$ | async) ?? {}; as columnTemplates) {
 @if ((columnHeaderTemplates$ | async) ?? {}; as columnHeaderTemplates) {
 <p-table
-  [value]="(displayedRows$ | async) ?? []"
+  [value]="groupedRows()"
   [paginator]="paginator()"
   [first]="stateService.activePage() * displayedPageSize"
   (onPage)="onPageChange($event)"
@@ -171,6 +170,7 @@
       <th style="width: 4rem" scope="col">
         @if (allowSelectAll()) {
         <p-tableHeaderCheckbox
+          autofocus="false"
           [ocxTooltip]="'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate"
           [ariaLabel]="'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate"
         ></p-tableHeaderCheckbox>
@@ -181,7 +181,7 @@
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       } @for (column of stateService.columns(); track column) {
         @if (columnHeaderTemplates[column.id]; as columnHeaderTemplate){
-          <th scope="col" [pSortableColumn]="column.sortable ? column.id : undefined">
+          <th scope="col" role="columnheader">
             <ng-container
               [ngTemplateOutlet]="columnHeaderTemplate"
               [ngTemplateOutletContext]="{ column: column, labelTemplate: columnHeaderLabel, sortTemplate: columnHeaderSortButton, filterTemplate: columnHeaderFilter }"
@@ -189,17 +189,26 @@
           </th>
         } @else { 
             @if (column.sortable || column.filterable) {
-              <th scope="col" [pSortableColumn]="column.sortable ? column.nameKey : undefined">
+              <th scope="col" role="columnheader">
                 <div
                   class="table-header-wrapper flex flex-col justify-between items-start"
                   style="height: 100%"
                 >
-                  <span class="flex"  [id]="column.id + '-header-name' + idSuffix">
-                    <ng-container [ngTemplateOutlet]="columnHeaderLabel" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+                  <span class="flex" [id]="column.id + '-header-name' + idSuffix">
+                    <ng-container
+                      [ngTemplateOutlet]="columnHeaderLabel"
+                      [ngTemplateOutletContext]="{ column: column }"
+                    ></ng-container>
                   </span>
                   <span class="flex icon-button-header-wrapper">
-                    <ng-container [ngTemplateOutlet]="columnHeaderSortButton" [ngTemplateOutletContext]="{ column: column }" ></ng-container>
-                    <ng-container [ngTemplateOutlet]="columnHeaderFilter" [ngTemplateOutletContext]="{ column: column }" ></ng-container>
+                    <ng-container
+                      [ngTemplateOutlet]="columnHeaderSortButton"
+                      [ngTemplateOutletContext]="{ column: column }"
+                    ></ng-container>
+                    <ng-container
+                      [ngTemplateOutlet]="columnHeaderFilter"
+                      [ngTemplateOutletContext]="{ column: column }"
+                    ></ng-container>
                   </span>
                 </div>
               </th>
@@ -216,17 +225,39 @@
     </tr>
   </ng-template>
 
+  @if (captionTemplate()) {
   <ng-template pTemplate="caption">
-    @if (captionTemplate()) {
-    <ng-container>
-      <ng-container [ngTemplateOutlet]="captionTemplate()"></ng-container>
-    </ng-container>
-    }
+    <ng-container [ngTemplateOutlet]="captionTemplate()"></ng-container>
   </ng-template>
+  }
 
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
-    <tr>
+    @if (groupingColumn(); as groupColumn) { @if (isRowGroupStart(rowObject)) {
+    <tr class="ocx-data-table-group-row">
+      <th
+        scope="rowgroup"
+        [attr.colspan]="getGroupColspan()"
+        [attr.data-group-key]="getGroupForRow(rowObject)?.key ?? ''"
+      >
+        @if (groupCell(); as customGroupCell) {
+        <ng-container
+          [ngTemplateOutlet]="customGroupCell"
+          [ngTemplateOutletContext]="getGroupContext(rowObject)"
+        ></ng-container>
+        } @else {
+        <ng-container
+          [ngTemplateOutlet]="cell() ?? columnTemplates[groupColumn.id]"
+          [ngTemplateOutletContext]="{
+            rowObject: getGroupForRow(rowObject)?.firstRow ?? rowObject,
+            column: groupColumn
+          }"
+        ></ng-container>
+        }
+      </th>
+    </tr>
+    } }
+    <tr [attr.id]="'ocx-data-row-' + rowObject.id + idSuffix">
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
@@ -239,6 +270,7 @@
         ></p-checkbox>
         } @else {
         <p-tableCheckbox
+          autofocus="false"
           [value]="rowObject"
           [disabled]="isRowSelectionDisabled(rowObject)"
           [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
@@ -343,8 +375,19 @@
   <ng-container> {{ resolveFieldData(rowObject, column.id) | translate }} </ng-container>
 </ng-template>
 
-
-<ng-template #columnHeaderLabel let-column="column">{{ column.nameKey | translate }}</ng-template>
+<ng-template #columnHeaderLabel let-column="column">
+  @if (column.tooltip || column.tooltipKey) {
+  <span
+    [ocxTooltip]="column.tooltip || (column.tooltipKey | translate)"
+    ocxTooltipCursor="default"
+    tooltipPosition="top"
+  >
+    {{ column.nameKey | translate }}
+  </span>
+  } @else {
+    {{ column.nameKey | translate }}
+  }
+</ng-template>
 
 <ng-template #columnHeaderSortButton let-column="column">
   @if (column.sortable) {
@@ -384,7 +427,8 @@
           appendTo="body"
           filterBy="toFilterBy"
           (onFocus)="onFilterChosen(column)"
-          [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+          [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+          tooltipPosition="top"
           [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
           [filterPlaceHolder]="'OCX_DATA_TABLE.COLUMN_FILTER_PLACEHOLDER' | translate"
           [ariaFilterLabel]="
@@ -430,7 +474,8 @@
       placeholder=" "
       appendTo="body"
       (onFocus)="onFilterChosen(column)"
-      [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+      [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+      tooltipPosition="top"
       [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
       [ariaFilterLabel]="
             'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
