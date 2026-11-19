@@ -10,7 +10,8 @@
       "WARNING": "Warning",
       "ERROR": "Error",
       "QUESTION": "Question"
-    }
+    },
+    "CONTENT_REGION": "Dialog content"
   },
   "OCX_CONSENT": {
     "TITLE": "Consent required",
@@ -216,7 +217,6 @@
       "ARIA_LABEL": "Search controls"
     },
     "ANNOUNCEMENTS": {
-      "SEARCHING": "Searching...",
       "NO_RESULTS": "No results found",
       "RESULTS_FOUND": "{{count}} results found" 
     }

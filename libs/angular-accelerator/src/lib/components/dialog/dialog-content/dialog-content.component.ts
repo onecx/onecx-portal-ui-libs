@@ -8,6 +8,7 @@ import {
   OnInit,
   ViewContainerRef,
   inject,
+  signal,
   viewChild,
 } from '@angular/core'
 import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
@@ -42,6 +43,15 @@ export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   dialogHost = viewChild('container', { read: ViewContainerRef })
+  scrollRegion = viewChild.required<ElementRef<HTMLElement>>('scrollRegion')
+  scrollContent = viewChild.required<ElementRef<HTMLElement>>('scrollContent')
+
+  /**
+   * True while the content overflows the scroll region. The region is then made
+   * keyboard focusable and exposed as a named region (WCAG 2.1.1, 1.4.10).
+   */
+  scrollable = signal(false)
+  private resizeObserver?: ResizeObserver
 
   dialogData: ButtonDialogData = this.defaultDialogData
   componentRef!: ComponentRef<any>
@@ -57,6 +67,22 @@ export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(): void {
     this.setDialogAccessibility()
+    // Safe here: scrollable is a signal read by the template, so setting it during the first
+    // change detection pass just schedules a refresh instead of raising ExpressionChanged errors.
+    this.updateScrollable()
+    if (typeof ResizeObserver === 'undefined') {
+      return
+    }
+    // The ResizeObserver callback runs outside NgZone; updating the signal still notifies Angular
+    // to re-render the view, so no NgZone.run() is needed.
+    this.resizeObserver = new ResizeObserver(() => this.updateScrollable())
+    this.resizeObserver.observe(this.scrollRegion().nativeElement)
+    this.resizeObserver.observe(this.scrollContent().nativeElement)
+  }
+
+  updateScrollable(): void {
+    const region = this.scrollRegion().nativeElement
+    this.scrollable.set(region.scrollHeight > region.clientHeight || region.scrollWidth > region.clientWidth)
   }
 
   /**
@@ -86,6 +112,7 @@ export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngOnDestroy(): void {
+    this.resizeObserver?.disconnect()
     this.primaryButtonEnabledSub?.unsubscribe()
     this.secondaryButtonEnabledSub?.unsubscribe()
     this.customButtonEnabledSub?.unsubscribe()

@@ -29,6 +29,7 @@ import { Observable, startWith } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
 import { Filter } from '../../model/filter.model'
 import { limit } from '../../utils/filter.utils'
 import {
@@ -68,7 +69,6 @@ export interface ColumnGroupData {
   standalone: false,
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
-  styleUrls: ['./interactive-data-view.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
@@ -108,6 +108,18 @@ export class InteractiveDataViewComponent implements OnInit {
   supportedViewLayouts = input<ViewLayout[]>(['grid', 'list', 'table'])
   draggableColumnGroupSelectorDialog = input<boolean>(true)
 
+  /**
+   * Controls whether the hosted column selection dialog can be resized by the user.
+   * Independent of {@link draggableColumnGroupSelectorDialog}.
+   */
+  resizableColumnGroupSelectorDialog = input<boolean>(true)
+
+  /**
+   * When enabled, the hosted column selector keeps the active columns in the main column order
+   * after a transfer instead of appending to the target.
+   */
+  restoreColumnGroupSelectorOrder = input<boolean>(false)
+
   @Input()
   set columns(value: DataTableColumn[]) {
     this.stateService.availableColumns.set(value)
@@ -116,6 +128,11 @@ export class InteractiveDataViewComponent implements OnInit {
   emptyResultsMessage = input<string | undefined>(undefined)
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
+  /**
+   * Whether new data is announced to screen readers by the data table or list grid. By default it is
+   * announced unless a search header on the page announces the search results.
+   */
+  announceResults = input<boolean>()
   fallbackImage = input<string>('placeholder.png')
 
   @Input()
@@ -314,6 +331,19 @@ export class InteractiveDataViewComponent implements OnInit {
     const optimusListItemSubtitleLines = this.optimusListItemSubtitleLines()
     const childListItemSubtitleLines = this.childListItemSubtitleLines()
     return optimusListItemSubtitleLines ?? childListItemSubtitleLines ?? undefined
+  })
+
+  rowGrouping = input<DataTableRowGroupingConfig | undefined>(undefined)
+
+  groupCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  childGroupCell = contentChild<TemplateRef<any> | undefined>('groupCell')
+  optimusGroupCell = computed(() => {
+    const templates = this.templates()
+    const groupCellTemplate = templates.find((t) => t.getType() === 'groupCell')
+    return groupCellTemplate?.template ?? undefined
+  })
+  _groupCell = computed(() => {
+    return this.groupCellTemplate() ?? this.optimusGroupCell() ?? this.childGroupCell() ?? undefined
   })
 
   childStringTableCell = contentChild<TemplateRef<any> | undefined>('stringTableCell')

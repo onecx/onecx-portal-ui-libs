@@ -1,10 +1,12 @@
 import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   Output,
   Signal,
   TemplateRef,
+  computed,
   contentChild,
   contentChildren,
   effect,
@@ -17,7 +19,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
-import { FormControlName, FormGroup } from '@angular/forms'
+import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
 import {
   Observable,
   combineLatest,
@@ -36,6 +38,7 @@ import { Action } from '../page-header/page-header.component'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { ResultsAnnouncementService } from '../../services/results-announcement.service'
 import { TranslateService } from '@ngx-translate/core'
 
 export interface SearchHeaderComponentState {
@@ -55,6 +58,12 @@ export interface SearchConfigData {
  * (one delegated keydown listener on the criteria container, no per-input listeners).
  * Please trigger the search yourself, if you want to have that functionality for other elements
  * which are not an input element.
+ *
+ * After each search, the result count (`searchResultsCount`) is announced to screen readers once.
+ * For asynchronous searches, bind `loading` and set it to true while the search runs: the count is
+ * announced when loading has finished. Without `loading`, the count present at the next change
+ * detection after the search is announced. Without a result count, the data table or list grid
+ * announces its next new data instead.
  */
 @Component({
   standalone: false,
@@ -68,6 +77,10 @@ export class SearchHeaderComponent {
   readonly idSuffix = injectInstanceIdSuffix('ocx-search-header')
   private readonly translate = inject(TranslateService)
   private readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly resultsAnnouncement = inject(ResultsAnnouncementService)
+  private searchResultsAnnouncementPending = false
+  /** Incremented per search with a result count, so that every search is announced, even with an unchanged count. */
+  private readonly searchRequests = signal(0)
   header = input<string>('')
   subheader = input<string | undefined>(undefined)
 
@@ -105,7 +118,10 @@ export class SearchHeaderComponent {
     return this.selectedSearchConfigChanged.observed
   }
 
-  formGroup = contentChild<FormGroup | undefined>(FormGroup)
+  // The projected `<form [formGroup]>` contributes a `FormGroupDirective`, not a `FormGroup`, so the query
+  // targets the directive and exposes its form.
+  private readonly formGroupDirective = contentChild(FormGroupDirective)
+  formGroup = computed<FormGroup | undefined>(() => this.formGroupDirective()?.form)
   visibleFormControls = contentChildren<FormControlName>(FormControlName, { descendants: true })
 
   hasAdvanced = signal<boolean>(false)
@@ -122,7 +138,9 @@ export class SearchHeaderComponent {
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = combineLatest([
     toObservable(this.formGroup).pipe(
       filter((fg) => !!fg),
-      mergeMap((fg) => fg.valueChanges.pipe(startWith({})))
+      // Start from the form's current value, not from an empty object, so the search config slot knows
+      // the search fields before the user changes the form for the first time.
+      mergeMap((fg) => fg.valueChanges.pipe(startWith(fg.value)))
     ),
     toObservable(this.visibleFormControls).pipe(startWith(null)),
   ]).pipe(
@@ -160,6 +178,7 @@ export class SearchHeaderComponent {
       })
     })
 
+    this.resultsAnnouncement.registerSearchHeader(inject(DestroyRef))
     this.announceSearchResults()
 
     const configurationService = inject(ConfigurationService)
@@ -184,6 +203,7 @@ export class SearchHeaderComponent {
   }
 
   onSearchClicked() {
+    this.prepareSearchResultsAnnouncement()
     this.searched.emit()
   }
 
@@ -234,22 +254,37 @@ export class SearchHeaderComponent {
     )
   }
 
+  /**
+   * Without a result count, the data component announces the next new data instead.
+   */
+  private prepareSearchResultsAnnouncement() {
+    if (this.searchResultsCount() === null) {
+      this.resultsAnnouncement.requestSearchResultsAnnouncement()
+    } else {
+      this.resultsAnnouncement.clearSearchResultsAnnouncementRequest()
+      this.searchResultsAnnouncementPending = true
+      this.searchRequests.update((requests) => requests + 1)
+    }
+  }
+
+  /**
+   * Announces the result count once after each search, when loading has finished
+   * (or right away, if loading is not used). Nothing is announced at page load.
+   */
   private announceSearchResults() {
     effect(() => {
-      let announmentKey = ''
-      if (this.loading()) {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.SEARCHING'
-      } else if (!this.loading() && !this.searchResultsCount()) {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.NO_RESULTS'
-      } else {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
+      this.searchRequests()
+      const loading = this.loading()
+      const count = this.searchResultsCount()
+      if (loading || !this.searchResultsAnnouncementPending) {
+        return
       }
+      this.searchResultsAnnouncementPending = false
+      const announcementKey = count
+        ? 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
+        : 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.NO_RESULTS'
 
-      firstValueFrom(
-        this.translate.get(announmentKey, {
-          count: !this.loading() && this.searchResultsCount() ? this.searchResultsCount() : null,
-        })
-      ).then((translatedText: string) => {
+      firstValueFrom(this.translate.get(announcementKey, { count: count || null })).then((translatedText: string) => {
         this.liveAnnouncer.announce(translatedText, 'polite')
       })
     })

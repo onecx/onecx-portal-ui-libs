@@ -10,7 +10,8 @@
       "WARNING": "Warnung",
       "ERROR": "Fehler",
       "QUESTION": "Frage"
-    }
+    },
+    "CONTENT_REGION": "Dialoginhalt"
   },
   "OCX_CONSENT": {
     "TITLE": "Zustimmung erforderlich",
@@ -217,7 +218,6 @@
       "ARIA_LABEL": "Suchsteuerungen"
     },
     "ANNOUNCEMENTS": {
-      "SEARCHING": "Suche läuft...",
       "NO_RESULTS": "Keine Ergebnisse gefunden",
       "RESULTS_FOUND": "{{count}} Ergebnisse gefunden"
     }

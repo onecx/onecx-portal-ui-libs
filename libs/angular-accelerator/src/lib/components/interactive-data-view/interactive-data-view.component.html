@@ -70,6 +70,8 @@
         [actionColumnPosition]="stateService.actionColumnConfigPosition()"
         (actionColumnConfigChanged)="onActionColumnConfigChange($event)"
         [draggableColumnGroupSelectorDialog]="draggableColumnGroupSelectorDialog()"
+        [resizableColumnGroupSelectorDialog]="resizableColumnGroupSelectorDialog()"
+        [restoreColumnGroupSelectorOrder]="restoreColumnGroupSelectorOrder()"
       ></ocx-custom-group-column-selector>
       }
     </div>
@@ -89,6 +91,7 @@
     [subtitleLineIds]="subtitleLineIds()"
     [clientSideSorting]="clientSideSorting()"
     [clientSideFiltering]="clientSideFiltering()"
+    [announceResults]="announceResults()"
     [pageSizes]="pageSizes()"
     [pageSize]="stateService.pageSize()"
     [emptyResultsMessage]="emptyResultsMessage()"
@@ -110,6 +113,8 @@
     (pageSizeChanged)="onPageSizeChange($event)"
     [frozenActionColumn]="stateService.actionColumnConfigFrozen()"
     [actionColumnPosition]="stateService.actionColumnConfigPosition()"
+    [rowGrouping]="rowGrouping()"
+    [groupCellTemplate]="_groupCell()"
     [stringTableCellTemplate]="_stringTableCell()"
     [numberTableCellTemplate]="_numberTableCell()"
     [dateTableCellTemplate]="_dateTableCell()"

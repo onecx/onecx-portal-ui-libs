@@ -44,7 +44,6 @@ export const defaultDialogData: ButtonDialogData = {
   selector: 'ocx-dialog-footer',
   templateUrl: './dialog-footer.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./dialog-footer.component.scss'],
 })
 export class DialogFooterComponent implements OnInit {
   /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
