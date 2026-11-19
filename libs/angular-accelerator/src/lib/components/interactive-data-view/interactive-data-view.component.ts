@@ -68,7 +68,6 @@ export interface ColumnGroupData {
   standalone: false,
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
-  styleUrls: ['./interactive-data-view.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
@@ -124,6 +123,11 @@ export class InteractiveDataViewComponent implements OnInit {
   emptyResultsMessage = input<string | undefined>(undefined)
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
+  /**
+   * Whether new data is announced to screen readers by the data table or list grid. By default it is
+   * announced unless a search header on the page announces the search results.
+   */
+  announceResults = input<boolean>()
   fallbackImage = input<string>('placeholder.png')
 
   @Input()
@@ -240,6 +244,10 @@ export class InteractiveDataViewComponent implements OnInit {
 
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
