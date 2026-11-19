@@ -17,13 +17,14 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
-import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core'
+import { Component, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { planRowGroups } from '../../utils/row-grouping-planner'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
+import { ResultsAnnouncementService } from '../../services/results-announcement.service'
 
 // This suite instantiates the full DataTable (a large Angular/PrimeNG component) many times.
 // Under parallel-worker CPU contention the per-row render can exceed Jest's 5s default, so
@@ -78,6 +79,7 @@ describe('DataTableComponent', () => {
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
     OCX_DATA_TABLE: {
+      TABLE_ARIA_LABEL: 'Data table',
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
       ALL: 'All',
@@ -89,6 +91,7 @@ describe('DataTableComponent', () => {
   const GERMAN_LANGUAGE = 'de'
   const GERMAN_TRANSLATIONS = {
     OCX_DATA_TABLE: {
+      TABLE_ARIA_LABEL: 'Datentabelle',
       SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
       ALL: 'Alle',
@@ -366,6 +369,13 @@ describe('DataTableComponent', () => {
 
       trigger(label, 'mouseleave')
     }))
+
+    it('should use the default cursor for column header labels with a tooltip', () => {
+      component.columns = [{ ...mockColumns[0], tooltipKey: 'CUSTOM_TOOLTIP' }]
+      fixture.detectChanges()
+
+      expect(getLabel().style.cursor).toBe('default')
+    })
 
     it.each([
       { tooltip: 'Product details', tooltipKey: undefined, expected: 'Product details' },
@@ -1378,6 +1388,136 @@ describe('DataTableComponent', () => {
         expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
+    })
+  })
+
+  describe('results announcement ownership', () => {
+    let announceSpy: jest.SpyInstance
+    let resultsAnnouncement: ResultsAnnouncementService
+    const noopDestroyRef = { onDestroy: () => () => undefined } as unknown as DestroyRef
+
+    beforeEach(() => {
+      announceSpy = jest.spyOn(TestBed.inject(LiveAnnouncer), 'announce').mockResolvedValue()
+      resultsAnnouncement = TestBed.inject(ResultsAnnouncementService)
+    })
+
+    async function render() {
+      fixture.detectChanges()
+      await fixture.whenStable()
+    }
+
+    it('should not announce the initial rows at page load', async () => {
+      const newFixture = TestBed.createComponent(DataTableComponent)
+      newFixture.componentInstance.rows.set(mockData as any)
+      newFixture.detectChanges()
+      await newFixture.whenStable()
+
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should announce the filtered row count once after a client-side filter change', async () => {
+      component.stateService.filters.set([
+        { columnId: 'name', value: 'example', filterType: FilterType.EQUALS },
+        { columnId: 'name', value: 'name 1', filterType: FilterType.EQUALS },
+      ])
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should announce the displayed row count once after a client-side sort change', async () => {
+      component.stateService.sortColumn.set('name')
+      component.stateService.sortDirection.set(DataSortDirection.DESCENDING)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+    })
+
+    it('should announce once when rows and filters change together', async () => {
+      component.rows.set([...mockData, { id: 'additionalRow', name: 'example' }] as any)
+      component.stateService.filters.set([{ columnId: 'name', value: 'example', filterType: FilterType.EQUALS }])
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should announce a server-side filter change when the new rows arrive', async () => {
+      resultsAnnouncement.registerSearchHeader(noopDestroyRef)
+      fixture.componentRef.setInput('clientSideFiltering', false)
+      await render()
+
+      component.stateService.filters.set([{ columnId: 'name', value: 'example', filterType: FilterType.EQUALS }])
+      await render()
+      expect(announceSpy).not.toHaveBeenCalled()
+
+      component.rows.set(mockData.slice(1, 2) as any)
+      await render()
+      component.rows.set(mockData.slice(0, 3) as any)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('1 Results Found')
+    })
+
+    it('should announce a server-side sort change when the new rows arrive', async () => {
+      fixture.componentRef.setInput('clientSideSorting', false)
+      fixture.componentRef.setInput('announceResults', false)
+      await render()
+
+      component.stateService.sortColumn.set('name')
+      await render()
+      expect(announceSpy).not.toHaveBeenCalled()
+
+      component.rows.set([...mockData].reverse() as any)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+    })
+
+    it('should not announce new rows while a search header owns the search results', async () => {
+      resultsAnnouncement.registerSearchHeader(noopDestroyRef)
+
+      component.rows.set(mockData.slice(0, 2) as any)
+      await render()
+
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should announce new rows once when the search header requests it', async () => {
+      resultsAnnouncement.registerSearchHeader(noopDestroyRef)
+      resultsAnnouncement.requestSearchResultsAnnouncement()
+
+      component.rows.set(mockData.slice(0, 2) as any)
+      await render()
+      component.rows.set(mockData.slice(0, 3) as any)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should announce new rows next to a search header when announceResults is true', async () => {
+      resultsAnnouncement.registerSearchHeader(noopDestroyRef)
+      fixture.componentRef.setInput('announceResults', true)
+
+      component.rows.set(mockData.slice(0, 2) as any)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should not announce new rows of a standalone table when announceResults is false', async () => {
+      fixture.componentRef.setInput('announceResults', false)
+
+      component.rows.set(mockData.slice(0, 2) as any)
+      await render()
+
+      expect(announceSpy).not.toHaveBeenCalled()
     })
   })
 
@@ -2459,6 +2599,65 @@ describe('DataTableComponent', () => {
       expect(summary).toBe('id: 1,name: Alice,active: true')
   })
 
+  describe('accessibility semantics', () => {
+    const getTable = () => fixture.nativeElement.querySelector('table') as HTMLTableElement
+
+    @Component({ template: '<ng-template #tpl><span>details</span></ng-template>', standalone: true })
+    class TemplateHostComponent {
+      @ViewChild('tpl', { static: true }) tpl!: TemplateRef<unknown>
+    }
+
+    const enableExpansion = () => {
+      const host = TestBed.createComponent(TemplateHostComponent)
+      const expansionTemplate = new PrimeTemplate(host.componentInstance.tpl)
+      expansionTemplate.name = 'expansion'
+      component.parentTemplates.set([expansionTemplate])
+      fixture.componentRef.setInput('expandable', true)
+      fixture.detectChanges()
+    }
+
+    it('should give the table a non-empty translated accessible name by default', () => {
+      translateService.use('en')
+      fixture.detectChanges()
+
+      const label = getTable().getAttribute('aria-label')
+      expect(label).toBeTruthy()
+      expect(label).toBe('Data table')
+    })
+
+    it('should allow overriding the table accessible name through tableAriaLabel', () => {
+      fixture.componentRef.setInput('tableAriaLabel', 'Orders overview')
+      fixture.detectChanges()
+
+      expect(getTable().getAttribute('aria-label')).toBe('Orders overview')
+    })
+
+    it('should only set aria-controls on the expand toggle when the controlled row exists', () => {
+      enableExpansion()
+      const toggles = (): HTMLButtonElement[] =>
+        Array.from(fixture.nativeElement.querySelectorAll('td[name="expansion-column"] button'))
+      expect(toggles().length).toBeGreaterThan(0)
+      expect(toggles().map((b) => [b.getAttribute('aria-expanded'), b.hasAttribute('aria-controls')])).toEqual(
+        toggles().map(() => ['false', false])
+      )
+
+      toggles()[0].click()
+      fixture.detectChanges()
+
+      const first = toggles()[0]
+      expect(first.getAttribute('aria-expanded')).toBe('true')
+      const controls = first.getAttribute('aria-controls')
+      expect(controls).toBeTruthy()
+      expect(fixture.nativeElement.querySelector(`[id="${controls}"]`)).not.toBeNull()
+      // every aria-controls reference in the document resolves
+      const controllers: Element[] = Array.from(fixture.nativeElement.querySelectorAll('[aria-controls]'))
+      const unresolved = controllers
+        .map((el) => el.getAttribute('aria-controls'))
+        .filter((id) => !fixture.nativeElement.querySelector(`[id="${id}"]`))
+      expect(unresolved).toEqual([])
+    })
+  })
+
   describe('row grouping', () => {
     const groupRows: Row[] = [
       { id: 'r1', name: 'A', status: 'one' },
@@ -2560,25 +2759,25 @@ describe('DataTableComponent', () => {
 
       expect(await renderedSequence()).toEqual([
         'B',
-        'ocx-expanded-row-B1',
-        'ocx-expanded-row-B2',
+        'ocx-data-row-B1',
+        'ocx-data-row-B2',
         'A',
-        'ocx-expanded-row-A1',
-        'ocx-expanded-row-A2',
+        'ocx-data-row-A1',
+        'ocx-data-row-A2',
         'C',
-        'ocx-expanded-row-C1',
+        'ocx-data-row-C1',
       ])
       expect(rows.map((row) => row.id)).toEqual(['B1', 'A1', 'B2', 'C1', 'A2'])
 
       child.onPageChange({ first: 3, rows: 3 })
       fixture.detectChanges()
-      expect(await renderedSequence()).toEqual(['A', 'ocx-expanded-row-A2', 'C', 'ocx-expanded-row-C1'])
+      expect(await renderedSequence()).toEqual(['A', 'ocx-data-row-A2', 'C', 'ocx-data-row-C1'])
       expect(child.getGroupContext(rows[4])).toMatchObject({ groupKey: 'A', memberCount: 2 })
 
       child.onPageChange({ first: 0, rows: 10 })
       fixture.componentInstance.rowGrouping = undefined
       fixture.detectChanges()
-      expect(await renderedSequence()).toEqual(rows.map((row) => `ocx-expanded-row-${row.id}`))
+      expect(await renderedSequence()).toEqual(rows.map((row) => `ocx-data-row-${row.id}`))
     })
 
     it('should preserve filtered and sorted row order when the configured grouping column is missing', async () => {
@@ -2606,7 +2805,7 @@ describe('DataTableComponent', () => {
       expect(child.groupedRows().map((row) => row.id)).toEqual(['r3', 'r2', 'r1'])
       expect(await Promise.all((await harness.getRows()).map(async (row) =>
         (await row.host()).getAttribute('id')
-      ))).toEqual(['ocx-expanded-row-r3', 'ocx-expanded-row-r2', 'ocx-expanded-row-r1'])
+      ))).toEqual(['ocx-data-row-r3', 'ocx-data-row-r2', 'ocx-data-row-r1'])
       expect(child.isRowGroupStart(rows[0])).toBe(false)
       expect(child.getGroupContext(rows[0])).toBeUndefined()
     })
@@ -2629,7 +2828,7 @@ describe('DataTableComponent', () => {
       expect(child.groupedRows().map((row) => row.id)).toEqual(['A1', 'B1', 'A2'])
       expect(await Promise.all((await harness.getRows()).map(async (row) =>
         (await row.host()).getAttribute('id')
-      ))).toEqual(['ocx-expanded-row-A1', 'ocx-expanded-row-B1', 'ocx-expanded-row-A2'])
+      ))).toEqual(['ocx-data-row-A1', 'ocx-data-row-B1', 'ocx-data-row-A2'])
 
       fixture.componentInstance.columns = groupColumns
       fixture.detectChanges()

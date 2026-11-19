@@ -157,6 +157,7 @@
   [expandedRowKeys]="expandedRowKeys()"
   (onRowExpand)="onRowExpand($event)"
   (onRowCollapse)="onRowCollapse($event)"
+  [pt]="{ table: { 'aria-label': tableAriaLabel() || ('OCX_DATA_TABLE.TABLE_ARIA_LABEL' | translate) } }"
 >
   <ng-template #header>
     <tr style="vertical-align: top">
@@ -219,13 +220,11 @@
     </tr>
   </ng-template>
 
+  @if (captionTemplate()) {
   <ng-template pTemplate="caption">
-    @if (captionTemplate()) {
-    <ng-container>
-      <ng-container [ngTemplateOutlet]="captionTemplate()"></ng-container>
-    </ng-container>
-    }
+    <ng-container [ngTemplateOutlet]="captionTemplate()"></ng-container>
   </ng-template>
+  }
 
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
@@ -253,7 +252,7 @@
       </th>
     </tr>
     } }
-    <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
+    <tr [attr.id]="'ocx-data-row-' + rowObject.id">
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
@@ -295,7 +294,7 @@
 
   <ng-template #expandedrow let-rowObject>
     @if (expansionTemplate(); as expansionTemplate) {
-    <tr>
+    <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
       <td [attr.colspan]="getRowColspan(!!expansionTemplate)">
         <ng-container
           [ngTemplateOutlet]="expansionTemplate.template"
@@ -334,7 +333,7 @@
       class="p-button-rounded p-button-text"
       (click)="toggleRowExpansion(rowObject)"
       [attr.aria-expanded]="isRowExpanded(rowObject)"
-      [attr.aria-controls]="'ocx-expanded-row-' + rowObject.id"
+      [attr.aria-controls]="isRowExpanded(rowObject) ? 'ocx-expanded-row-' + rowObject.id : null"
       [attr.aria-label]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
       [title]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
     ></button>
@@ -368,6 +367,7 @@
   @if (column.tooltip || column.tooltipKey) {
   <span
     [ocxTooltip]="column.tooltip || (column.tooltipKey | translate)"
+    ocxTooltipCursor="default"
     tooltipPosition="top"
   >
     {{ column.nameKey | translate }}
@@ -415,7 +415,8 @@
           appendTo="body"
           filterBy="toFilterBy"
           (onFocus)="onFilterChosen(column)"
-          [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+          [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+          tooltipPosition="top"
           [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
           [filterPlaceHolder]="'OCX_DATA_TABLE.COLUMN_FILTER_PLACEHOLDER' | translate"
           [ariaFilterLabel]="
@@ -461,7 +462,8 @@
       placeholder=" "
       appendTo="body"
       (onFocus)="onFilterChosen(column)"
-      [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+      [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+      tooltipPosition="top"
       [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
       [ariaFilterLabel]="
             'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
