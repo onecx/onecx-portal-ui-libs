@@ -10,6 +10,8 @@
   >
     <div class="icon-button-row-wrapper">
       @if (viewTableRowObserved && (!viewActionVisibleField || fieldIsTruthy(rowObject, viewActionVisibleField))) {
+      @let resolvedViewActionUrl = resolveRowActionUrl(viewActionUrl, rowObject);
+      @if (viewActionUrl === undefined) {
       <button
         id="{{resolveFieldData(rowObject, 'id')}}-viewButton"
         *ocxIfPermission="viewPermission"
@@ -22,7 +24,26 @@
         (click)="onViewRow(rowObject)"
         [attr.name]="'data-table-action-button'"
       ></button>
+      } @else if (resolvedViewActionUrl) {
+      @let viewActionDisabled = !!viewActionEnabledField && !fieldIsTruthy(rowObject, viewActionEnabledField);
+      <a
+        id="{{resolveFieldData(rowObject, 'id')}}-viewButton"
+        *ocxIfPermission="viewPermission"
+        pButton
+        [routerLink]="viewActionDisabled ? null : resolvedViewActionUrl"
+        [attr.aria-disabled]="viewActionDisabled"
+        [attr.tabindex]="viewActionDisabled ? -1 : null"
+        class="p-button-rounded p-button-text viewTableRowButton"
+        [class.p-disabled]="viewActionDisabled"
+        title="{{ 'OCX_DATA_TABLE.ACTIONS.VIEW' | translate }}"
+        [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
+        icon="pi pi-eye"
+        [attr.name]="'data-table-action-link'"
+      ></a>
+      }
       } @if (editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))) {
+      @let resolvedEditActionUrl = resolveRowActionUrl(editActionUrl, rowObject);
+      @if (editActionUrl === undefined) {
       <button
         id="{{resolveFieldData(rowObject, 'id')}}-editButton"
         *ocxIfPermission="editPermission"
@@ -35,6 +56,23 @@
         (click)="onEditRow(rowObject)"
         [attr.name]="'data-table-action-button'"
       ></button>
+      } @else if (resolvedEditActionUrl) {
+      @let editActionDisabled = !!editActionEnabledField && !fieldIsTruthy(rowObject, editActionEnabledField);
+      <a
+        id="{{resolveFieldData(rowObject, 'id')}}-editButton"
+        *ocxIfPermission="editPermission"
+        pButton
+        [routerLink]="editActionDisabled ? null : resolvedEditActionUrl"
+        [attr.aria-disabled]="editActionDisabled"
+        [attr.tabindex]="editActionDisabled ? -1 : null"
+        class="p-button-rounded p-button-text editTableRowButton"
+        [class.p-disabled]="editActionDisabled"
+        title="{{ 'OCX_DATA_TABLE.ACTIONS.EDIT' | translate }}"
+        [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
+        icon="pi pi-pencil"
+        [attr.name]="'data-table-action-link'"
+      ></a>
+      }
       } @if (deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject,
       deleteActionVisibleField))) {
       <button
@@ -51,12 +89,13 @@
       ></button>
       } @for (action of inlineActions$ | async; track action) { @if ((!action.actionVisibleField ||
       fieldIsTruthy(rowObject, action.actionVisibleField))) {
-      @if (typeof action.routerLink === 'string' && !(action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField)))) {
+      @let actionRouterLink = resolveActionRouterLink(action.routerLink);
+      @if (actionRouterLink !== undefined && !(action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField)))) {
       <a
         id="{{resolveFieldData(rowObject, 'id')}}-{{action.id ? action.id.concat('ActionButton') : 'inlineActionButton'}}"
         *ocxIfPermission="action.permission"
         pButton
-        [routerLink]="action.routerLink"
+        [routerLink]="actionRouterLink"
         class="p-button-rounded p-button-text no-underline"
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
@@ -72,7 +111,7 @@
         class="p-button-rounded p-button-text"
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
-        (click)="action.callback?.(rowObject)"
+        (click)="onAdditionalActionClick(action, rowObject)"
         [title]="action.labelKey ? (action.labelKey | translate) : ''"
         [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
         [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"

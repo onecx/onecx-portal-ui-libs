@@ -499,6 +499,19 @@ export const WithRouterLinkOverflowActions = {
   },
 }
 
+export const WithRowSpecificViewEditLinks = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    viewPermission: 'TEST_MGMT#TEST_VIEW',
+    editPermission: 'TEST_MGMT#TEST_EDIT',
+    viewActionEnabledField: 'available',
+    editActionEnabledField: 'available',
+    viewActionUrl: (row: { id: number }) => `/details/${row.id}`,
+    editActionUrl: (row: { id: number }) => `/edit/${row.id}`,
+  },
+}
+
 export const WithPageSizes = {
   render: Template,
   args: {
