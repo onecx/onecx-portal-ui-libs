@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DataLayoutSelectionComponent } from './data-layout-selection.component'
 import { TranslateModule } from '@ngx-translate/core'
+import { FormsModule } from '@angular/forms'
+import { By } from '@angular/platform-browser'
+import { SelectButton, SelectButtonModule } from '@openng/optimus-ui/selectbutton'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { expectNoAxeViolations, provideTranslateTestingService } from '@onecx/angular-testing'
-import { FormsModule } from '@angular/forms'
-import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
-import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('DataLayoutSelectionComponent', () => {
   let component: DataLayoutSelectionComponent
@@ -15,8 +16,9 @@ describe('DataLayoutSelectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataLayoutSelectionComponent],
-      imports: [TranslateModule.forRoot(), AngularAcceleratorOptimusModule, FormsModule, OcxTooltipDirective],
+      imports: [TranslateModule.forRoot(), FormsModule, SelectButtonModule, OcxTooltipDirective],
       providers: [DataViewStateService, provideTranslateTestingService({})],
+      schemas: [],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataLayoutSelectionComponent)
@@ -95,6 +97,16 @@ describe('DataLayoutSelectionComponent', () => {
 
       const layouts = component.viewingLayouts().map((l) => l.layout)
       expect(layouts).toEqual(['list', 'grid'])
+    })
+  })
+
+  describe('select button', () => {
+    it('should not autofocus the select button', () => {
+      fixture.componentRef.setInput('supportedViewLayouts', ['grid', 'list'])
+      fixture.detectChanges()
+
+      const selectButton = fixture.debugElement.query(By.directive(SelectButton)).componentInstance as SelectButton
+      expect(selectButton.autofocus).toBe(false)
     })
   })
 

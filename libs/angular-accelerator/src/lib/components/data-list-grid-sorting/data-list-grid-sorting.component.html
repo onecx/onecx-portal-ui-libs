@@ -8,6 +8,7 @@
       (onChange)="selectSorting($event)"
       [ariaLabel]="('OCX_LIST_GRID_SORT.DROPDOWN.ARIA_LABEL' | translate)"
       optionLabel="columnName"
+      autofocus="false"
     >
       <ng-template let-item #item> 
         <span>{{ item?.columnName ? (item.columnName | translate) : ''}}</span> 
@@ -24,8 +25,6 @@
     icon="pi {{sortIcon()}}"
     styleClass="p-button-outlined"
     (onClick)="sortDirectionChanged()"
-    (keydown.enter)="sortDirectionChanged()"
-    (keydown.space)="sortDirectionChanged()"
     [ocxTooltip]="(sortIconTitle() | translate)"
     tooltipPosition="top"
     [ariaLabel]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{currentDirection: stateService.sortDirection(), nextDirection: (sortDirectionToTitle(nextSortDirection())) | translate})"
