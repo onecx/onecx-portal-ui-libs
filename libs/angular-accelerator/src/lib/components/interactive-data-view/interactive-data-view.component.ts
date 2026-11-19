@@ -123,6 +123,11 @@ export class InteractiveDataViewComponent implements OnInit {
   emptyResultsMessage = input<string | undefined>(undefined)
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
+  /**
+   * Whether new data is announced to screen readers by the data table or list grid. By default it is
+   * announced unless a search header on the page announces the search results.
+   */
+  announceResults = input<boolean>()
   fallbackImage = input<string>('placeholder.png')
 
   @Input()
