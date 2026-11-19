@@ -1,0 +1,16 @@
+{
+  "name": "architecture",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tools/architecture/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "test-arch": {
+      "executor": "@nx/jest:jest",
+      "cache": false,
+      "options": {
+        "jestConfig": "tools/architecture/jest.config.ts"
+      }
+    }
+  }
+}
