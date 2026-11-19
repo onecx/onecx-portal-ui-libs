@@ -7,6 +7,7 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
+  OnInit,
   Output,
   inject,
   ChangeDetectionStrategy,
@@ -29,6 +30,7 @@ import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog
 import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
+  DialogCustomButtonsDisabled,
   DialogPrimaryButtonDisabled,
   DialogResult,
   DialogSecondaryButtonDisabled,
@@ -266,6 +268,20 @@ export class CompleteDialogComponent
   }
 }
 
+@Component({
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `<div></div>`,
+})
+class CustomButtonDialogComponent implements DialogCustomButtonsDisabled, OnInit {
+  @Output()
+  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }> = new EventEmitter()
+
+  ngOnInit() {
+    this.customButtonEnabled.emit({ id: 'customButton', enabled: true })
+  }
+}
+
 describe('PortalDialogService', () => {
   let pDialogService: DialogService
   let rootLoader: HarnessLoader
@@ -311,6 +327,7 @@ describe('PortalDialogService', () => {
         DialogFooterComponent,
         DialogMessageContentComponent,
         CompleteDialogComponent,
+        CustomButtonDialogComponent,
         DialogButtonClickedWithResultComponent,
         DialogPrimaryButtonDisabledComponent,
         DialogSecondaryButtonDisabledComponent,
@@ -1153,6 +1170,22 @@ describe('PortalDialogService', () => {
             cleanup(performance.now() - startedAt <= timeoutMs)
           }
         })
+      const mockVisibleOffsetParent = () => {
+        const descriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent')
+        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+          configurable: true,
+          get(this: HTMLElement) {
+            return this.isConnected ? this.parentElement : null
+          },
+        })
+        return () => {
+          if (descriptor) {
+            Object.defineProperty(HTMLElement.prototype, 'offsetParent', descriptor)
+          } else {
+            Reflect.deleteProperty(HTMLElement.prototype, 'offsetParent')
+          }
+        }
+      }
       let opener: HTMLButtonElement
 
       beforeEach(() => {
@@ -1182,11 +1215,16 @@ describe('PortalDialogService', () => {
       })
 
       it('should focus the first form field within 300 ms', async () => {
+        const restoreOffsetParent = mockVisibleOffsetParent()
         const firstFieldFocused = waitForFocus('#name', 300)
-        fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2')
+        try {
+          fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2')
 
-        expect(await firstFieldFocused).toBe(true)
-        expect(document.activeElement).toBe(document.querySelector('#name'))
+          expect(await firstFieldFocused).toBe(true)
+          expect(document.activeElement).toBe(document.querySelector('#name'))
+        } finally {
+          restoreOffsetParent()
+        }
       })
 
       it('should respect an explicit focusOnShow false (spread order)', async () => {
@@ -1245,7 +1283,7 @@ describe('PortalDialogService', () => {
       })
 
       it('should focus the explicitly requested custom button', async () => {
-        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2', {
+        fixture.componentInstance.show('title', CustomButtonDialogComponent, 'button1', 'button2', {
           customButtons: [{ id: 'customButton', alignment: 'right', key: 'customButton' }],
           autoFocusButton: 'custom',
           autoFocusButtonCustomId: 'customButton',
