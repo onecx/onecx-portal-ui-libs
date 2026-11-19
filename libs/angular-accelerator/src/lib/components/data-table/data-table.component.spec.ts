@@ -482,6 +482,62 @@ describe('DataTableComponent', () => {
 
       expect(component.stateService.filters().length).toBeGreaterThan(0)
     })
+
+    describe('keyboard access to the column header filter', () => {
+      const getStatusFilterFocusInput = (): HTMLInputElement => {
+        const headers = Array.from(fixture.nativeElement.querySelectorAll('th')) as HTMLElement[]
+        const statusHeader = headers.find((th) => th.textContent?.includes('STATUS'))
+        expect(statusHeader).toBeTruthy()
+        // The filter multiselect's focusable element is its combobox focus input.
+        const focusInput = statusHeader?.querySelector('.filterMultiSelect input[role="combobox"]') as HTMLInputElement
+        expect(focusInput).toBeTruthy()
+        return focusInput
+      }
+
+      const expectFilterOperableByKeyboard = async (focusInput: HTMLInputElement) => {
+        const onFilterChosenSpy = jest.spyOn(component, 'onFilterChosen')
+
+        focusInput.focus()
+        fixture.detectChanges()
+        expect(document.activeElement).toBe(focusInput)
+        // (onFocus) still wires the focused column as the current filter column
+        expect(onFilterChosenSpy).toHaveBeenCalledWith(expect.objectContaining({ id: 'status' }))
+        expect(focusInput.getAttribute('aria-label')).toBeTruthy()
+
+        focusInput.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', key: 'Enter', bubbles: true }))
+        fixture.detectChanges()
+        await fixture.whenStable()
+        expect(focusInput.getAttribute('aria-expanded')).toBe('true')
+
+        focusInput.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape', bubbles: true }))
+        fixture.detectChanges()
+        await fixture.whenStable()
+        expect(focusInput.getAttribute('aria-expanded')).toBe('false')
+      }
+
+      it('should focus and open/close an EQUALS column filter with the keyboard', async () => {
+        component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: 'B' } as any])
+        fixture.detectChanges()
+
+        await expectFilterOperableByKeyboard(getStatusFilterFocusInput())
+      })
+
+      it('should focus and open/close an IS_NOT_EMPTY column filter with the keyboard', async () => {
+        component.columns = [
+          {
+            columnType: ColumnType.STRING,
+            id: 'status',
+            nameKey: 'COLUMN_HEADER_NAME.STATUS',
+            filterable: true,
+            filterType: FilterType.IS_NOT_EMPTY,
+          } as any,
+        ]
+        component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: '' } as any])
+        fixture.detectChanges()
+
+        await expectFilterOperableByKeyboard(getStatusFilterFocusInput())
+      })
+    })
   })
 
   describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {
@@ -1856,6 +1912,39 @@ describe('DataTableComponent', () => {
           toFilterBy: 'T1',
         },
       ])
+    })
+
+    it('currentEqualFilterOptions$ should translate a selected filter that has no matching row (TRANSLATION_KEY, empty table)', async () => {
+      const translateService = TestBed.inject(TranslateService)
+      jest.spyOn(translateService, 'get').mockReturnValue(of({ 'BOOK_GENRE.FICTION': 'Fiction' } as any))
+
+      component.columns = ([{ id: 'status', columnType: ColumnType.TRANSLATION_KEY } as any])
+      component.stateService.filters.set([{ columnId: 'status', value: 'BOOK_GENRE.FICTION' } as any])
+      component.rows.set([])
+      component.currentFilterColumn.set({ id: 'status', columnType: ColumnType.TRANSLATION_KEY } as any)
+      fixture.detectChanges()
+
+      const res = await firstValueFrom(component.currentEqualFilterOptions$!)
+      expect(res.column?.id).toBe('status')
+      expect(res.options).toHaveLength(1)
+      const option = res.options.find((o: any) => o.value === 'BOOK_GENRE.FICTION')
+      expect(option).toBeDefined()
+      expect(option!.label).toBe('Fiction')
+    })
+
+    it('currentEqualFilterOptions$ should include a selected filter that has no matching row (non-TRANSLATION_KEY, empty table)', async () => {
+      component.columns = ([{ id: 'status', columnType: ColumnType.STRING } as any])
+      component.stateService.filters.set([{ columnId: 'status', value: 'PENDING' } as any])
+      component.rows.set([])
+      component.currentFilterColumn.set({ id: 'status', columnType: ColumnType.STRING } as any)
+      fixture.detectChanges()
+
+      const res = await firstValueFrom(component.currentEqualFilterOptions$!)
+      expect(res.column?.id).toBe('status')
+      expect(res.options).toHaveLength(1)
+      const option = res.options.find((o: any) => o.value === 'PENDING')
+      expect(option).toBeDefined()
+      expect(option!.label).toBe('PENDING')
     })
 
     it('currentTruthySelectedFilters$ should include values for IS_NOT_EMPTY filters', async () => {
