@@ -137,7 +137,7 @@
     "husky": "^9.1.7",
     "jest": "^30.0.5",
     "jest-canvas-mock": "^2.5.2",
-    "jest-environment-jsdom": "^30.0.5",
+    "jest-environment-jsdom": "^30.5.2",
     "jest-environment-node": "^30.5.2",
     "jest-extended": "^6.0.0",
     "jest-preset-angular": "^16.2.0",
