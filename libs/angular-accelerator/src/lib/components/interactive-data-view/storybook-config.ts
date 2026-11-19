@@ -93,7 +93,8 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         TooltipStyle,
         provideAppInitializer(() => {
           const userServiceMock = inject(UserService) as unknown as UserServiceMock
-          userServiceMock.permissionsTopic$.publish([
+          // Angular waits for the returned promise, the permissions are set before the first render
+          return userServiceMock.permissionsTopic$.publish([
             'TEST_MGMT#TEST_DELETE',
             'TEST_MGMT#TEST_EDIT',
             'TEST_MGMT#TEST_VIEW',
