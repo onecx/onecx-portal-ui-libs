@@ -149,6 +149,13 @@ This is an Nx monorepo containing Angular libraries for the OneCX portal platfor
 
 ### Test Execution Strategy
 
+For component changes where browser verification adds value (such as interaction,
+layout, styling, accessibility, or responsive behavior), use the
+[test-component skill](../.agents/skills/test-component/SKILL.md) before committing.
+It verifies uncommitted changes by copying fresh local library builds into a
+temporary app and checking functionality and visuals with Playwright. This
+complements, rather than replaces, Jest tests and harnesses.
+
 1. Run tests for the current file only first: Use task `nx affected test (current work)`
 2. Once tests pass, run the full test suite to ensure nothing else is broken
 3. Review coverage report and add tests for uncovered branches

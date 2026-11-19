@@ -33,7 +33,8 @@
   },
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Confirm",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "CONTENT_REGION": "Dialog content"
   },
   "OCX_CONSENT": {
     "TITLE": "Consent required",
@@ -230,7 +231,6 @@
       "ARIA_LABEL": "Search controls"
     },
     "ANNOUNCEMENTS": {
-      "SEARCHING": "Searching...",
       "NO_RESULTS": "No results found",
       "RESULTS_FOUND": "{{count}} results found" 
     }

@@ -30,7 +30,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { PrimeTemplate, SelectItem } from '@openng/optimus-ui/api'
 import { Menu } from '@openng/optimus-ui/menu'
 import { MultiSelectItem } from '@openng/optimus-ui/multiselect'
-import { Observable, combineLatest, debounceTime, filter, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
+import { Observable, combineLatest, debounceTime, filter, map, mergeMap, of, switchMap, tap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -41,12 +41,12 @@ import { findTemplate } from '../../utils/template.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { DisplayedResultsAnnouncer } from '../../services/results-announcement.service'
 import { InteractiveExpandedRows } from '../../model/view-layout.model'
 import { planRowGroups, RowGroupPlan } from '../../utils/row-grouping-planner'
 import type { RowGroup } from '../../utils/row-grouping-planner'
@@ -103,7 +103,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly injector = inject(Injector)
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
-  private readonly liveAnnouncer = inject(LiveAnnouncer)
   readonly stateService = inject(DataViewStateService)
 
   FilterType = FilterType
@@ -146,6 +145,16 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   clientSideFiltering = input(true)
   clientSideSorting = input(true)
+  /**
+   * Whether new rows are announced to screen readers. By default they are announced
+   * unless a search header on the page announces the search results.
+   * Filter and sort changes are always announced with the displayed row count.
+   */
+  announceResults = input<boolean>()
+  private readonly resultsAnnouncer = new DisplayedResultsAnnouncer(this.announceResults, {
+    results: 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND',
+    noResults: 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND',
+  })
   sortStates = model<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
   pageSizes = model<number[]>([10, 25, 50])
@@ -312,6 +321,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     Object.fromEntries(this.expandedRowIds().map((id) => [id, true]))
   )
 
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
@@ -339,19 +352,20 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     map(([rows, filters, sortColumn, sortDirection, columns, clientSideFiltering, clientSideSorting]) => {
       return { rows, filters, sortColumn, sortDirection, columns, clientSideFiltering, clientSideSorting }
     }),
-    mergeMap((params) =>
+    switchMap((params) =>
       this.translateItems(params.rows, params.columns, params.clientSideFiltering, params.clientSideSorting).pipe(
         map((translations) => ({ ...params, translations }))
       )
     ),
     map((params) => ({
       ...params,
-      rows: this.filterItems([params.rows, params.filters], params.clientSideFiltering),
+      filteredRows: this.filterItems([params.rows, params.filters], params.clientSideFiltering),
     })),
+    tap((params) => this.resultsAnnouncer.update({ ...params, items: params.rows }, params.filteredRows.length)),
     map((params) => ({
       ...params,
       rows: this.sortItems(
-        [params.rows, params.sortColumn, params.sortDirection, params.translations],
+        [params.filteredRows, params.sortColumn, params.sortDirection, params.translations],
         params.columns,
         params.clientSideSorting
       ),
@@ -471,38 +485,25 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
       const isTranslationKeyColumn =
         columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
+      // Also translate the values of filters the user has already selected, so they stay readable in the
+      // dropdown even when they no longer appear in the current result set (e.g. the table is empty).
+      const valuesToTranslate = [...new Set([...columnValues, ...currentFilters])]
       const translateObservable = isTranslationKeyColumn
-        ? this.translateColumnValues(columnValues as string[])
-        : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
+        ? this.translateColumnValues(valuesToTranslate as string[])
+        : of(Object.fromEntries(valuesToTranslate.map((cv) => [cv, cv])))
       // This creates dropown object with text as label and key as value sp when event is fired for filter change.
       // Key is being passed down and stored in local storage
       return translateObservable.pipe(
         map((translatedValues) => {
-          return (
-            Object.entries(translatedValues)
-              .map(
-                ([key, translatedValue]) =>
-                  ({
-                    label: translatedValue,
-                    value: key,
-                    toFilterBy: translatedValue,
-                  }) as SelectItem
-              )
-              // Concat existing user selected filters that are not in the current column values to ensure they remain visible in the dropdown.
-              .concat(
-                currentFilters
-                  .filter((filterValue) => !columnValues.includes(filterValue as string))
-                  .map(
-                    (filterValue) =>
-                      ({
-                        label: translatedValues[filterValue as string] || filterValue,
-                        value: filterValue,
-                        toFilterBy: translatedValues[filterValue as string] || filterValue,
-                      }) as SelectItem
-                  )
-              )
-              // Remove duplicates
-              .filter((item, index, self) => self.findIndex((i) => i.value === item.value) === index)
+          // valuesToTranslate already contains the selected filters, so the single translated
+          // map covers both the visible rows and any selected filter that has no matching row.
+          return Object.entries(translatedValues).map(
+            ([key, translatedValue]) =>
+              ({
+                label: translatedValue,
+                value: key,
+                toFilterBy: translatedValue,
+              }) as SelectItem
           )
         }),
         map((options) => {
@@ -681,16 +682,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
           this.stateService.activePage.set(0)
         }
       })
-
-      const currentResults = rows.length
-      const newStatus =
-        currentResults === 0 ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
-
-      firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then(
-        (translatedText: string) => {
-          this.liveAnnouncer.announce(translatedText)
-        }
-      )
     })
 
     effect(() => {
