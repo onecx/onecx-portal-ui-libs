@@ -14,7 +14,7 @@ import {
   inject,
 } from '@angular/core'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
-import { Observable, combineLatest, debounceTime, from, map, of, startWith } from 'rxjs'
+import { Observable, combineLatest, debounceTime, defer, from, map, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Action } from '../page-header/page-header.component'
@@ -138,9 +138,12 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   }
 
   ngAfterContentInit(): void {
-    if (this.formGroup) {
+    const formGroup = this.formGroup
+    if (formGroup) {
+      // Start from the form's current value (read on subscription), not from an empty object, so the
+      // search config slot knows the search fields before the user changes the form for the first time.
       this.fieldValues$ = combineLatest([
-        this.formGroup.valueChanges.pipe(startWith({})),
+        defer(() => formGroup.valueChanges.pipe(startWith(formGroup.value))),
         this.visibleFormControls.changes.pipe(startWith(null)),
       ]).pipe(
         debounceTime(100),
