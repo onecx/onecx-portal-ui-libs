@@ -1,3 +1,5 @@
+@use "sass:list";
+
 @mixin icon-override($icon) {
   &:before {
     content: $icon;
@@ -183,7 +185,7 @@
 }
 
 @mixin scaledPadding($val, $scale) {
-  padding: nth($val, 1) * $scale nth($val, 2) * $scale;
+  padding: list.nth($val, 1) * $scale list.nth($val, 2) * $scale;
 }
 
 @mixin scaledFontSize($val, $scale) {

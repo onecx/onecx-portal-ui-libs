@@ -3,8 +3,6 @@
     id="searchButton"
     icon="pi pi-search"
     (onClick)="onSearchClicked()"
-    (keydown.enter)="onSearchClicked()"
-    (keydown.space)="onSearchClicked()"
     [disabled]="searchButtonDisabled() || formGroup()?.invalid"
     [label]="searchButtonLabel() || ('OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate)"
     [ariaLabel]="searchButtonAriaLabel() || undefined"
@@ -18,8 +16,6 @@
     id="resetButton"
     icon="pi pi-eraser"
     (onClick)="onResetClicked()"
-    (keydown.enter)="onResetClicked()"
-    (keydown.space)="onResetClicked()"
     [disabled]="resetButtonDisabled()"
     [label]="resetButtonLabel() || ('OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate)"
     [ariaLabel]="resetButtonAriaLabel() || undefined"
@@ -59,7 +55,10 @@
     }
   </ng-template>
   <div class="flex gap-y-3 gap-x-6 flex-wrap items-center">
-    <section #searchParameterFields [attr.aria-label]="'OCX_SEARCH_HEADER.CRITERIA.ARIA_LABEL' | translate">
+    <section
+      [attr.aria-label]="'OCX_SEARCH_HEADER.CRITERIA.ARIA_LABEL' | translate"
+      (keydown.enter)="onSearchKeydown($event)"
+    >
       <ng-content></ng-content>
     </section>
     <section
