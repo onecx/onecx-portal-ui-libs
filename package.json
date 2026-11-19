@@ -62,6 +62,7 @@
     "react-router": "^7.13.0",
     "rxjs": "^7.8.2",
     "semver": "^7.7.3",
+    "uuid": "^11.1.1",
     "tailwindcss": "^4.3.3",
     "ts-semaphore": "^1.0.0",
     "tslib": "^2.8.1",
@@ -178,7 +179,7 @@
     "koa": "^3.1.1",
     "diff": "^8.0.3",
     "tar": "^7.5.6",
-    "glob": "^10.4.5",
+    "glob": "^14.0.2",
     "test-exclude": "^7.0.1",
     "brace-expansion": "^2.0.2",
     "cross-spawn": "^7.0.6",
@@ -189,7 +190,8 @@
       "webpack-dev-middleware": "^7.4.6"
     },
     "semver": "^7.7.3",
-    "minimatch": "^9.0.6",
+    "uuid": "^11.1.1",
+    "minimatch": "^11.0.1",
     "@eslint/eslintrc": {
       "minimatch": "^3.1.5"
     },
