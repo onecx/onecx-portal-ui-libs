@@ -1,0 +1,139 @@
+= Dynamic content via container
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:area: ./README.adoc
+:u6: ./dynamic-content-via-patching.adoc
+:u8: ./scope-polyfill.adoc
+:u9: ./primeng-style-scoping.adoc
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+:dynamic_content_utils: {shell}/src/app/shell/utils/styles/dynamic-content.utils.ts
+:react_dynamic_scoping: {libs}/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts
+
+== Question answered
+
+How does an overlay or popup stay inside an app-owned container so it is styled by the app's scope, and how do OneCX and the app share responsibility for creating and using that container?
+
+== Why it exists
+
+The dynamic-content patching route in link:{u6}[Dynamic content via patching] stamps an out-of-scope node at creation time and then lets the Shell's body wrapper promote those temporary markers. This page covers the other option: instead of patching the portal child directly, the app points the overlay at a Shell-created dynamic container that already belongs to the app.
+
+That container-based route matters when the framework already offers an overlay target or container hook. Angular CDK and Angular Material overlays can be redirected to the Shell dynamic container, but only when the app registers OneCX's OverlayContainer replacements. Native CDK/Material `OverlayContainer` does not consume the `DYNAMIC_CONTAINER` token; `OnecxOverlayContainer` and `OnecxFullscreenOverlayContainer` inject it and must be provided as the `OverlayContainer` provider to redirect overlays. PrimeNG components with an `appendTo` option can be configured to render into the app's dynamic container. In all of those cases the content is inserted into a real app-owned container, so the scope is preserved by placement rather than by creation-time patching.
+
+== How it works
+
+The dynamic container is created or reused by the Shell, but it is selected by the app.
+
+=== Container lookup and creation
+
+`getDynamicContainer(containerTag, appElementName)` in link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`get-dynamic-container.utils.ts`] first looks for an existing element matching `containerTag`. If it finds one, it returns that element. If not, it calls `document.createOnecxDynamicContainer(containerTag, appElementName)` on the Shell-provided `document` extension and returns the new container.
+
+That means the lookup is idempotent from the app's point of view: asking for the same selector twice gives back the same element once it exists. The Shell owns the actual creation logic.
+
+=== Shell-owned insertion and scope data
+
+The Shell's `createOnecxDynamicContainer` implementation in link:{dynamic_content_utils}[`dynamic-content.utils.ts`] creates the container element, resolves the app's style data from the app element, writes the permanent style attributes, marks the element with `data-onecx-dynamic-container`, appends it to `document.body`, and returns it.
+
+The important point is ownership:
+
+* the app supplies the container selector and the app element name,
+* the Shell creates and inserts the element,
+* the Shell writes the scope attributes onto the container itself.
+
+Those permanent attributes are the ones from link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `data-style-id`, `data-style-isolation`, and, when applicable, `data-no-portal-layout-styles` / `data-mfe-element`. The dynamic container therefore becomes a real scope boundary, not a temporary wrapper.
+
+=== Angular CDK / Material insertion path
+
+`OnecxOverlayContainer` and `OnecxFullscreenOverlayContainer` in link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`onecx-overlay-container.ts`] and link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`onecx-fullscreen-overlay-container.ts`] both inject `DYNAMIC_CONTAINER` optionally.
+
+When the token is present:
+
+1. The base CDK container is created with the normal CDK logic.
+2. The custom container callback returns the app's dynamic container.
+3. The default container's classes and attributes are copied onto the dynamic container.
+4. The default node is replaced with the dynamic container.
+5. The container field is updated to point at the dynamic container.
+
+When the token is absent, both classes fall back to the default CDK behavior and leave the container under `document.body`.
+
+This makes the dynamic container a replacement for the CDK container, not a wrapper around it.
+
+=== PrimeNG insertion path
+
+For PrimeNG components that expose `appendTo`, the app can configure them to target its dynamic container instead of `body`. That is a configuration choice in the consuming app; OneCX does not auto-rewrite PrimeNG's `appendTo` values.
+
+In other words, the app chooses the target, and the target is the Shell-created dynamic container. React's PrimeReact integration uses the generic patching contract from link:{u6}[Dynamic content via patching] instead of this container path; its framework-specific implementation lives in link:{react_dynamic_scoping}[`libs/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts`].
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`webcomponent-bootstrap.utils.ts`]: bootstrap helpers that add the dynamic-container providers (`addDynamicContainerProvider`) and bind the proxy per entrypoint (`createEntrypoint`).
+* link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`get-dynamic-container.utils.ts`]: `getDynamicContainer` and `removeDynamicContainer`.
+* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`]: `DYNAMIC_CONTAINER` token declaration.
+* link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`onecx-overlay-container.ts`]: `OnecxOverlayContainer`, the optional `DYNAMIC_CONTAINER` replacement for the CDK overlay container.
+* link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`onecx-fullscreen-overlay-container.ts`]: `OnecxFullscreenOverlayContainer`, the fullscreen variant.
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `data-onecx-dynamic-container` and the shared `data-style-*` keys used on the container.
+
+=== Shell side
+
+* link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`dynamic-content-initializer.utils.ts`]: starts the dynamic-content listeners that cooperate with this path.
+* link:{dynamic_content_utils}[`dynamic-content.utils.ts`]: `createOnecxDynamicContainer`, the Shell-owned container creation and insertion path.
+* link:{shell}/src/app/shell/utils/styles/body-overwrites.utils.ts[`body-overwrites.utils.ts`]: the body wrapper excludes `data-onecx-dynamic-container` from the generic wrapping path and has a special CDK overlay path.
+* link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts`]: the helper set that stamps and removes scope attributes for dynamic content in the Shell.
+
+== Angular / React
+
+=== Angular
+
+Angular CDK and Angular Material are the primary consumers of this path. To redirect CDK/Material overlays into the Shell dynamic container, an application registers `OnecxOverlayContainer` (or `OnecxFullscreenOverlayContainer`) as the `OverlayContainer` provider; the default CDK `OverlayContainer` does not consume `DYNAMIC_CONTAINER`, but those classes do. PrimeNG components that support `appendTo` can also be pointed at the container; the app sets that property, and OneCX supplies only the target and its scope data.
+
+When a webcomponent is bootstrapped, the bootstrap helpers (see libs/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts) provide `DYNAMIC_CONTAINER` through a proxy (`DYNAMIC_CONTAINER_PROXY`) that `createEntrypoint` binds per entrypoint, so the token resolves to a callback shared for the same app or remote-component entrypoint. An application on the webcomponent bootstrap path does not provide the token itself. Because the container already carries the scope attributes, overlays inside it inherit the app's scope without an extra wrapper `div`.
+
+=== React
+
+React does not use the `DYNAMIC_CONTAINER` path documented here. PrimeReact's dynamic-content integration stays on the generic patching contract from link:{u6}[Dynamic content via patching], with the React-side portal patch living in link:{react_dynamic_scoping}[`libs/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts`].
+
+== Edge cases & pitfalls
+
+* *Missing `DYNAMIC_CONTAINER` token.* If the app does not provide the token, the custom CDK containers fall back to the default document-body behavior.
+* *Missing Shell support.* `getDynamicContainer` depends on `document.createOnecxDynamicContainer`. Without the Shell's document extension, the creation path is unavailable.
+* *Existing container reuse.* If the dynamic container already exists, `getDynamicContainer` returns it instead of creating another one.
+* *The container is the scope boundary.* The app should not expect a second wrapper around the dynamic container. The container itself carries the scope data.
+* *PrimeNG is configured, not patched.* A PrimeNG overlay only uses this route when the consuming app points `appendTo` at the dynamic container.
+* *React is different.* PrimeReact portals still use the patching option and should not be documented as using `DYNAMIC_CONTAINER`.
+
+== Debugging
+
+In the devtools:
+
+* Inspect the app's dynamic container. It should have `data-onecx-dynamic-container` plus the permanent scope attributes (`data-style-id`, `data-style-isolation`, and any applicable companion markers).
+* If a CDK overlay still lands under `body`, check whether `DYNAMIC_CONTAINER` is provided and whether the app's `OnecxOverlayContainer` / `OnecxFullscreenOverlayContainer` is registered.
+* If a PrimeNG popup still lands under `body`, check the component's `appendTo` value. It must point at the app's dynamic container rather than the document body.
+* If the container exists but is missing scope attributes, the Shell-side `createOnecxDynamicContainer` path is not running or is not receiving the correct app element information.
+
+General runtime inspection is covered by the *Diagnostics* Area.
+
+== Related Units
+
+* link:{u6}[Dynamic content via patching]: the companion option that stamps the portal child directly instead of reusing a container.
+* link:{u8}[Scope polyfill]: how the `@scope` blocks that this container feeds are rewritten on browsers without native {scope_at_rule}.
+* link:{area}[Styling & Style Isolation: Area overview]
+* link:{u9}[PrimeNG/PrimeReact style scoping].
+* *Angular component styles*: the separate Unit that covers framework-encapsulated component CSS.
+
+== Sources
+
+Code::
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`webcomponent-bootstrap.utils.ts`]: bootstrap helpers that add the dynamic-container providers (`addDynamicContainerProvider`) and bind the proxy per entrypoint (`createEntrypoint`).
+* link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`get-dynamic-container.utils.ts`]: `getDynamicContainer`, `removeDynamicContainer`
+* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`]: `DYNAMIC_CONTAINER` token declaration
+* link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`onecx-overlay-container.ts`]: `OnecxOverlayContainer`
+* link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`onecx-fullscreen-overlay-container.ts`]: `OnecxFullscreenOverlayContainer`
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `data-onecx-dynamic-container`, shared `data-style-*` keys
+* link:{dynamic_content_utils}[`dynamic-content.utils.ts` (Shell)]: `createOnecxDynamicContainer`
+* link:{shell}/src/app/shell/utils/styles/body-overwrites.utils.ts[`body-overwrites.utils.ts` (Shell)]: generic-body wrapper exclusions and CDK special path
+* link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`dynamic-content-initializer.utils.ts` (Shell)]: dynamic-content runtime bootstrap
+* link:{react_dynamic_scoping}[`libs/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts`]: PrimeReact's patching-side portal integration
+* link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts` (Shell)]: dynamic-content style-data helpers

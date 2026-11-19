@@ -1,0 +1,26 @@
+/*
+ * Tailwind CSS v4 source entry for the @onecx/angular-standalone-shell layout
+ * utilities.
+ *
+ * Compiled (by the `build:styles` target, via `@tailwindcss/cli`) into
+ * `assets/tailwind.css`, which `assets/styles.scss` imports alongside the
+ * shell's own element rules.
+ *
+ * Notes:
+ * - The `tailwindcss/preflight` reset is intentionally NOT imported. The
+ *   library ships utilities only; it must not reset the consumer
+ *   application's global element styles (the shell's own `body` rules live in
+ *   `assets/styles.scss`, not here).
+ * - `@layer` ordering is declared explicitly so that generated `utilities`
+ *   win over Optimus UI's `optimus` layer while the Optimus theme `@theme`
+ *   block still feeds the `--color-*`/`--radius-*` values the utilities read.
+ * - `@source` is scoped to this library so generated utilities only reflect
+ *   classes the library itself owns.
+ */
+@layer theme, base, optimus, components, utilities;
+
+@import "tailwindcss/theme";
+@import "@openng/optimus-ui-tailwindcss";
+@import "tailwindcss/utilities";
+
+@source "./src";

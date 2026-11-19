@@ -1,0 +1,274 @@
+= Global `window` state inventory
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+Which pieces of state do the libraries (and the Shell) keep on the shared `window`/`globalThis` object: and who writes, who reads, and which Area owns each of them?
+
+== Why it exists
+
+A OneCX page hosts the Shell, several Apps and Remote Components, all from different bundles, on one `window`. Several mechanisms cannot use a normal in-process channel because they have to cross that bundle boundary in the *same* page, or they have to survive a re-render. So they keep their state on global properties: plain keys on `window`/`globalThis`.
+
+That is powerful and dangerous at the same time:
+
+* any bundle can read or clobber a key without a type-system or ownership contract;
+* the value is shared across *all* frameworks on the page, so an Angular write and a React read see the same object;
+* nothing in the code tells you what is *supposed* to be there.
+
+This inventory is the reference for "what actually lives on `window` in a running OneCX page". Every entry is verified against the current code; every key names its owning Area so you know where to go for the mechanism. The *Owning Area* column points at the Area from the Dev Docs index that explains the mechanism: this Unit does not re-explain it.
+
+== How it works
+
+Global keys in OneCX come in two shapes.
+
+* **Namespaced objects.** A single top-level key that holds a subtree, written through link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[`ensureProperty`]. `ensureProperty(globalThis, ['@onecx/accelerator', 'topic', 'tabId'], value)` creates each intermediate object if missing and only assigns the leaf when it is `null`/`undefined`, so a later call never clobbers an earlier one. `@onecx/accelerator`, `@onecx/integration-interface`, `@onecx/angular-utils` and `onecxAuth` are this kind.
+* **Plain scalar / map keys.** A single top-level key with a scalar or flat object: `onecxMessageId`, `onecxIcons`, `onecxTranslations`, `onecxTriggerElement`, `onecx-shell-capabilities`.
+
+Both kinds are *shared across the page*: a value written by the Shell is read by an Angular App and a React App on the same `window`, with no per-bundle copy.
+
+=== Library-owned runtime state
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph W["window / globalThis (one per page)"]
+    K1["@onecx/accelerator.*"]
+    K3["onecxIcons"]
+    K4["@onecx/integration-interface.*"]
+    K5["onecxTranslations"]
+  end
+  Ang["Angular libs (Libs side)"]
+  React["React libs (Libs side)"]
+  Ang -->|writes/reads| K1
+  Ang -->|writes/reads| K3
+  Ang -->|writes/reads| K4
+  Ang -->|writes/reads| K5
+  React -->|reads| K3
+----
+
+=== Shell-provided auth/capability state
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph W["window / globalThis (one per page)"]
+    K2["onecxAuth / onecxAngularAuth"]
+    K6["onecx-shell-capabilities"]
+  end
+  Shell["Shell (Shell side)"]
+  Ang["Angular libs (Libs side)"]
+  Shell -->|writes| K2
+  Shell -->|writes| K6
+  Ang -->|reads| K2
+  Ang -->|reads| K6
+----
+
+=== Bootstrap / attribution state
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph W["window / globalThis (one per page)"]
+    K7["onecxTriggerElement"]
+    K8["__FEDERATION__ / onecxFederationInstance"]
+  end
+  Shell["Shell (Shell side)"]
+  React["React libs (Libs side)"]
+  Shell -->|writes| K8
+  React -->|reads| K7
+  React -->|reads| K8
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+Most globals are *owned* by a library in this repository: the library writes the key through `ensureProperty` and also reads it back. The exceptions, the auth proxies and the Shell capability flags, are *written by the Shell* and *read by the libraries* (or, for `onecxAngularAuth`, written by the Shell for older libraries). The table below records, per key, the owner and whether the writer and reader are on the libs side or the Shell side.
+
+=== Shell side
+
+The Shell writes three kinds of globals. It sets the auth proxies (`onecxAuth`, `onecxAngularAuth`) from the `AuthServiceWrapper` that the `@onecx/shell-auth` library instantiates when the Shell calls `provideAuthService()`; it publishes the capability list via `ShellCapabilityService.setCapabilities(...)` in link:{shell}/src/bootstrap.ts[`src/bootstrap.ts`]; and at startup it exposes the Module Federation instance on `globalThis` and initialises the preloader registry in link:{shell}/src/main.ts[`src/main.ts`]. The libs never need to know *how* the Shell produced these values: only the key name.
+
+== The inventory
+
+The table lists every `window`/`globalThis` key that the current libraries read or write. `Writer` / `Reader` name the code that touches the key. The *Owning Area* column points at the Area from the Dev Docs index that explains the mechanism; link the page once it exists. A key tagged *Shell* is written by the Shell and consumed by the libs.
+
+[cols="25,25,20,30", options="header",width="100%"]
+|===
+|Global key |Writer / owner |Reader |Owning Area (mechanism)
+
+|`@onecx/accelerator.gatherer.promises`
+|`@onecx/accelerator`: link:{libs}/accelerator/src/lib/declarations.ts[`declarations.ts`], link:{libs}/accelerator/src/lib/utils/gatherer.ts[`gatherer.ts`]
+|`@onecx/accelerator`: `gatherer.ts`
+|1. Integration Contract: Gatherers & RPC
+
+|`@onecx/accelerator.topic.useBroadcastChannel`
+|Writers: `@onecx/accelerator`: link:{libs}/accelerator/src/lib/declarations.ts[`declarations.ts`] (default `'V2'`); runtime assignments in link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`] via `disableBroadcastChannel()` and `disableBroadcastChannelV2()`; fallback assignment in link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`topic-publisher.ts`] when BroadcastChannel is unavailable
+|Readers: `topic.ts`, `topic-publisher.ts`
+|1. Integration Contract: Transports & tab scope
+
+|`@onecx/accelerator.topic.initDate`
+|`@onecx/accelerator`: `declarations.ts` (`Date.now()`)
+|`topic.ts` (topic init timing)
+|1. Integration Contract: Topic lifecycle
+
+|`@onecx/accelerator.topic.tabId`
+|`@onecx/accelerator`: `declarations.ts` (`ceil(performance.now())`, per tab)
+|`topic.ts`, `topic-publisher.ts` (V2 BroadcastChannel name)
+|1. Integration Contract: Transports & tab scope
+
+|`@onecx/accelerator.topic.statsEnabled`
+|Developer / DevTools (optional)
+|`@onecx/accelerator`: link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`logs.utils.ts`]
+|13. Diagnostics: this Unit
+
+|`@onecx/accelerator.topic.stats.messagesPublished`
+|`@onecx/accelerator`: `logs.utils.ts`
+|DevTools (statistics readout)
+|13. Diagnostics: this Unit
+
+|`@onecx/accelerator.topic.stats.instancesCreated`
+|`@onecx/accelerator`: `logs.utils.ts`
+|DevTools (statistics readout)
+|13. Diagnostics: this Unit
+
+|`onecxMessageId`
+|`@onecx/accelerator`: link:{libs}/accelerator/src/lib/topic/message.ts[`message.ts`]
+|`message.ts` (message ordering)
+|1. Integration Contract: Message delivery
+
+|`onecxAuth.authServiceProxy.v1.{getHeaderValues,updateTokenIfNeeded}`
+|Shell: link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`shell-auth` `auth-service-wrapper.ts`]
+|`@onecx/angular-auth`: link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[`auth-proxy.service.ts`]
+|8. Authentication
+
+|`onecxAngularAuth.authServiceProxy.v1.{getHeaderValues,updateTokenIfNeeded}`
+|Shell: `shell-auth` `auth-service-wrapper.ts` (compat for older libs)
+|older library versions
+|8. Authentication
+
+|`onecxIcons`
+|`@onecx/integration-interface`: link:{libs}/integration-interface/src/lib/services/icon.service.ts[`icon.service.ts`]
+|`@onecx/integration-interface`: `icon.service.ts`
+|5. Theming & Visual Assets: Icons
+
+|`@onecx/integration-interface.dynamicTranslationsCache`
+|`@onecx/integration-interface`: link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`dynamic-translation.service.ts`]
+|same file
+|10. Localization: Dynamic translations
+
+|`onecxTranslations`
+|`@onecx/angular-utils`: link:{libs}/angular-utils/src/lib/services/translation-cache.service.ts[`translation-cache.service.ts`]
+|same file
+|10. Localization: App translations
+
+|`@onecx/integration-interface.resizedEvents.{slot_resized,slot_group_resized}`
+|`@onecx/integration-interface`: link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-events.topic.ts[`resized-events.topic.ts`]
+|same file
+|6. Remote Components: Slot size reporting
+
+|`onecx-shell-capabilities`
+|Shell: link:{shell}/src/bootstrap.ts[`bootstrap.ts`] via `setShellCapabilities`; defined by link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`shell-capability.utils.ts`]
+|`@onecx/integration-interface`: `shell-capability.utils.ts`, `dynamic-translation.service.ts`
+|3. Shell Context (capability negotiation)
+
+|`onecxTriggerElement`
+|Shell: link:{shell}/src/app/shell/utils/styles/onecx-trigger-element.utils.ts[`onecx-trigger-element.utils.ts`], link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`dynamic-content-initializer.utils.ts`]
+|`@onecx/react-utils`: link:{libs}/react-utils/src/lib/styling/primeReact/dynamicScoping/functions/onecx-trigger-element.ts[`onecx-trigger-element.ts`]
+|4. Styling: Dynamic content attribution
+
+|`onecxFederationInstance`
+|Shell: link:{shell}/src/main.ts[`src/main.ts`]
+|`@onecx/angular-utils`: link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`get-load-remote-entry-options.utils.ts`] (falls back to the runtime `getInstance`)
+|2. Application Bootstrap: Module Federation
+
+|`__FEDERATION__.__INSTANCES__`
+|Webpack Module Federation runtime
+|`@onecx/react-remote-components`: link:{libs}/react-remote-components/src/lib/utils/getShellMfInstance.ts[`getShellMfInstance.ts`]
+|2. Application Bootstrap: Module Federation
+
+|`onecxPreloaders`
+|Shell: link:{shell}/src/main.ts[`src/main.ts`]
+|Shell: link:{shell}/src/app/shell/utils/preloader.utils.ts[`preloader.utils.ts`]
+|2. Application Bootstrap: Preloaders
+|===
+
+One related value is not a `window` key but is equally important at runtime:
+
+* `localStorage.debug`: the namespace patterns that enable link:logging.adoc[logging]. Written by the developer, read by the `debug` package on load.
+
+== Angular / React
+
+Both frameworks share the same globals. Angular writes and reads `onecxTranslations` and `onecxAuth` (via `angular-auth`); React reads `onecxTriggerElement` and the Module Federation instance. `onecxIcons` and the `@onecx/accelerator.*` / `@onecx/integration-interface.*` keys are consumed by both, which is exactly why they live on `window` rather than in a single framework's store.
+
+== Edge cases & pitfalls
+
+* *No ownership guarantee.* Nothing stops a bundle from overwriting another's key. `ensureProperty` only protects against *first-writer-wins* on the leaf; it does not protect a key from being replaced wholesale. Treat the table above as the intended surface and inspect it before debugging.
+* *Values may not exist yet.* Most keys are created lazily with `??=`. Reading a key before its writer runs returns `undefined`; the auth reader in `angular-auth` handles this with a no-op default and a rejecting promise (`Error: No authServiceWrapper provided...`).
+* *`@onecx/angular-utils.guards.debug` is an unused declaration.* The guards package declares the global, but the current code does not write or read it. Guard logging is enabled through the guards logger namespace instead: `localStorage.debug = '@onecx/angular-utils:guards:*'`.
+* *`onecxAngularAuth` is legacy.* It exists only so older library versions keep working. New code should read `onecxAuth`; the Shell writes both from the same `AuthServiceWrapper`.
+* *Two `@onecx/*` look-alikes.* `@onecx/accelerator` (accelerator lib) and `@onecx/integration-interface` / `@onecx/angular-utils` are separate top-level keys with unrelated sub-trees.
+
+== Debugging
+
+In DevTools you can inspect the live values without a page reload:
+
+[source,js]
+----
+// The whole accelerator namespace (topics, tab id, gatherer promises, stats)
+globalThis['@onecx/accelerator']
+
+// Topic statistics: turn these on first, they are off by default
+globalThis['@onecx/accelerator'].topic.statsEnabled = true
+
+// Auth proxies the Apps read
+globalThis.onecxAuth
+
+// Shell-advertised capabilities
+globalThis['onecx-shell-capabilities']
+
+// Module Federation instance the Apps load remotes through
+globalThis.onecxFederationInstance
+----
+
+To see *why* a key has a given value, enable link:logging.adoc[logging] and follow the owning Area. To see the values *change* as Topics move between Apps, use link:tracing-communication.adoc[Tracing cross-App communication].
+
+== Known issues
+
+* *The Shell does not advertise or answer the dynamic-translations capability.* `link:{shell}/src/bootstrap.ts[bootstrap.ts]` calls `setShellCapabilities([PARAMETERS_TOPIC, CURRENT_LOCATION_TOPIC, ACTIVENESS_AWARE_MENUS])` but does *not* include `DYNAMIC_TRANSLATIONS_TOPIC`, even though link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`dynamic-translation.service.ts`] checks `hasShellCapability(ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC)` before using the dynamic-translations Topic. The global cache `@onecx/integration-interface.dynamicTranslationsCache` is still created, but the capability the libs look for is absent on `main`. Follow-up: either the Shell advertises and answers the Topic, or the lib check is removed. (Owned by *10. Localization*.)
+
+== Related Units
+
+* link:logging.adoc[Logging]: the `localStorage.debug` that turns on the logs you read while inspecting these keys.
+* link:tracing-communication.adoc[Tracing cross-App communication]: the `@onecx/accelerator.topic.*` keys from the dynamic side (transports, tab id, message traffic).
+* *1. Integration Contract & Topics*: the `@onecx/accelerator.*` keys and `onecxMessageId`.
+* *2. Application Bootstrap*: `onecxFederationInstance`, `__FEDERATION__.__INSTANCES__`, `onecxPreloaders`.
+* *8. Authentication*, `onecxAuth`, `onecxAngularAuth`. *10. Localization*, `onecxTranslations`, `dynamicTranslationsCache`. *5. Theming & Visual Assets*, `onecxIcons`.
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[`accelerator/src/lib/utils/ensure-property.utils.ts`]: the `ensureProperty` helper that creates namespaced globals.
+* link:{libs}/accelerator/src/lib/declarations.ts[`accelerator/src/lib/declarations.ts`]: `@onecx/accelerator` namespace: `gatherer.promises`, `topic.useBroadcastChannel`, `topic.initDate`, `topic.tabId`.
+* link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`accelerator/src/lib/utils/logs.utils.ts`]: `topic.statsEnabled`, `topic.stats.messagesPublished`, `topic.stats.instancesCreated`.
+* link:{libs}/accelerator/src/lib/topic/message.ts[`accelerator/src/lib/topic/message.ts`]: `onecxMessageId`.
+* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`accelerator/src/lib/utils/gatherer.ts`]: `gatherer.promises` reader/writer.
+* link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[`angular-auth/src/lib/auth-proxy.service.ts`]: `onecxAuth` reader (App side).
+* link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`shell-auth/src/lib/auth-service-wrapper.ts`]: `onecxAuth` / `onecxAngularAuth` writers (Shell side).
+* link:{libs}/integration-interface/src/lib/services/icon.service.ts[`integration-interface/src/lib/services/icon.service.ts`]: `onecxIcons`.
+* link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`integration-interface/src/lib/services/dynamic-translation.service.ts`]: `dynamicTranslationsCache`.
+* link:{libs}/angular-utils/src/lib/services/translation-cache.service.ts[`angular-utils/src/lib/services/translation-cache.service.ts`]: `onecxTranslations`.
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-events.topic.ts[`integration-interface/src/lib/topics/resized-events/v1/resized-events.topic.ts`]: `@onecx/integration-interface.resizedEvents`.
+* link:{libs}/angular-utils/guards/src/declarations.ts[`angular-utils/guards/src/declarations.ts`]: `@onecx/angular-utils.guards.debug`.
+* link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`integration-interface/src/lib/utils/shell-capability.utils.ts`] and link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`]: `onecx-shell-capabilities` and the `ShellCapability` enum.
+* link:{libs}/react-utils/src/lib/styling/primeReact/dynamicScoping/functions/onecx-trigger-element.ts[`react-utils/.../onecx-trigger-element.ts`] and `.../functions/declarations.ts`: `onecxTriggerElement`.
+* link:{libs}/react-remote-components/src/lib/utils/getShellMfInstance.ts[`react-remote-components/src/lib/utils/getShellMfInstance.ts`]: `__FEDERATION__.__INSTANCES__` reader.
+* link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts`]: `onecxFederationInstance` reader (Angular side, with a runtime `getInstance` fallback).
+* link:{shell}/src/main.ts[`src/main.ts` (Shell)]: `onecxFederationInstance`, `onecxPreloaders` writers.
+* link:{shell}/src/bootstrap.ts[`src/bootstrap.ts` (Shell)]: `setShellCapabilities(...)` writer.
+* link:{shell}/src/app/shell/utils/styles/onecx-trigger-element.utils.ts[`src/app/shell/utils/styles/onecx-trigger-element.utils.ts`]: assigns `globalThis.onecxTriggerElement` from UI event handlers.
+* link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`src/app/shell/utils/styles/dynamic-content-initializer.utils.ts`]: initializer that wires the event handlers that set `onecxTriggerElement`.
+* link:{libs}/shell-auth/src/lib/provide-auth-service.ts[`shell-auth/src/lib/provide-auth-service.ts`]: the `provideAuthService()` entry the Shell calls to instantiate the `AuthServiceWrapper` that writes the auth proxies.

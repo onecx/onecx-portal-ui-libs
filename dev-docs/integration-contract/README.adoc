@@ -1,0 +1,65 @@
+= Integration Contract & Topics
+:idprefix:
+:idseparator: -
+:dev-docs-index: ../README.adoc
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+Apps, Remote Components and the Shell talk at runtime by exchanging *Topics*, not by calling each other's code. Every other Area builds on this messaging contract, so it is Area 1 of the link:{dev-docs-index}[Dev Docs]. This Area covers the mechanism only; the meaning of each concrete Topic (workspace, theme, permissions, …) belongs to its owning Area.
+
+== Problem
+
+A OneCX page hosts one Shell, the currently routed App and any Remote Components it hosts. These units are released separately, use Angular or React, share no object graph or DI container, and may load at different times.
+
+They must still stay in sync: the Shell owns the workspace, theme, route and user profile, and Apps and Remote Components react to them. The Topic contract is their only channel, so every other Dev Docs mechanism depends on it.
+
+== Big picture
+
+The libraries in this repository define the vocabulary and machinery; the Shell and Apps use them:
+
+* *Libraries* (`@onecx/accelerator`, `@onecx/integration-interface` and the Angular/React adapters) provide the `Topic` and `Gatherer` primitives, the concrete shared and request/response (RPC) Topics, and the per-framework services and contexts that wrap them.
+* *Shell* advertises its capabilities, publishes shared state and answers requests for Shell-owned data.
+* *Apps / Remote Components* subscribe to the state they need. Where needed, they also publish Topics or answer Topic requests, including between Apps.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Shell
+  participant App
+  participant Remote as Remote Component
+
+  Shell->>Shell: publish workspace / theme / user
+  App->>App: subscribe to shared Topics
+  Remote->>App: TopicGet (late subscriber asks for current state)
+  App-->>Remote: TopicNext (current value)
+  App->>Shell: RPC request (e.g. permissions)
+  Shell-->>App: RPC response
+----
+
+== Unit map
+
+Units in reading order:
+
+. link:why-message-based.adoc[Why a message-based contract]: why units communicate only through Topics, and what that forbids.
+. link:message-delivery.adoc[Topic message delivery]: message types, ordering by id and timestamp, late-subscriber replay and the init/resolve handshake.
+. link:transports-and-tab-scope.adoc[Transports & tab scope]: postMessage vs BroadcastChannel v1/V2, the per-tab `tabId`, fallback between transports and who selects one.
+. link:topic-lifecycle.adoc[Topic lifecycle]: Topic creation and publishing, what `destroy` releases and leaves behind, where the adapters destroy, and the deprecated syncable Topic.
+. link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics]: the `Gatherer` scatter/gather and the RPC Topics, and when to use them instead of a plain Topic.
+. link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation]: Topic versions, how the Shell advertises its capabilities and how Apps and Remote Components check them to adapt to older or newer Shells.
+. link:framework-adapters.adoc[Framework adapters]: how Angular services, React contexts and ngrx store connectors wrap the `Topic`, who owns and destroys each instance, and how a Topic value reaches the ngrx store.
+. link:topic-catalogue.adoc[Topic & Gatherer catalogue]: every shared `Topic` and `Gatherer` the libraries define, with version, publisher, consumers and owning Area.
+
+== Related Areas
+
+* Areas 2–12 of the link:{dev-docs-index}[Dev Docs index] describe concrete Topics and state flows built on this contract.
+* link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13) shows how to observe Topic traffic at runtime.
+
+[#debugging-conventions]
+== Debugging conventions
+
+All Topics log under `@onecx/accelerator:Topic:<name>` and all Gatherers under `@onecx/accelerator:Gatherer:<name>`. Set `localStorage.debug` and reload the page:
+
+* `localStorage.debug = '@onecx/accelerator:Topic:*'` (or `:Gatherer:*`): every Topic or Gatherer.
+* `localStorage.debug = '@onecx/accelerator:Topic:<name>'` (or `:Gatherer:<name>`): one concrete instance.
+* `localStorage.debug = '@onecx/accelerator:Topic:*:error'`: errors only.
+
+Each Unit's *Debugging* section adds only what is specific to it. For general cross-App tracing, see link:../diagnostics/tracing-communication.adoc[Area 13], also listed under each Unit's Related Units.

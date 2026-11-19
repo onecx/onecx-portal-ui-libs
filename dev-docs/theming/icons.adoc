@@ -1,0 +1,158 @@
+
+= Icons
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:overview: ./README.adoc
+:icon_model: {libs}/integration-interface/src/lib/topics/icons/v1/icon.model.ts
+:icon_topic: {libs}/integration-interface/src/lib/topics/icons/v1/icon.topic.ts
+:icon_service: {libs}/integration-interface/src/lib/services/icon.service.ts
+:icon_declarations: {libs}/integration-interface/src/lib/declarations.ts
+:icon_service_angular: {libs}/angular-integration-interface/src/lib/services/icon.service.ts
+:topic_base: {libs}/accelerator/src/lib/topic/topic.ts
+:shell_app_module: {shell}/src/app/app.module.ts
+:shell_icon_loader: {shell}/src/app/shell/services/icon-loader.service.ts
+
+== Question answered
+
+How are icons delivered and shared across OneCX applications so that any app can ask for an icon by name and receive a CSS class, without each app bundling its own icon assets?
+
+== Why it exists
+
+Applications render many icons (Material Design Icons as `mdi:…`, Prime icons as `prime:…`), and a single icon may be needed by the Shell and by several Microfrontends/Remote Components on the same page. Bundling a copy of every SVG into every application would bloat the builds and duplicate the network load. OneCX therefore separates *asking for an icon* from *loading the icon asset*: an application only ever handles a stable icon *name* and a generated CSS *class name*; the Shell loads the actual SVG assets once for the page and shares them through a global cache.
+
+== How it works
+
+The framework-agnostic half lives in `@onecx/integration-interface`. An application never reads or renders raw SVG itself; it requests an icon *name* and receives a deterministic CSS class name to apply in its template. The mechanism has three parts: a generated class name, a shared global cache, and a Topic that coordinates loading with the Shell.
+
+=== The `Icon` model
+
+link:{icon_model}[`icon.model.ts`] defines the shapes used across the boundary:
+
+* `IconClassType`: the rendering style: `'svg' | 'background' | 'background-before'`.
+* `IconCache`: a resolved icon: `{ name, type, body, parent? }`, where `body` is the SVG payload.
+* `IconRequested`, `{ type: 'IconRequested', name }`, a request for one real icon name.
+* `IconsReceived`, `{ type: 'IconsReceived' }`, the Shell's signal that it finished loading/injecting the requested icons.
+* `Icon`: `IconRequested | IconsReceived`, the Topic's message type.
+
+=== The class name
+
+`IconService` (link:{icon_service}[`icon.service.ts`]) builds the class name a consumer applies. `generateClassName(name, classType)` returns:
+
+[source,typescript]
+----
+onecx-theme-icon-${classType}-${normalizeIconName(name)}
+----
+
+`normalizeIconName` replaces every character that is not `[a-zA-Z0-9_-]` with `-`, so `mdi:home` becomes `onecx-theme-icon-background-before-mdi-home`. The result is always a valid CSS identifier regardless of the icon's source. The `classType` selects which CSS the Shell will emit for that class (see *Edge cases*); the default is `'background-before'`.
+
+=== The global cache
+
+The resolved icons are shared page-wide on `globalThis.onecxIcons` (declared in link:{icon_declarations}[`declarations.ts`] as `Record<string, IconCache | null | undefined>`). Its three states drive the whole flow:
+
+* `undefined`: requested, not loaded yet;
+* `null`: loaded and *not found* (so consumers can stop waiting);
+* `IconCache`: available.
+
+Because the cache lives on `globalThis`, the Shell and every application on the page read and write the same object.
+
+=== The channel: `IconTopic`
+
+link:{icon_topic}[`icon.topic.ts`] exposes the coordination as a link:{topic_base}[`Topic`]:
+
+[source,typescript]
+----
+export class IconTopic extends Topic<Icon> {
+  constructor() {
+    super('icon', 1, false)
+  }
+}
+----
+
+It is a Topic named `icon` at version `1`, constructed with `sendGetMessage = false`. That last argument matters: the Topic does *not* send a `TopicGet` on construction, so an application never asks the Shell for the current icon state: the application only *pushes* `IconRequested`, and relies on the shared cache for anything already loaded.
+
+The request/reply round trip:
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant App
+  participant Cache as globalThis.onecxIcons
+  participant Shell as ShellIconLoaderService
+  App->>Cache: mark name undefined
+  App->>Shell: IconTopic.publish({ type: 'IconRequested', name })
+  Shell->>Cache: batch (100ms), load missing icons, write IconCache/null
+  Shell->>App: inject CSS (onecx-theme-icon-* rules)
+  Shell-->>App: IconTopic.publish({ type: 'IconsReceived' })
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+`@onecx/integration-interface` provides the framework-agnostic `IconService` (link:{icon_service}[`icon.service.ts`]):
+
+* `requestIcon(name, classType = 'background-before'): string`: returns the generated class name immediately. If `name` is not yet a key of `globalThis.onecxIcons`, it marks the entry as `undefined` and publishes `{ type: 'IconRequested', name }` on the Topic. It never awaits anything.
+* `requestIconAsync(name, classType?, fallbackClass?): Promise<string | null>`: calls `requestIcon` first, then reads `globalThis.onecxIcons[name]`: if it is already `null` it resolves to `fallbackClass` (or `null`) immediately, if it is already an `IconCache` it resolves to the class name immediately, and only while the entry is still `undefined` does it wait for the first `IconsReceived` before resolving.
+* `destroy()`: destroys the Topic (removes the message listener / closes channels).
+
+The library owns *only* the request and the class-name/cache contract. It does not fetch any SVG, does not own the CSS, and does not populate the cache.
+
+=== Shell side
+
+The Shell is the loader and the CSS authority (separate repository, read-only here; linked via `github.com/onecx/onecx-shell-ui/blob/main/…`). Its `ShellIconLoaderService` (link:{shell_icon_loader}), wired up by the `shellIconLoaderServiceInitializer` in link:{shell_app_module}[`src/app/app.module.ts`], does the rest on every `init()`:
+
+* Subscribes to `IconTopic` and filters for `IconRequested` messages.
+* Batches them (a ~100 ms `bufferTime`) so several applications asking at once collapse into one load.
+* For each missing name it fetches the icon and writes the result into `globalThis.onecxIcons`: an `IconCache` when found, `null` when not.
+* Injects the CSS for the requested render styles into a single global `<style>` element (a `mask`/`currentColor` rule for `svg`, and a base64 `data:image/svg+xml` rule for `background` / `background-before`).
+* Publishes `{ type: 'IconsReceived' }` once the batch is done.
+
+Because the CSS and the cache are both page-global, the Shell loads and styles each icon once no matter how many applications request it.
+
+== Angular / React
+
+The request API is the same in both frameworks; only how you obtain the `IconService` differs.
+
+=== Angular
+
+link:{icon_service_angular}[`IconService`] (`@onecx/angular-integration-interface`, `providedIn: 'root'`) is a thin injectable wrapper around the framework-agnostic service. It exposes `iconTopic`, `requestIcon`, `requestIconAsync`, and calls `destroy()` from `ngOnDestroy`. An Angular component injects it and uses the same two methods.
+
+=== React
+
+There is no React-specific icon context. React applications construct the shared framework-agnostic `IconService` from `@onecx/integration-interface` directly and call `requestIcon` / `requestIconAsync` on it.
+
+== Edge cases & pitfalls
+
+* *`requestIcon` is synchronous and optimistic.* It returns the class name before the icon has loaded. The element renders with the class immediately and the icon "pops in" when the Shell injects the CSS. Use `requestIconAsync` when the icon must be present before the UI shows (or to degrade to a `fallbackClass`).
+* *`requestIconAsync` resolves only on `IconsReceived`.* If the icon is missing (cache entry `null`) it resolves to `fallbackClass` (or `null`); if it is already available it resolves without waiting. Do not assume it always waits.
+* *No `TopicGet` is sent.* `IconTopic` is created with `sendGetMessage = false`, so a fresh application does not pull the current icon state from the Shell. Anything already in `globalThis.onecxIcons` (loaded by the Shell or another app) is found silently; only names absent from the cache trigger an `IconRequested`.
+* *The `classType` does not travel on the Topic.* `IconRequested` carries only the name; the `classType` is used locally to build the class name. The Shell injects the CSS per style, so the class name is what couples a request to a rendered style.
+* *The class name is normalized, the Topic name is not.* `mdi:home` maps to `onecx-theme-icon-…-mdi-home`, but the `IconRequested` message still carries the real `mdi:home` name, which is what the Shell looks up.
+
+== Debugging
+
+* Inspect `window.onecxIcons` in the console to see, per icon name, whether it is `undefined` (pending), `null` (not found) or an `IconCache` (loaded).
+* In the DOM, look for the global `<style>` containing `onecx-theme-icon-…` rules and confirm the `background-image` / `mask` rule exists for the class you applied.
+* Trace the Topic traffic: `IconRequested` is published by applications, `IconsReceived` by the Shell; between them the Shell is fetching and injecting.
+
+== Related Units
+
+* link:{overview}[Theming & Visual Assets overview]: the Area this Unit belongs to.
+* link:theme-to-page.adoc[Theme → page]: where the theme (and the icon set's theme scoping) is applied to the page.
+* link:images.adoc[Images]: the sibling Unit covering images delivered via the image repository.
+
+== Sources
+
+Code::
+* link:{icon_model}[`integration-interface/.../icons/v1/icon.model.ts`]: `Icon`, `IconCache`, `IconClassType`, `IconRequested`, `IconsReceived`.
+* link:{icon_topic}[`integration-interface/.../icons/v1/icon.topic.ts`]: `IconTopic` (`icon`, v1, `sendGetMessage = false`).
+* link:{icon_service}[`integration-interface/.../services/icon.service.ts`]: `IconService`, `generateClassName`, `normalizeIconName`, `ensureIconCache`.
+* link:{icon_declarations}[`integration-interface/.../lib/declarations.ts`]: the `globalThis.onecxIcons` global declaration.
+* link:{icon_service_angular}[`angular-integration-interface/.../services/icon.service.ts`]: the Angular `providedIn: 'root'` wrapper.
+* link:{topic_base}[`accelerator/.../topic/topic.ts`]: the `Topic` base class and its `sendGetMessage` flag.
+* Shell (read-only, via `github.com/onecx/onecx-shell-ui/blob/main`):
+** link:{shell_icon_loader}[`src/app/shell/services/icon-loader.service.ts`]: `ShellIconLoaderService`: batches `IconRequested`, loads icons into `globalThis.onecxIcons`, injects CSS, publishes `IconsReceived`.
+** link:{shell_app_module}[`src/app/app.module.ts`]: the `shellIconLoaderServiceInitializer` that runs the loader on startup.

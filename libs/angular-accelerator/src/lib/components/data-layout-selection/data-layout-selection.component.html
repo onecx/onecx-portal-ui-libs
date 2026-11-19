@@ -1,9 +1,10 @@
-<div class="flex flex-wrap justify-content-between align-items-center py-1 gap-2">
+<div class="flex flex-wrap justify-between items-center py-1 gap-2">
   @if (viewingLayouts().length > 1) {
   <p-selectbutton
     [options]="viewingLayouts()"
     [ngModel]="selectedViewLayout()"
     optionLabel="id"
+    autofocus="false"
     (onChange)="onDataViewLayoutChange($event.value)"
     [ariaLabel]="'OCX_DATA_LAYOUT_SELECTION.SELECT_BUTTON.ARIA_LABEL' | translate"
   >

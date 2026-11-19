@@ -36,13 +36,13 @@ const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = 
         </div>
       </ng-template>
       <ng-template #grid let-item>
-        <div class="w-3 px-4 py-2 card m-0 mr-4">
+        <div class="w-1/4 px-4 py-2 card m-0 mr-4">
           <p>{{item.product}}</p>
           <p-progressBar [value]="item.amount" />
         </div>
     </ng-template>
     <ng-template #topCenter>
-      <input pInputText placeholder="Custom input injected via template" class="border-round w-18rem p-2" />
+      <input pInputText placeholder="Custom input injected via template" class="rounded-border w-[18rem] p-2" />
     </ng-template>
     </ocx-interactive-data-view>`,
 })
@@ -225,7 +225,7 @@ const CustomFilterViewChipContentInteractiveDataView: StoryFn<InteractiveDataVie
   template: `
     <ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data" filterViewChipStyleClass="pl-0 pr-3">
       <ng-template pTemplate="filterViewChipContent" let-filter="filter" let-column="column" let-filterValueTemplates="filterValueTemplates" let-truthyTemplate="truthyTemplate" let-filterValueTemplate="filterValueTemplate">
-        <span class="bg-primary border-circle w-2rem h-2rem flex align-items-center justify-content-center">{{(column.nameKey | translate).at(0)}}</span>
+        <span class="bg-primary rounded-full w-[2rem] h-[2rem] flex items-center justify-center">{{(column.nameKey | translate).at(0)}}</span>
         <span class="p-chip-text">
           <ng-container *ngIf="filter.filterType === 'TRUTHY'; else myChipValue">
             {{filter.value ? 'MY_YES' : 'MY_NO'}}
@@ -269,7 +269,7 @@ const CustomFilterViewShowMoreChipInteractiveDataView: StoryFn<InteractiveDataVi
   template: `
     <ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
       <ng-template pTemplate="filterViewShowMoreChip" let-value>
-      <span class="p-chip-text flex flex-nowrap align-items-center">
+      <span class="p-chip-text flex flex-nowrap items-center">
         <i class="pi pi-plus"></i> {{value}}
       </span>
       </ng-template>

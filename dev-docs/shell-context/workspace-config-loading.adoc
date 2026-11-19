@@ -1,0 +1,130 @@
+= Workspace config load & distribution
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How is the Workspace configuration loaded on the Shell, and how is it fanned out to the `current-workspace`, `configuration` and `parameters` Topics and the services that read them?
+
+== Why it exists
+
+Apps build URLs for their products and endpoints and read Shell-supplied configuration and parameters. That data has two origins that are easy to confuse:
+
+* *Runtime configuration:* env keys such as `TKIT_*`, `KEYCLOAK_*` and `IS_SHELL`, resolved from `env.json`.
+* *Workspace configuration:* routes, endpoints, microfrontend registrations and `i18n`, fetched from the Shell's back-end.
+
+An App does not care where either comes from; it reads a Topic. This Unit traces both paths from source to Topic and to the libs service that consumes each value.
+
+== How it works
+
+Shell bootstrap runs two independent loads, each feeding different Topics:
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Boot as Shell bootstrap
+  participant BFF as WorkspaceConfig BFF
+  participant WS as current-workspace
+  participant PAR as parameters
+  participant CFG as configuration
+  Boot->>CFG: configurationService.init() (env)
+  Boot->>BFF: loadWorkspaceConfig(path)
+  BFF-->>Boot: Workspace + routes + i18n
+  Boot->>WS: publish(workspace)
+  Boot->>PAR: parametersService.initialize() -> publish
+----
+
+* *Runtime configuration:* `ConfigurationService.init()` (or the React `ConfigurationProvider`) calls the shared `resolveConfigPayload()` helper. It prefers inlined `APP_CONFIG`, then the injected default, then a remote `env.json` fetch, and the result goes to the `configuration` Topic.
+* *Workspace configuration:* the Shell's `workspaceConfigInitializer` fetches it from the OpenAPI-generated `WorkspaceConfigBffService` (in `src/app/shared/generated`). On success it publishes the `Workspace` to `current-workspace`, initializes `RoutesService`, applies the theme and publishes `remoteComponents$`. It then calls `parametersService.initialize()` to fill the `parameters` Topic.
+
+Apps read everything downstream from these three Topics. The values originate on the Shell; the libs only resolve and consume them.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libs define the three Topics and the pure helpers that turn a `Workspace` into URLs and parameter values. The helpers are framework-agnostic and shared by Angular and React.
+
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`CurrentWorkspaceTopic`]: carries the `Workspace` (topic name `currentPortal`). The model is link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`]: `baseUrl`, `workspaceName`, `routes` (each link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`] has `appId`, `productName`, `baseUrl`, `endpoints`), `homePage`, `microfrontendRegistrations`, `i18n`, and many `@deprecated` fields.
+* link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`]: the URL builders. `constructRouteUrl(workspace, appId, productName, endpointName?, endpointParameters?)` finds the route by `appId`/`productName`, then the endpoint (following `[[alias]]` chains), then fills `{param}` placeholders. `doesUrlExistForWorkspace(...)` checks that a route or endpoint exists.
+* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`]: the Angular consumer. `getUrl(...)` and `doesUrlExistFor(...)` map `AppStateService.currentWorkspace$` through these helpers. React mirrors it with link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`].
+* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`]: carries `{ parameters: ApplicationParameters[] }`, one entry per `productName`/`appId` with a `parameters` map. link:{libs}/integration-interface/src/lib/utils/parameters.utils.ts[`findParameterValue` (`parameters.utils.ts`)] looks up a value by `key`, `productName` and `appId`.
+* link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`ParametersService`]: the Angular consumer. `get(key, defaultValue, productName?, appId?)` checks the `PARAMETERS_TOPIC` Shell capability, resolves missing `productName`/`appId` from `currentMfe$`, then reads through `findParameterValue`. React mirrors it with `ParametersProvider` / `useParameters`.
+* link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`]: a base for generated API clients. It takes the API `basePath` from `currentMfe$.remoteBaseUrl` instead of a hard-coded value, so generated clients call the right host. See link:current-app-and-api-base-url.adoc[Current App & API base URL resolution].
+* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`resolveConfigPayload` (`configuration.utils.ts`)]: the configuration resolution shared by `ConfigurationService` and the React `ConfigurationProvider`. For readiness, see link:context-readiness.adoc[Context overview & readiness].
+
+=== Shell side
+
+The Shell is the single producer of all three Topics.
+
+* *Workspace config:* `workspaceConfigInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`] calls `WorkspaceConfigBffService.loadWorkspaceConfig({ path: getLocation().applicationPath })` with `retry({ delay: 500, count: 3 })` and `initializationErrorHandler`. The BFF client is generated in link:{shell}/src/app/shared/generated/api/workspaceConfig.service.ts[`src/app/shared/generated/api/workspaceConfig.service.ts`]. On success it runs these steps in parallel, then `parametersService.initialize()` once all finish:
+** publish `currentWorkspace$` with `baseUrl`, `portalName`, `workspaceName`, `routes`, `homePage`, `microfrontendRegistrations`, `displayName` and `i18n`;
+** call `routesService.init(routes)`;
+** apply the theme;
+** publish `remoteComponents$` (via `mapSlots`).
+* *Parameters:* link:{shell}/src/app/shell/services/parameters.service.ts[`ParametersService`] (Shell) reads a `localStorage` cache and builds a request from `currentWorkspace$` and `remoteComponents$`. It fetches missing values, updates the cache and publishes the result to the `parameters` Topic.
+* *Runtime configuration:* `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`] calls `configurationService.init()`. It resolves inlined `APP_CONFIG`, injected defaults or link:{shell}/src/assets/env.json[`src/assets/env.json`] and publishes the `configuration` Topic. The build-time defaults (the Keycloak keys and `skipRemoteConfigLoad`) come from link:{shell}/src/environments/environment.ts[`src/environments/environment.ts`].
+
+== Angular / React
+
+The load path and the shared helpers (`workspace.utils.ts`, `parameters.utils.ts`, `configuration.utils.ts`) are identical in both frameworks. Only the consumer differs:
+
+* *Angular:* `WorkspaceService` and `ParametersService` are `@Injectable` services; configuration comes from `ConfigurationService`.
+* *React:* `useWorkspace` and `useParameters` are hooks under a Provider; configuration comes from `ConfigurationProvider`. `useTopic` (link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`use-topic.utils.ts`]) creates the Topics and defers destruction, so StrictMode double-mounts do not drop a shared Topic.
+
+== Edge cases & pitfalls
+
+* *Parameters are capability-gated.* `ParametersService.get` (and the React equivalent) returns `defaultValue` when the Shell does not advertise the `PARAMETERS_TOPIC` capability, so an older Shell yields only defaults. Always pass a sane default.
+* *`productName`/`appId` come from `currentMfe$`.* Parameter and API base-URL resolution read `currentMfe$` when these values are not passed. Outside the Shell-published current-MFE context, they resolve against an empty value.
+* *The `Workspace` model is largely deprecated.* Most fields on link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`] carry `@deprecated will be removed`. New code uses `baseUrl`, `workspaceName`, `routes`, `homePage` and `i18n` and treats the rest as transitional.
+* *Missing route/endpoint degrades gracefully.* When a route, endpoint or path parameter is missing, `constructRouteUrl` warns and returns the best base URL found (route, else workspace) instead of throwing. `doesUrlExistForWorkspace` returns `false`.
+* *BFF failure is retried then aborted.* The Shell retries the workspace load three times. On final failure it routes to the initialization-error page instead of publishing a partial workspace.
+
+== Debugging
+
+* Log the `configuration` source: `ENV resolved from injected config` (inlined), `📢 TKA001: Remote config load is disabled...` (default), or a silent remote fetch.
+* Before debugging URL resolution, check `currentWorkspace$.isInitialized` to confirm the workspace arrived.
+* For raw cross-App Topic traffic (including `parameters`), see Area 13 (Diagnostics): `tracing-communication.adoc`.
+
+== Known issues
+
+* *`PortalApiConfiguration.basePath` setter trap.* The `basePath` setter throws `Error('Do not set basePath')` (link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`portal-api-configuration.utils.ts`]). The getter is filled asynchronously from the first `currentMfe$` value; earlier reads get the `./<apiPrefix>` placeholder.
+* *`encocdeParam` setter typo.* The same file names the setter `encocdeParam` instead of `encodeParam`, so `configuration.encodeParam` cannot be reassigned through the intended accessor.
+
+== Related Units
+
+* link:context-readiness.adoc[Context overview & readiness]: the readiness gate (`isInitialized`) these loads resolve.
+* link:workspace-model-and-urls.adoc[Workspace model & URL building]: the `Workspace` model and URL building in depth.
+* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution]: `currentMfe$` and API base-URL resolution.
+* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]: the three settings kinds.
+* link:parameters.adoc[Parameters]: Parameters in depth.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`CurrentWorkspaceTopic`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/endpoint.model.ts[`Endpoint`]
+* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`]
+* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`]
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`]
+* link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts` (`constructRouteUrl`, `doesUrlExistForWorkspace`)]
+* link:{libs}/integration-interface/src/lib/utils/parameters.utils.ts[`findParameterValue`]
+* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`resolveConfigPayload`]
+* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`]
+* link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`ParametersService`]
+* link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`]
+* link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`]
+* link:{libs}/react-integration-interface/src/lib/contexts/parametersContext.tsx[`ParametersProvider` / `useParameters`]
+* link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`ConfigurationProvider`]
+* link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`useTopic`]
+* link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`]
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (`workspaceConfigInitializer`, `configurationServiceInitializer`) (Shell)
+* link:{shell}/src/app/shared/generated/api/workspaceConfig.service.ts[`WorkspaceConfigBffService`] (Shell)
+* link:{shell}/src/app/shell/services/parameters.service.ts[`ParametersService`] (Shell)
+* link:{shell}/src/assets/env.json[`env.json`] (Shell)
+* link:{shell}/src/environments/environment.ts[`environment.ts`] (Shell)

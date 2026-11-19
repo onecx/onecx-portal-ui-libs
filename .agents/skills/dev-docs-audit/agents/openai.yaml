@@ -1,0 +1,5 @@
+interface:
+  display_name: "Dev Docs Audit"
+  short_description: "Audit all dev-docs Areas in parallel, one PR per Area"
+policy:
+  allow_implicit_invocation: false
