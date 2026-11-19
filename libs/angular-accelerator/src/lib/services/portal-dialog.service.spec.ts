@@ -291,6 +291,25 @@ describe('PortalDialogService', () => {
     jest.clearAllMocks()
   })
 
+  // Clean up the DOM after each test
+  // This is required because DynamicDialog appends dialogs to the document body and they persist between tests
+  afterEach(() => {
+    document.getElementsByTagName('html')[0].innerHTML = ''
+  })
+
+  it('should lay out the dialog content as a flex column so the content scroll region can shrink', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show('TITLE_TRANSLATE', 'message', 'button1', 'button2')
+
+    expect(pDialogService.open).toHaveBeenCalledWith(
+      DialogContentComponent,
+      expect.objectContaining({
+        contentStyle: { display: 'flex', flexDirection: 'column' },
+      })
+    )
+  })
+
   it('should display dialog with translated title', async () => {
     jest.spyOn(pDialogService, 'open')
 
