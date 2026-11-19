@@ -35,6 +35,14 @@
     "PARAMETERS": {
       "TARGET_LANGUAGE": "Feldinhalt übersetzen in"
     },
+    "LANGUAGES": {
+      "EN": "Englisch",
+      "DE": "Deutsch",
+      "PL": "Polnisch",
+      "FR": "Französisch",
+      "ES": "Spanisch",
+      "IT": "Italienisch"
+    },
     "ERRORS": {
       "NO_PROVIDER": "Für diese Anwendung ist kein KI-Provider konfiguriert.",
       "AGENT_NOT_FOUND": "Für diesen Kontext ist kein KI-Agent konfiguriert.",
