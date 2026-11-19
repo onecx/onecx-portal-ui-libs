@@ -10,7 +10,8 @@
       "WARNING": "Warning",
       "ERROR": "Error",
       "QUESTION": "Question"
-    }
+    },
+    "CONTENT_REGION": "Dialog content"
   },
   "OCX_CONSENT": {
     "TITLE": "Consent required",

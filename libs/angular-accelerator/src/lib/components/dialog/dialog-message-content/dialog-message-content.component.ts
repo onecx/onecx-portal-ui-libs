@@ -19,6 +19,7 @@ const ICON_SEVERITY_KEYS: { pattern: RegExp; key: string }[] = [
   standalone: false,
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: `./dialog-message-content.component.html`,
+  styleUrls: ['./dialog-message-content.component.scss'],
 })
 export class DialogMessageContentComponent {
   @Input() message = 'message'

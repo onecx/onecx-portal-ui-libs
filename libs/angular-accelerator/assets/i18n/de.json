@@ -10,7 +10,8 @@
       "WARNING": "Warnung",
       "ERROR": "Fehler",
       "QUESTION": "Frage"
-    }
+    },
+    "CONTENT_REGION": "Dialoginhalt"
   },
   "OCX_CONSENT": {
     "TITLE": "Zustimmung erforderlich",
