@@ -1,3 +1,36 @@
+## [8.15.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.15.0...v8.15.1) (2026-11-13)
+
+### Bug Fixes
+
+* **angular-accelerator:** report the search fields to the search config slot (v8) ([#1970](https://github.com/onecx/onecx-portal-ui-libs/issues/1970)) ([7c53347](https://github.com/onecx/onecx-portal-ui-libs/commit/7c533472c97e3f89181046dd98af087bb8d85b4c))
+* column-header getting focused ([#1949](https://github.com/onecx/onecx-portal-ui-libs/issues/1949)) ([c4a0574](https://github.com/onecx/onecx-portal-ui-libs/commit/c4a0574a0e30616172f56b807ddeb7764c2ceb8f))
+* fix data-table header spacing + overflow v8 ([#1974](https://github.com/onecx/onecx-portal-ui-libs/issues/1974)) ([277f623](https://github.com/onecx/onecx-portal-ui-libs/commit/277f6230c5fe1bf4f47a7650ecd2319415d7ce8b))
+* make OcxTooltipDirective host cursor configurable (v8) ([#1943](https://github.com/onecx/onecx-portal-ui-libs/issues/1943)) ([7847839](https://github.com/onecx/onecx-portal-ui-libs/commit/784783973484c0b6b0bc5776f743e9e864bb4f27)), closes [onecx/internal-tasks#1266](https://github.com/onecx/internal-tasks/issues/1266)
+
+## [8.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.14.0...v8.15.0) (2026-11-03)
+
+### Features
+
+* add tooltips to data table column headers ([#1939](https://github.com/onecx/onecx-portal-ui-libs/issues/1939)) ([07e04de](https://github.com/onecx/onecx-portal-ui-libs/commit/07e04de87bff07cf19e5b7efead1da1295d722ae))
+
+## [8.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.13.0...v8.14.0) (2026-11-02)
+
+### Features
+
+* **integration-interface:** add AiAgentService with ai-agent gatherer [#1920](https://github.com/onecx/onecx-portal-ui-libs/issues/1920) ([0e8dd5f](https://github.com/onecx/onecx-portal-ui-libs/commit/0e8dd5fb175f807cc61d7b04d4f17348d9580df7))
+
+### Bug Fixes
+
+* **data-table:** translate selected translation_key filter when its rows are absent ([#1821](https://github.com/onecx/onecx-portal-ui-libs/issues/1821)) ([fd29c45](https://github.com/onecx/onecx-portal-ui-libs/commit/fd29c454c8816843509594882e9e832ce1c2fc75)), closes [#1819](https://github.com/onecx/onecx-portal-ui-libs/issues/1819) [onecx/onecx-portal-ui-libs#1819](https://github.com/onecx/onecx-portal-ui-libs/issues/1819)
+* enable Sonar SCM detection and checkout v7 ([#1768](https://github.com/onecx/onecx-portal-ui-libs/issues/1768)) ([c15b296](https://github.com/onecx/onecx-portal-ui-libs/commit/c15b2962b6ee062342ba6ed11e683162ba62451e))
+* resolve gatherer id issues when using multiple gatherers ([#1809](https://github.com/onecx/onecx-portal-ui-libs/issues/1809)) ([1a7954a](https://github.com/onecx/onecx-portal-ui-libs/commit/1a7954a1ded0f619b458471f732a72a8a9aff9af))
+* v8 resizableColumnGroupSelectorDialog default value ([#1915](https://github.com/onecx/onecx-portal-ui-libs/issues/1915)) ([f18d65e](https://github.com/onecx/onecx-portal-ui-libs/commit/f18d65ecacaa4f05262a02f657da5660f291e9f5))
+* v9 implement issue [#970](https://github.com/onecx/onecx-portal-ui-libs/issues/970) - Column Group Selector Issues ([#1816](https://github.com/onecx/onecx-portal-ui-libs/issues/1816)) ([#1867](https://github.com/onecx/onecx-portal-ui-libs/issues/1867)) ([e10b771](https://github.com/onecx/onecx-portal-ui-libs/commit/e10b7713eff5297e9d09744a2f7b0c02d5c759e6))
+
+### Refactoring
+
+* improve tooltip and aria-label for reset button in ocx-search-header ([#1754](https://github.com/onecx/onecx-portal-ui-libs/issues/1754)) ([#1803](https://github.com/onecx/onecx-portal-ui-libs/issues/1803)) ([a6238ef](https://github.com/onecx/onecx-portal-ui-libs/commit/a6238efd71add72c89402c32616cabadb2557ee5))
+
 ## [8.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.12.0...v8.13.0) (2026-10-06)
 
 ### Features

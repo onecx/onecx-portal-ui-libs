@@ -165,6 +165,22 @@ export const WithMockData = {
   },
 }
 
+export const WithTooltipData = {
+  render: WithMockData.render,
+  args: {
+    ...defaultComponentArgs,
+    columns: defaultComponentArgs.columns.map((column) => ({
+      ...column,
+      tooltip: {
+        product: 'Name of the product',
+        amount: 'Number of items in stock',
+        expiration: 'Date after which the product must not be sold',
+      }[column.id],
+      tooltipKey: column.id === 'available' ? 'datatable.availableTooltip' : undefined,
+    })),
+  },
+}
+
 export const NoData = {
   args: {
     ...defaultComponentArgs,
