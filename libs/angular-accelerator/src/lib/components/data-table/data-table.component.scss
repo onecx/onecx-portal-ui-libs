@@ -59,6 +59,13 @@ $header-trigger-min-focus-width: 2px;
   }
 }
 
+// Restore a keyboard focus ring (the rule above removes the theme one). The focused element is an <input>,
+// so :focus-visible also matches after a click; a click opens the overlay, hence :not(.p-multiselect-open).
+:host ::ng-deep .filterMultiSelect:has(:focus-visible):not(.p-multiselect-open) {
+  outline: 2px solid $clr-neutral-700;
+  outline-offset: 1px;
+}
+
 .pi {
   border: none;
   background: none;
@@ -72,6 +79,18 @@ $header-trigger-min-focus-width: 2px;
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   border: 0;
+}
+
+.ocx-data-table-group-row th[scope='rowgroup'] {
+  background: $clr-neutral-100;
+  color: $clr-neutral-700;
+  font-weight: 700;
+  text-align: left;
+}
+
+:host ::ng-deep .p-datatable-table-container {
+  position: relative;
+  z-index: 0;
 }
