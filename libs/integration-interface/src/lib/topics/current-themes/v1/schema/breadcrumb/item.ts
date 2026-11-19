@@ -19,23 +19,6 @@ const breadcrumbItemSeverityShape = z.object({
   paddingY: withRef(z.string()).optional(),
 })
 
-const breadcrumbItemStateShape = z
-  .object({
-    defaultSeverity: breadcrumbItemSeverityShape.prefault({}),
-  })
-  .register(themeSchemaRegistry, { id: 'breadcrumbItemStateShape', axis: 'severity' })
-
-const breadcrumbItemVariantShape = z
-  .object({
-    defaultState: breadcrumbItemStateShape.prefault({}),
-    hover: breadcrumbItemStateShape.prefault({}),
-    focus: breadcrumbItemStateShape.prefault({}),
-    active: breadcrumbItemStateShape.prefault({}),
-    disabled: breadcrumbItemStateShape.prefault({}),
-  })
-  .register(themeSchemaRegistry, { id: 'breadcrumbItemVariantShape', axis: 'state' })
-  .prefault({})
-
 export class BreadcrumbItemSchema {
   private static readonly defaultSeverityTokens = {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
