@@ -1,11 +1,13 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, DeferBlockState, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
-import { Component, ChangeDetectionStrategy } from '@angular/core'
+import { Component, ChangeDetectionStrategy, DestroyRef } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { ResultsAnnouncementService } from '../../services/results-announcement.service'
+import { FilterType } from '../../model/filter.model'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
@@ -1544,6 +1546,73 @@ describe('DataListGridComponent', () => {
     })
   })
 
+  describe('results announcement ownership', () => {
+    let announceSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      announceSpy = jest.spyOn(TestBed.inject(LiveAnnouncer), 'announce').mockResolvedValue()
+    })
+
+    async function render() {
+      fixture.detectChanges()
+      await fixture.whenStable()
+    }
+
+    it('should not announce the initial data at page load', async () => {
+      const newFixture = TestBed.createComponent(DataListGridComponent)
+      newFixture.componentRef.setInput('data', mockData)
+      newFixture.componentRef.setInput('columns', mockColumns)
+      newFixture.detectChanges()
+      await newFixture.whenStable()
+
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should announce the filtered item count once after a client-side filter change', async () => {
+      stateService.filters.set([
+        { columnId: 'name', value: 'example', filterType: FilterType.EQUALS },
+        { columnId: 'name', value: 'name 1', filterType: FilterType.EQUALS },
+      ])
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should announce the displayed item count once after a client-side sort change', async () => {
+      stateService.sortColumn.set('name')
+      stateService.sortDirection.set(DataSortDirection.DESCENDING)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+    })
+
+    it('should not announce new data while a search header owns the search results', async () => {
+      TestBed.inject(ResultsAnnouncementService).registerSearchHeader({
+        onDestroy: () => () => undefined,
+      } as unknown as DestroyRef)
+
+      fixture.componentRef.setInput('data', mockData.slice(0, 2))
+      await render()
+
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should announce new data next to a search header when announceResults is true', async () => {
+      TestBed.inject(ResultsAnnouncementService).registerSearchHeader({
+        onDestroy: () => () => undefined,
+      } as unknown as DestroyRef)
+      fixture.componentRef.setInput('announceResults', true)
+
+      fixture.componentRef.setInput('data', mockData.slice(0, 2))
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+  })
+
   describe('sortDirectionNumber', () => {
     it('should return 1 when sortDirection is ASCENDING', () => {
       fixture.componentRef.setInput('sortDirection', DataSortDirection.ASCENDING)
@@ -1675,6 +1744,82 @@ describe('DataListGridComponent', () => {
 
       await expect(firstValueFrom((component as any).getPermissions())).resolves.toEqual(['FALLBACK#PERM'])
       expect(getPermissionsSpy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('accessibility semantics', () => {
+    it('should render the grid title as a button that opens the view on click and Enter', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      await setUpGridActionButtonMockData()
+
+      const el: HTMLElement = fixture.nativeElement
+      expect(el.querySelector('.item-name a')).toBeNull()
+      const title = el.querySelector('.item-name button') as HTMLButtonElement
+      expect(title).not.toBeNull()
+      expect(title.getAttribute('type')).toBe('button')
+      expect(title.textContent?.trim()).toBe('Card 1')
+
+      const viewSpy = jest.fn()
+      component.viewItem.subscribe(viewSpy)
+      title.click()
+      expect(viewSpy).toHaveBeenCalledTimes(1)
+      expect(viewSpy.mock.calls[0][0].id).toBe('Test')
+    })
+
+    it('should render an empty grid title as plain text instead of an unnamed button', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      await setUpGridActionButtonMockData()
+      fixture.componentRef.setInput('data', [{ id: 'Test', imagePath: '', property1: '' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const name = (fixture.nativeElement as HTMLElement).querySelector('.item-name') as HTMLElement
+      expect(name.querySelector('button')).toBeNull()
+      expect(name.querySelector('span')).not.toBeNull()
+      expect(name.textContent?.trim()).toBe('')
+    })
+
+    it('should render the grid title as plain text when the view is not observed', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      fixture.componentRef.setInput('data', [{ id: 'Test', imagePath: '', property1: 'Card 1' }])
+      fixture.componentRef.setInput('titleLineId', 'property1')
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const name = (fixture.nativeElement as HTMLElement).querySelector('.item-name') as HTMLElement
+      expect(name.querySelector('a, button')).toBeNull()
+      expect(name.textContent?.trim()).toBe('Card 1')
+    })
+
+    it('should expose grid cards as list items of a list', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      await setUpGridActionButtonMockData()
+
+      const list = (fixture.nativeElement as HTMLElement).querySelector('[role="list"]') as HTMLElement
+      expect(list).not.toBeNull()
+      expect(list.querySelectorAll(':scope > [role="listitem"]').length).toBe(1)
+    })
+
+    it('should render list values as definition list name/value pairs', async () => {
+      fixture.componentRef.setInput('layout', 'list')
+      await setUpListActionButtonMockData()
+      const deferBlocks = await fixture.getDeferBlocks()
+      for (const block of deferBlocks) {
+        await block.render(DeferBlockState.Complete)
+      }
+
+      const el: HTMLElement = fixture.nativeElement
+      const dl = el.querySelector('[role="listitem"] dl') as HTMLElement
+      expect(dl).not.toBeNull()
+      const dts = dl.querySelectorAll('dt')
+      const dds = dl.querySelectorAll('dd')
+      expect(dts.length).toBeGreaterThan(0)
+      expect(dts.length).toBe(dds.length)
+      const groups = Array.from(dl.querySelectorAll(':scope > *'))
+      expect(groups.map((group) => [group.tagName, ...Array.from(group.children).map((c) => c.tagName)])).toEqual(
+        groups.map(() => ['DIV', 'DT', 'DD'])
+      )
+      expect(el.querySelector('[role="list"] > :not([role="listitem"]):not([aria-hidden="true"])')).toBeNull()
     })
   })
 })

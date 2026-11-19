@@ -233,11 +233,17 @@ export class FilterViewComponent {
         : undefined
     })
 
+    // The initial filters are not announced. Inside a data view the data component
+    // announces the filtered result count instead of the filter count.
+    let initialFilters = true
     effect(() => {
       const filters = this.stateService.filters()
       this.filtered.emit(filters)
       this.componentStateChanged.emit({ filters })
-      this.annouceFilterCount()
+      if (!initialFilters && !this.parentService) {
+        this.annouceFilterCount()
+      }
+      initialFilters = false
     })
   }
 
