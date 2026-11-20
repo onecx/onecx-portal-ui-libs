@@ -27,7 +27,8 @@
     "ngxtension": "^7.1.0",
     "rxjs": "~7.8.1",
     "@protobi/exceljs": "^4.4.0-protobi.9",
-    "@openng/optimus-ui": "^2.0.2"
+    "@openng/optimus-ui": "^2.0.2",
+    "zod": "^4.1.12"
   },
   "dependencies": {},
   "exports": {
