@@ -351,7 +351,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
       id: a.id,
-      label: a.labelKey ? translations[a.labelKey] : a.label,
+      label: a.labelKey ? translations[a.labelKey] : a.label || this.getInlineActionAriaLabel(a),
       icon: a.icon,
       tooltipOptions: {
         tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
