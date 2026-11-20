@@ -17,6 +17,7 @@ import { ColumnType } from '../../model/column-type.model'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from '@openng/optimus-ui/tooltip'
 import { FormsModule } from '@angular/forms'
+import { action } from 'storybook/actions'
 
 const FRUIT_TYPE: string[] = []
 
@@ -48,6 +49,10 @@ export default {
   argTypes: {
     diagramType: {
       options: [DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR, DiagramType.PIE],
+      control: { type: 'select' },
+    },
+    titleHeadingLevel: {
+      options: [1, 2, 3, 4, 5, 6],
       control: { type: 'select' },
     },
   },
@@ -105,9 +110,8 @@ const mockData = [
     id: 5,
     fruitType: 'Banana',
     name: 'Banana2',
-  }
+  },
 ]
-
 
 const mockDataWithTranslationKeys = [
   {
@@ -134,7 +138,7 @@ const mockDataWithTranslationKeys = [
     id: 5,
     fruitType: 'chart.fruit2',
     name: 'Banana2',
-  }
+  },
 ]
 export const PieChart = {
   render: Template,
@@ -147,6 +151,35 @@ export const PieChart = {
       type: ColumnType.STRING,
     },
     sumKey: 'Total',
+  },
+}
+
+export const WithAccessibilityImprovements = {
+  render: (args: any) => ({
+    props: { ...args, onDataSelected: action('dataSelected') },
+    template: `
+      <ocx-group-by-count-diagram
+        [data]="data"
+        [column]="column"
+        [diagramType]="diagramType"
+        [sumKey]="sumKey"
+        [chartTitleKey]="chartTitleKey"
+        [titleHeadingLevel]="titleHeadingLevel"
+        (dataSelected)="onDataSelected($event)"
+      ></ocx-group-by-count-diagram>
+    `,
+  }),
+
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    column: {
+      id: 'fruitType',
+      type: ColumnType.STRING,
+    },
+    sumKey: 'Total',
+    chartTitleKey: 'OCX_DIAGRAM.ACCESSIBILITY_TITLE',
+    titleHeadingLevel: 3,
   },
 }
 
@@ -241,7 +274,7 @@ export const withAllLabels = {
     fillMissingColors: false,
     showAllLabels: false,
     columnType: ColumnType.TRANSLATION_KEY,
-    allLabels: ['Apple', 'Banana', 'Orange']
+    allLabels: ['Apple', 'Banana', 'Orange'],
   },
 }
 
@@ -257,8 +290,8 @@ export const withAllLabelAndTranslationKeys = {
     },
     fillMissingColors: false,
     showAllLabels: true,
-    allLabelKeys: ['chart.fruit1', 'chart.fruit2', 'chart.fruit3']
-  }
+    allLabelKeys: ['chart.fruit1', 'chart.fruit2', 'chart.fruit3'],
+  },
 }
 
 const TemplateWithContainer: StoryFn<GroupByCountDiagramComponent> = (args) => ({
@@ -293,6 +326,6 @@ export const WithChartFillingContainerHeight = {
     },
     fillMissingColors: false,
     showAllLabels: true,
-    allLabelKeys: FRUIT_TYPE
-  }
+    allLabelKeys: FRUIT_TYPE,
+  },
 }

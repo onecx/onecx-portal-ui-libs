@@ -236,10 +236,10 @@ describe('GroupByCountDiagramComponent', () => {
     fixture.detectChanges()
     const ariaLabel = await getCanvasAriaLabel()
 
-    expect(ariaLabel).toContain('test0:1')
-    expect(ariaLabel).toContain('test1:2')
-    expect(ariaLabel).toContain('test2:4')
-    expect(ariaLabel).toContain('testNone:0')
+    expect(ariaLabel).toContain('test0: 1')
+    expect(ariaLabel).toContain('test1: 2')
+    expect(ariaLabel).toContain('test2: 4')
+    expect(ariaLabel).toContain('testNone: 0')
     expect(ariaLabel).toContain('Total amount: 7')
     expect(component.allLabelKeys()).toEqual(labelsMock)
     expect(component.showAllLabels()).toBe(true)
@@ -252,7 +252,7 @@ describe('GroupByCountDiagramComponent', () => {
     fixture.detectChanges()
     const ariaLabel = await getCanvasAriaLabel()
 
-    expect(ariaLabel).not.toContain('testNone:0')
+    expect(ariaLabel).not.toContain('testNone: 0')
     expect(ariaLabel).toContain('Total amount: 7')
     expect(component.allLabelKeys()).toEqual(labelsMock)
     expect(component.showAllLabels()).toBe(false)
@@ -260,12 +260,31 @@ describe('GroupByCountDiagramComponent', () => {
 
   it('should emit dataSelected event when dataClicked is called', () => {
     const emitSpy = jest.spyOn(component.dataSelected, 'emit')
-    const clickEvent = { label: 'test0', value: 1 }
+    const clickEvent = { index: 0, data: { label: 'test0', value: 1 } }
 
     component.dataClicked(clickEvent)
 
     expect(emitSpy).toHaveBeenCalledWith(clickEvent)
     expect(emitSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should forward a legend selection of the diagram as dataSelected', async () => {
+    const emitSpy = jest.spyOn(component.dataSelected, 'emit')
+    const legendItems = await (await getHarness()).getLegendItems()
+
+    await legendItems[1].click()
+
+    expect(emitSpy).toHaveBeenCalledWith({ index: 1, data: diagramData[1] })
+  })
+
+  it('should pass title heading level and custom legends to the diagram', async () => {
+    fixture.componentRef.setInput('chartTitleKey', 'Total')
+    fixture.componentRef.setInput('titleHeadingLevel', 4)
+    fixture.componentRef.setInput('customLegends', true)
+    const diagram = await getHarness()
+
+    expect(await (await diagram.getTitle())?.getProperty('tagName')).toBe('H4')
+    expect(fixture.nativeElement.querySelector('.diagram-legend.custom-legends-container')).toBeTruthy()
   })
 
   it('should emit diagramTypeChanged event when diagram type is changed', async () => {

@@ -347,9 +347,7 @@ describe('DataTableComponent', () => {
 
     const getLabel = (): HTMLElement => fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
 
-    const getTooltipText = (label: HTMLElement) =>
-      document.getElementById(label.getAttribute('aria-describedby') ?? '')?.querySelector('.p-tooltip-text')
-        ?.textContent ?? null
+    const getTooltipText = () => document.querySelector('.p-tooltip-text')?.textContent ?? null
 
     const trigger = (label: HTMLElement, event: string) => {
       label.dispatchEvent(new Event(event))
@@ -365,7 +363,7 @@ describe('DataTableComponent', () => {
       const label = getLabel()
       trigger(label, 'mouseenter')
 
-      expect(getTooltipText(label)).toBe('Custom tooltip')
+      expect(getTooltipText()).toBe('Custom tooltip')
 
       trigger(label, 'mouseleave')
     }))
@@ -398,7 +396,7 @@ describe('DataTableComponent', () => {
         trigger(label, 'mouseenter')
 
         expect(label.textContent?.trim()).toBe('Name')
-        expect(getTooltipText(label)).toBe(expected)
+        expect(getTooltipText()).toBe(expected)
 
         trigger(label, 'mouseleave')
       })()
