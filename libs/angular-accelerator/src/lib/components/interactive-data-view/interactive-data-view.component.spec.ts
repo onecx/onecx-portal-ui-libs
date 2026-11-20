@@ -15,6 +15,7 @@ import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import * as loggerUtils from '../../utils/logger.utils'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideRouter } from '@angular/router'
@@ -76,6 +77,11 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     fixture.detectChanges()
     return { fixture, component: fixture.componentInstance, slotService }
   }
+
+  it('should have no axe violations', async () => {
+    const { fixture } = createComponentWithFixture()
+    await expectNoAxeViolations(fixture.nativeElement)
+  })
 
   describe('DataViewStateService provider factory', () => {
     const createSlotServiceMock = () => ({
