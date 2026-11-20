@@ -19,7 +19,7 @@ function validatePullRequest(pullRequest, sourceRepository, number) {
     pullRequest?.user?.type !== 'User' ||
     !allowedAssociations.has(pullRequest?.author_association) ||
     pullRequest?.base?.repo?.full_name?.toLowerCase() !== sourceRepository.toLowerCase() ||
-    pullRequest?.head?.repo?.full_name?.toLowerCase() !== sourceRepository.toLowerCase() ||
+    !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(pullRequest?.head?.repo?.full_name ?? '') ||
     pullRequest?.number !== number
   ) {
     validationError()

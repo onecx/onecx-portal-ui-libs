@@ -160,6 +160,30 @@ test('an exact PR comment dispatches after checking the commenter write permissi
   assertDispatched(await fixture(t, { eventName: 'issue_comment' }))
 })
 
+test('allows trusted team fork PRs through automatic and both manual triggers', async (t) => {
+  for (const eventName of ['pull_request_target', 'issue_comment', 'workflow_dispatch']) {
+    await t.test(eventName, async (t) => {
+      assertDispatched(
+        await fixture(t, {
+          eventName,
+          pullRequest: { head: { repo: { full_name: 'teammate/fork' } } },
+        })
+      )
+    })
+  }
+})
+
+test('a fork requester still needs write access to the consumer repository', async (t) => {
+  const { result, calls } = await fixture(t, {
+    eventName: 'issue_comment',
+    permission: 'read',
+    pullRequest: { head: { repo: { full_name: 'teammate/fork' } } },
+  })
+  assert.equal(result.status, 1)
+  assert.equal(calls.length, 1)
+  assert.match(result.stderr, /authorization failed/i)
+})
+
 test('rejects unrelated or untrusted events before using GitHub credentials', async (t) => {
   const cases = [
     { eventName: 'pull_request' },
@@ -215,7 +239,6 @@ test('validates the current PR for manual requests, including its canonical URL'
     { number: 43 },
     { author_association: 'FIRST_TIME_CONTRIBUTOR' },
     { user: { type: 'Bot' } },
-    { head: { repo: { full_name: 'contributor/fork' } } },
     { head: { repo: null } },
     { base: { repo: { full_name: 'different/repository' } } },
     { html_url: 'https://github.com/example/consumer/pull/43' },

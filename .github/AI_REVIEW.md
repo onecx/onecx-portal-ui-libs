@@ -12,9 +12,12 @@ request changes, merge, or execute pull-request code.
   branch (`main`), and enter the pull request number.
 
 Both manual triggers and automatic requests require the requester to have
-`write`, `maintain`, or `admin` access to this repository. Drafts, closed PRs,
-fork PRs, bot authors/requesters, and PR authors without an owner, member, or
-collaborator association are not eligible. Manual requests fetch the current PR
+`write`, `maintain`, or `admin` access to this repository. PRs from team forks
+into this repository are eligible through all three triggers; the requester
+must have access to this consumer repository, not just the fork. Drafts,
+closed PRs, deleted head repositories, bot authors/requesters, and PR authors
+without an owner, member, or collaborator association are not eligible.
+Manual requests fetch the current PR
 state before dispatching. Ineligible manual requests fail with a generic diagnostic;
 unrelated comments and ineligible automatic events are skipped.
 
@@ -50,7 +53,10 @@ actor-specific tokens from Vault or requires consumer OIDC permissions.
 The workflow checks out only the trusted PR base commit for automatic requests,
 or the default branch for manual requests, with credential persistence disabled.
 It never checks out PR-head content. Manual Actions runs from other branches are
-skipped. Optional additive review focus can be supplied in `.github/ai-review.md`
+skipped. For fork reviews, the central review reads the head through this
+repository's `refs/pull/<number>/head`; it does not need separate access to the
+fork or permission to push to it.
+Optional additive review focus can be supplied in `.github/ai-review.md`
 on the trusted base/default branch (at most 4,000 JavaScript UTF-16 code units).
 Missing or empty guidance uses the standard focus; oversized or unreadable
 guidance fails explicitly.
