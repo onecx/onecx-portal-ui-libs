@@ -2,7 +2,7 @@ import { BaseHarnessFilters, ComponentHarness, HarnessLoader, HarnessPredicate }
 import { PMultiSelectListItemHarness } from './p-multiSelectListItem.harness'
 
 export interface PMultiSelectHarnessFilters extends BaseHarnessFilters {
-  id?: string
+  id?: string | RegExp
   class?: string
 }
 

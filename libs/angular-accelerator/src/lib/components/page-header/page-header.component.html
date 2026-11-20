@@ -2,7 +2,7 @@
   @if (showBreadcrumbs()) { @if (breadcrumbs$ | async ; as items) {
   <p-breadcrumb
     #breadcrumbRef
-    id="pageHeaderBreadcrumb"
+    [id]="'pageHeaderBreadcrumb' + idSuffix"
     [model]="items"
     [home]="(home$ | async)?.menuItem ?? {}"
     [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
@@ -31,9 +31,9 @@
       } @if (!loading()) {
       <div class="header">
         @if (!!header()) {
-        <h1 id="page-header">{{ header() }}</h1>
+        <h1 [id]="'page-header' + idSuffix">{{ header() }}</h1>
         } @if (!!subheader()) {
-        <div id="page-subheader" role="note" [attr.aria-label]="'OCX_PAGE_HEADER.SUBHEADER' | translate">
+        <div [id]="'page-subheader' + idSuffix" role="note" [attr.aria-label]="'OCX_PAGE_HEADER.SUBHEADER' | translate">
           {{ subheader() }}
         </div>
         }
@@ -61,7 +61,7 @@
           @if (typeof action.routerLink === 'string' && !action.disabled) {
           <a
             pButton
-            [id]="action.id"
+            [id]="scopedActionId(action.id)"
             [icon]="action.icon ?? ''"
             [iconPos]="action.iconPos ?? 'left'"
             class="action-button no-underline"
@@ -73,7 +73,7 @@
           >
           } @else {
           <p-button
-            [id]="action.id"
+            [id]="scopedActionId(action.id)"
             [icon]="action.icon ?? ''"
             [iconPos]="action.iconPos ?? 'left'"
             type="button"
@@ -95,7 +95,7 @@
         @if(overflowActions$ | async; as overflowActions) {@if (overflowActions.length !== 0) {
         <div>
           <button
-            id="pageHeaderMenuButton"
+            [id]="'pageHeaderMenuButton' + idSuffix"
             type="button"
             pButton
             icon="pi pi-ellipsis-v"
@@ -103,6 +103,9 @@
             (click)="menu.toggle($event)"
             name="ocx-page-header-overflow-action-button"
             [attr.aria-label]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
+            aria-haspopup="menu"
+            [attr.aria-expanded]="!!menu.visible"
+            [attr.aria-controls]="menu.visible ? menu.id : null"
             [ocxTooltip]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
             tooltipEvent="hover"
             tooltipPosition="top"

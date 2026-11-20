@@ -3,8 +3,13 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { PTableCheckboxHarness } from '@onecx/angular-testing'
-import { DataTableHarness, provideTranslateTestingService } from '../../../../testing'
+import { PTableCheckboxHarness, expectNoAxeViolations } from '@onecx/angular-testing'
+import {
+  DataTableHarness,
+  expectInstanceScopedIds,
+  INSTANCE_ID_AXE_RULES,
+  provideTranslateTestingService,
+} from '../../../../testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
@@ -295,6 +300,10 @@ describe('DataTableComponent', () => {
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     router = TestBed.inject(Router)
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create the data table component', () => {
@@ -1338,6 +1347,146 @@ describe('DataTableComponent', () => {
         expect(callbackSpy).toHaveBeenCalledWith(component.rows()[0])
       })
     })
+  })
+
+  describe('accessible names of row-level buttons', () => {
+    let warnSpy: jest.SpyInstance
+    const buttons = (selector: string): HTMLElement[] =>
+      Array.from(fixture.nativeElement.querySelectorAll(selector)) as HTMLElement[]
+
+    beforeEach(() => {
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+      translateService.setTranslation('en', {
+        OCX_DATA_TABLE: {
+          ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
+          EXPAND_ROW_ARIA_LABEL: 'Toggle row details: {{row}}',
+          MORE_ACTIONS: 'More actions',
+          ACTIONS: { VIEW: 'View', EDIT: 'Edit', DELETE: 'Delete', DEFAULT: 'Action' },
+        },
+      }, true)
+      translateService.setTranslation('de', {
+        OCX_DATA_TABLE: {
+          ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
+          EXPAND_ROW_ARIA_LABEL: 'Zeilendetails umschalten: {{row}}',
+          MORE_ACTIONS: 'Weitere Aktionen',
+          ACTIONS: { VIEW: 'Anzeigen', EDIT: 'Bearbeiten', DELETE: 'Löschen', DEFAULT: 'Aktion' },
+        },
+      }, true)
+      translateService.use('en')
+      component.rows.set([
+        { id: 'r1', name: 'First row' },
+        { id: 'r2', name: 'Second row' },
+      ] as any)
+      fixture.componentRef.setInput('rowLabelField', 'name')
+    })
+
+    afterEach(() => warnSpy.mockRestore())
+
+    it('should name built-in action buttons with the row label and keep them unique', () => {
+      component.editTableRow.subscribe(() => undefined)
+      component.deleteTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      fixture.componentRef.setInput('deletePermission', 'DELETE')
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Edit: First row', 'Delete: First row', 'Edit: Second row', 'Delete: Second row'])
+      expect(new Set(labels).size).toBe(labels.length)
+      const ids = buttons('button[id]').map((b) => b.id)
+      expect(new Set(ids).size).toBe(ids.length)
+    })
+
+    it('should not use translation key, date or relative date columns as row label', () => {
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      component.columns = [
+        { id: 'status', columnType: ColumnType.TRANSLATION_KEY, nameKey: 'S' },
+        { id: 'startDate', columnType: ColumnType.DATE, nameKey: 'D' },
+        { id: 'modificationDate', columnType: ColumnType.RELATIVE_DATE, nameKey: 'M' },
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'N' },
+      ] as any
+      fixture.detectChanges()
+      expect(
+        component.rowLabel({ id: 'r1', status: 'STATUS.ACTIVE', startDate: '2023-09-12T09:34:11Z', name: 'Nice name' })
+      ).toBe('Nice name')
+      expect(component.rowLabel({ id: 'r2', status: 'STATUS.ACTIVE' })).toBe('r2')
+    })
+
+    it('should use the translated action name in German without English text', () => {
+      component.editTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      translateService.use('de')
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Bearbeiten: First row', 'Bearbeiten: Second row'])
+    })
+
+    it('should fall back to the first displayed column value and the row id for the row label', () => {
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      fixture.detectChanges()
+      expect(component.rowLabel({ id: 'r1', name: 'First row' })).toBe('First row')
+      expect(component.rowLabel({ id: 'only-id' })).toBe('only-id')
+    })
+
+    it('should never render an empty aria-label or title for actions without labelKey and warn', () => {
+      userServiceMockPublish(['ADDITIONAL#VIEW', 'OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'inline', permission: 'ADDITIONAL#VIEW', callback: () => undefined },
+        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      const inline = buttons('[name="data-table-action-button"]')
+      expect(inline.map((b) => b.getAttribute('aria-label'))).toEqual(['Action: First row', 'Action: Second row'])
+      inline.forEach((b) => expect(b.getAttribute('title')).toBe('Action'))
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('has no labelKey'))
+    })
+
+    it('should not render an empty overflow menu item for actions without labelKey', async () => {
+      userServiceMockPublish(['OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      await (await dataTable.getOverflowActionMenuButton())?.click()
+      const menuItems = await (await dataTable.getOverflowMenu())!.getAllMenuItems()
+      expect(menuItems.length).toBe(1)
+      expect(await menuItems[0].getText()).toBe('Action')
+    })
+
+    it('should name the overflow trigger with the row label', () => {
+      userServiceMockPublish(['OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'o', labelKey: 'L', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-overflow-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['More actions: First row', 'More actions: Second row'])
+    })
+
+    it('should name the expand toggle with the row label', () => {
+      fixture.componentRef.setInput('expandable', true)
+      component.parentTemplates.set([{ getType: () => 'expansion' } as any])
+      fixture.detectChanges()
+
+      const labels = buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Toggle row details: First row', 'Toggle row details: Second row'])
+      const titles = buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('title'))
+      expect(titles).toEqual(labels)
+
+      translateService.use('de')
+      fixture.detectChanges()
+      expect(buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('aria-label'))).toEqual([
+        'Zeilendetails umschalten: First row',
+        'Zeilendetails umschalten: Second row',
+      ])
+    })
+
+    function userServiceMockPublish(permissions: string[]) {
+      TestBed.inject(UserServiceMock).permissionsTopic$.publish(permissions)
+    }
   })
 
   describe('LiveAnnouncer announcements', () => {
@@ -2757,6 +2906,41 @@ describe('DataTableComponent', () => {
         .map((el) => el.getAttribute('aria-controls'))
         .filter((id) => !fixture.nativeElement.querySelector(`[id="${id}"]`))
       expect(unresolved).toEqual([])
+    })
+
+    it('should scope row button, header and expanded row ids per instance', async () => {
+      const second = TestBed.createComponent(DataTableComponent)
+      second.componentInstance.rows.set(mockData as any)
+      second.componentInstance.columns = mockColumns as any
+      const subscriptions = [fixture, second].map((f) => f.componentInstance.viewTableRow.subscribe(() => undefined))
+      const host = TestBed.createComponent(TemplateHostComponent)
+      for (const f of [fixture, second]) {
+        f.componentRef.setInput('viewPermission', 'VIEW')
+        const expansionTemplate = new PrimeTemplate(host.componentInstance.tpl)
+        expansionTemplate.name = 'expansion'
+        f.componentInstance.parentTemplates.set([expansionTemplate])
+        f.componentRef.setInput('expandable', true)
+        f.detectChanges()
+        const expandToggle = f.nativeElement.querySelector('td[name="expansion-column"] button') as HTMLButtonElement
+        // the expanded rows may be shared through the DataViewStateService provided by the test module
+        if (expandToggle.getAttribute('aria-expanded') !== 'true') {
+          expandToggle.click()
+        }
+        f.detectChanges()
+      }
+      fixture.detectChanges()
+
+      const rowId = mockData[0].id
+      expect(fixture.nativeElement.querySelector(`[id="${rowId}-viewButton"]`)).not.toBeNull()
+      expect(second.nativeElement.querySelector(`[id="${rowId}-viewButton-1"]`)).not.toBeNull()
+      expect(second.nativeElement.querySelector(`[id="${mockColumns[0].id}-header-name-1"]`)).not.toBeNull()
+      const toggle = second.nativeElement.querySelector('td[name="expansion-column"] button') as HTMLButtonElement
+      expect(toggle.getAttribute('aria-controls')).toBe(`ocx-expanded-row-${rowId}-1`)
+      expect(second.nativeElement.querySelector(`[id="ocx-expanded-row-${rowId}-1"]`)).not.toBeNull()
+
+      expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
+      await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
+      subscriptions.forEach((subscription) => subscription.unsubscribe())
     })
   })
 
