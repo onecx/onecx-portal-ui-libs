@@ -19,3 +19,11 @@ jobs:
   test:
     uses: ./.github/workflows/test.yml
     secrets: inherit
+
+  test-a11y:
+    uses: ./.github/workflows/test-a11y.yml
+    secrets: inherit
+
+  test-arch:
+    uses: ./.github/workflows/test-arch.yml
+    secrets: inherit

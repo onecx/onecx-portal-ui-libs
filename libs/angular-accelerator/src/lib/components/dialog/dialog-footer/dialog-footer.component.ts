@@ -50,7 +50,8 @@ export class DialogFooterComponent implements OnInit {
 
   config = input<ButtonDialogConfig | undefined>(undefined)
 
-  dialogData = signal<ButtonDialogData>(defaultDialogData)
+  // Own copy of the config per instance, it is updated in place below and must not leak into other dialogs.
+  dialogData = signal<ButtonDialogData>({ ...defaultDialogData, config: { ...defaultDialogData.config } })
   primaryButtonDisabled$: Observable<boolean | undefined> | undefined
   secondaryButtonDisabled$: Observable<boolean | undefined> | undefined
   customButtonsDisabled$: BehaviorSubject<Record<string, boolean>> = new BehaviorSubject({})

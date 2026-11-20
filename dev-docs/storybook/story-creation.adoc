@@ -14,10 +14,10 @@ Additionally, follow the steps below to create a basic boilerplate for your stor
    - `args`: An object containing the default global input values for your component (see https://storybook.js.org/docs/writing-stories/args).
    - `argTypes`: An object containing the types for the component's inputs (see https://storybook.js.org/docs/api/arg-types)
 	
-  import type { Meta, StoryObj } from '@storybook/angular/'
+  import type { Meta, StoryObj } from '@storybook/angular-vite'
 
   import { YourComponent } from '../your-component.component'
-  import { moduleMetadata } from '@storybook/angular'
+  import { moduleMetadata } from '@storybook/angular-vite'
 
   const meta: Meta<YourComponent> = {
     component: YourComponent,
@@ -68,12 +68,25 @@ Storybook allows developers to specify "Actions" that listen for certain events 
 == Creating Docs Pages
 Storybook allows developers to provide in depth documentation for components. We recommend that you create one documentation page for each of your components. To get started, create a new file with the name of your component file and the ending `.stories.mdx` in your components `storybook` folder (e.g. `button.component.stories.mdx`). Your documentation page should, at least, contain the default documentation structure used in the automatically generated docs pages provided by Storybook. You can find the default structure https://storybook.js.org/docs/writing-docs/doc-blocks#customizing-the-automatic-docs-page[here]. In addition to the default documentation structure, we recommend that you document the purpose of your component, as well as best practices/dos and donts related to the use of the component.
 
-**Disclaimer:** Adding custom MDX documentation pages to Storybooks that were created using the `@storybook/angular` framework preset is not supported out of the box and requires some additional configuration. The necessary configuration has not yet been added to the OneCX Storybook setup and will be implemented as soon as possible.
+**Disclaimer:** Adding custom MDX documentation pages to Storybooks that were created using the `@storybook/angular-vite` framework preset is not supported out of the box and requires some additional configuration. The necessary configuration has not yet been added to the OneCX Storybook setup and will be implemented as soon as possible.
 
 == OneCX Specific Considerations
 When writing stories for OneCX components, be sure to import or declare all used components, directives and other dependencies in the `moduleMetadata` decorator. 
 
 To enable translation support for your component's stories, add the `StorybookTranslateModule`, which is currently located in `libs/angular-accelerator/src/lib/storybook-translate.module.ts`, to the `imports` array of the `moduleMetadata` decorator.
+
+== Accessibility Tests
+Every story of the angular-accelerator Storybook is rendered in Chromium and checked with axe-core by `npm run test:a11y` (Storybook Vitest addon with the a11y addon). A violation fails the run, so each story should render the component in a realistic state (with data, labels and translations).
+
+If a story shows a known violation that cannot be fixed right away, disable only the affected rule or element for that story and explain why in a comment, e.g.
+
+[source,typescript]
+----
+  parameters: { a11y: { config: { rules: [{ id: 'color-contrast', enabled: false }] } } },
+  parameters: { a11y: { context: { exclude: ['.p-tooltip'] } } },
+----
+
+Avoid `a11y: { test: 'todo' }` or `'off'`, they disable all checks of the story.
 
 == Pro Tip: Use of GenAI
 GenAI tools such as Microsoft Copilot are quite helpful when creating story files for your components. They can write most boilerplate code for you and even suggest stories based on your component's inputs and outputs. 

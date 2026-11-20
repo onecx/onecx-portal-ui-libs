@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
+import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular-vite'
 import { TranslateModule } from '@ngx-translate/core'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'

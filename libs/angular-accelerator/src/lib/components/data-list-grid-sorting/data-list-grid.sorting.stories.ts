@@ -1,6 +1,6 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { Meta, applicationConfig, argsToTemplate, moduleMetadata } from '@storybook/angular'
+import { Meta, applicationConfig, argsToTemplate, moduleMetadata } from '@storybook/angular-vite'
 import { action } from 'storybook/actions'
 import { FormsModule } from '@angular/forms'
 import { ButtonModule } from '@openng/optimus-ui/button'

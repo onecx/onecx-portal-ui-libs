@@ -1,0 +1,23 @@
+name: Accessibility Tests
+
+on:
+  workflow_call:
+
+jobs:
+  test-a11y:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+
+      # npm ci does not download the browsers for the Storybook Vitest addon
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run affected accessibility tests
+        run: npx nx affected -t test-a11y

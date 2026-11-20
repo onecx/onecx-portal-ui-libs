@@ -6,6 +6,7 @@ async function checkStagedFiles() {
   })
     .split('\0')
     .filter(Boolean)
+    .filter((file) => !isTakenUnchangedFromMerge(file))
 
   if (stagedFiles.length === 0) {
     return
@@ -32,6 +33,24 @@ async function checkStagedFiles() {
   }
 
   process.exitCode = failed ? 1 : 0
+}
+
+function objectId(revision) {
+  try {
+    return execFileSync('git', ['rev-parse', '--quiet', '--verify', revision], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+  } catch {
+    return undefined
+  }
+}
+
+// During a merge, files that are staged exactly as on the merged branch were checked there. Only the files changed or
+// resolved in the merge itself are checked.
+function isTakenUnchangedFromMerge(file) {
+  const mergedVersion = objectId(`MERGE_HEAD:${file}`)
+  return mergedVersion !== undefined && mergedVersion === objectId(`:${file}`)
 }
 
 checkStagedFiles().catch((error) => {

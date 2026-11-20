@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
-import { Meta, moduleMetadata, applicationConfig, argsToTemplate, StoryFn } from '@storybook/angular'
+import { Meta, moduleMetadata, applicationConfig, argsToTemplate, StoryFn } from '@storybook/angular-vite'
 import { RouterModule } from '@angular/router'
 import { TableModule } from '@openng/optimus-ui/table'
 import { ButtonModule } from '@openng/optimus-ui/button'
@@ -39,7 +39,8 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         importProvidersFrom(StorybookThemeModule),
         provideAppInitializer(() => {
           const userServiceMock = inject(UserService) as unknown as UserServiceMock
-          userServiceMock.permissionsTopic$.publish([
+          // Angular waits for the returned promise, the permissions are set before the first render
+          return userServiceMock.permissionsTopic$.publish([
             'TEST_MGMT#TEST_DELETE',
             'TEST_MGMT#TEST_EDIT',
             'TEST_MGMT#TEST_VIEW',

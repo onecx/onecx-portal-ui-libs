@@ -2,7 +2,7 @@ import { OcxContentContainerDirective } from '../../directives/content-container
 import { OcxContentDirective } from '../../directives/content.directive'
 import { OcxContentComponent } from '../content/content.component'
 import { OcxContentContainerComponent } from './content-container.component'
-import { moduleMetadata, Meta } from '@storybook/angular'
+import { moduleMetadata, Meta } from '@storybook/angular-vite'
 
 export default {
   title: 'Components/ContentContainerComponent',

@@ -43,7 +43,10 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
-          ignoredFiles: ['libs/angular-accelerator/**/storybook-config.ts'],
+          ignoredFiles: [
+            'libs/angular-accelerator/**/storybook-config.ts',
+            'libs/angular-accelerator/vitest.storybook.config.mts',
+          ],
         },
       ],
     },
