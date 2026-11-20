@@ -34,3 +34,19 @@ import {
 } from '@onecx/ngrx-accelerator'
 ----
 
+== Fragment instead of query params
+
+The ngrx-accelerator also provides fragment-based variants of the query params utilities.
+The fragment format is `#<path>?a=b&c=d` (for example `#search?name=x`): the part before `?` is a prefix, the part after `?` holds the criteria.
+`createFragmentParamsEffect` only updates an existing fragment: if the URL has no fragment yet, it does not navigate, so make sure the page URL already contains the prefix (for example `#search?`).
+If you want to keep the search criteria in the URL fragment instead of the query params, use these utilities:
+
+[cols="2",options="header"]
+|===
+| Old (query params) | New (fragment)
+
+| `filterOutQueryParamsHaveNotChanged` | `filterOutFragmentParamsHaveNotChanged`
+| `filterOutOnlyQueryParamsChanged` | `filterOutOnlyFragmentParamsChanged`
+| `createQueryParamsEffect` | `createFragmentParamsEffect`
+|===
+
