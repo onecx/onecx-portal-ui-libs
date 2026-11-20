@@ -289,6 +289,29 @@ describe('PortalDialogService', () => {
     pDialogService = TestBed.inject(DialogService)
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(fixture)
     jest.clearAllMocks()
+    // The afterEach wipes the document, which recreates document.body. The removeChild spy was bound
+    // once above, so rebind it to the current body (the one the dialog is appended to) and drop any
+    // call history left by a previous test.
+    Object.defineProperty(document.body, 'removeChild', { value: removeChildSpy })
+  })
+
+  // Clean up the DOM after each test
+  // This is required because DynamicDialog appends dialogs to the document body and they persist between tests
+  afterEach(() => {
+    document.getElementsByTagName('html')[0].innerHTML = ''
+  })
+
+  it('should lay out the dialog content as a flex column so the content scroll region can shrink', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show('TITLE_TRANSLATE', 'message', 'button1', 'button2')
+
+    expect(pDialogService.open).toHaveBeenCalledWith(
+      DialogContentComponent,
+      expect.objectContaining({
+        contentStyle: { display: 'flex', flexDirection: 'column' },
+      })
+    )
   })
 
   it('should display dialog with translated title', async () => {
