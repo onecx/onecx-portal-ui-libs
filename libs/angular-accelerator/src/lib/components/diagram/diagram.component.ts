@@ -22,6 +22,9 @@ export interface DiagramComponentState {
   activeDiagramType?: DiagramType
 }
 
+/* Matches when the user asked the operating system to minimise non-essential motion (WCAG 2.3.3). */
+const reducedMotionQuery = '(prefers-reduced-motion: reduce)'
+
 export type ChartType = 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar'
 
 const allDiagramTypes: DiagramLayouts[] = [
@@ -98,6 +101,8 @@ export class DiagramComponent implements OnDestroy {
   // Changing the colorScale, will change the thematic color appearance of the diagram.
   private colorScale = d3.interpolateCool
 
+  private readonly reducedMotion = globalThis.matchMedia(reducedMotionQuery)
+
   private static nextUniqueId = 0;
   uniqueInstanceId: number;
   legendItems: { label: string | undefined, color: string | undefined, value?: number }[] = []
@@ -106,6 +111,7 @@ export class DiagramComponent implements OnDestroy {
     this.refreshTheme()
     this.uniqueInstanceId = DiagramComponent.nextUniqueId++;
     addHighContrastListener(this.refreshTheme)
+    this.reducedMotion.addEventListener('change', this.refreshTheme)
     effect(() => {
       this.generateChart(this.colorScale, this.colorRangeInfo)
     })
@@ -113,6 +119,7 @@ export class DiagramComponent implements OnDestroy {
 
   ngOnDestroy() {
     removeHighContrastListener(this.refreshTheme)
+    this.reducedMotion.removeEventListener('change', this.refreshTheme)
   }
 
   refreshTheme = () => {
@@ -152,6 +159,8 @@ export class DiagramComponent implements OnDestroy {
         },
       },
       maintainAspectRatio: false,
+      // Render the chart statically when the user prefers reduced motion
+      ...(this.reducedMotion.matches && { animation: false }),
       ...(this.diagramType() === DiagramType.VERTICAL_BAR && {
         scales: { y: { ticks: { precision: 0, color: labelColor } }, x: { ticks: { color: labelColor } } },
       }),
