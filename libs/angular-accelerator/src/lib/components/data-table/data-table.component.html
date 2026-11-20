@@ -9,15 +9,16 @@
     [ngClass]="(stateService.actionColumnConfigFrozen() && stateService.actionColumnConfigPosition() === 'left') ? 'border-right-1' : (stateService.actionColumnConfigFrozen() && stateService.actionColumnConfigPosition() === 'right') ? 'border-left-1' : ''"
   >
     <div class="icon-button-row-wrapper">
+      @let rowLabelText = rowLabel(rowObject);
       @if (viewTableRowObserved && (!viewActionVisibleField() || fieldIsTruthy(rowObject, viewActionVisibleField()))) {
       <button
-        id="{{ resolveFieldData(rowObject, 'id') }}-viewButton"
+        [id]="resolveFieldData(rowObject, 'id') + '-viewButton' + idSuffix"
         *ocxIfPermission="viewPermission()"
         [disabled]="!!viewActionEnabledField() && !fieldIsTruthy(rowObject, viewActionEnabledField())"
         pButton
         class="p-button-rounded p-button-text viewTableRowButton"
         [title]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
-        [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
+        [attr.aria-label]="rowLabelText ? ('OCX_DATA_TABLE.ROW_ACTION_ARIA_LABEL' | translate: { action: ('OCX_DATA_TABLE.ACTIONS.VIEW' | translate), row: rowLabelText }) : ('OCX_DATA_TABLE.ACTIONS.VIEW' | translate)"
         icon="pi pi-eye"
         (click)="onViewRow(rowObject)"
         [attr.name]="'data-table-action-button'"
@@ -25,13 +26,13 @@
       } @if (editTableRowObserved && (!editActionVisibleField() || fieldIsTruthy(rowObject, editActionVisibleField())))
       {
       <button
-        [id]="resolveFieldData(rowObject, 'id')+'-editButton'"
+        [id]="resolveFieldData(rowObject, 'id') + '-editButton' + idSuffix"
         *ocxIfPermission="editPermission()"
         [disabled]="!!editActionEnabledField() && !fieldIsTruthy(rowObject, editActionEnabledField())"
         pButton
         class="p-button-rounded p-button-text editTableRowButton"
         [title]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
-        [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
+        [attr.aria-label]="rowLabelText ? ('OCX_DATA_TABLE.ROW_ACTION_ARIA_LABEL' | translate: { action: ('OCX_DATA_TABLE.ACTIONS.EDIT' | translate), row: rowLabelText }) : ('OCX_DATA_TABLE.ACTIONS.EDIT' | translate)"
         icon="pi pi-pencil"
         (click)="onEditRow(rowObject)"
         [attr.name]="'data-table-action-button'"
@@ -39,13 +40,13 @@
       } @if ( deleteTableRowObserved && (!deleteActionVisibleField() || fieldIsTruthy(rowObject,
       deleteActionVisibleField())) ) {
       <button
-        [id]="resolveFieldData(rowObject, 'id')+'-deleteButton'"
+        [id]="resolveFieldData(rowObject, 'id') + '-deleteButton' + idSuffix"
         *ocxIfPermission="deletePermission()"
         [disabled]="!!deleteActionEnabledField() && !fieldIsTruthy(rowObject, deleteActionEnabledField())"
         pButton
         class="p-button-rounded p-button-text p-button-danger deleteTableRowButton"
         [title]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
-        [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
+        [attr.aria-label]="rowLabelText ? ('OCX_DATA_TABLE.ROW_ACTION_ARIA_LABEL' | translate: { action: ('OCX_DATA_TABLE.ACTIONS.DELETE' | translate), row: rowLabelText }) : ('OCX_DATA_TABLE.ACTIONS.DELETE' | translate)"
         icon="pi pi-trash"
         (click)="onDeleteRow(rowObject)"
         [attr.name]="'data-table-action-button'"
@@ -54,28 +55,28 @@
       action.actionVisibleField)) { @if (typeof action.routerLink === 'string' && !(action.disabled ||
       (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField)))) {
       <a
-        [id]="resolveFieldData(rowObject, 'id')+'-'+(action.id ? action.id.concat('ActionButton') : 'inlineActionButton')"
+        [id]="resolveFieldData(rowObject, 'id') + '-' + (action.id ? action.id.concat('ActionButton') : 'inlineActionButton') + idSuffix"
         *ocxIfPermission="action.permission"
         pButton
         class="p-button-rounded p-button-text no-underline"
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
         [routerLink]="action.routerLink"
-        [title]="action.labelKey ? (action.labelKey | translate) : ''"
-        [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+        [title]="(action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate"
+        [attr.aria-label]="rowLabelText ? ('OCX_DATA_TABLE.ROW_ACTION_ARIA_LABEL' | translate: { action: ((action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate), row: rowLabelText }) : ((action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate)"
         [attr.data-testid]="'data-table-action-button'"
       ></a>
       } @else {
       <button
-        [id]="resolveFieldData(rowObject, 'id')+'-'+(action.id ? action.id.concat('ActionButton') : 'inlineActionButton')"
+        [id]="resolveFieldData(rowObject, 'id') + '-' + (action.id ? action.id.concat('ActionButton') : 'inlineActionButton') + idSuffix"
         *ocxIfPermission="action.permission"
         pButton
         class="p-button-rounded p-button-text"
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
         (click)="onActionClick(action, rowObject)"
-        [title]="action.labelKey ? (action.labelKey | translate) : ''"
-        [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+        [title]="(action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate"
+        [attr.aria-label]="rowLabelText ? ('OCX_DATA_TABLE.ROW_ACTION_ARIA_LABEL' | translate: { action: ((action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate), row: rowLabelText }) : ((action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate)"
         [disabled]="
             action.disabled ||
             (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))
@@ -89,7 +90,10 @@
         class="p-button-rounded p-button-text"
         [icon]="'pi pi-ellipsis-v'"
         (click)="toggleOverflowMenu($event, menu, rowObject)"
-        [attr.aria-label]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+        [attr.aria-label]="rowLabelText ? ('OCX_DATA_TABLE.ROW_ACTION_ARIA_LABEL' | translate: { action: ('OCX_DATA_TABLE.MORE_ACTIONS' | translate), row: rowLabelText }) : ('OCX_DATA_TABLE.MORE_ACTIONS' | translate)"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="!!menu.visible"
+        [attr.aria-controls]="menu.visible ? menu.id : null"
         [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
         [name]="'data-table-overflow-action-button'"
       ></button>
@@ -143,7 +147,7 @@
         | translate : params()
     "
   [rowsPerPageOptions]="pageSizes()"
-  [id]="'dataTable_' + name()"
+  [id]="'dataTable_' + name() + idSuffix"
   (selectionChange)="onSelectionChange($event)"
   dataKey="id"
   [rowTrackBy]="rowTrackByFunction"
@@ -190,7 +194,7 @@
                   class="table-header-wrapper flex flex-col justify-between items-start"
                   style="height: 100%"
                 >
-                  <span class="flex" id="{{column.id}}-header-name">
+                  <span class="flex" [id]="column.id + '-header-name' + idSuffix">
                     <ng-container
                       [ngTemplateOutlet]="columnHeaderLabel"
                       [ngTemplateOutletContext]="{ column: column }"
@@ -253,7 +257,7 @@
       </th>
     </tr>
     } }
-    <tr [attr.id]="'ocx-data-row-' + rowObject.id">
+    <tr [attr.id]="'ocx-data-row-' + rowObject.id + idSuffix">
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
@@ -296,7 +300,7 @@
 
   <ng-template #expandedrow let-rowObject>
     @if (expansionTemplate(); as expansionTemplate) {
-    <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
+    <tr [attr.id]="'ocx-expanded-row-' + rowObject.id + idSuffix">
       <td [attr.colspan]="getRowColspan(!!expansionTemplate)">
         <ng-container
           [ngTemplateOutlet]="expansionTemplate.template"
@@ -327,6 +331,12 @@
 <ng-template #expansionColumn let-rowObject="localRowObject">
   @if (expandable() && expansionTemplate()) {
   <td pFrozenColumn [frozen]="frozenExpandColumn()" alignFrozen="left" [attr.name]="'expansion-column'">
+    @let expandToggleLabel =
+      rowLabel(rowObject)
+        ? ('OCX_DATA_TABLE.EXPAND_ROW_ARIA_LABEL' | translate: { row: rowLabel(rowObject) })
+        : isRowExpanded(rowObject)
+          ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate)
+          : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate);
     <button
       type="button"
       pButton
@@ -335,9 +345,9 @@
       class="p-button-rounded p-button-text"
       (click)="toggleRowExpansion(rowObject)"
       [attr.aria-expanded]="isRowExpanded(rowObject)"
-      [attr.aria-controls]="isRowExpanded(rowObject) ? 'ocx-expanded-row-' + rowObject.id : null"
-      [attr.aria-label]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
-      [title]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
+      [attr.aria-controls]="isRowExpanded(rowObject) ? 'ocx-expanded-row-' + rowObject.id + idSuffix : null"
+      [attr.aria-label]="expandToggleLabel"
+      [title]="expandToggleLabel"
     ></button>
   </td>
   }

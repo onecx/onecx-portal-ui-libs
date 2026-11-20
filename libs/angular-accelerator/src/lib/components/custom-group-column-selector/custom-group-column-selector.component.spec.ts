@@ -3,7 +3,9 @@ import { signal } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { provideTranslateTestingService, expectNoAxeViolations } from '@onecx/angular-testing'
+import { CustomGroupColumnSelectorHarness } from '../../../../testing/custom-group-column-selector.harness'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -33,6 +35,11 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
     fixture = TestBed.createComponent(CustomGroupColumnSelectorComponent)
     component = fixture.componentInstance
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   describe('ngOnInit', () => {
@@ -274,6 +281,45 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
       expect(frozenSpy).toHaveBeenCalledWith(true)
       expect(positionSpy).toHaveBeenCalledWith('left')
+    })
+  })
+
+  describe('[a11y] open button popup semantics', () => {
+    const innerButton = () => fixture.nativeElement.querySelector('#customGroupColumnSelectorButton button') as HTMLButtonElement
+
+    it('announces haspopup/expanded on the inner button and sets aria-controls only while open', () => {
+      fixture.detectChanges()
+      const pButton = fixture.nativeElement.querySelector('#customGroupColumnSelectorButton') as HTMLElement
+      expect(pButton.getAttributeNames().filter((n) => n.startsWith('aria-') && n !== 'aria-describedby')).toEqual([])
+      expect(innerButton().getAttribute('aria-haspopup')).toBe('dialog')
+      expect(innerButton().getAttribute('aria-expanded')).toBe('false')
+      expect(innerButton().hasAttribute('aria-controls')).toBe(false)
+
+      component.visible.set(true)
+      fixture.detectChanges()
+      expect(innerButton().getAttribute('aria-expanded')).toBe('true')
+      expect(innerButton().getAttribute('aria-controls')).toBe('customGroupColumnSelectorDialog')
+
+      component.visible.set(false)
+      fixture.detectChanges()
+      expect(innerButton().getAttribute('aria-expanded')).toBe('false')
+      expect(innerButton().hasAttribute('aria-controls')).toBe(false)
+    })
+  })
+
+  describe('[a11y] dialog name', () => {
+    it('should name the dialog by its visible title', async () => {
+      fixture.componentRef.setInput('columns', [makeColumn('c1')])
+      fixture.componentRef.setInput('displayedColumns', [makeColumn('c1')])
+      fixture.componentRef.setInput('dialogTitle', 'My visible title')
+      fixture.detectChanges()
+
+      const selector = await TestbedHarnessEnvironment.harnessForFixture(fixture, CustomGroupColumnSelectorHarness)
+      await selector.openCustomGroupColumnSelectorDialog()
+      const dialog = await selector.getDialog()
+
+      expect(await dialog.getDialogTitle()).toContain('My visible title')
+      expect(await dialog.getAccessibleName()).toBe('My visible title')
     })
   })
 

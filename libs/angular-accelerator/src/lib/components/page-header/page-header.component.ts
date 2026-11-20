@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import {
   AfterViewInit,
   Component,
@@ -15,7 +16,8 @@ import {
   model,
   output,
   signal,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  isDevMode,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -34,6 +36,10 @@ import { handleAction, handleActionSync } from '../../utils/action-router.utils'
  * Action definition.
  */
 export interface Action {
+  /**
+   * Element id of the action button or overflow menu item. The first `ocx-page-header` on a page uses it as is,
+   * further instances add the instance suffix (`<id>-1`, `<id>-2`, ...) so that ids stay unique per page.
+   */
   id?: string
   label?: string
   labelKey?: string
@@ -61,7 +67,7 @@ export interface Action {
   showCondition?: boolean
 }
 
-export interface ObjectDetailItem {
+interface ObjectDetailItemBase {
   label: string
   value?: string
   icon?: OptimusIcon
@@ -71,13 +77,34 @@ export interface ObjectDetailItem {
   valuePipeArgs?: string
   valueCssClass?: string
   actionItemIcon?: OptimusIcon
-  actionItemCallback?: () => void
   actionItemAriaLabel?: string
-  actionItemAriaLabelKey?: TranslationKey
   actionItemTooltipKey?: TranslationKey
   labelTooltipKey?: TranslationKey
   valueTooltipKey?: TranslationKey
 }
+
+/**
+ * Object detail without an action button.
+ */
+export interface ObjectDetailItemWithoutAction extends ObjectDetailItemBase {
+  actionItemCallback?: undefined
+  /** Only allowed together with `actionItemCallback`, see {@link ObjectDetailItemWithAction}. */
+  actionItemAriaLabelKey?: never
+}
+
+/**
+ * Object detail with an icon-only action button (rendered when `actionItemIcon` is set as well).
+ * The button has no visible text, so `actionItemAriaLabelKey` is required: it is the accessible name of the button.
+ */
+export interface ObjectDetailItemWithAction extends ObjectDetailItemBase {
+  actionItemCallback: () => void
+  actionItemAriaLabelKey: TranslationKey
+}
+
+/**
+ * Object detail shown in the page header. Setting `actionItemCallback` requires `actionItemAriaLabelKey`.
+ */
+export type ObjectDetailItem = ObjectDetailItemWithoutAction | ObjectDetailItemWithAction
 
 export interface HomeItem {
   menuItem: MenuItem
@@ -95,6 +122,8 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, AfterViewInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-page-header')
   private readonly translateService = inject(TranslateService)
   private readonly appStateService = inject(AppStateService)
   private readonly userService = inject(UserService)
@@ -243,6 +272,62 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     this.figureImageLoadError.set(true)
   }
 
+  private readonly warnedItems = new Set<string>()
+
+  private translateKey(key: TranslationKey | undefined): string | undefined {
+    if (!key) return undefined
+    const translated =
+      typeof key === 'string'
+        ? this.translateService.instant(key)
+        : this.translateService.instant(key.key, key.parameters)
+    return translated || undefined
+  }
+
+  /** A disabled action that explains why; its wrapper is made keyboard-focusable to expose the reason. */
+  hasDisabledReason(action: Action): boolean {
+    return !!action.disabled && !!(action.disabledTooltipKey || action.disabledTooltip)
+  }
+
+  /**
+   * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
+   * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
+   */
+  getInlineActionAriaLabel(action: Action): string | undefined {
+    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
+    if (visibleLabel) return undefined
+    return (
+      this.translateKey(action.ariaLabelKey) ||
+      action.ariaLabel ||
+      this.translateKey(action.titleKey) ||
+      action.title ||
+      undefined
+    )
+  }
+
+  /**
+   * Accessible name of the object detail action button:
+   * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
+   */
+  getActionItemAriaLabel(item: ObjectDetailItem): string {
+    const name =
+      this.translateKey(item.actionItemAriaLabelKey) ||
+      item.actionItemAriaLabel ||
+      this.translateKey(item.actionItemTooltipKey)
+    if (name) return name
+    if (isDevMode() && !this.warnedItems.has(item.label)) {
+      this.warnedItems.add(item.label)
+      console.warn(
+        `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
+      )
+    }
+    return item.label
+  }
+
+  /** Text alternative for an icon-only object detail value. */
+  getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
+    return this.translateKey(item.valueTooltipKey)
+  }
+
   public generateItemStyle(item: ObjectDetailItem): string {
     let style = ''
     if (item.icon) style = style.concat(style, ' ', 'gap-1 items-center')
@@ -298,7 +383,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
-      id: a.id,
+      id: this.scopedActionId(a.id),
       label: a.labelKey ? translations[a.labelKey] : a.label,
       icon: a.icon,
       tooltipOptions: {
@@ -310,6 +395,17 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
       command: typeof a.routerLink === 'string' ? undefined : () => handleActionSync(this.router, a),
       disabled: a.disabled,
     }))
+  }
+
+  /**
+   * Element id of an action button or overflow menu item: the `id` of the action plus the instance suffix,
+   * so the first page header keeps the given id and further instances get `<id>-1`, `<id>-2`, ...
+   *
+   * @param id the `id` of the action
+   * @returns the instance-scoped id, or `undefined` when the action has no id
+   */
+  scopedActionId(id: string | undefined): string | undefined {
+    return id ? id + this.idSuffix : undefined
   }
 
   async onActionClick(action: Action): Promise<void> {
@@ -326,11 +422,13 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     breadcrumbItems.forEach((item: Element, index: number) => {
       const text = (item as HTMLElement)?.innerText?.trim()
       if (!text) return
-      
-      this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
-        this.renderer.setAttribute(item, 'aria-label', ariaLabel)
-      })
-      
+
+      this.translateService
+        .get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text })
+        .subscribe((ariaLabel) => {
+          this.renderer.setAttribute(item, 'aria-label', ariaLabel)
+        })
+
       if (index === breadcrumbItems.length - 1) {
         this.renderer.setAttribute(item, 'aria-current', 'page')
       }

@@ -1,7 +1,7 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
 
 export interface ButtonHarnessFilters extends BaseHarnessFilters {
-  id?: string
+  id?: string | RegExp
   icon?: string
   class?: string
 }

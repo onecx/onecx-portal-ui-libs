@@ -15,6 +15,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ObjectUtils } from '../../utils/objectutils'
 import { toObservable } from '@angular/core/rxjs-interop'
+import { DiagramColorPalette, DiagramDataSelectedEvent } from '../diagram/diagram.component'
 
 export interface GroupByCountDiagramComponentState {
   activeDiagramType?: DiagramType
@@ -34,12 +35,20 @@ export class GroupByCountDiagramComponent {
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
   /**
+   * Level (1-6) of the heading rendered for `chartTitleKey`. Choose it so that the heading fits into the page outline.
+   */
+  titleHeadingLevel = input<number>(2)
+  /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
    * Setting this property to false will result in using the provided colors only if every data item has one.
    *  In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   fillMissingColors = input<boolean>(true)
+  /**
+   * Palette of the generated colors, see {@link DiagramColorPalette}. Defaults to `categorical`; set `sequential` to keep the pre-v9 gradient.
+   */
+  colorPalette = input<DiagramColorPalette>('categorical')
   supportedDiagramTypes = input<DiagramType[]>([])
 
   data = model<unknown[]>([])
@@ -60,7 +69,10 @@ export class GroupByCountDiagramComponent {
   
   colors = model<Record<string, string>>({})
 
-  dataSelected = output<any>()
+  /**
+   * Emits the selected entry when a chart segment is clicked or a legend entry is activated with mouse or keyboard.
+   */
+  dataSelected = output<DiagramDataSelectedEvent>()
   diagramTypeChanged = output<DiagramType>()
   componentStateChanged = output<GroupByCountDiagramComponentState>()
 
@@ -123,7 +135,7 @@ export class GroupByCountDiagramComponent {
     })
   }
 
-  dataClicked(event: any) {
+  dataClicked(event: DiagramDataSelectedEvent) {
     this.dataSelected.emit(event)
   }
 

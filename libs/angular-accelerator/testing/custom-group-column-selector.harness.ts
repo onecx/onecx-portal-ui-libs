@@ -1,3 +1,4 @@
+import { instanceScopedId } from './instance-scoped-id'
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
 import { PDialogHarness, PPicklistHarness, PButtonHarness } from '@onecx/angular-testing'
 
@@ -6,13 +7,13 @@ export class CustomGroupColumnSelectorHarness extends ContentContainerComponentH
 
   getCustomGroupColumnSelectorButton = this.locatorFor(
     PButtonHarness.with({
-      id: 'customGroupColumnSelectorButton',
+      id: instanceScopedId('customGroupColumnSelectorButton'),
     })
   )
 
   getDialog = this.locatorFor(PDialogHarness)
-  getCancelButton = this.locatorFor(PButtonHarness.with({ id: 'cancelButton' }))
-  getSaveButton = this.locatorFor(PButtonHarness.with({ id: 'saveButton' }))
+  getCancelButton = this.locatorFor(PButtonHarness.with({ id: instanceScopedId('cancelButton') }))
+  getSaveButton = this.locatorFor(PButtonHarness.with({ id: instanceScopedId('saveButton') }))
   getPicklist = this.locatorFor(PPicklistHarness)
   getSelectButtons = this.locatorForOptional('[name]')
 

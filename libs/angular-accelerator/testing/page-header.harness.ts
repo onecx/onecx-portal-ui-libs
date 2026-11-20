@@ -1,3 +1,4 @@
+import { instanceScopedIdSelector } from './instance-scoped-id'
 import { BaseHarnessFilters, ComponentHarness, ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
 import {
   ListItemHarness,
@@ -69,11 +70,11 @@ export class PageHeaderHarness extends ComponentHarness {
   }
 
   async getHeaderText(): Promise<string | undefined> {
-    return await (await this.locatorForOptional('#page-header')())?.text()
+    return await (await this.locatorForOptional(instanceScopedIdSelector('page-header'))())?.text()
   }
 
   async getSubheaderText(): Promise<string | undefined> {
-    return await (await this.locatorForOptional('#page-subheader')())?.text()
+    return await (await this.locatorForOptional(instanceScopedIdSelector('page-subheader'))())?.text()
   }
 }
 
@@ -118,6 +119,10 @@ class ObjectDetailItemHarness extends ContentContainerComponentHarness {
     return this.getTooltipFromElement(
       await this.locatorForOptional('[name="object-detail-value"] > span:first-of-type')()
     )
+  }
+
+  async getActionItemButton() {
+    return await this.locatorForOptional('[name="object-detail-value"] button')()
   }
 
   async getActionItemTooltipContent(): Promise<string | null> {

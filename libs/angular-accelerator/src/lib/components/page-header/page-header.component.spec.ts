@@ -20,10 +20,12 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { provideRouter, Router } from '@angular/router'
-import { of } from 'rxjs'
+import { firstValueFrom, of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
+import { expectInstanceScopedIds } from '../../../../testing/instance-scoped-id'
 
 export function provideBreadcrumbServiceMock() {
   return [BreadcrumbServiceMock, { provide: BreadcrumbService, useExisting: BreadcrumbServiceMock }]
@@ -40,20 +42,21 @@ export class BreadcrumbServiceMock {
     },
   ])
 
-  generatedItemsSource = of<MenuItem[]>([{
+  generatedItemsSource = of<MenuItem[]>([
+    {
       label: 'Test breadcrumb from generated source',
       show: 'always',
       routerLink: '/test-breadcrumb',
       permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-    }])
+    },
+  ])
 
   generateBreadcrumbs() {
     return this.generatedItemsSource
   }
 }
 
-@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
- template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 class TestRouteComponent {}
 
 const mockActions: Action[] = [
@@ -135,6 +138,10 @@ describe('PageHeaderComponent', () => {
     jest.restoreAllMocks()
   })
 
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
+  })
+
   it('should create', async () => {
     expect(component).toBeTruthy()
     const pageHeaderWrapper = await pageHeaderHarness.getPageHeaderWrapperHarness()
@@ -145,7 +152,7 @@ describe('PageHeaderComponent', () => {
     fixture = TestBed.createComponent(PageHeaderComponent)
     component = fixture.componentInstance
     fixture.componentRef.setInput('manualBreadcrumbs', true)
-      
+
     fixture.detectChanges()
     await fixture.whenStable()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
@@ -158,7 +165,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is false', async () => {
-    fixture.componentRef.setInput('manualBreadcrumbs', false)   
+    fixture.componentRef.setInput('manualBreadcrumbs', false)
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -195,8 +202,8 @@ describe('PageHeaderComponent', () => {
         show: 'always',
         routerLink: '/empty',
         permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-      }      
-    ]);
+      },
+    ])
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -226,7 +233,7 @@ describe('PageHeaderComponent', () => {
     fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
   })
@@ -238,7 +245,7 @@ describe('PageHeaderComponent', () => {
     fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeTruthy()
     await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeTruthy()
@@ -246,7 +253,7 @@ describe('PageHeaderComponent', () => {
     userServiceMock.permissionsTopic$.publish([])
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
   })
@@ -773,5 +780,190 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getLabelTooltipContent()).toBeNull()
     expect(await objectInfo.getValueTooltipContent()).toBeNull()
     expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
+  })
+
+  describe('accessible names', () => {
+    const cb = () => undefined
+    let warnSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+    })
+    afterEach(() => warnSpy.mockRestore())
+
+    async function actionButtonName(details: Partial<ObjectDetailItem>): Promise<string | null | undefined> {
+      fixture.componentRef.setInput('objectDetails', [
+        { label: 'Venue', value: 'AIE', actionItemIcon: 'pi pi-copy', actionItemCallback: cb, ...details },
+      ])
+      fixture.detectChanges()
+      const btn: HTMLElement = fixture.nativeElement.querySelector('[name="object-detail-value"] button')
+      return btn.getAttribute('aria-label')
+    }
+
+    it('should resolve the object detail action name by key, label, tooltip key, then detail label', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { ARIA: 'Aria key', TIP: 'Tip key' })
+      translate.use('en')
+      expect(
+        await actionButtonName({
+          actionItemAriaLabelKey: 'ARIA',
+          actionItemAriaLabel: 'Aria',
+          actionItemTooltipKey: 'TIP',
+        })
+      ).toBe('Aria key')
+      expect(await actionButtonName({ actionItemAriaLabel: 'Aria', actionItemTooltipKey: 'TIP' })).toBe('Aria')
+      expect(await actionButtonName({ actionItemTooltipKey: 'TIP' })).toBe('Tip key')
+      expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(0)
+    })
+
+    it('should fall back to the detail label with a dev warning and never expose the icon class', async () => {
+      const name = await actionButtonName({})
+      expect(name).toBe('Venue')
+      expect(name).not.toContain('pi pi-')
+      expect(name).not.toContain('button for')
+      expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(1)
+    })
+
+    it('should render the object detail action button at least 24x24 px via the min-size class', async () => {
+      await actionButtonName({})
+      const btn: HTMLElement = fixture.nativeElement.querySelector('[name="object-detail-value"] button')
+      expect(btn.classList.contains('object-info-action-button')).toBe(true)
+    })
+
+    it('should let a visible label win over title and ariaLabel on inline actions', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'a1', label: 'Save', title: 'Persist', ariaLabel: 'Store it', show: 'always', actionCallback: cb },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      const btn: HTMLElement = fixture.nativeElement.querySelector('#a1 button, button#a1')
+      expect(btn.getAttribute('aria-label')).toBeNull()
+      expect(btn.textContent).toContain('Save')
+    })
+
+    it('should name icon-only inline actions by ariaLabel, then title', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'a1', icon: 'pi pi-lock', title: 'Title', ariaLabel: 'Aria', show: 'always', actionCallback: cb },
+        { id: 'a2', icon: 'pi pi-lock', title: 'Title only', show: 'always', actionCallback: cb },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('#a1 button, button#a1').getAttribute('aria-label')).toBe('Aria')
+      expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title only')
+    })
+
+    it('should resolve inline action names from translation keys and fall back through the chain', () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key', EMPTY: '' })
+      translate.use('en')
+      expect(component.getInlineActionAriaLabel({ labelKey: 'LBL', ariaLabel: 'x' } as Action)).toBeUndefined()
+      expect(
+        component.getInlineActionAriaLabel({ ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } } as Action)
+      ).toBe('Hello World')
+      expect(component.getInlineActionAriaLabel({ ariaLabelKey: 'EMPTY', titleKey: 'TITLE' } as Action)).toBe(
+        'Title key'
+      )
+      expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
+    })
+
+    it('should render the figure image as decorative and the subheader as plain content', async () => {
+      fixture.componentRef.setInput('figureImage', 'assets/x.png')
+      fixture.componentRef.setInput('subheader', 'Sub')
+      fixture.detectChanges()
+      const img = fixture.nativeElement.querySelector('.figure img')
+      expect(img?.getAttribute('alt')).toBe('')
+      const sub = fixture.nativeElement.querySelector('#page-subheader')
+      expect(sub.getAttribute('role')).toBeNull()
+      expect(sub.getAttribute('aria-label')).toBeNull()
+    })
+
+    it('should give icon-only object details a text alternative', async () => {
+      fixture.componentRef.setInput('objectDetails', [
+        { label: 'Status', icon: 'pi pi-check', valueTooltipKey: 'STATUS_OK' },
+      ])
+      TestBed.inject(TranslateService).setTranslation('en', { STATUS_OK: 'Confirmed' })
+      TestBed.inject(TranslateService).use('en')
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('[name="object-detail-value"] .sr-only').textContent).toBe('Confirmed')
+    })
+  })
+
+  describe('disabled action reason', () => {
+    it('should make the wrapper of a disabled action with a reason keyboard-focusable', async () => {
+      fixture.componentRef.setInput('actions', [
+        {
+          id: 'd1',
+          icon: 'pi pi-lock',
+          title: 'Edit',
+          disabledTooltip: 'No permission',
+          disabled: true,
+          show: 'always',
+          actionCallback: () => undefined,
+        },
+        { id: 'e1', icon: 'pi pi-lock', title: 'Enabled', show: 'always', actionCallback: () => undefined },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      const wrappers: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.toolbar > span'))
+      expect(wrappers[0].getAttribute('tabindex')).toBe('0')
+      expect(wrappers[0].getAttribute('aria-disabled')).toBe('true')
+      expect(wrappers[0].getAttribute('aria-label')).toBe('Edit')
+      expect(wrappers[1].hasAttribute('tabindex')).toBe(false)
+      expect(wrappers[1].hasAttribute('aria-disabled')).toBe(false)
+    })
+  })
+
+  describe('ObjectDetailItem type (v9: required actionItemAriaLabelKey)', () => {
+    it('should require actionItemAriaLabelKey for an object detail with an action button', () => {
+      const withAction: ObjectDetailItem = {
+        label: 'Venue',
+        actionItemIcon: OpenngIcons.COPY,
+        actionItemCallback: () => undefined,
+        actionItemAriaLabelKey: 'COPY_VENUE',
+      }
+      // @ts-expect-error actionItemAriaLabelKey is required as soon as actionItemCallback is set
+      const withoutName: ObjectDetailItem = {
+        label: 'Venue',
+        actionItemIcon: OpenngIcons.COPY,
+        actionItemCallback: () => undefined,
+      }
+      const withoutAction: ObjectDetailItem = { label: 'Status', value: 'Confirmed' }
+      // @ts-expect-error actionItemAriaLabelKey is only allowed together with actionItemCallback
+      const nameWithoutAction: ObjectDetailItem = { label: 'Status', actionItemAriaLabelKey: 'UNUSED' }
+
+      expect([withAction, withoutName, withoutAction, nameWithoutAction].map((item) => item.label)).toEqual([
+        'Venue',
+        'Venue',
+        'Status',
+        'Status',
+      ])
+    })
+  })
+
+  it('should scope action ids per instance', async () => {
+    const actionsWithIds: Action[] = [
+      { id: 'inlineAction', label: 'Inline', show: 'always', actionCallback: () => undefined },
+      { id: 'overflowAction', label: 'Overflow', show: 'asOverflow', actionCallback: () => undefined },
+      { label: 'Overflow without id', show: 'asOverflow', actionCallback: () => undefined },
+    ]
+    const second = TestBed.createComponent(PageHeaderComponent)
+    for (const f of [fixture, second]) {
+      f.componentRef.setInput('actions', actionsWithIds)
+      f.detectChanges()
+      await f.whenStable()
+      f.detectChanges()
+    }
+
+    expect(component.scopedActionId(undefined)).toBeUndefined()
+    expect(fixture.nativeElement.querySelector('#inlineAction')).not.toBeNull()
+    expect(second.nativeElement.querySelector('#inlineAction-1')).not.toBeNull()
+    expect(second.nativeElement.querySelector('#inlineAction')).toBeNull()
+    const secondOverflowItems = await firstValueFrom(second.componentInstance.overflowActions$)
+    expect(secondOverflowItems.map((item) => item.id)).toEqual(['overflowAction-1', undefined])
+    expect((await firstValueFrom(component.overflowActions$))[0].id).toBe('overflowAction')
+    expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
   })
 })

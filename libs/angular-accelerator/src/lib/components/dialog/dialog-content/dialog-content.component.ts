@@ -34,6 +34,7 @@ import {
 export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy {
   dynamicDialogConfig = inject(DynamicDialogConfig)
   dynamicDialogRef = inject(DynamicDialogRef)
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef)
 
   defaultDialogData: ButtonDialogData = {
     component: DialogMessageContentComponent,
@@ -65,6 +66,7 @@ export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(): void {
+    this.setDialogAccessibility()
     // Safe here: scrollable is a signal read by the template, so setting it during the first
     // change detection pass just schedules a refresh instead of raising ExpressionChanged errors.
     this.updateScrollable()
@@ -81,6 +83,32 @@ export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy 
   updateScrollable(): void {
     const region = this.scrollRegion().nativeElement
     this.scrollable.set(region.scrollHeight > region.clientHeight || region.scrollWidth > region.clientWidth)
+  }
+
+  /**
+   * Neither the dialog nor the dynamic dialog support aria-describedby, and a dialog without title has no name,
+   * so both are set on the dialog container (role="dialog") that hosts this component.
+   */
+  private setDialogAccessibility() {
+    const container = this.elementRef.nativeElement.closest<HTMLElement>('[role="dialog"]')
+    if (!container) return
+
+    const header = this.dynamicDialogConfig.header
+    const hasTitle = typeof header === 'string' ? header.trim().length > 0 : !!header
+    const showHeader = this.dynamicDialogConfig.showHeader !== false
+    if ((!hasTitle || !showHeader) && !this.dynamicDialogConfig.ariaLabelledBy) {
+      const label = this.dynamicDialogConfig.data?.dialogAriaLabel
+      if (label) {
+        // An empty title would be an empty name
+        container.removeAttribute('aria-labelledby')
+        container.setAttribute('aria-label', label)
+      }
+    }
+
+    const message = this.elementRef.nativeElement.querySelector<HTMLElement>('.dialogMessageText')
+    if (message?.id) {
+      container.setAttribute('aria-describedby', message.id)
+    }
   }
 
   ngOnDestroy(): void {

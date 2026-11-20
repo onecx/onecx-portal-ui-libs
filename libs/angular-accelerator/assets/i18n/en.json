@@ -2,6 +2,15 @@
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Confirm",
     "CANCEL": "Cancel",
+    "DEFAULT_NAME": "Dialog",
+    "CLOSE": "Close dialog",
+    "SEVERITY": {
+      "SUCCESS": "Success",
+      "INFO": "Information",
+      "WARNING": "Warning",
+      "ERROR": "Error",
+      "QUESTION": "Question"
+    },
     "CONTENT_REGION": "Dialog content"
   },
   "OCX_CONSENT": {
@@ -76,10 +85,13 @@
     "SHOWING": "{{first}} - {{last}} of {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
     "MORE_ACTIONS": "More actions",
+    "ROW_ACTION_ARIA_LABEL": "{{action}}: {{row}}",
+    "EXPAND_ROW_ARIA_LABEL": "Toggle row details: {{row}}",
     "ACTIONS": {
       "VIEW": "View",
       "EDIT": "Edit",
-      "DELETE": "Delete"
+      "DELETE": "Delete",
+      "DEFAULT": "Action"
     },
     "TOGGLE_BUTTON": {
       "ASCENDING_TITLE": "Sort Ascending",
@@ -104,8 +116,10 @@
     "MENU": {
       "VIEW": "View",
       "EDIT": "Edit",
-      "DELETE": "Delete"
+      "DELETE": "Delete",
+      "DEFAULT": "Action"
     },
+    "ROW_ACTION_ARIA_LABEL": "{{action}}: {{row}}",
     "MORE_ACTIONS_ARIA_LABEL": "More actions",
     "MORE_ACTIONS_TOOLTIP": "Display more actions"
   },
@@ -144,7 +158,11 @@
       "VALUE": "Filter value",
       "ACTIONS": "Actions",
       "REMOVE_FILTER_TITLE": "Remove filter",
-      "REMOVE_FILTER_ARIA_LABEL": "Remove filter"
+      "REMOVE_FILTER_ARIA_LABEL": "Remove filter",
+      "REMOVE_FILTER_ROW_ARIA_LABEL": "Remove filter: {{column}}: {{value}}"
+    },
+    "SHOW_MORE": {
+      "SR_TEXT": "more filters"
     },
     "PANEL_TITLE": "Filters",
     "ADD_FILTER": {
@@ -216,6 +234,9 @@
     "EMPTY_ARIA_LABEL": "Chart with no data",
     "SUM": "Total",
     "NO_DATA": "There is no data available",
+    "LEGEND": {
+      "ARIA_LABEL": "Chart legend"
+    },
     "SELECT_BUTTON": {
       "ARIA_LABEL": "Select chart type"
     },
