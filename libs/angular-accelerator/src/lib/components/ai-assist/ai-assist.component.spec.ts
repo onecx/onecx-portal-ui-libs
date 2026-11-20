@@ -403,6 +403,19 @@ describe('AiAssistComponent', () => {
     expect(component.resultText).toBeUndefined()
   })
 
+  it('should show the generic warning for an empty custom result without toSuggestion', async () => {
+    getCompletion.mockResolvedValueOnce(null)
+    await createComponent()
+    component.additionalActions = [{ ...extractKeywordsAction(), outputSchema: z.null() }]
+    component.selectAction('extractKeywords')
+    component.inputText = 'Empty'
+
+    await component.run()
+
+    expect(component.runState).toBe('success')
+    expect(component.isReviewReady).toBe(false)
+  })
+
   it('should show the error state and retry explicitly on a failed completion', async () => {
     getCompletion.mockRejectedValueOnce(new AiProviderError('TIMEOUT', 'timeout', { retryable: true }))
     await createComponent()
