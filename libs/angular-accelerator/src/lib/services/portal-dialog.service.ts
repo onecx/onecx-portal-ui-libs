@@ -539,6 +539,9 @@ export class PortalDialogService implements OnDestroy {
           modal: true,
           appendTo: 'body', // Important for the function findBodyChild
           ...dialogOptions,
+          // Initial focus is moved by the dialog (first field) unless a footer button takes it (see DialogFooterComponent).
+          // Must stay after the spread, but derive from the caller's value so that an explicit `false` is respected.
+          focusOnShow: focusOnShow && !autoFocusButton,
           // Lets ocx-dialog-content shrink with the dialog so its named, focusable region scrolls (WCAG 1.4.10)
           contentStyle: { display: 'flex', flexDirection: 'column' },
           // Initial focus is moved by the dialog (first field) unless a footer button takes it (see DialogFooterComponent).
