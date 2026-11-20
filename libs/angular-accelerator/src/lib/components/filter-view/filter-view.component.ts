@@ -46,6 +46,8 @@ export interface FilterViewComponentState {
   filters?: Filter[]
 }
 
+let nextPanelId = 0
+
 @Component({
   standalone: false,
   selector: 'ocx-filter-view',
@@ -111,6 +113,21 @@ export class FilterViewComponent {
   readonly defaultTemplates$ = toObservable(this.defaultTemplates)
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
+  /** Unique per instance so aria-controls never points at another filter view's panel. */
+  readonly panelId = `ocxFilterViewPanel-${nextPanelId++}`
+  readonly panelPt = { root: { id: this.panelId } }
+  readonly panelOpen = signal(false)
+  /**
+   * ARIA state of the manage button. Set on the inner native button (pass-through of the root element),
+   * never on the p-button host, which has no role.
+   */
+  readonly manageButtonPt = computed(() => ({
+    root: {
+      'aria-haspopup': 'dialog',
+      'aria-expanded': String(this.panelOpen()),
+      'aria-controls': this.panelOpen() ? this.panelId : null,
+    },
+  }))
 
   private readonly portalDialogService = inject(PortalDialogService)
 
@@ -193,6 +210,10 @@ export class FilterViewComponent {
   private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   constructor() {    
+    // the popover is destroyed while open (template switch): onHide never fires, so reset the trigger state
+    effect(() => {
+      if (!this.panel()) this.panelOpen.set(false)
+    })
     effect(() => {
       const t = this.templates()
 
