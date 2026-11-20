@@ -776,6 +776,110 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
   })
 
+  describe('layout classes', () => {
+    it('should use the default object panel and object info layout when grid view is not set', () => {
+      expect(component.objectPanelLayoutClasses()).toBe('flex flex-col gap-y-2 md:flex-row md:justify-between')
+      expect(component.objectInfoLayoutClasses()).toBe('flex flex-row md:flex-col md:items-center md:gap-2')
+    })
+
+    it('should use grid layout classes when grid view is enabled', () => {
+      fixture.componentRef.setInput('enableGridView', true)
+      expect(component.objectPanelLayoutClasses()).toBe('grid grid-cols-12 gap-y-2 m-0')
+      expect(component.objectInfoLayoutClasses()).toBe('col-span-12 flex gap-4 md:col-span-6 items-center p-0 lg:col-span-4')
+    })
+
+    it('should divide 12 by the grid column count when gridLayoutDesktopColumns is set', () => {
+      fixture.componentRef.setInput('enableGridView', true)
+      fixture.componentRef.setInput('gridLayoutDesktopColumns', 6)
+      expect(component.objectInfoLayoutClasses()).toContain('lg:col-span-2')
+    })
+
+    it('should use column layout classes when grid view is disabled', () => {
+      fixture.componentRef.setInput('enableGridView', false)
+      expect(component.objectPanelLayoutClasses()).toBe('flex flex-row justify-between overflow-x-auto')
+      expect(component.objectInfoLayoutClasses()).toBe('flex flex-col items-center gap-2 min-w-[120px]')
+    })
+  })
+
+  describe('onAction and image error', () => {
+    it('should emit save for the save action and do nothing for unknown actions', () => {
+      const saveSpy = jest.fn()
+      component.save.subscribe(saveSpy)
+
+      component.onAction('save')
+      expect(saveSpy).toHaveBeenCalledTimes(1)
+
+      component.onAction('unknown')
+      expect(saveSpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should hide the figure image after an image load error', async () => {
+      fixture.componentRef.setInput('figureImage', 'assets/x.png')
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(fixture.nativeElement.querySelector('.figure img')).toBeTruthy()
+
+      component.handleImageError()
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(component.figureImageLoadError()).toBe(true)
+      expect(fixture.nativeElement.querySelector('.figure img')).toBeFalsy()
+    })
+  })
+
+  describe('conditional actions', () => {
+    it('should filter inline actions by showCondition when conditional is set', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'c1', label: 'Shown', show: 'always', conditional: true, showCondition: true },
+        { id: 'c2', label: 'Hidden', show: 'always', conditional: true, showCondition: false },
+        { id: 'c3', label: 'Always', show: 'always' },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(await pageHeaderHarness.getInlineActionButtonByLabel('Shown')).toBeTruthy()
+      expect(await pageHeaderHarness.getInlineActionButtonByLabel('Hidden')).toBeFalsy()
+      expect(await pageHeaderHarness.getInlineActionButtonByLabel('Always')).toBeTruthy()
+    })
+
+    it('should filter overflow actions by showCondition when conditional is set', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'c1', label: 'Shown', show: 'asOverflow', conditional: true, showCondition: true },
+        { id: 'c2', label: 'Hidden', show: 'asOverflow', conditional: true, showCondition: false },
+        { id: 'c3', label: 'Always', show: 'asOverflow' },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      expect(menuOverflowButton).toBeTruthy()
+      await menuOverflowButton?.click()
+
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(await menuItems[0].getText()).toBe('Shown')
+      expect(await menuItems[1].getText()).toBe('Always')
+      expect(menuItems).toHaveLength(2)
+    })
+
+    it('should translate an overflow action label from labelKey', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { OVERFLOW_KEY: 'Translated overflow' })
+      translate.use('en')
+
+      fixture.componentRef.setInput('actions', [{ id: 'lk', labelKey: 'OVERFLOW_KEY', show: 'asOverflow' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      expect(menuOverflowButton).toBeTruthy()
+      await menuOverflowButton?.click()
+
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(menuItems).toHaveLength(1)
+      expect(await menuItems[0].getText()).toBe('Translated overflow')
+    })
+  })
+
   describe('accessible names', () => {
     const cb = () => undefined
     let warnSpy: jest.SpyInstance
@@ -911,5 +1015,41 @@ describe('PageHeaderComponent', () => {
       fixture.detectChanges()
       expect(fixture.nativeElement.querySelector('[name="object-detail-value"] .sr-only').textContent).toBe('Confirmed')
     })
+  })
+})
+
+describe('PageHeaderComponent permission provider fallback', () => {
+  it('should filter actions by permission via the user service when no permission checker is provided', async () => {
+    const userMock = new UserServiceMock()
+    userMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
+
+    await TestBed.configureTestingModule({
+      declarations: [PageHeaderComponent, DynamicPipe, TestRouteComponent],
+      imports: [BreadcrumbModule, MenuModule, ButtonModule, TooltipModule, AngularAcceleratorModule],
+      providers: [
+        provideTranslateTestingService({
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
+        }),
+        { provide: UserService, useValue: userMock },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideAppStateServiceMock(),
+        provideRouter([{ path: '**', component: TestRouteComponent }]),
+        provideBreadcrumbServiceMock(),
+      ],
+    }).compileComponents()
+
+    const fixture = TestBed.createComponent(PageHeaderComponent)
+    fixture.componentRef.setInput('actions', [
+      { id: 'allowed', label: 'Allowed', show: 'always', permission: 'TEST#TEST_PERMISSION' },
+      { id: 'denied', label: 'Denied', show: 'always', permission: 'OTHER#PERMISSION' },
+    ])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
+    expect(await harness.getInlineActionButtonByLabel('Allowed')).toBeTruthy()
+    expect(await harness.getInlineActionButtonByLabel('Denied')).toBeFalsy()
   })
 })
