@@ -664,6 +664,7 @@ export class PortalDialogService implements OnDestroy {
             ? componentOrMessage.message
             : componentOrMessage.message.key,
           icon: componentOrMessage.icon,
+          iconLabel: componentOrMessage.iconLabel,
           messageParameters: this.isString(componentOrMessage.message) ? {} : componentOrMessage.message.parameters,
         },
       }
