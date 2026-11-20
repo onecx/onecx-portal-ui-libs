@@ -70,7 +70,7 @@ if (args[0] === 'api') {
     process.exit(1)
   }
   if (args[1].endsWith('/permission')) {
-    process.stdout.write(process.env.FAKE_PERMISSION)
+    process.stdout.write(args[1].includes('/collaborators/contributor/') ? process.env.FAKE_AUTHOR_PERMISSION : process.env.FAKE_PERMISSION)
   } else {
     if (process.env.FAKE_MODE === 'pr-failure') process.exit(1)
     process.stdout.write(process.env.FAKE_PR)
@@ -100,6 +100,8 @@ if (args[0] === 'api') {
       FAKE_LOG: logPath,
       FAKE_MODE: options.ghMode ?? 'success',
       FAKE_PERMISSION: options.permissionResponse ?? JSON.stringify({ permission: options.permission ?? 'write' }),
+      FAKE_AUTHOR_PERMISSION:
+        options.authorPermissionResponse ?? JSON.stringify({ permission: options.authorPermission ?? 'write' }),
       FAKE_PR: options.prResponse ?? JSON.stringify({ ...pullRequest, ...options.currentPullRequest }),
     },
   })
@@ -121,15 +123,20 @@ if (args[0] === 'api') {
   return { result, calls }
 }
 
-function assertDispatched({ result, calls }) {
+function assertDispatched({ result, calls }, authorLookup = false) {
   assert.equal(result.status, 0, result.stderr)
   assert.deepEqual(
     calls.map(({ token }) => token),
-    ['repository-read-secret', 'repository-read-secret', 'service-secret']
+    authorLookup
+      ? ['repository-read-secret', 'repository-read-secret', 'repository-read-secret', 'service-secret']
+      : ['repository-read-secret', 'repository-read-secret', 'service-secret']
   )
   assert.deepEqual(calls[0].args, ['api', 'repos/example/consumer/collaborators/maintainer/permission'])
   assert.deepEqual(calls[1].args, ['api', 'repos/example/consumer/pulls/42'])
-  assert.deepEqual(calls[2].args, [
+  if (authorLookup) {
+    assert.deepEqual(calls[2].args, ['api', 'repos/example/consumer/collaborators/contributor/permission'])
+  }
+  assert.deepEqual(calls.at(-1).args, [
     'workflow',
     'run',
     'hybrid-agent-pipeline.yml',
@@ -182,6 +189,55 @@ test('a fork requester still needs write access to the consumer repository', asy
   assert.equal(result.status, 1)
   assert.equal(calls.length, 1)
   assert.match(result.stderr, /authorization failed/i)
+})
+
+test('accepts a team fork author reported as CONTRIBUTOR when repository permissions prove admin access', async (t) => {
+  for (const eventName of ['pull_request_target', 'issue_comment', 'workflow_dispatch']) {
+    await t.test(eventName, async (t) => {
+      assertDispatched(
+        await fixture(t, {
+          eventName,
+          pullRequest: {
+            author_association: 'CONTRIBUTOR',
+            head: { repo: { full_name: 'teammate/fork' } },
+          },
+          authorPermission: 'admin',
+        }),
+        true
+      )
+    })
+  }
+})
+
+test('rejects an unassociated author without verified repository write access', async (t) => {
+  const { result, calls } = await fixture(t, {
+    eventName: 'workflow_dispatch',
+    pullRequest: { author_association: 'CONTRIBUTOR' },
+    authorPermission: 'read',
+  })
+  assert.equal(result.status, 1)
+  assert.equal(calls.length, 3)
+  assert.match(result.stderr, /author authorization failed/i)
+})
+
+test('reuses verified requester permissions when the CONTRIBUTOR author is the requester', async (t) => {
+  assertDispatched(
+    await fixture(t, {
+      eventName: 'workflow_dispatch',
+      pullRequest: { author_association: 'CONTRIBUTOR', user: { login: 'maintainer', type: 'User' } },
+    })
+  )
+})
+
+test('author permission lookup failures remain explicit and redacted', async (t) => {
+  const { result, calls } = await fixture(t, {
+    eventName: 'workflow_dispatch',
+    pullRequest: { author_association: 'CONTRIBUTOR' },
+    authorPermissionResponse: '{broken',
+  })
+  assert.equal(result.status, 1)
+  assert.equal(calls.length, 3)
+  assert.match(result.stderr, /author authorization failed/i)
 })
 
 test('rejects unrelated or untrusted events before using GitHub credentials', async (t) => {
@@ -237,7 +293,6 @@ test('validates the current PR for manual requests, including its canonical URL'
     { state: 'closed' },
     { draft: true },
     { number: 43 },
-    { author_association: 'FIRST_TIME_CONTRIBUTOR' },
     { user: { type: 'Bot' } },
     { head: { repo: null } },
     { base: { repo: { full_name: 'different/repository' } } },
