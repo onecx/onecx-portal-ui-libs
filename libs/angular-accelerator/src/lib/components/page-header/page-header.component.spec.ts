@@ -862,6 +862,35 @@ describe('PageHeaderComponent', () => {
       expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
     })
 
+    it('should fall back to the accessible name chain for icon-only overflow actions without a label', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { ARIA_KEY: 'Aria from key', TITLE_KEY: 'Title from key' })
+      translate.use('en')
+
+      fixture.componentRef.setInput('actions', [
+        { id: 'ov1', icon: 'pi pi-lock', ariaLabel: 'Aria', show: 'asOverflow', actionCallback: cb },
+        { id: 'ov2', icon: 'pi pi-lock', title: 'Title only', show: 'asOverflow', actionCallback: cb },
+        { id: 'ov3', icon: 'pi pi-lock', ariaLabelKey: 'ARIA_KEY', show: 'asOverflow', actionCallback: cb },
+        { id: 'ov4', icon: 'pi pi-lock', titleKey: 'TITLE_KEY', show: 'asOverflow', actionCallback: cb },
+        { id: 'ov5', icon: 'pi pi-lock', label: 'Labeled', ariaLabel: 'Aria', show: 'asOverflow', actionCallback: cb },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+
+      const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      expect(menuOverflowButton).toBeTruthy()
+      await menuOverflowButton?.click()
+
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(menuItems).toHaveLength(5)
+      expect(await menuItems[0].getText()).toBe('Aria')
+      expect(await menuItems[1].getText()).toBe('Title only')
+      expect(await menuItems[2].getText()).toBe('Aria from key')
+      expect(await menuItems[3].getText()).toBe('Title from key')
+      expect(await menuItems[4].getText()).toBe('Labeled')
+    })
+
     it('should render the figure image as decorative and the subheader as plain content', async () => {
       fixture.componentRef.setInput('figureImage', 'assets/x.png')
       fixture.componentRef.setInput('subheader', 'Sub')
