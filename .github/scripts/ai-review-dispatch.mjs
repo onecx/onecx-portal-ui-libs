@@ -17,7 +17,7 @@ function validatePullRequest(pullRequest, sourceRepository, number) {
     pullRequest?.state !== 'open' ||
     pullRequest?.draft !== false ||
     pullRequest?.user?.type !== 'User' ||
-    !allowedAssociations.has(pullRequest?.author_association) ||
+    !/^[A-Za-z0-9-]+$/.test(pullRequest?.user?.login ?? '') ||
     pullRequest?.base?.repo?.full_name?.toLowerCase() !== sourceRepository.toLowerCase() ||
     !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(pullRequest?.head?.repo?.full_name ?? '') ||
     pullRequest?.number !== number
@@ -141,6 +141,12 @@ function failed(result) {
   return !result || Boolean(result.error) || result.status !== 0 || result.signal !== null
 }
 
+function assertWritePermission(result) {
+  if (failed(result) || !allowedPermissions.has(JSON.parse(result.stdout).permission)) {
+    throw new Error('authorization')
+  }
+}
+
 function safelyRunGh(args, env, token) {
   try {
     return runGh(args, env, token)
@@ -164,9 +170,7 @@ export async function dispatchReview(env = process.env) {
     env.GH_READ_TOKEN
   )
   try {
-    if (failed(authorization) || !allowedPermissions.has(JSON.parse(authorization.stdout).permission)) {
-      throw new Error('authorization')
-    }
+    assertWritePermission(authorization)
   } catch {
     process.stderr.write('Review dispatch authorization failed.\n')
     return 1
@@ -191,6 +195,22 @@ export async function dispatchReview(env = process.env) {
   } catch {
     process.stderr.write('Review dispatch validation failed.\n')
     return 1
+  }
+  if (
+    !allowedAssociations.has(pullRequest.author_association) &&
+    pullRequest.user.login.toLowerCase() !== request.actor.toLowerCase()
+  ) {
+    const authorAuthorization = safelyRunGh(
+      ['api', `repos/${request.sourceRepository}/collaborators/${pullRequest.user.login}/permission`],
+      env,
+      env.GH_READ_TOKEN
+    )
+    try {
+      assertWritePermission(authorAuthorization)
+    } catch {
+      process.stderr.write('Review dispatch author authorization failed.\n')
+      return 1
+    }
   }
   const args = [
     'workflow',

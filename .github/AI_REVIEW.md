@@ -15,8 +15,12 @@ Both manual triggers and automatic requests require the requester to have
 `write`, `maintain`, or `admin` access to this repository. PRs from team forks
 into this repository are eligible through all three triggers; the requester
 must have access to this consumer repository, not just the fork. Drafts,
-closed PRs, deleted head repositories, bot authors/requesters, and PR authors
-without an owner, member, or collaborator association are not eligible.
+closed PRs, deleted head repositories, and bot authors/requesters are not eligible.
+PR authors must have an owner, member, or collaborator association, or verified
+`write`, `maintain`, or `admin` access to this consumer repository.
+The repository token can report a team member as `CONTRIBUTOR` because
+association visibility depends on authentication; the dispatcher checks actual
+author permissions when the association does not establish eligibility.
 Manual requests fetch the current PR
 state before dispatching. Ineligible manual requests fail with a generic diagnostic;
 unrelated comments and ineligible automatic events are skipped.
@@ -49,6 +53,8 @@ Findings appear on the pull request when the central review completes.
 The consumer uses `github.token` only to verify requester permissions and read
 current PR metadata. It uses `CI_PAT` only for dispatch; it no longer reads
 actor-specific tokens from Vault or requires consumer OIDC permissions.
+Author permission lookup failures and insufficient author access fail with
+`Review dispatch author authorization failed.` without exposing raw GitHub output.
 
 The workflow checks out only the trusted PR base commit for automatic requests,
 or the default branch for manual requests, with credential persistence disabled.
