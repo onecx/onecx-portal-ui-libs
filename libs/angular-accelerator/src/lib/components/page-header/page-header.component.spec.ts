@@ -281,35 +281,6 @@ describe('PageHeaderComponent', () => {
     expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
-  it('should render inline actions buttons with icons', async () => {
-    fixture.componentRef.setInput('actions', [
-      {
-        label: 'Action with left icon',
-        show: 'always',
-        actionCallback: () => {
-          console.log('My Test Action')
-        },
-        permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.LOCK,
-      },
-      {
-        label: 'Action with right icon',
-        show: 'always',
-        actionCallback: () => {
-          console.log('My Test Action')
-        },
-        permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.LOCK,
-        iconPos: 'right',
-      },
-    ])
-
-    const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
-    expect(inlineButtons).toHaveLength(2)
-    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
-    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
-  })
-
   it('should show a loading spinner when action is loading', async () => {
     const mockFn = jest.fn()
 
@@ -1161,6 +1132,28 @@ describe('PageHeaderComponent', () => {
       await overflowButton?.click()
       const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
       expect(await menuItems[0].getText()).toBe('Plain label')
+    })
+
+    it('should name an icon-only overflow action from the ariaLabel/title fallback, matching the inline branch', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'o1', icon: 'pi pi-lock', ariaLabel: 'Overflow aria', title: 'Overflow title', show: 'asOverflow', actionCallback: () => undefined },
+        { id: 'o2', icon: 'pi pi-lock', title: 'Only title', show: 'asOverflow', actionCallback: () => undefined },
+        { id: 'o3', label: 'Visible label', icon: 'pi pi-lock', ariaLabel: 'Should not win', show: 'asOverflow', actionCallback: () => undefined },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+
+      const overflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      await overflowButton?.click()
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(menuItems).toHaveLength(3)
+      // ariaLabel wins over title for the first icon-only action
+      expect(await menuItems[0].getText()).toBe('Overflow aria')
+      // title is the last fallback for the second icon-only action
+      expect(await menuItems[1].getText()).toBe('Only title')
+      // a visible label always wins — the ariaLabel fallback must not override it
+      expect(await menuItems[2].getText()).toBe('Visible label')
     })
 
     it('should render no actions for a user without any permissions', async () => {

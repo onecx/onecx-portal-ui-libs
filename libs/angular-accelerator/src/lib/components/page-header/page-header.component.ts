@@ -349,7 +349,9 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
       id: a.id,
-      label: a.labelKey ? translations[a.labelKey] : a.label,
+      // Fall back to the same ariaLabel/title chain the inline branch uses (getInlineActionAriaLabel returns
+      // undefined when a visible label is present, so this only applies to the icon-only case).
+      label: a.labelKey ? translations[a.labelKey] : a.label || this.getInlineActionAriaLabel(a),
       icon: a.icon,
       tooltipOptions: {
         tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
