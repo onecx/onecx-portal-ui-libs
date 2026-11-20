@@ -1,19 +1,25 @@
 import {
+  AfterViewInit,
   Component,
   ContentChild,
+  ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
+  Renderer2,
   TemplateRef,
   Type,
+  ViewChild,
   ViewEncapsulation,
   inject,
+  isDevMode,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { BehaviorSubject, Observable, concat, map, of, switchMap } from 'rxjs'
+import { BehaviorSubject, Observable, concat, map, of, switchMap, Subscription, tap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
@@ -81,11 +87,20 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit {
+export class PageHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private translateService = inject(TranslateService)
   private appStateService = inject(AppStateService)
   private userService = inject(UserService)
+  private readonly renderer = inject(Renderer2)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
+
+  private breadcrumbRef?: ElementRef<HTMLElement>
+  private readonly breadcrumbAriaSubs = new Subscription()
+  @ViewChild('breadcrumbRef', { read: ElementRef })
+  set breadcrumbElementRef(ref: ElementRef<HTMLElement> | undefined) {
+    this.breadcrumbRef = ref
+    this.applyBreadcrumbAriaLabels()
+  }
 
   @Input()
   public header: string | undefined
@@ -203,11 +218,27 @@ export class PageHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.manualBreadcrumbs) {
-      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
+    if (this.manualBreadcrumbs) {
+      this.breadcrumbs$ = this.breadcrumbs.itemsHandler.pipe(
+        tap(() => {
+          setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
+        })
+      )
     } else {
-      this.breadcrumbs$ = this.breadcrumbs.itemsHandler
+      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource.pipe(
+        tap(() => {
+          setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
+        })
+      )
     }
+  }
+
+  ngAfterViewInit() {
+    this.applyBreadcrumbAriaLabels()
+  }
+
+  ngOnDestroy() {
+    this.breadcrumbAriaSubs.unsubscribe()
   }
 
   onAction(action: string) {
@@ -222,6 +253,85 @@ export class PageHeaderComponent implements OnInit {
 
   handleImageError() {
     this.figureImageLoadError = true
+  }
+
+  private readonly warnedItems = new WeakSet<ObjectDetailItem>()
+
+  private translateKey(key: TranslationKey | undefined): string | undefined {
+    if (!key) return undefined
+    const translated =
+      typeof key === 'string'
+        ? this.translateService.instant(key)
+        : this.translateService.instant(key.key, key.parameters)
+    return translated || undefined
+  }
+
+  /**
+   * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
+   * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
+   */
+  getInlineActionAriaLabel(action: Action): string | undefined {
+    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
+    if (visibleLabel) return undefined
+    return (
+      this.translateKey(action.ariaLabelKey) ||
+      action.ariaLabel ||
+      this.translateKey(action.titleKey) ||
+      action.title ||
+      undefined
+    )
+  }
+
+  /**
+   * Accessible name of the object detail action button:
+   * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
+   */
+  getActionItemAriaLabel(item: ObjectDetailItem): string {
+    const name =
+      this.translateKey(item.actionItemAriaLabelKey) ||
+      item.actionItemAriaLabel ||
+      this.translateKey(item.actionItemTooltipKey)
+    if (name) return name
+    if (isDevMode() && !this.warnedItems.has(item)) {
+      this.warnedItems.add(item)
+      console.warn(
+        `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
+      )
+    }
+    return item.label
+  }
+
+  /** Text alternative for an icon-only object detail value. */
+  getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
+    return this.translateKey(item.valueTooltipKey)
+  }
+
+  private applyBreadcrumbAriaLabels(): void {
+    const breadcrumbHost = this.breadcrumbRef?.nativeElement
+    if (!breadcrumbHost) {
+      return
+    }
+
+    const breadcrumbItems = breadcrumbHost.querySelectorAll(`.p-breadcrumb-item .p-breadcrumb-item-link`)
+    // Re-applying replaces the previous set of label subscriptions so they don't accumulate
+    // across breadcrumb emissions; the group is also torn down in ngOnDestroy.
+    this.breadcrumbAriaSubs.unsubscribe()
+    breadcrumbItems.forEach((item: Element, index: number) => {
+      const text = (item as HTMLElement)?.innerText?.trim()
+      if (!text) return
+
+      this.breadcrumbAriaSubs.add(
+        this.translateService
+          .get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text })
+          .subscribe((ariaLabel) => {
+            this.renderer.setAttribute(item, 'aria-label', ariaLabel)
+          })
+      )
+
+      if (index === breadcrumbItems.length - 1) {
+        this.renderer.setAttribute(item, 'aria-current', 'page')
+      }
+    })
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {
@@ -302,7 +412,14 @@ export class PageHeaderComponent implements OnInit {
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
       id: a.id,
-      label: (a.labelKey ? translations[a.labelKey] : undefined) || a.label || a.title || a.id || 'Action',
+      // Fall back to the same aria-label chain the inline branch uses (getInlineActionAriaLabel returns
+      // undefined when a visible label is present, so this only applies to the icon-only case).
+      label:
+        (a.labelKey ? translations[a.labelKey] : undefined) ||
+        a.label ||
+        this.getInlineActionAriaLabel(a) ||
+        a.id ||
+        'Action',
       icon: a.icon,
       routerLink: a.routerLink,
       tooltipOptions: {
