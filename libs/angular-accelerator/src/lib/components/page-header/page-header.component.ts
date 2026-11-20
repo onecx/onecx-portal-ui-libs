@@ -5,6 +5,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   Renderer2,
@@ -18,7 +19,7 @@ import {
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { BehaviorSubject, Observable, concat, map, of, switchMap, tap } from 'rxjs'
+import { BehaviorSubject, Observable, concat, map, of, switchMap, Subscription, tap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
@@ -86,7 +87,7 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit, AfterViewInit {
+export class PageHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private translateService = inject(TranslateService)
   private appStateService = inject(AppStateService)
   private userService = inject(UserService)
@@ -94,6 +95,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
 
   private breadcrumbRef?: ElementRef<HTMLElement>
+  private readonly breadcrumbAriaSubs = new Subscription()
   @ViewChild('breadcrumbRef', { read: ElementRef })
   set breadcrumbElementRef(ref: ElementRef<HTMLElement> | undefined) {
     this.breadcrumbRef = ref
@@ -235,6 +237,10 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     this.applyBreadcrumbAriaLabels()
   }
 
+  ngOnDestroy() {
+    this.breadcrumbAriaSubs.unsubscribe()
+  }
+
   onAction(action: string) {
     switch (action) {
       case 'save':
@@ -307,15 +313,20 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     }
 
     const breadcrumbItems = breadcrumbHost.querySelectorAll(`.p-breadcrumb-item .p-breadcrumb-item-link`)
+    // Re-applying replaces the previous set of label subscriptions so they don't accumulate
+    // across breadcrumb emissions; the group is also torn down in ngOnDestroy.
+    this.breadcrumbAriaSubs.unsubscribe()
     breadcrumbItems.forEach((item: Element, index: number) => {
       const text = (item as HTMLElement)?.innerText?.trim()
       if (!text) return
 
-      this.translateService
-        .get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text })
-        .subscribe((ariaLabel) => {
-          this.renderer.setAttribute(item, 'aria-label', ariaLabel)
-        })
+      this.breadcrumbAriaSubs.add(
+        this.translateService
+          .get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text })
+          .subscribe((ariaLabel) => {
+            this.renderer.setAttribute(item, 'aria-label', ariaLabel)
+          })
+      )
 
       if (index === breadcrumbItems.length - 1) {
         this.renderer.setAttribute(item, 'aria-current', 'page')
@@ -401,7 +412,14 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
       id: a.id,
-      label: (a.labelKey ? translations[a.labelKey] : undefined) || a.label || a.title || a.id || 'Action',
+      // Fall back to the same aria-label chain the inline branch uses (getInlineActionAriaLabel returns
+      // undefined when a visible label is present, so this only applies to the icon-only case).
+      label:
+        (a.labelKey ? translations[a.labelKey] : undefined) ||
+        a.label ||
+        this.getInlineActionAriaLabel(a) ||
+        a.id ||
+        'Action',
       icon: a.icon,
       routerLink: a.routerLink,
       tooltipOptions: {

@@ -24,7 +24,7 @@ import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { PButtonHarness } from '@onecx/angular-testing'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
-import { firstValueFrom, of } from 'rxjs'
+import { firstValueFrom, of, Subscription } from 'rxjs'
 import { ElementRef, Injectable, Renderer2 } from '@angular/core'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 
@@ -256,35 +256,6 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
-  })
-
-  it('should render inline actions buttons with icons', async () => {
-    component.actions = [
-      {
-        label: 'Action with left icon',
-        show: 'always',
-        actionCallback: () => {
-          console.log('My Test Action')
-        },
-        permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.LOCK,
-      },
-      {
-        label: 'Action with right icon',
-        show: 'always',
-        actionCallback: () => {
-          console.log('My Test Action')
-        },
-        permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.LOCK,
-        iconPos: 'right',
-      },
-    ]
-
-    const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
-    expect(inlineButtons).toHaveLength(2)
-    expect(await (await (inlineButtons[0] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
-    expect(await (await (inlineButtons[1] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
   it('should render inline actions buttons with icons', async () => {
@@ -1053,6 +1024,77 @@ describe('PageHeaderComponent', () => {
       expect(await menuItems[0].getText()).toBe('Plain label')
     })
 
+    it('should name icon-only overflow actions from the ariaLabel chain (ariaLabelKey, ariaLabel, titleKey, title), then id', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { OVERFLOW_ARIA_KEY: 'Aria via key', OVERFLOW_TITLE_KEY: 'Title via key' })
+      translate.use('en')
+
+      component.actions = [
+        {
+          id: 'icon-aria-key',
+          icon: 'pi pi-copy',
+          ariaLabelKey: 'OVERFLOW_ARIA_KEY',
+          show: 'asOverflow',
+          actionCallback: () => undefined,
+          permission: 'TEST#TEST_PERMISSION',
+        },
+        {
+          id: 'icon-aria-label',
+          icon: 'pi pi-copy',
+          ariaLabel: 'Aria plain',
+          show: 'asOverflow',
+          actionCallback: () => undefined,
+          permission: 'TEST#TEST_PERMISSION',
+        },
+        {
+          id: 'icon-title-key',
+          icon: 'pi pi-copy',
+          titleKey: 'OVERFLOW_TITLE_KEY',
+          show: 'asOverflow',
+          actionCallback: () => undefined,
+          permission: 'TEST#TEST_PERMISSION',
+        },
+        {
+          id: 'icon-title',
+          icon: 'pi pi-copy',
+          title: 'Title plain',
+          show: 'asOverflow',
+          actionCallback: () => undefined,
+          permission: 'TEST#TEST_PERMISSION',
+        },
+        {
+          id: 'icon-fallback-id',
+          icon: 'pi pi-copy',
+          show: 'asOverflow',
+          actionCallback: () => undefined,
+          permission: 'TEST#TEST_PERMISSION',
+        },
+        // A visible label always wins: the aria chain must NOT override it.
+        {
+          label: 'Visible label',
+          icon: 'pi pi-copy',
+          ariaLabel: 'Should be ignored',
+          show: 'asOverflow',
+          actionCallback: () => undefined,
+          permission: 'TEST#TEST_PERMISSION',
+        },
+      ]
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+
+      const overflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      await overflowButton?.click()
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(menuItems).toHaveLength(6)
+      expect(await menuItems[0].getText()).toBe('Aria via key')
+      expect(await menuItems[1].getText()).toBe('Aria plain')
+      expect(await menuItems[2].getText()).toBe('Title via key')
+      expect(await menuItems[3].getText()).toBe('Title plain')
+      expect(await menuItems[4].getText()).toBe('icon-fallback-id')
+      expect(await menuItems[5].getText()).toBe('Visible label')
+    })
+
     it('should render no actions for a user without any permissions', async () => {
       userServiceMock.permissionsTopic$.publish([])
 
@@ -1176,6 +1218,31 @@ describe('PageHeaderComponent', () => {
       const normalHost = { querySelectorAll: () => [{ innerText: 'A page' }] } as unknown as HTMLElement
       component.breadcrumbElementRef = new ElementRef(normalHost)
       expect(setAttributeSpy).toHaveBeenCalled()
+    })
+
+    it('should reuse a single breadcrumb aria subscription group across re-emissions', () => {
+      const f = TestBed.createComponent(PageHeaderComponent)
+      const c = f.componentInstance
+      const group = (c as unknown as { breadcrumbAriaSubs: Subscription }).breadcrumbAriaSubs
+      expect(group).toBeInstanceOf(Subscription)
+      // Use a stubbed renderer so we can drive applyBreadcrumbAriaLabels with fabricated (non-DOM) links.
+      ;(c as unknown as { renderer: { setAttribute: unknown } }).renderer = { setAttribute: jest.fn() }
+      const host = { querySelectorAll: () => [{ innerText: 'A page' }] } as unknown as HTMLElement
+      // Setting the breadcrumb ref (as each navigation / ViewChild update does) re-applies the labels
+      // through the SAME group instead of allocating a new one each time, so the per-link label
+      // subscriptions don't accumulate across emissions.
+      c.breadcrumbElementRef = new ElementRef(host)
+      c.breadcrumbElementRef = new ElementRef(host)
+      expect((c as unknown as { breadcrumbAriaSubs: Subscription }).breadcrumbAriaSubs).toBe(group)
+    })
+
+    it('should tear down the breadcrumb aria subscriptions on destroy', () => {
+      const f = TestBed.createComponent(PageHeaderComponent)
+      const c = f.componentInstance
+      const group = (c as unknown as { breadcrumbAriaSubs: Subscription }).breadcrumbAriaSubs
+      expect(group.closed).toBe(false)
+      c.ngOnDestroy()
+      expect(group.closed).toBe(true)
     })
   })
 })
