@@ -166,6 +166,7 @@
       <th style="width: 4rem" scope="col">
         @if (allowSelectAll()) {
         <p-tableHeaderCheckbox
+          autofocus="false"
           [ocxTooltip]="'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate"
           [ariaLabel]="'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate"
         ></p-tableHeaderCheckbox>
@@ -265,6 +266,7 @@
         ></p-checkbox>
         } @else {
         <p-tableCheckbox
+          autofocus="false"
           [value]="rowObject"
           [disabled]="isRowSelectionDisabled(rowObject)"
           [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
@@ -415,7 +417,8 @@
           appendTo="body"
           filterBy="toFilterBy"
           (onFocus)="onFilterChosen(column)"
-          [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+          [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+          tooltipPosition="top"
           [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
           [filterPlaceHolder]="'OCX_DATA_TABLE.COLUMN_FILTER_PLACEHOLDER' | translate"
           [ariaFilterLabel]="
@@ -461,7 +464,8 @@
       placeholder=" "
       appendTo="body"
       (onFocus)="onFilterChosen(column)"
-      [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+      [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+      tooltipPosition="top"
       [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
       [ariaFilterLabel]="
             'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
