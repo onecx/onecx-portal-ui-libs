@@ -122,7 +122,7 @@ export const PortalPage = ({
       children
     ) : (
       <>
-        <h3>{unauthorizedTitle}</h3>
+        <h1>{unauthorizedTitle}</h1>
         <p>{unauthorizedMessage}</p>
       </>
     )

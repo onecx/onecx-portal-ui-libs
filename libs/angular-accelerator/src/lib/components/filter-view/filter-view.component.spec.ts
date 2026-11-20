@@ -72,6 +72,14 @@ describe('FilterViewComponent (class logic)', () => {
     stateService = TestBed.inject(DataViewStateService)
   })
 
+  it('should default the panel title heading level to 2 and clamp configured levels', () => {
+    expect((component as any).panelTitleLevel()).toBe(2)
+    fixture.componentRef.setInput('panelTitleHeadingLevel', 4)
+    expect((component as any).panelTitleLevel()).toBe(4)
+    fixture.componentRef.setInput('panelTitleHeadingLevel', 9)
+    expect((component as any).panelTitleLevel()).toBe(6)
+  })
+
   it('should initialize columnFilterDataRows and display filters from service', () => {
     fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })])
     fixture.componentRef.setInput('filters', [

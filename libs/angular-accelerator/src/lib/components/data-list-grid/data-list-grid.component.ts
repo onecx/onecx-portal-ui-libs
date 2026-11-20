@@ -21,6 +21,7 @@ import {
   viewChildren,
   ChangeDetectionStrategy
 } from '@angular/core'
+import { normalizeHeadingLevel } from '../../utils/heading-level.utils'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -86,6 +87,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
 
   titleLineId = input<string>()
+  /**
+   * Heading level (1-6) of the item titles in the default grid and list items. Defaults to 2 as the page header renders the level 1 heading.
+   */
+  itemTitleHeadingLevel = input<number>(2)
+  protected readonly itemTitleLevel = computed(() => normalizeHeadingLevel(this.itemTitleHeadingLevel()))
   subtitleLineIds = input<string[]>()
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
