@@ -13,8 +13,8 @@ request changes, merge, or execute pull-request code.
 
 The review runs as the PR author, with the author's own tokens from Vault, so
 only the PR author can request it. Comments, manual runs, and pushes by anyone
-else are skipped with a notice, and so are re-runs started by anyone but the
-original requester; ask the author to comment `@ai-review`.
+else are skipped with a notice; ask the author to comment `@ai-review`. Re-runs
+started by anyone but the original requester are skipped entirely.
 The author must have `write`, `maintain`, or `admin` access to this repository.
 PRs from team forks into this repository are eligible through all three triggers;
 the author must have access to this consumer repository, not just the fork. Drafts,
@@ -32,19 +32,25 @@ Findings appear on the pull request when the central review completes.
 
 1. Each PR author stores their own `github_token_onecx` at
    `secret/data/users/<login>/tokens` in Vault (`https://vault.dev.one-cx.org`).
-   It needs **Actions: write** on the review destination, because the built-in
-   repository token cannot dispatch to another repository. The Vault JWT role
-   `github-onecx-role` must accept this repository's Actions OIDC tokens and let
-   each run read only its actor's own path.
+   It needs **Actions: Read & write** on the review destination, and its
+   repository access must include that destination, because the built-in
+   repository token cannot dispatch to another repository. A token created
+   following the onecx-ai-workflows README lacks this permission; without it the
+   Request review step fails with the generic dispatch diagnostic. The Vault JWT
+   role `github-onecx-role` must accept this repository's Actions OIDC tokens,
+   including `pull_request_target` runs on release branches (their `ref` claim is
+   the PR base branch), and let each run read only its actor's own path.
 2. Set the Actions secret `AI_REVIEW_DISPATCH_REPOSITORY` to the private review
    destination in `owner/repository` form. Keep it a secret, not a repository
    variable or workflow input.
 3. Ensure the destination has `hybrid-agent-pipeline.yml` on `main` and supports
    the `review-gh-pr` profile.
 4. The dispatched run's `github.actor` is the PR author, so the central workflow
-   loads the author's `github_token` from the same Vault path. It needs
-   target-repository read access and **Pull requests: read & write**, plus access
-   to the central repository for checkpoints and to any required skills releases.
+   loads the author's `github_token` (required, the fallback) and
+   `github_token_onecx` (used for this `onecx/*` repository) from the same Vault
+   path; both must exist. `github_token_onecx` therefore also needs read access to
+   this repository and **Pull requests: read & write**, plus access to the central
+   repository for checkpoints and to any required skills releases.
    ai-passport credentials stay in the central workflow; no personal Copilot token
    is needed for this review profile.
 

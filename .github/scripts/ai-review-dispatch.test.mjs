@@ -123,8 +123,9 @@ if (args[0] === 'api') {
   return { result, calls, output }
 }
 
-function assertDispatched({ result, calls }, dispatchRef = 'main') {
+function assertDispatched({ result, calls, output }, dispatchRef = 'main') {
   assert.equal(result.status, 0, result.stderr)
+  assert.equal(output, '')
   assert.deepEqual(
     calls.map(({ token }) => token),
     ['repository-read-secret', 'repository-read-secret', 'author-secret']
@@ -231,6 +232,10 @@ test('the check step approves only the PR author, before any dispatch token exis
       assert.equal(other.result.status, 0, other.result.stderr)
       assert.equal(other.calls.length, 2)
       assert.equal(other.output, '')
+
+      const readOnly = await fixture(t, { eventName, check: true, dispatchToken: '', permission: 'read' })
+      assert.equal(readOnly.result.status, 1)
+      assert.equal(readOnly.output, '')
     })
   }
 })
