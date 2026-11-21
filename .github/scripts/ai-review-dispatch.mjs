@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { appendFile, readFile } from 'node:fs/promises'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -153,7 +153,9 @@ function safelyRunGh(args, env, token) {
   }
 }
 
-export async function dispatchReview(env = process.env) {
+// With checkOnly, stop before the dispatch token is needed and record whether
+// to dispatch, so the workflow reads Vault only for an eligible PR author.
+export async function dispatchReview(env = process.env, { checkOnly = false } = {}) {
   let request
   try {
     request = await loadRequest(env)
@@ -202,9 +204,18 @@ export async function dispatchReview(env = process.env) {
     )
     return 0
   }
+  if (checkOnly) {
+    try {
+      await appendFile(env.GITHUB_OUTPUT, 'dispatch=true\n')
+    } catch {
+      process.stderr.write('Review dispatch check output failed.\n')
+      return 1
+    }
+    return 0
+  }
   if (!env.GH_TOKEN) {
     process.stderr.write(
-      `Review dispatch token missing: store github_token_onecx under secret/users/${request.actor}/tokens in Vault.\n`
+      `Review dispatch token missing: store github_token_onecx under secret/data/users/${request.actor}/tokens in Vault.\n`
     )
     return 1
   }
@@ -239,7 +250,7 @@ export async function dispatchReview(env = process.env) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
-  dispatchReview().then((status) => {
+  dispatchReview(process.env, { checkOnly: process.argv.includes('--check') }).then((status) => {
     process.exitCode = status
   })
 }

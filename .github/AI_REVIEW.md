@@ -13,13 +13,14 @@ request changes, merge, or execute pull-request code.
 
 The review runs as the PR author, with the author's own tokens from Vault, so
 only the PR author can request it. Comments, manual runs, and pushes by anyone
-else are skipped with a notice; ask the author to comment `@ai-review`.
+else are skipped with a notice, and so are re-runs started by anyone but the
+original requester; ask the author to comment `@ai-review`.
 The author must have `write`, `maintain`, or `admin` access to this repository.
 PRs from team forks into this repository are eligible through all three triggers;
 the author must have access to this consumer repository, not just the fork. Drafts,
 closed PRs, deleted head repositories, and bot authors/requesters are not eligible.
 Manual requests fetch the current PR
-state before dispatching. Ineligible manual requests fail with a generic diagnostic;
+state before dispatching. Other ineligible manual requests fail with a generic diagnostic;
 unrelated comments and ineligible automatic events are skipped.
 
 Repeated requests use the central review's incremental behavior: an already
@@ -48,10 +49,11 @@ Findings appear on the pull request when the central review completes.
    is needed for this review profile.
 
 The consumer uses `github.token` only to verify requester permissions and read
-current PR metadata. It reads only the requester's own Vault path, through the
-job's OIDC token (`id-token: write`), and uses that token only for dispatch.
-An author without a Vault token fails with
-`Review dispatch token missing: store github_token_onecx under secret/users/<login>/tokens in Vault.`
+current PR metadata. Only after that check confirms the requester is the PR
+author does it read the requester's own Vault path, through the job's OIDC token
+(`id-token: write`), and it uses that token only for dispatch. A failed Vault
+lookup (missing entry or key, or an OIDC role that rejects this repository) fails
+the **Load the PR author's dispatch token** step with Vault's own error.
 
 The workflow loads its dispatcher, tests, and optional review guidance from
 `main` for every trigger, with credential persistence disabled. It does not

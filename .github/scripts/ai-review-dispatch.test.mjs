@@ -23,7 +23,6 @@ async function fixture(t, options = {}) {
     state: 'open',
     draft: false,
     user: { login: actor, type: 'User' },
-    author_association: 'MEMBER',
     base: { repo: { full_name: 'example/consumer' }, sha: 'base-sha' },
     head: { repo: { full_name: 'example/consumer' } },
     ...options.pullRequest,
@@ -82,7 +81,8 @@ if (args[0] === 'api') {
 `
   )
   await chmod(gh, 0o755)
-  const result = spawnSync(process.execPath, [script], {
+  const outputPath = path.join(root, 'github-output')
+  const result = spawnSync(process.execPath, options.check ? [script, '--check'] : [script], {
     cwd: root,
     encoding: 'utf8',
     env: {
@@ -94,6 +94,7 @@ if (args[0] === 'api') {
       GITHUB_REPOSITORY: 'example/consumer',
       GITHUB_REF: options.ref ?? 'refs/heads/main',
       GITHUB_WORKSPACE: workspace,
+      GITHUB_OUTPUT: outputPath,
       AI_REVIEW_DISPATCH_REPOSITORY: options.target ?? 'private/destination',
       AI_REVIEW_DISPATCH_REF: options.dispatchRef ?? '',
       GH_TOKEN: options.dispatchToken ?? 'author-secret',
@@ -113,7 +114,13 @@ if (args[0] === 'api') {
   for (const secret of ['author-secret', 'repository-read-secret', 'private/destination', 'raw auth', 'raw dispatch']) {
     assert.equal(`${result.stdout}${result.stderr}`.includes(secret), false, `output exposed ${secret}`)
   }
-  return { result, calls }
+  let output = ''
+  try {
+    output = await readFile(outputPath, 'utf8')
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+  }
+  return { result, calls, output }
 }
 
 function assertDispatched({ result, calls }, dispatchRef = 'main') {
@@ -192,21 +199,13 @@ test('a fork requester still needs write access to the consumer repository', asy
   assert.match(result.stderr, /authorization failed/i)
 })
 
-test('reuses verified requester permissions when the CONTRIBUTOR author is the requester', async (t) => {
-  assertDispatched(
-    await fixture(t, {
-      eventName: 'workflow_dispatch',
-      pullRequest: { author_association: 'CONTRIBUTOR', user: { login: 'maintainer', type: 'User' } },
-    })
-  )
-})
-
 test('skips requests from anyone but the PR author without using a dispatch token', async (t) => {
   for (const eventName of ['pull_request_target', 'issue_comment', 'workflow_dispatch']) {
     await t.test(eventName, async (t) => {
       const { result, calls } = await fixture(t, {
         eventName,
         pullRequest: { user: { login: 'contributor', type: 'User' } },
+        dispatchToken: '',
       })
       assert.equal(result.status, 0, result.stderr)
       assert.equal(calls.length, 2)
@@ -215,11 +214,32 @@ test('skips requests from anyone but the PR author without using a dispatch toke
   }
 })
 
+test('the check step approves only the PR author, before any dispatch token exists', async (t) => {
+  for (const eventName of ['pull_request_target', 'issue_comment', 'workflow_dispatch']) {
+    await t.test(eventName, async (t) => {
+      const author = await fixture(t, { eventName, check: true, dispatchToken: '' })
+      assert.equal(author.result.status, 0, author.result.stderr)
+      assert.equal(author.calls.length, 2)
+      assert.equal(author.output, 'dispatch=true\n')
+
+      const other = await fixture(t, {
+        eventName,
+        check: true,
+        dispatchToken: '',
+        pullRequest: { user: { login: 'contributor', type: 'User' } },
+      })
+      assert.equal(other.result.status, 0, other.result.stderr)
+      assert.equal(other.calls.length, 2)
+      assert.equal(other.output, '')
+    })
+  }
+})
+
 test('fails with the Vault path when the PR author has no dispatch token', async (t) => {
   const { result, calls } = await fixture(t, { dispatchToken: '' })
   assert.equal(result.status, 1)
   assert.equal(calls.length, 2)
-  assert.match(result.stderr, /secret\/users\/maintainer\/tokens/)
+  assert.match(result.stderr, /secret\/data\/users\/maintainer\/tokens/)
 })
 
 test('rejects unrelated or untrusted events before using GitHub credentials', async (t) => {

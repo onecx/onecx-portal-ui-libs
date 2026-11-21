@@ -21,6 +21,7 @@ jobs:
   dispatch:
     if: >-
       github.event.sender.login == github.actor &&
+      github.triggering_actor == github.actor &&
       github.event.sender.type != 'Bot' &&
       !endsWith(github.actor, '[bot]') &&
       (
@@ -60,11 +61,18 @@ jobs:
       - name: Test dispatcher
         run: node --test .github/scripts/ai-review-dispatch.test.mjs
 
-      # Only the requester's own Vault path; the dispatcher uses it only when
-      # the requester is the PR author.
-      - name: Load the requester's dispatch token
+      - name: Check that the PR author requested the review
+        id: check
+        env:
+          AI_REVIEW_DISPATCH_REPOSITORY: ${{ secrets.AI_REVIEW_DISPATCH_REPOSITORY }}
+          GH_READ_TOKEN: ${{ github.token }}
+        run: node .github/scripts/ai-review-dispatch.mjs --check
+
+      # Reads only the actor's own Vault path; the check above made sure the
+      # actor is the PR author.
+      - name: Load the PR author's dispatch token
         id: vault
-        continue-on-error: true
+        if: steps.check.outputs.dispatch == 'true'
         uses: hashicorp/vault-action@v4
         with:
           url: https://vault.dev.one-cx.org
@@ -77,6 +85,7 @@ jobs:
             secret/data/users/${{ github.actor }}/tokens github_token_onecx | GH_TOKEN_ONECX
 
       - name: Request review
+        if: steps.check.outputs.dispatch == 'true'
         env:
           AI_REVIEW_DISPATCH_REPOSITORY: ${{ secrets.AI_REVIEW_DISPATCH_REPOSITORY }}
           AI_REVIEW_DISPATCH_REF: ${{ vars.AI_REVIEW_DISPATCH_REF }}
