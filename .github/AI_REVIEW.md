@@ -11,16 +11,13 @@ request changes, merge, or execute pull-request code.
 - Alternatively, open **Actions → AI Review → Run workflow**, select the default
   branch (`main`), and enter the pull request number.
 
-Both manual triggers and automatic requests require the requester to have
-`write`, `maintain`, or `admin` access to this repository. PRs from team forks
-into this repository are eligible through all three triggers; the requester
-must have access to this consumer repository, not just the fork. Drafts,
+The review runs as the PR author, with the author's own tokens from Vault, so
+only the PR author can request it. Comments, manual runs, and pushes by anyone
+else are skipped with a notice; ask the author to comment `@ai-review`.
+The author must have `write`, `maintain`, or `admin` access to this repository.
+PRs from team forks into this repository are eligible through all three triggers;
+the author must have access to this consumer repository, not just the fork. Drafts,
 closed PRs, deleted head repositories, and bot authors/requesters are not eligible.
-PR authors must have an owner, member, or collaborator association, or verified
-`write`, `maintain`, or `admin` access to this consumer repository.
-The repository token can report a team member as `CONTRIBUTOR` because
-association visibility depends on authentication; the dispatcher checks actual
-author permissions when the association does not establish eligibility.
 Manual requests fetch the current PR
 state before dispatching. Ineligible manual requests fail with a generic diagnostic;
 unrelated comments and ineligible automatic events are skipped.
@@ -32,29 +29,29 @@ Findings appear on the pull request when the central review completes.
 
 ## Maintainer setup
 
-1. Make the existing `CI_PAT` Actions secret available to this repository. It must
-   belong to the agreed service account and have **Actions: write** on the review
-   destination. The built-in repository token cannot dispatch to another repository.
+1. Each PR author stores their own `github_token_onecx` at
+   `secret/data/users/<login>/tokens` in Vault (`https://vault.dev.one-cx.org`).
+   It needs **Actions: write** on the review destination, because the built-in
+   repository token cannot dispatch to another repository. The Vault JWT role
+   `github-onecx-role` must accept this repository's Actions OIDC tokens and let
+   each run read only its actor's own path.
 2. Set the Actions secret `AI_REVIEW_DISPATCH_REPOSITORY` to the private review
    destination in `owner/repository` form. Keep it a secret, not a repository
    variable or workflow input.
 3. Ensure the destination has `hybrid-agent-pipeline.yml` on `main` and supports
    the `review-gh-pr` profile.
-4. The central workflow still loads GitHub credentials from Vault for its
-   `github.actor`, which will be the `CI_PAT` account, not the commenter or PR author.
-   Provision that service identity's `github_token` at
-   `secret/data/users/<service-account>/tokens` and, where applicable, its
-   `github_token_onecx`. The central token needs target-repository read access and
-   **Pull requests: read & write**, plus access to the central repository for
-   checkpoints and to any required skills releases. Its Vault OIDC policy must
-   allow the central workflow. ai-passport credentials stay in the central
-   workflow; no personal Copilot token is needed for this review profile.
+4. The dispatched run's `github.actor` is the PR author, so the central workflow
+   loads the author's `github_token` from the same Vault path. It needs
+   target-repository read access and **Pull requests: read & write**, plus access
+   to the central repository for checkpoints and to any required skills releases.
+   ai-passport credentials stay in the central workflow; no personal Copilot token
+   is needed for this review profile.
 
 The consumer uses `github.token` only to verify requester permissions and read
-current PR metadata. It uses `CI_PAT` only for dispatch; it no longer reads
-actor-specific tokens from Vault or requires consumer OIDC permissions.
-Author permission lookup failures and insufficient author access fail with
-`Review dispatch author authorization failed.` without exposing raw GitHub output.
+current PR metadata. It reads only the requester's own Vault path, through the
+job's OIDC token (`id-token: write`), and uses that token only for dispatch.
+An author without a Vault token fails with
+`Review dispatch token missing: store github_token_onecx under secret/users/<login>/tokens in Vault.`
 
 The workflow loads its dispatcher, tests, and optional review guidance from
 `main` for every trigger, with credential persistence disabled. It does not

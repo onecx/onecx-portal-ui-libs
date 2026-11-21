@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
   pull-requests: read
 
 jobs:
@@ -59,10 +60,26 @@ jobs:
       - name: Test dispatcher
         run: node --test .github/scripts/ai-review-dispatch.test.mjs
 
+      # Only the requester's own Vault path; the dispatcher uses it only when
+      # the requester is the PR author.
+      - name: Load the requester's dispatch token
+        id: vault
+        continue-on-error: true
+        uses: hashicorp/vault-action@v4
+        with:
+          url: https://vault.dev.one-cx.org
+          method: jwt
+          role: github-onecx-role
+          jwtGithubAudience: https://github.com
+          exportEnv: false
+          exportToken: false
+          secrets: |
+            secret/data/users/${{ github.actor }}/tokens github_token_onecx | GH_TOKEN_ONECX
+
       - name: Request review
         env:
           AI_REVIEW_DISPATCH_REPOSITORY: ${{ secrets.AI_REVIEW_DISPATCH_REPOSITORY }}
           AI_REVIEW_DISPATCH_REF: ${{ vars.AI_REVIEW_DISPATCH_REF }}
-          GH_TOKEN: ${{ secrets.CI_PAT }}
+          GH_TOKEN: ${{ steps.vault.outputs.GH_TOKEN_ONECX }}
           GH_READ_TOKEN: ${{ github.token }}
         run: node .github/scripts/ai-review-dispatch.mjs
