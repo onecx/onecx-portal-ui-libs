@@ -147,6 +147,17 @@ This is an Nx monorepo containing Angular libraries for the OneCX portal platfor
 - **Organization:** Group tests logically with `describe` blocks (e.g., by tested method or feature)
 - **Naming:** Use descriptive test names that explain the scenario and expected outcome
 
+### Testing Rules
+
+These rules apply to every new or changed `*.spec.ts` / `*.test.ts(x)` file. The Clean Code Guardrail rules below apply to tests as well (test functions up to 50 lines, files up to 250 lines: split by scenario, share setup through small factory functions).
+
+- **Test behavior, not implementation.** Assert only what a user or a collaborator can observe: return values, emitted values, rendered DOM, and calls to injected collaborators that belong to the unit's contract. Do not assert private state, internal call order or call counts of internal steps, or timer arithmetic of an internal debounce.
+- **Derive scenarios from intended behavior, not from the code.** Take them from the documentation (`docs/`, `dev-docs/`), public types and JSDoc contracts, and how callers use the unit. Never write a test only to "cover" a line or branch, and never name a test after a line or branch (no "covers remaining branch-only paths"). If the intended behavior is unclear, ask instead of recording what the code happens to do. A test that exposes a bug must fail until the bug is fixed.
+- **Call only public API of the unit under test.** No `as any`, bracket access (`['member']`) or other access to private or protected members. If a line is only reachable through a private member, it is dead code (remove it) or the design needs a public entry point.
+- **Mock only other classes, never the unit itself.** Use spies and mocks of the test framework (e.g. `jest.spyOn`) on injected collaborators and external modules only. Never spy on, stub or replace methods of the unit under test.
+- **Name tests as scenarios** (`given <state>, when <action>, then <outcome>`), keep one scenario per test, and structure each test as arrange, act, assert without logic (no loops or conditionals) in the test body.
+- **Coverage follows from behavior.** The target is 100% statement, branch, function and line coverage of non-generated code. Reach it by testing the scenarios above; remove unreachable code instead of testing it through private access.
+
 ### Test Execution Strategy
 
 For component changes where browser verification adds value (such as interaction,
