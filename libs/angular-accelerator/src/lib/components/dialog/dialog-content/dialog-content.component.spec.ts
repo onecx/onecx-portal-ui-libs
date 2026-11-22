@@ -127,6 +127,94 @@ describe('DialogContentComponent', () => {
     jest.resetAllMocks()
   })
 
+  describe('dialog accessibility', () => {
+    let container: HTMLElement
+    let config: DynamicDialogConfig
+
+    const applyAccessibility = () => (component as any).setDialogAccessibility()
+
+    beforeEach(() => {
+      fixture = TestBed.createComponent(DialogContentComponent)
+      component = fixture.componentInstance
+      config = TestBed.inject(DynamicDialogConfig)
+      container = document.createElement('div')
+      container.setAttribute('role', 'dialog')
+      container.setAttribute('aria-labelledby', 'title-id')
+      container.appendChild(fixture.nativeElement)
+      document.body.appendChild(container)
+    })
+
+    afterEach(() => container.remove())
+
+    it('should do nothing outside of a dialog container', () => {
+      container.removeChild(fixture.nativeElement)
+      config.data = { dialogAriaLabel: 'Name' }
+
+      expect(() => applyAccessibility()).not.toThrow()
+      expect(container.hasAttribute('aria-label')).toBe(false)
+    })
+
+    it('should name a dialog with a blank title by its aria label', () => {
+      config.header = '  '
+      config.data = { dialogAriaLabel: 'Name' }
+
+      applyAccessibility()
+
+      expect(container.getAttribute('aria-label')).toBe('Name')
+      expect(container.hasAttribute('aria-labelledby')).toBe(false)
+    })
+
+    it('should name a dialog without header by its aria label', () => {
+      config.header = undefined
+      config.data = { dialogAriaLabel: 'Name' }
+
+      applyAccessibility()
+
+      expect(container.getAttribute('aria-label')).toBe('Name')
+    })
+
+    it('should name a dialog with hidden header by its aria label', () => {
+      config.header = 'Title'
+      config.showHeader = false
+      config.data = { dialogAriaLabel: 'Name' }
+
+      applyAccessibility()
+
+      expect(container.getAttribute('aria-label')).toBe('Name')
+    })
+
+    it('should keep the title as name when it is shown', () => {
+      config.header = 'Title'
+      config.showHeader = true
+      config.data = { dialogAriaLabel: 'Name' }
+
+      applyAccessibility()
+
+      expect(container.hasAttribute('aria-label')).toBe(false)
+      expect(container.getAttribute('aria-labelledby')).toBe('title-id')
+    })
+
+    it('should keep an explicit ariaLabelledBy', () => {
+      config.header = undefined
+      config.ariaLabelledBy = 'custom-id'
+      config.data = { dialogAriaLabel: 'Name' }
+
+      applyAccessibility()
+
+      expect(container.hasAttribute('aria-label')).toBe(false)
+    })
+
+    it('should not set an aria label when none is provided', () => {
+      config.header = undefined
+      config.data = undefined
+
+      applyAccessibility()
+
+      expect(container.hasAttribute('aria-label')).toBe(false)
+      expect(container.getAttribute('aria-labelledby')).toBe('title-id')
+    })
+  })
+
   it('should ue ng-content', async () => {
     fixtureWithHost = TestBed.createComponent(TestBaseHostComponent)
     fixtureWithHost.detectChanges()
