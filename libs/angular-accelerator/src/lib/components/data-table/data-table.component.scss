@@ -62,8 +62,7 @@ $header-trigger-min-focus-width: 2px;
 // Restore a keyboard focus ring (the rule above removes the theme one). The focused element is an <input>,
 // so :focus-visible also matches after a click; a click opens the overlay, hence :not(.p-multiselect-open).
 :host ::ng-deep .filterMultiSelect:has(:focus-visible):not(.p-multiselect-open) {
-  outline: 2px solid $clr-neutral-700;
-  outline-offset: 1px;
+  @include header-trigger-focus-ring;
 }
 
 .pi {
