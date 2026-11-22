@@ -1,4 +1,14 @@
-import { Component, computed, effect, inject, Input, input, OnInit, output, ChangeDetectionStrategy } from '@angular/core'
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  Input,
+  input,
+  OnInit,
+  output,
+  ChangeDetectionStrategy,
+} from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
@@ -21,6 +31,10 @@ export class ColumnGroupSelectionComponent implements OnInit {
   @Input()
   set selectedGroupKey(value: string) {
     this.stateService.activeColumnGroupKey.set(value)
+  }
+
+  get selectedGroupKey() {
+    return this.stateService.activeColumnGroupKey() ?? ''
   }
 
   @Input()
@@ -71,8 +85,10 @@ export class ColumnGroupSelectionComponent implements OnInit {
       return
     }
 
-    const activeColumns = this.stateService.availableColumns().filter((c) => c.predefinedGroupKeys?.includes(selected ?? this.defaultGroupKey()))
-    
+    const activeColumns = this.stateService
+      .availableColumns()
+      .filter((c) => c.predefinedGroupKeys?.includes(selected ?? this.defaultGroupKey()))
+
     this.componentStateChanged.emit({
       activeColumnGroupKey: selected,
       displayedColumns: activeColumns,
@@ -86,7 +102,9 @@ export class ColumnGroupSelectionComponent implements OnInit {
 
     this.stateService.activeColumnGroupKey.set(event.value)
 
-    const activeColumns = this.stateService.availableColumns().filter((c) => c.predefinedGroupKeys?.includes(event.value))
+    const activeColumns = this.stateService
+      .availableColumns()
+      .filter((c) => c.predefinedGroupKeys?.includes(event.value))
 
     this.groupSelectionChanged.emit({ activeColumns, groupKey: event.value })
     this.componentStateChanged.emit({
