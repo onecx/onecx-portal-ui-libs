@@ -14,7 +14,8 @@
     "clean": "npm cache clean --force && rm -rf *.log dist reports .angular .eslintcache ./node_modules/.cache/prettier/.prettier-cache .nx tmp",
     "sonar": "node sonar-single.js",
     "sonar:all": "node sonar-all.js",
-    "prettier": "prettier -c --cache .",
+    "prettier": "npm run prettier:staged",
+    "prettier:all": "prettier -c --cache .",
     "prettier:staged": "node tools/prettier-staged.js"
   },
   "private": true,
