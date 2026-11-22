@@ -539,13 +539,13 @@ export class PortalDialogService implements OnDestroy {
           modal: true,
           appendTo: 'body', // Important for the function findBodyChild
           ...dialogOptions,
+          // Lets ocx-dialog-content shrink with the dialog so its named, focusable region scrolls (WCAG 1.4.10)
+          contentStyle: { display: 'flex', flexDirection: 'column' },
           // Initial focus is moved by the dialog (first field) unless a footer button takes it (see DialogFooterComponent).
           // Must stay after the spread, but derive from the caller's value so that an explicit `false` is respected.
           focusOnShow: focusOnShow && !autoFocusButton,
           // The close button always has a (translated) name. A caller-provided closeAriaLabel is used as is.
           closeAriaLabel: dialogOptions.closeAriaLabel || defaultCloseAriaLabel,
-          // Lets ocx-dialog-content shrink with the dialog so its named, focusable region scrolls (WCAG 1.4.10)
-          contentStyle: { display: 'flex', flexDirection: 'column' },
           duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,
@@ -664,6 +664,7 @@ export class PortalDialogService implements OnDestroy {
             ? componentOrMessage.message
             : componentOrMessage.message.key,
           icon: componentOrMessage.icon,
+          iconLabel: componentOrMessage.iconLabel,
           messageParameters: this.isString(componentOrMessage.message) ? {} : componentOrMessage.message.parameters,
         },
       }

@@ -294,6 +294,7 @@ describe('PortalDialogService', () => {
     TITLE_TRANSLATE_PARAM: 'translatedTitle {{val}}',
     MESSAGE: 'myMessage',
     MESSAGE_PARAM: 'myMessage {{val}}',
+    CUSTOM_ICON_LABEL: 'Custom icon {{value}}',
     BUTTON: 'myButton',
     BUTTON_PARAM: 'myButton {{val}}',
   }
@@ -1161,6 +1162,21 @@ describe('PortalDialogService', () => {
       expect(closeButton?.getAttribute('aria-label')).toBe('OCX_BUTTON_DIALOG.CLOSE')
     })
 
+    it('should render and activate a close button with a custom name', async () => {
+      fixture.componentInstance.show('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2', {
+        closable: true,
+        closeAriaLabel: 'Dismiss custom dialog',
+      })
+      await rootLoader.getHarness(DialogContentHarness)
+
+      const closeButton = document.querySelector<HTMLElement>('.p-dialog-close-button')
+      expect(closeButton?.getAttribute('aria-label')).toBe('Dismiss custom dialog')
+      closeButton?.click()
+      await fixture.whenStable()
+
+      expect(document.querySelector('[role="dialog"]')).toBeNull()
+    })
+
     it('should expose the severity of the icon as text', async () => {
       fixture.componentInstance.show(
         'TITLE_TRANSLATE',
@@ -1170,11 +1186,42 @@ describe('PortalDialogService', () => {
       )
       const content = await rootLoader.getHarness(DialogContentHarness)
       expect(content).toBeTruthy()
-
       expect(document.querySelector('.dialogMessageIconLabel')?.textContent).toContain(
         'OCX_BUTTON_DIALOG.SEVERITY.WARNING'
       )
       expect(document.querySelector('.dialogMessageContent i')?.getAttribute('aria-hidden')).toBe('true')
+    })
+
+    it('should render a custom label for an unmapped icon with translated parameters', async () => {
+      fixture.componentInstance.show(
+        'TITLE_TRANSLATE',
+        {
+          message: 'MESSAGE',
+          icon: 'pi pi-star',
+          iconLabel: { key: 'CUSTOM_ICON_LABEL', parameters: { value: 'critical' } },
+        },
+        'button1',
+        'button2'
+      )
+      await rootLoader.getHarness(DialogContentHarness)
+
+      expect(document.querySelector('.dialogMessageIconLabel')?.textContent).toContain('Custom icon critical.')
+    })
+
+    it('should allow a custom label to override a mapped icon severity', async () => {
+      fixture.componentInstance.show(
+        'TITLE_TRANSLATE',
+        {
+          message: 'MESSAGE',
+          icon: OpenngIcons.EXCLAMATION_TRIANGLE,
+          iconLabel: { key: 'CUSTOM_ICON_LABEL', parameters: { value: 'override' } },
+        },
+        'button1',
+        'button2'
+      )
+      await rootLoader.getHarness(DialogContentHarness)
+
+      expect(document.querySelector('.dialogMessageIconLabel')?.textContent).toContain('Custom icon override.')
     })
   })
 

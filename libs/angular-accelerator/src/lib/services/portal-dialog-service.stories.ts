@@ -52,7 +52,7 @@ class ButtonDialogWithPortalDialogServiceComponent {
       })
     if (this.stacked) {
       this.portalDialogService
-        .openDialog('Second dialog', 'Message of the second dialog', 'Primary', 'Secondary')
+        .openDialog('Second dialog', 'Message of the second dialog', 'Primary', 'Secondary', { closable: true })
         .subscribe(() => {
           console.log('second dialog closed')
         })
@@ -156,7 +156,7 @@ export const CustomData = {
     messageOrComponent: 'Custom message',
     primaryKey: 'Primary Button',
     secondaryKey: 'Secondary Button',
-    extras: {},
+    extras: { closable: true },
   },
 }
 
@@ -240,7 +240,7 @@ export const WithoutTitle = dialogStory({
   messageOrComponent: 'Custom message',
   primaryKey: 'Primary Button',
   secondaryKey: 'Secondary Button',
-  extras: {},
+  extras: { closable: true },
 })
 
 /** Message with severity icon: the severity is exposed as visually hidden text */
@@ -249,7 +249,7 @@ export const WithSeverityIcon = dialogStory({
   messageOrComponent: { message: 'Custom message', icon: OpenngIcons.EXCLAMATION_TRIANGLE },
   primaryKey: 'Primary Button',
   secondaryKey: 'Secondary Button',
-  extras: {},
+  extras: { closable: true },
 })
 
 /** Two dialogs open at the same time */
@@ -258,7 +258,7 @@ export const StackedDialogs = dialogStory({
   messageOrComponent: 'Message of the first dialog',
   primaryKey: 'Primary Button',
   secondaryKey: 'Secondary Button',
-  extras: {},
+  extras: { closable: true },
   stacked: true,
 })
 

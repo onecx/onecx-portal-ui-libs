@@ -457,7 +457,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
       }
       // viewChild() produces a read-only signal, so substitute a writable one for this test.
       Object.defineProperty(component, 'pickList', { value: signal(pickListMock), configurable: true })
-      component.pickList().setSelectionList(component.pickList().SOURCE_LIST, [c1])
+      const pickList = component.pickList()!
+      pickList.setSelectionList(pickList.SOURCE_LIST, [c1])
 
       expect(pickListMock.setSelectionList).toHaveBeenCalledWith(-1, [c1])
       expect(component.columnsChanged()).toBe(false)
