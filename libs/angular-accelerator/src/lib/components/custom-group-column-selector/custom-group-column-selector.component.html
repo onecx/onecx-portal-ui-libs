@@ -25,22 +25,22 @@
     <ng-template #dialogTitleContent>{{ dialogTitle() || (dialogTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' | translate) }}</ng-template>
     @switch (dialogTitleLevel()) {
       @case (1) {
-        <h1 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h1>
+        <h1 [id]="dialog.computedAriaLabelledBy()" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h1>
       }
       @case (2) {
-        <h2 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h2>
+        <h2 [id]="dialog.computedAriaLabelledBy()" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h2>
       }
       @case (3) {
-        <h3 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h3>
+        <h3 [id]="dialog.computedAriaLabelledBy()" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h3>
       }
       @case (4) {
-        <h4 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h4>
+        <h4 [id]="dialog.computedAriaLabelledBy()" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h4>
       }
       @case (5) {
-        <h5 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h5>
+        <h5 [id]="dialog.computedAriaLabelledBy()" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h5>
       }
       @case (6) {
-        <h6 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h6>
+        <h6 [id]="dialog.computedAriaLabelledBy()" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h6>
       }
     }
   </ng-template>
