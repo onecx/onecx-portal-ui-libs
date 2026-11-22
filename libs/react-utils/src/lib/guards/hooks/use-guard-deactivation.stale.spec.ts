@@ -59,7 +59,9 @@ describe('useGuardDeactivation (stale check)', () => {
   })
 
   it('given a check for an earlier location that resolves after a newer check, when the stale check resolves, then its result is not reported', async () => {
-    let resolveStale: (result: boolean) => void = () => undefined
+    let resolveStale: (result: boolean) => void = (result) => {
+      void result
+    }
     const staleCheck = new Promise<boolean>((resolve) => {
       resolveStale = resolve
     })

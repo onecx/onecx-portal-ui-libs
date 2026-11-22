@@ -45,15 +45,16 @@ export function useGuardDeactivation(nextLocation: Location, options: UseGuardCh
 function trackDeactivationCheck(check: Promise<boolean>, onResult: (result: boolean) => void): () => void {
   let cancelled = false
 
-  void check
-    .then((result) => {
+  void check.then(
+    (result) => {
       if (!cancelled) {
         onResult(result)
       }
-    })
-    .catch((error) => {
+    },
+    (error) => {
       logger.error('canDeactivate check failed', error)
-    })
+    }
+  )
 
   return () => {
     cancelled = true
