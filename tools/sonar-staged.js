@@ -138,13 +138,19 @@ function groupByLib(ranges) {
   return libs
 }
 
+/** Only libraries with a sonar-project.properties have a SonarCloud project. */
+function hasSonarConfig(lib) {
+  return fs.existsSync(path.resolve(__dirname, '..', 'libs', lib, 'sonar-project.properties'))
+}
+
 function projectKeyFor(lib) {
   return `${PROJECT_PREFIX}${lib}`
 }
 
 /** Exports the staged blobs of one library, so the scanner sees exactly what will be committed (not the working tree). */
 function exportLib(dir, lib) {
-  const files = git(['ls-files', '-z', '--', `libs/${lib}`])
+  // root tsconfig*.json and package.json, so libs/<lib>/tsconfig*.json (extends ../../tsconfig.base.json) resolves
+  const files = git(['ls-files', '-z', '--', `libs/${lib}`, ':(glob)tsconfig*.json', 'package.json'])
   execFileSync('git', ['checkout-index', `--prefix=${dir}${path.sep}`, '-z', '--stdin'], {
     input: files,
     maxBuffer: 64 * 1024 * 1024,
@@ -205,6 +211,9 @@ async function analyzeLib(lib, ranges, env, newFiles) {
         `-Dsonar.inclusions=${inclusions.map(relative).join(',')}`,
         `-Dsonar.test.inclusions=${testInclusions.length > 0 ? testInclusions.join(',') : 'staged-none/**'}`,
         '-Dsonar.scm.disabled=true',
+        // no coverage/test reports exist in the export; avoid missing-report warnings
+        '-Dsonar.javascript.lcov.reportPaths=',
+        '-Dsonar.testExecutionReportPaths=',
         `-Dsonar.working.directory=${workDir}`,
         `-Dsonar.pullrequest.key=${pullRequest}`,
         `-Dsonar.pullrequest.branch=${pullRequest}`,
@@ -240,7 +249,12 @@ async function analyzeLib(lib, ranges, env, newFiles) {
 }
 
 /** Entry point; returns the number of issues on new code. Throws when the gate cannot run. */
-async function main(env = process.env, readRanges = stagedSourceRanges, log = console.log) {
+async function main(
+  env = process.env,
+  readRanges = stagedSourceRanges,
+  log = console.log,
+  deps = { analyzeLib, hasSonarConfig }
+) {
   const ranges = readRanges()
   const files = Object.keys(ranges)
   if (files.length === 0) {
@@ -255,7 +269,11 @@ async function main(env = process.env, readRanges = stagedSourceRanges, log = co
   const newFiles = stagedNewFiles()
   let total = 0
   for (const [lib, libRanges] of Object.entries(groupByLib(ranges))) {
-    total += await analyzeLib(lib, libRanges, env, newFiles)
+    if (!deps.hasSonarConfig(lib)) {
+      log(`sonar:staged ${lib}: skipped, libs/${lib}/sonar-project.properties does not exist (no Sonar project)`)
+      continue
+    }
+    total += await deps.analyzeLib(lib, libRanges, env, newFiles)
   }
   if (total > 0) {
     throw new Error(`sonar:staged found ${total} issue(s) on new or changed lines`)
@@ -268,6 +286,7 @@ module.exports = {
   isSourceFile: (f) => SOURCE_FILE.test(f),
   isTestFile: (f) => TEST_FILE.test(f),
   groupByLib,
+  hasSonarConfig,
   projectKeyFor,
   fetchIssues,
   parseHunkRanges,

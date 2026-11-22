@@ -7,6 +7,7 @@ const path = require('node:path')
 const { test } = require('node:test')
 const {
   parseHunkRanges,
+  hasSonarConfig,
   stagedSourceRanges,
   groupByLib,
   filterNewCodeIssues,
@@ -35,6 +36,14 @@ test('quoted, tabbed and noprefix headers do not matter, mode-only has no lines,
   assert.deepEqual(parseHunkRanges(noprefix, 'a.ts'), [[5, 5]])
   assert.deepEqual(parseHunkRanges('diff --git a/x b/x\nold mode 100644\nnew mode 100755\n', 'x'), [])
   assert.throws(() => parseHunkRanges('', 'a.ts'), /cannot parse/)
+})
+
+test('new files (/dev/null old side) and trailing-tab headers are parsed', () => {
+  const added =
+    'diff --git a/n.ts b/n.ts\nnew file mode 100644\nindex 0..2\n--- /dev/null\n+++ b/n.ts\n@@ -0,0 +1,4 @@\n'
+  const tabbed = 'diff --git a/t x.ts b/t x.ts\nindex 1..2 100644\n--- a/t x.ts\t\n+++ b/t x.ts\t\n@@ -1 +1,2 @@\n'
+  assert.deepEqual(parseHunkRanges(added, 'n.ts'), [[1, 4]])
+  assert.deepEqual(parseHunkRanges(tabbed, 't x.ts'), [[1, 2]])
 })
 
 test('only library sources are grouped by lib; specs are tests, docs and config are ignored', () => {
@@ -144,4 +153,46 @@ test('issues are fetched across pages', async () => {
   } finally {
     server.close()
   }
+})
+
+test('libs without sonar-project.properties are skipped with a message, not analyzed', async () => {
+  assert.equal(hasSonarConfig('angular-standalone-shell'), false)
+  assert.equal(hasSonarConfig('angular-linter-rules'), false)
+  assert.equal(hasSonarConfig('ngrx-linter-rules'), false)
+  assert.equal(hasSonarConfig('accelerator'), true)
+  const logs = []
+  const analyzed = []
+  const code = await main(
+    { SONAR_TOKEN: 't' },
+    () => ({ 'libs/angular-standalone-shell/src/a.ts': [[1, 1]] }),
+    (m) => logs.push(m),
+    { hasSonarConfig, analyzeLib: async (lib) => analyzed.push(lib) }
+  )
+  assert.equal(code, 0)
+  assert.deepEqual(analyzed, [])
+  assert.match(logs.join('\n'), /angular-standalone-shell: skipped, .*sonar-project\.properties does not exist/)
+})
+
+test('each affected lib is analyzed separately and their issues are summed', async () => {
+  const calls = []
+  const deps = {
+    hasSonarConfig: () => true,
+    analyzeLib: async (lib, ranges) => {
+      calls.push([lib, Object.keys(ranges)])
+      return lib === 'b' ? 2 : 0
+    },
+  }
+  await assert.rejects(
+    main(
+      { SONAR_TOKEN: 't' },
+      () => ({ 'libs/a/src/x.ts': [[1, 1]], 'libs/a/src/y.ts': [[2, 2]], 'libs/b/src/z.ts': [[3, 3]] }),
+      noop,
+      deps
+    ),
+    /found 2 issue/
+  )
+  assert.deepEqual(calls, [
+    ['a', ['libs/a/src/x.ts', 'libs/a/src/y.ts']],
+    ['b', ['libs/b/src/z.ts']],
+  ])
 })

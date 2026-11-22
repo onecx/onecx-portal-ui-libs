@@ -1,10 +1,19 @@
+/**
+ * Keeps the heap of Angular/jsdom-style test runs bounded: with a single CPU jest would run all suites in-band in one
+ * process (default ~1GB heap) and memory grows per suite. Always use workers and recycle them once they hold on to memory.
+ * Note: --runInBand / --maxWorkers=1 on the CLI disables workerIdleMemoryLimit.
+ */
+export function createWorkerMemoryConfig() {
+  return {
+    maxWorkers: 2,
+    workerIdleMemoryLimit: '400MB',
+  }
+}
+
 export function createReportsConfig(projectName: string) {
   const reportsRoot = `${process.cwd()}/reports/${projectName}`
   return {
-    // Angular TestBed/DOM leaks accumulate per process; with a single CPU jest would run all suites in-band and hit the
-    // default ~1GB heap. Always use workers and recycle them once they hold on to memory.
-    maxWorkers: 2,
-    workerIdleMemoryLimit: '400MB',
+    ...createWorkerMemoryConfig(),
     testMatch: ['<rootDir>/src/lib/**/*.spec.ts'],
     coverageDirectory: `${reportsRoot}/coverage`,
     collectCoverageFrom: [
