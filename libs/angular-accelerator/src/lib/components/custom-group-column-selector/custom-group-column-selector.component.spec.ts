@@ -3,7 +3,9 @@ import { signal } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { CustomGroupColumnSelectorHarness } from '../../../../testing/custom-group-column-selector.harness'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -300,6 +302,22 @@ describe('CustomGroupColumnSelectorComponent', () => {
     })
   })
 
+  describe('[a11y] dialog name', () => {
+    it('should name the dialog by its visible title', async () => {
+      fixture.componentRef.setInput('columns', [makeColumn('c1')])
+      fixture.componentRef.setInput('displayedColumns', [makeColumn('c1')])
+      fixture.componentRef.setInput('dialogTitle', 'My visible title')
+      fixture.detectChanges()
+
+      const selector = await TestbedHarnessEnvironment.harnessForFixture(fixture, CustomGroupColumnSelectorHarness)
+      await selector.openCustomGroupColumnSelectorDialog()
+      const dialog = await selector.getDialog()
+
+      expect(await dialog.getDialogTitle()).toContain('My visible title')
+      expect(await dialog.getAccessibleName()).toBe('My visible title')
+    })
+  })
+  
   describe('columnsChanged computed property', () => {
     it('should return false when the active columns match the committed ones in membership and order', () => {
       const c1 = makeColumn('c1')
@@ -434,7 +452,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
       }
       // viewChild() produces a read-only signal, so substitute a writable one for this test.
       Object.defineProperty(component, 'pickList', { value: signal(pickListMock), configurable: true })
-      component.pickList().setSelectionList(component.pickList().SOURCE_LIST, [c1])
+      const pickList = component.pickList()!
+      pickList.setSelectionList(pickList.SOURCE_LIST, [c1])
 
       expect(pickListMock.setSelectionList).toHaveBeenCalledWith(-1, [c1])
       expect(component.columnsChanged()).toBe(false)
