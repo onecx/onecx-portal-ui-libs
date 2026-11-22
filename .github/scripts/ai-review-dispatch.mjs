@@ -219,7 +219,7 @@ export async function dispatchReview(env = process.env) {
     '--repo',
     request.targetRepository,
     '--ref',
-    'main',
+    env.AI_REVIEW_DISPATCH_REF || 'main',
     '-f',
     `pr_url=${pullRequestUrl}`,
     '-f',
