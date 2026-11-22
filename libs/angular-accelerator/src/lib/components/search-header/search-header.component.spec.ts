@@ -498,7 +498,7 @@ describe('SearchHeaderComponent', () => {
 
     it('should search for an input that is added after initialization', async () => {
       const added = document.createElement('input')
-      el('section[aria-label="Search Criteria"]').appendChild(added)
+      el('section[aria-label="Search criteria"]').appendChild(added)
       added.focus()
       await user.keyboard('{Enter}')
       expect(host.searched).toHaveBeenCalledTimes(1)
