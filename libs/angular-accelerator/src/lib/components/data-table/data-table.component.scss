@@ -1,3 +1,7 @@
+$clr-neutral-100: #f7f7f7;
+$clr-neutral-500: #979797;
+$clr-neutral-700: #262626;
+
 // INFO: Sort and filter triggers in the column headers (WCAG 2.5.8, 2.4.7, 1.4.11):
 // at least 24x24 CSS px and a focus ring of at least 2px from the theme focus ring tokens.
 $header-trigger-min-size: 24px;
@@ -62,7 +66,8 @@ $header-trigger-min-focus-width: 2px;
 // Restore a keyboard focus ring (the rule above removes the theme one). The focused element is an <input>,
 // so :focus-visible also matches after a click; a click opens the overlay, hence :not(.p-multiselect-open).
 :host ::ng-deep .filterMultiSelect:has(:focus-visible):not(.p-multiselect-open) {
-  @include header-trigger-focus-ring;
+  outline: 2px solid $clr-neutral-700;
+  outline-offset: 1px;
 }
 
 .pi {
