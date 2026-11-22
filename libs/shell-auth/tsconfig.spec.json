@@ -5,7 +5,14 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2016",
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "paths": {
+      "@onecx/accelerator": ["libs/accelerator/src/index.ts"],
+      "@onecx/angular-integration-interface": ["libs/angular-integration-interface/src/index.ts"],
+      "@onecx/angular-utils": ["libs/angular-utils/src/index.ts"],
+      "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
+      "keycloak-js": ["../../node_modules/keycloak-js/lib/keycloak.d.ts"]
+    }
   },
   "files": ["src/test-setup.ts"],
   "include": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
