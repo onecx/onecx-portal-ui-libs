@@ -24,6 +24,9 @@ export class LoadingIndicatorDirective {
   }
 
   private elementLoader() {
+    if (this.loaderElement) {
+      this.loaderElement.remove()
+    }
     this.renderer.addClass(this.el.nativeElement, 'element-overlay')
     this.loaderElement = document.createElement('div')
     this.loaderElement.className = 'loader'
@@ -44,12 +47,17 @@ export class LoadingIndicatorDirective {
       this.viewContainerRef.clear()
       if (this.componentRef) {
         this.componentRef.destroy()
-      } else {
-        this.renderer.removeClass(this.el.nativeElement, 'element-overlay')
-        if (this.loaderElement) { 
-          this.loaderElement.remove()
-        }
       }
+      this.removeElementLoader()
     }
+  }
+
+  private removeElementLoader() {
+    if (!this.loaderElement) {
+      return
+    }
+    this.renderer.removeClass(this.el.nativeElement, 'element-overlay')
+    this.loaderElement.remove()
+    this.loaderElement = undefined
   }
 }
