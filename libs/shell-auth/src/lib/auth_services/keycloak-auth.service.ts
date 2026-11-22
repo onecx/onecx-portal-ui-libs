@@ -3,6 +3,7 @@ import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-int
 import Keycloak, { KeycloakServerConfig } from 'keycloak-js'
 import { AuthService } from '../auth.service'
 import { createLogger } from '../utils/logger.utils'
+import { getRefreshTokenExp, isStoredRefreshTokenExpired, formatStoredRefreshTokenExpiry } from './refresh-token.utils'
 import Semaphore from 'ts-semaphore'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
@@ -24,15 +25,17 @@ export class KeycloakAuthService implements AuthService {
     let idToken = localStorage.getItem(KC_ID_TOKEN_LS)
     let refreshToken = localStorage.getItem(KC_REFRESH_TOKEN_LS)
     if (token && refreshToken) {
-      const parsedToken = JSON.parse(atob(refreshToken.split('.')[1]))
-      if (parsedToken.exp * 1000 < new Date().getTime()) {
-        this.logger.info(`[KC init] 1 Stored refresh token expired at ${new Date(parsedToken.exp * 1000).toISOString()}, clearing stored tokens`)
-        token = null
-        refreshToken = null
-        idToken = null
+      const refreshTokenExp = getRefreshTokenExp(refreshToken)
+      if (isStoredRefreshTokenExpired(refreshTokenExp, new Date().getTime())) {
+        this.logger.info(
+          `[KC init] 1 Stored refresh token expired or undecodable at ${formatStoredRefreshTokenExpiry(refreshTokenExp)}, clearing stored tokens`
+        )
+        token = refreshToken = idToken = null
         this.clearKCStateFromLocalstorage()
       } else {
-        this.logger.info(`[KC init] 1 Stored refresh token valid until ${new Date(parsedToken.exp * 1000).toISOString()}, will attempt to reuse`)
+        this.logger.info(
+          `[KC init] 1 Stored refresh token valid until ${formatStoredRefreshTokenExpiry(refreshTokenExp)}, will attempt to reuse`
+        )
       }
     } else {
       this.logger.info('[KC init] 1 No stored tokens found, will require fresh login')
@@ -41,7 +44,7 @@ export class KeycloakAuthService implements AuthService {
     let kcConfig: KeycloakServerConfig | string
     const validKCConfig = await this.getValidKCConfig()
     kcConfig = { ...validKCConfig, ...(config ?? {}) }
-    
+
     if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
       kcConfig = './assets/keycloak.json'
     }
@@ -50,21 +53,23 @@ export class KeycloakAuthService implements AuthService {
       (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
     const timeSkew = await this.getConfigValueNumberOrUndefined(CONFIG_KEY.KEYCLOAK_TIME_SKEW)
-    this.logger.info(`[KC init] Config: `, { timeSkew, silentSSO: enableSilentSSOCheck, hasStoredToken: !!token, hasStoredRefreshToken: !!refreshToken, kcConfig })
+    this.logger.info(`[KC init] Config: `, {
+      timeSkew,
+      silentSSO: enableSilentSSOCheck,
+      hasStoredToken: !!token,
+      hasStoredRefreshToken: !!refreshToken,
+      kcConfig,
+    })
 
     try {
       await import('keycloak-js').then(({ default: Keycloak }) => {
         this.keycloak = new Keycloak(kcConfig)
       })
     } catch (err) {
-      const errorMessage = 'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.'
-      this.logger.error(
-        errorMessage,
-        err
-      )
-      throw new Error(
-        errorMessage
-      )
+      const errorMessage =
+        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.'
+      this.logger.error(errorMessage, err)
+      throw new Error(errorMessage)
     }
 
     if (!this.keycloak) {
@@ -83,11 +88,11 @@ export class KeycloakAuthService implements AuthService {
         token: token || undefined,
         timeSkew: timeSkew,
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         this.logger.warn(`Keycloak err: ${err}, try force login`)
         return this.keycloak?.login(this.config)
       })
-      .then((loginOk) => {
+      .then((loginOk: boolean | void | undefined) => {
         if (loginOk) {
           return this.keycloak?.token
         } else {
@@ -97,7 +102,7 @@ export class KeycloakAuthService implements AuthService {
       .then(() => {
         return true
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         this.logger.error(`KC ERROR ${err} as json ${JSON.stringify(err)}`)
         throw err
       })
@@ -120,16 +125,18 @@ export class KeycloakAuthService implements AuthService {
     }
   }
 
-    private async setupEventListener() {
+  private async setupEventListener() {
     if (this.keycloak) {
-      const onTokenExpiredEnabled = (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED)) === 'true'
+      const onTokenExpiredEnabled =
+        (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED)) === 'true'
 
-      const onAuthRefreshErrorEnabled = (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED)) === 'true'
+      const onAuthRefreshErrorEnabled =
+        (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED)) === 'true'
 
       this.logger.info(`[KC events] 1 setupEventListener() `, { onTokenExpiredEnabled, onAuthRefreshErrorEnabled })
 
-      this.keycloak.onAuthError = (errorData) => {
-        this.logger.error(`[KC event] 2.1 onAuthError:`,{ errorData })
+      this.keycloak.onAuthError = (errorData: unknown) => {
+        this.logger.error(`[KC event] 2.1 onAuthError:`, { errorData })
         this.updateLocalStorage()
       }
       this.keycloak.onAuthLogout = () => {
@@ -140,10 +147,14 @@ export class KeycloakAuthService implements AuthService {
       this.keycloak.onAuthRefreshSuccess = () => {
         this.updateLocalStorage()
         const expiry = this.keycloak?.tokenParsed?.exp
-        this.logger.info(`[KC event] 2.3 onAuthRefreshSuccess - token silently refreshed, new expiry: `, { "expiry": expiry ? new Date(expiry * 1000).toISOString() : 'unknown'  })
+        this.logger.info(`[KC event] 2.3 onAuthRefreshSuccess - token silently refreshed, new expiry: `, {
+          expiry: expiry ? new Date(expiry * 1000).toISOString() : 'unknown',
+        })
       }
       this.keycloak.onAuthRefreshError = () => {
-        this.logger.warn(`[KC event] 2.4.1           onAuthRefreshError - refresh token or SSO session has expired`, { onAuthRefreshErrorEnabled })
+        this.logger.warn(`[KC event] 2.4.1           onAuthRefreshError - refresh token or SSO session has expired`, {
+          onAuthRefreshErrorEnabled,
+        })
         this.updateLocalStorage()
         if (onAuthRefreshErrorEnabled) {
           this.logger.info('[KC event] 2.4.1           onAuthRefreshError - initiating re-login')
@@ -153,11 +164,16 @@ export class KeycloakAuthService implements AuthService {
       this.keycloak.onAuthSuccess = () => {
         this.updateLocalStorage()
         const expiry = this.keycloak?.tokenParsed?.exp
-        this.logger.info(`[KC event] 2.5 onAuthSuccess - authenticated, token expires: `, { "expiry": expiry ? new Date(expiry * 1000).toISOString() : 'unknown' })
+        this.logger.info(`[KC event] 2.5 onAuthSuccess - authenticated, token expires: `, {
+          expiry: expiry ? new Date(expiry * 1000).toISOString() : 'unknown',
+        })
       }
       this.keycloak.onTokenExpired = () => {
         const expiry = this.keycloak?.tokenParsed?.exp
-        this.logger.info(`[KC event] 2.6 onTokenExpired at ${new Date().toISOString()} ,`, { "expiry": expiry ? new Date(expiry * 1000).toISOString() : 'unknown', onTokenExpiredEnabled })
+        this.logger.info(`[KC event] 2.6 onTokenExpired at ${new Date().toISOString()} ,`, {
+          expiry: expiry ? new Date(expiry * 1000).toISOString() : 'unknown',
+          onTokenExpiredEnabled,
+        })
         this.updateLocalStorage()
         if (onTokenExpiredEnabled) {
           // A semaphore is used to prevent executing multiple updateToken calls in parallel.
@@ -166,14 +182,16 @@ export class KeycloakAuthService implements AuthService {
             this.keycloak?.updateToken()
           })
         } else {
-          this.logger.info('[KC event] 2.6            onTokenExpired - proactive refresh disabled, token will stay expired until next API call triggers updateTokenIfNeeded()')
+          this.logger.info(
+            '[KC event] 2.6            onTokenExpired - proactive refresh disabled, token will stay expired until next API call triggers updateTokenIfNeeded()'
+          )
         }
       }
-      this.keycloak.onActionUpdate = (state) => {
+      this.keycloak.onActionUpdate = (state: 'success' | 'cancelled' | 'error') => {
         this.logger.info(`[KC event] 2.7 onActionUpdate`, { state })
         this.updateLocalStorage()
       }
-      this.keycloak.onReady = (authenticated) => {
+      this.keycloak.onReady = (authenticated: boolean | undefined) => {
         this.updateLocalStorage()
         this.logger.info(`[KC event] 2.8 onReady `, { authenticated })
       }
@@ -234,7 +252,10 @@ export class KeycloakAuthService implements AuthService {
 
       const minValidity = await this.getConfigValueNumberOrUndefined(CONFIG_KEY.KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY)
       const expiry = this.keycloak.tokenParsed?.exp
-      this.logger.info(`[KC updateTokenIfNeeded] 4 minValidity`, { minValidity, expiry: expiry ? new Date(expiry * 1000).toISOString() : 'unknown' })
+      this.logger.info(`[KC updateTokenIfNeeded] 4 minValidity`, {
+        minValidity,
+        expiry: expiry ? new Date(expiry * 1000).toISOString() : 'unknown',
+      })
 
       const refreshed = await this.keycloak.updateToken(minValidity)
       this.logger.info(`[KC updateTokenIfNeeded] 4 tokenRefreshed`, { refreshed })
