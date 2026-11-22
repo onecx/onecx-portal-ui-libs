@@ -1453,12 +1453,12 @@ describe('PortalDialogService', () => {
         expect(document.activeElement).toBe(opener)
       })
 
-      it('should return focus to the opener when closed with Escape (close path)', async () => {
+      it('should return focus to the opener when closed with the Escape key', async () => {
         fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
         await rootLoader.getHarness(DialogFooterHarness)
         await flush()
         expect(document.activeElement).not.toBe(opener)
-        openRef()?.close()
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
         await flush()
         expect(document.activeElement).toBe(opener)
       })
