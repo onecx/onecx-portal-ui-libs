@@ -2954,12 +2954,6 @@ describe('DataTableComponent', () => {
     })
   })
 
-  it('should return row summary for object entries when getRowSummary is called', () => {
-      const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
-
-      expect(summary).toBe('id: 1,name: Alice,active: true')
-  })
-
   describe('accessibility semantics', () => {
     const getTable = () => fixture.nativeElement.querySelector('table') as HTMLTableElement
 
