@@ -356,9 +356,9 @@ describe('DataTableComponent', () => {
 
     const getLabel = (): HTMLElement => fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
 
-    const getTooltipText = (label: HTMLElement) =>
-      document.getElementById(label.getAttribute('aria-describedby') ?? '')?.querySelector('.p-tooltip-text')
-        ?.textContent ?? null
+    // The label is not focusable, so the tooltip directive does not set aria-describedby on it; read the overlay itself
+    const getTooltipText = (_label: HTMLElement) =>
+      document.querySelector('.p-tooltip .p-tooltip-text')?.textContent ?? null
 
     const trigger = (label: HTMLElement, event: string) => {
       label.dispatchEvent(new Event(event))
@@ -2978,6 +2978,9 @@ describe('DataTableComponent', () => {
       dataTable: DataTableComponent
     }
 
+    // Rows carry a per-instance id suffix ("-1", ...) while another table instance is alive in the same test
+    const stripIdSuffix = (id: string | null) => (id ?? '').replace(/-\d+$/, '')
+
     async function createGroupingHost(
       hostType: new () => GroupingHost,
       rows: Row[],
@@ -3053,7 +3056,7 @@ describe('DataTableComponent', () => {
         Promise.all(
           (await harness.getRows()).map(async (row) => {
             const element = await row.host()
-            return (await element.getAttribute('id')) ?? (await element.text())
+            return stripIdSuffix((await element.getAttribute('id')) ?? (await element.text()))
           })
         )
 
@@ -3104,7 +3107,7 @@ describe('DataTableComponent', () => {
       expect(child.rowGroupPlan()).toBeNull()
       expect(child.groupedRows().map((row) => row.id)).toEqual(['r3', 'r2', 'r1'])
       expect(await Promise.all((await harness.getRows()).map(async (row) =>
-        (await row.host()).getAttribute('id')
+        stripIdSuffix(await (await row.host()).getAttribute('id'))
       ))).toEqual(['ocx-data-row-r3', 'ocx-data-row-r2', 'ocx-data-row-r1'])
       expect(child.isRowGroupStart(rows[0])).toBe(false)
       expect(child.getGroupContext(rows[0])).toBeUndefined()
@@ -3127,7 +3130,7 @@ describe('DataTableComponent', () => {
       expect(child.rowGroupPlan()).toBeNull()
       expect(child.groupedRows().map((row) => row.id)).toEqual(['A1', 'B1', 'A2'])
       expect(await Promise.all((await harness.getRows()).map(async (row) =>
-        (await row.host()).getAttribute('id')
+        stripIdSuffix(await (await row.host()).getAttribute('id'))
       ))).toEqual(['ocx-data-row-A1', 'ocx-data-row-B1', 'ocx-data-row-A2'])
 
       fixture.componentInstance.columns = groupColumns
