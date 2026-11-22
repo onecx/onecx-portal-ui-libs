@@ -59,9 +59,7 @@ describe('useGuardDeactivation (stale check)', () => {
   })
 
   it('given a check for an earlier location that resolves after a newer check, when the stale check resolves, then its result is not reported', async () => {
-    let resolveStale: (result: boolean) => void = (result) => {
-      void result
-    }
+    let resolveStale: (result: boolean) => void = (result) => result
     const staleCheck = new Promise<boolean>((resolve) => {
       resolveStale = resolve
     })
@@ -93,7 +91,7 @@ describe('useGuardDeactivation (stale check)', () => {
   })
 })
 
-describe('useGuardDeactivation (failing and default checks)', () => {
+describe('useGuardDeactivation (failing and single checks)', () => {
   beforeEach(() => {
     resetLocation('a')
   })
@@ -118,7 +116,21 @@ describe('useGuardDeactivation (failing and default checks)', () => {
     expect(result.current.lastResult).toBeNull()
   })
 
-  it('given a deactivation check without options, when the check resolves, then the last result is the check result', async () => {
+  it('given a single deactivation check, when it resolves, then the callback is called once with the result', async () => {
+    useWrappedGuardsMock.mockReturnValue(makeWrappedGuards(jest.fn(async () => true)))
+    const onGuardCheck = jest.fn()
+
+    const { result } = renderHook(() => useGuardDeactivation(nextLocation, { onGuardCheck }))
+
+    await waitFor(() => {
+      expect(onGuardCheck).toHaveBeenCalledTimes(1)
+    })
+
+    expect(onGuardCheck).toHaveBeenCalledWith(true)
+    expect(result.current.lastResult).toBe(true)
+  })
+
+  it('given a deactivation check without options, when it resolves, then the last result is the check result', async () => {
     useWrappedGuardsMock.mockReturnValue(makeWrappedGuards(jest.fn(async () => true)))
 
     const { result } = renderHook(() => useGuardDeactivation(nextLocation))
@@ -126,5 +138,25 @@ describe('useGuardDeactivation (failing and default checks)', () => {
     await waitFor(() => {
       expect(result.current.lastResult).toBe(true)
     })
+  })
+})
+
+describe('useGuardDeactivation (disabled check)', () => {
+  beforeEach(() => {
+    resetLocation('a')
+  })
+
+  it('given a disabled deactivation check, when the hook runs, then no check is run and no result is reported', async () => {
+    const canDeactivate = jest.fn(async () => true)
+    useWrappedGuardsMock.mockReturnValue(makeWrappedGuards(canDeactivate))
+
+    const { result } = renderHook(() => useGuardDeactivation(nextLocation, { enabled: false }))
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0)
+    })
+
+    expect(canDeactivate).not.toHaveBeenCalled()
+    expect(result.current.lastResult).toBeNull()
   })
 })
