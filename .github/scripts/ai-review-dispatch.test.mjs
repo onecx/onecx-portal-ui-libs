@@ -95,6 +95,7 @@ if (args[0] === 'api') {
       GITHUB_REF: options.ref ?? 'refs/heads/main',
       GITHUB_WORKSPACE: workspace,
       AI_REVIEW_DISPATCH_REPOSITORY: options.target ?? 'private/destination',
+      AI_REVIEW_DISPATCH_REF: options.dispatchRef ?? '',
       GH_TOKEN: options.dispatchToken ?? 'service-secret',
       GH_READ_TOKEN: 'repository-read-secret',
       FAKE_LOG: logPath,
@@ -123,7 +124,7 @@ if (args[0] === 'api') {
   return { result, calls }
 }
 
-function assertDispatched({ result, calls }, authorLookup = false) {
+function assertDispatched({ result, calls }, authorLookup = false, dispatchRef = 'main') {
   assert.equal(result.status, 0, result.stderr)
   assert.deepEqual(
     calls.map(({ token }) => token),
@@ -143,7 +144,7 @@ function assertDispatched({ result, calls }, authorLookup = false) {
     '--repo',
     'private/destination',
     '--ref',
-    'main',
+    dispatchRef,
     '-f',
     'pr_url=https://github.com/example/consumer/pull/42',
     '-f',
@@ -157,6 +158,23 @@ function assertDispatched({ result, calls }, authorLookup = false) {
 
 test('dispatches automatic reviews with a service token, not the event actor PAT', async (t) => {
   assertDispatched(await fixture(t))
+})
+
+test('release-target PRs still dispatch the central main workflow by default', async (t) => {
+  assertDispatched(
+    await fixture(t, {
+      ref: 'refs/heads/v7',
+      pullRequest: { base: { repo: { full_name: 'example/consumer' }, ref: 'v7', sha: 'release-sha' } },
+    })
+  )
+})
+
+test('an explicit trusted dispatch ref overrides main without using the PR target ref', async (t) => {
+  assertDispatched(
+    await fixture(t, { ref: 'refs/heads/v7', dispatchRef: 'release/review-v2' }),
+    false,
+    'release/review-v2'
+  )
 })
 
 test('manual Actions dispatch looks up an existing PR on the default branch', async (t) => {
