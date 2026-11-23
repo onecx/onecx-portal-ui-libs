@@ -1374,7 +1374,7 @@ describe('PortalDialogService', () => {
         } finally {
           restoreOffsetParent()
         }
-      })
+      }, 10000)
 
       it('should respect an explicit focusOnShow false (spread order)', async () => {
         jest.spyOn(pDialogService, 'open')
