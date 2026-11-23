@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { ImageRepositoryService } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 interface ImageRepositoryContextValue {
   imageRepositoryService: ImageRepositoryService
@@ -35,19 +36,7 @@ const useImageRepositoryService = (): ImageRepositoryContextValue => {
  * @returns Provider wrapping the given children.
  */
 const ImageRepositoryProvider: React.FC<ImageRepositoryProviderProps> = ({ children, value }) => {
-  const imageRepositoryService = useMemo(
-    () => value?.imageRepositoryService ?? new ImageRepositoryService(),
-    [value?.imageRepositoryService]
-  )
-  const isInternalService = !value?.imageRepositoryService
-
-  useEffect(() => {
-    return () => {
-      if (isInternalService) {
-        imageRepositoryService.destroy()
-      }
-    }
-  }, [imageRepositoryService, isInternalService])
+  const imageRepositoryService = useTopic(value?.imageRepositoryService, ImageRepositoryService)
 
   const contextValue = useMemo(
     (): ImageRepositoryContextValue => ({
