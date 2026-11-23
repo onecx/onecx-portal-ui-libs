@@ -43,7 +43,6 @@ describe('GroupByCountDiagramComponent wiring', () => {
     translateService.use('en')
 
     fixture.detectChanges()
-    fixture.detectChanges()
   })
 
   it('given an ocx-group-by-count-diagram, when the embedded diagram emits dataSelected, then the component emits dataSelected with the same value', () => {
@@ -59,7 +58,6 @@ describe('GroupByCountDiagramComponent wiring', () => {
 
   it('given an ocx-group-by-count-diagram with customLegends enabled, when the pie diagram renders, then the embedded diagram shows the custom legend', () => {
     fixture.componentRef.setInput('customLegends', true)
-    fixture.detectChanges()
     fixture.detectChanges()
 
     const customLegend = fixture.nativeElement.querySelector('.custom-legends-container')
