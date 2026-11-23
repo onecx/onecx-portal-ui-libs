@@ -28,8 +28,10 @@
     >
   </ng-template>
 
-  @let resolvedActiveColumnsLabel = activeColumnsLabel() || (activeColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate);
-  @let resolvedInactiveColumnsLabel = inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
+  @let resolvedActiveColumnsLabel = activeColumnsLabel() || (activeColumnsLabelKey() | translate) ||
+  ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate); @let resolvedInactiveColumnsLabel =
+  inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) ||
+  ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
   <p-pickList
     [source]="displayedColumnsModel()"
     [target]="hiddenColumnsModel()"
@@ -108,13 +110,13 @@
       (onClick)="onCancelClick()"
       [label]="cancelButtonLabel() || (cancelButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate)"
       styleClass="p-button"
-      [ariaLabel]="cancelButtonLabel() || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_ARIA_LABEL' | translate)"
+      [ariaLabel]="cancelButtonAriaLabel() || (cancelButtonAriaLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_ARIA_LABEL' | translate)"
     ></p-button>
     <p-button
       id="saveButton"
       (onClick)="onSaveClick()"
       [label]="saveButtonLabel() || (saveButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
-      [ariaLabel]="saveButtonAriaLabelKey() || (saveButtonAriaLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL' | translate)"
+      [ariaLabel]="saveButtonAriaLabel() || (saveButtonAriaLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL' | translate)"
       [disabled]="!canSave()"
     ></p-button>
   </ng-template>
