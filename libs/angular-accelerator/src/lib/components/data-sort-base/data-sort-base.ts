@@ -52,10 +52,7 @@ export class DataSortBase {
     return of({})
   }
 
-  filterItems(
-    [items, filters]: [RowListGridData[], Filter[]],
-    clientSideFiltering: boolean
-  ): RowListGridData[] {
+  filterItems([items, filters]: [RowListGridData[], Filter[]], clientSideFiltering: boolean): RowListGridData[] {
     if (!clientSideFiltering) {
       return items
     }
@@ -114,7 +111,7 @@ export class DataSortBase {
       )
     }
     if (column?.columnType === ColumnType.TRANSLATION_KEY) {
-      colValues = translations[sortColumn]
+      colValues = translations[sortColumn] ?? {}
     }
     return [...items].sort(this.createCompareFunction(colValues, sortColumn, sortDirection))
   }
