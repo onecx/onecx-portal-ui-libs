@@ -3,10 +3,11 @@
   [fillMissingColors]="fillMissingColors()"
   [sumKey]="sumKey()"
   [fullHeight]="fullHeight()"
+  [customLegends]="customLegends()"
   [diagramType]="diagramType()"
   [chartTitleKey]="chartTitleKey()"
   [chartDescriptionKey]="chartDescriptionKey()"
-  (onDataSelect)="dataClicked($event)"
+  (dataSelected)="dataClicked($event)"
   [supportedDiagramTypes]="supportedDiagramTypes()"
   (diagramTypeChanged)="onDiagramTypeChanged($event)"
 ></ocx-diagram>
