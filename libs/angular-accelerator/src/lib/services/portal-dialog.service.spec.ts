@@ -1299,22 +1299,6 @@ describe('PortalDialogService', () => {
     })
     describe('opening and closing', () => {
       const flush = () => new Promise((resolve) => setTimeout(resolve, 20))
-      const waitForFocus = (selector: string) =>
-        new Promise<boolean>((resolve) => {
-          const onFocus = (event: FocusEvent) => {
-            if (event.target instanceof HTMLElement && event.target.matches(selector)) {
-              cleanup()
-            }
-          }
-          const cleanup = () => {
-            document.removeEventListener('focus', onFocus, true)
-            resolve(true)
-          }
-          document.addEventListener('focus', onFocus, true)
-          if (document.activeElement instanceof HTMLElement && document.activeElement.matches(selector)) {
-            cleanup()
-          }
-        })
       const mockVisibleOffsetParent = () => {
         const descriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent')
         Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
@@ -1359,16 +1343,16 @@ describe('PortalDialogService', () => {
         )
       })
 
-      it('should focus the first form field when the dialog opens', async () => {
+      it('should focus the first form field within 300 ms of opening (fake timers)', async () => {
         const restoreOffsetParent = mockVisibleOffsetParent()
-        const firstFieldFocused = waitForFocus('#name')
+        jest.useFakeTimers()
         try {
           fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2')
-          await rootLoader.getHarness(DialogContentHarness)
+          await jest.advanceTimersByTimeAsync(300)
 
-          expect(await firstFieldFocused).toBe(true)
-          expect(document.activeElement).toBe(document.querySelector('#name'))
+          expect(document.activeElement?.id).toBe('name')
         } finally {
+          jest.useRealTimers()
           restoreOffsetParent()
         }
       })
