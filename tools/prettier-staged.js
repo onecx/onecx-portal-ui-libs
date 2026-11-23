@@ -1,11 +1,8 @@
 const { execFileSync } = require('node:child_process')
+const { stagedFiles: stagedFilesList } = require('./staged-files.js')
 
 async function checkStagedFiles() {
-  const stagedFiles = execFileSync('git', ['diff', '--cached', '--name-only', '--diff-filter=ACMR', '-z'], {
-    encoding: 'utf8',
-  })
-    .split('\0')
-    .filter(Boolean)
+  const stagedFiles = stagedFilesList()
 
   if (stagedFiles.length === 0) {
     return
