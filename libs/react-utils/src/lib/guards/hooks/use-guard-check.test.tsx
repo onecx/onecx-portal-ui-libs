@@ -13,6 +13,15 @@ jest.mock('./use-wrapped-guards', () => ({
   useWrappedGuards: jest.fn(),
 }))
 
+jest.mock('../utils/logger.utils', () => ({
+  createLogger: () => ({
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  }),
+}))
+
 function TestComponent({
   onGuardCheck,
   enabled,
