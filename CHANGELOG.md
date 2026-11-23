@@ -1,3 +1,11 @@
+## [8.15.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.15.1...v8.15.2) (2026-11-23)
+
+### Bug Fixes
+
+* **angular-accelerator:** show data table filter tooltip above the icon ([#1981](https://github.com/onecx/onecx-portal-ui-libs/issues/1981)) ([9f572ab](https://github.com/onecx/onecx-portal-ui-libs/commit/9f572ab6b256a2e2baa8304563230ad3752722c0))
+* **angular-accelerator:** use ocxTooltip for data table filter icon ([#1962](https://github.com/onecx/onecx-portal-ui-libs/issues/1962)) ([8c6323c](https://github.com/onecx/onecx-portal-ui-libs/commit/8c6323c2bd119bf9f9c364de593cf3e26a5d404c))
+* **angular-utils:** keep guard redirects during router sync (v8) ([#2010](https://github.com/onecx/onecx-portal-ui-libs/issues/2010)) ([76ca7ac](https://github.com/onecx/onecx-portal-ui-libs/commit/76ca7acea0bdc74b8f8aed3c52cdff651fc1ebcc))
+
 ## [8.15.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.15.0...v8.15.1) (2026-11-13)
 
 ### Bug Fixes
