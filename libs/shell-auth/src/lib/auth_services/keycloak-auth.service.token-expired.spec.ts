@@ -10,6 +10,7 @@ const KeycloakConstructor = (jest.requireMock('keycloak-js') as { default: jest.
 
 interface KeycloakLike {
   authenticated: boolean
+  token: string
   tokenParsed: { exp: number }
   init: jest.Mock
   login: jest.Mock
@@ -62,6 +63,7 @@ const createService = (tokenExpiredConfig?: string): KeycloakAuthService => {
 const installKeycloak = (updateToken: jest.Mock): KeycloakLike => {
   keycloak = {
     authenticated: true,
+    token: 'token',
     tokenParsed: { exp: 9_999_999_999 },
     init: jest.fn(async () => true),
     login: jest.fn(),
@@ -71,17 +73,48 @@ const installKeycloak = (updateToken: jest.Mock): KeycloakLike => {
   return keycloak
 }
 
-describe('KeycloakAuthService', () => {
-  beforeEach(() => {
-    loggerError = jest.fn()
-    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue(makeLogger(loggerError))
-    service = createService('true')
-  })
+const setupTestDoubles = (): void => {
+  loggerError = jest.fn()
+  jest.spyOn(loggerUtils, 'createLogger').mockReturnValue(makeLogger(loggerError))
+  service = createService('true')
+}
 
-  afterEach(() => {
-    jest.restoreAllMocks()
-    KeycloakConstructor.mockClear()
-  })
+const restoreTestDoubles = (): void => {
+  jest.restoreAllMocks()
+  KeycloakConstructor.mockClear()
+}
+
+const expectFailingPersistenceIsHandled = async (): Promise<void> => {
+  const listener = jest.fn()
+  const originalStorage = window.localStorage
+  const throwingStorage = {
+    getItem: () => null,
+    setItem: () => {
+      throw new Error('storage unavailable')
+    },
+    removeItem: () => undefined,
+  } as unknown as Storage
+  Object.defineProperty(window, 'localStorage', { value: throwingStorage, configurable: true })
+  process.on('unhandledRejection', listener)
+  try {
+    installKeycloak(jest.fn())
+    await service.init()
+    keycloak.onTokenExpired?.()
+    await flushMicrotasks()
+    expect(listener).not.toHaveBeenCalled()
+    expect(loggerError).toHaveBeenCalledWith(
+      '[KC event] 2.6 onTokenExpired - handler failed',
+      expect.objectContaining({ message: 'storage unavailable' })
+    )
+  } finally {
+    process.removeListener('unhandledRejection', listener)
+    Object.defineProperty(window, 'localStorage', { value: originalStorage, configurable: true })
+  }
+}
+
+describe('KeycloakAuthService', () => {
+  beforeEach(setupTestDoubles)
+  afterEach(restoreTestDoubles)
 
   describe('given a proactive refresh started by onTokenExpired is still running', () => {
     it('when updateTokenIfNeeded is called, then it calls updateToken only after the running refresh has finished', async () => {
@@ -120,6 +153,12 @@ describe('KeycloakAuthService', () => {
       keycloak.onTokenExpired?.()
       await flushMicrotasks()
       expect(keycloak.updateToken).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('given the onTokenExpired handler fails while persisting tokens', () => {
+    it('when onTokenExpired fires, then the failure is logged and nothing is left unhandled', async () => {
+      await expectFailingPersistenceIsHandled()
     })
   })
 })

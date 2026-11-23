@@ -11,7 +11,7 @@
       "@onecx/angular-integration-interface": ["libs/angular-integration-interface/src/index.ts"],
       "@onecx/angular-utils": ["libs/angular-utils/src/index.ts"],
       "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
-      "keycloak-js": ["../../node_modules/keycloak-js/lib/keycloak.d.ts"]
+      "keycloak-js": ["./node_modules/keycloak-js/lib/keycloak.d.ts"]
     }
   },
   "files": ["src/test-setup.ts"],

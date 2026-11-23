@@ -132,7 +132,7 @@ export class KeycloakAuthService implements AuthService {
       }
       this.keycloak.onAuthLogout = () => {
         this.logger.info('[KC event] 2.2 onAuthLogout - SSO session ended, navigating to login')
-        this.clearKCStateFromLocalstorage()
+        clearStoredKeycloakTokens()
         this.keycloak?.login(this.config)
       }
       this.keycloak.onAuthRefreshSuccess = () => {
@@ -159,7 +159,7 @@ export class KeycloakAuthService implements AuthService {
           expiry: expiry ? new Date(expiry * 1000).toISOString() : 'unknown',
         })
       }
-      this.keycloak.onTokenExpired = () => this.handleTokenExpired()
+      this.keycloak.onTokenExpired = () => this.handleTokenExpired().catch((err) => this.handleTokenExpiredFailure(err))
       this.keycloak.onActionUpdate = (state) => {
         this.logger.info(`[KC event] 2.7 onActionUpdate`, { state })
         this.updateLocalStorage()
@@ -192,6 +192,10 @@ export class KeycloakAuthService implements AuthService {
     return (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED)) === 'true'
   }
 
+  private handleTokenExpiredFailure(err: unknown): void {
+    this.logger.error('[KC event] 2.6 onTokenExpired - handler failed', err)
+  }
+
   private async proactivelyRefreshToken(): Promise<void> {
     // A semaphore is used to prevent executing multiple updateToken calls in parallel.
     // The callback awaits updateToken() so the semaphore is held until the refresh settles,
@@ -210,10 +214,6 @@ export class KeycloakAuthService implements AuthService {
     if (this.keycloak) {
       persistKeycloakTokens(this.keycloak)
     }
-  }
-
-  private clearKCStateFromLocalstorage() {
-    clearStoredKeycloakTokens()
   }
 
   private getSilentSSOUrl() {
