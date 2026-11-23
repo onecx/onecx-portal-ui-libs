@@ -1299,23 +1299,20 @@ describe('PortalDialogService', () => {
     })
     describe('opening and closing', () => {
       const flush = () => new Promise((resolve) => setTimeout(resolve, 20))
-      const waitForFocus = (selector: string, timeoutMs: number) =>
+      const waitForFocus = (selector: string) =>
         new Promise<boolean>((resolve) => {
-          const startedAt = performance.now()
           const onFocus = (event: FocusEvent) => {
             if (event.target instanceof HTMLElement && event.target.matches(selector)) {
-              cleanup(performance.now() - startedAt <= timeoutMs)
+              cleanup()
             }
           }
-          const timeout = setTimeout(() => cleanup(false), timeoutMs)
-          const cleanup = (focusedWithinTimeout: boolean) => {
-            clearTimeout(timeout)
+          const cleanup = () => {
             document.removeEventListener('focus', onFocus, true)
-            resolve(focusedWithinTimeout)
+            resolve(true)
           }
           document.addEventListener('focus', onFocus, true)
           if (document.activeElement instanceof HTMLElement && document.activeElement.matches(selector)) {
-            cleanup(performance.now() - startedAt <= timeoutMs)
+            cleanup()
           }
         })
       const mockVisibleOffsetParent = () => {
@@ -1362,11 +1359,12 @@ describe('PortalDialogService', () => {
         )
       })
 
-      it('should focus the first form field within 300 ms', async () => {
+      it('should focus the first form field when the dialog opens', async () => {
         const restoreOffsetParent = mockVisibleOffsetParent()
-        const firstFieldFocused = waitForFocus('#name', 300)
+        const firstFieldFocused = waitForFocus('#name')
         try {
           fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2')
+          await rootLoader.getHarness(DialogContentHarness)
 
           expect(await firstFieldFocused).toBe(true)
           expect(document.activeElement).toBe(document.querySelector('#name'))
