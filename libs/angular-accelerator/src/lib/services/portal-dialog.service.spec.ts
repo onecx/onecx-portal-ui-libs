@@ -1343,7 +1343,7 @@ describe('PortalDialogService', () => {
         )
       })
 
-      it('should focus the first form field within 300 ms of opening (fake timers)', async () => {
+      it('should focus the first form field within 300 ms of opening', async () => {
         const restoreOffsetParent = mockVisibleOffsetParent()
         jest.useFakeTimers()
         try {
