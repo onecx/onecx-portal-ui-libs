@@ -140,16 +140,23 @@ test('staged ranges come from the index for odd names, renames (whole file, cons
   }
 })
 
-test('issues are fetched across pages', async () => {
+test('issues are fetched across pages of the analysed branch, not of a pull request', async () => {
+  const queries = []
   const server = http.createServer((req, res) => {
-    const page = Number(new URL(req.url, 'http://x').searchParams.get('p'))
+    const query = new URL(req.url, 'http://x').searchParams
+    queries.push(query)
+    const page = Number(query.get('p'))
     res.setHeader('content-type', 'application/json')
     res.end(JSON.stringify({ issues: [{ id: page }], paging: { total: 501 } }))
   })
   await new Promise((resolve) => server.listen(0, resolve))
   try {
-    const issues = await fetchIssues(`http://127.0.0.1:${server.address().port}`, 't', 'k', 'pr')
+    const issues = await fetchIssues(`http://127.0.0.1:${server.address().port}`, 't', 'k', 'precommit-x-1')
     assert.deepEqual(issues, [{ id: 1 }, { id: 2 }])
+    for (const query of queries) {
+      assert.equal(query.get('branch'), 'precommit-x-1')
+      assert.equal(query.has('pullRequest'), false)
+    }
   } finally {
     server.close()
   }
