@@ -31,9 +31,7 @@ export const axiosFactory: (baseURL?: string) => AuthenticatedAxiosInstance = (b
       try {
         await authServiceProxy.updateTokenIfNeeded()
       } catch (error) {
-        if ((error as Error).message !== MISSING_PROXY_ERROR) {
-          throw error
-        }
+        if (!(error instanceof Error && error.message === MISSING_PROXY_ERROR)) throw error
       }
 
       const headerValues = authServiceProxy.getHeaderValues()
