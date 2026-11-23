@@ -140,6 +140,25 @@ describe('ActivateGuardsWrapper', () => {
       expect(mockGuard).toHaveBeenCalledWith(route, state)
       expect(result).toBe(redirectCommand)
     })
+
+    it('should return false if one guard fails and another redirects', async () => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
+
+      const failingGuard = jest.fn().mockResolvedValue(false)
+      const redirectingGuard = jest.fn().mockResolvedValue(new UrlTree())
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, [failingGuard, redirectingGuard])
+
+      expect(failingGuard).toHaveBeenCalledWith(route, state)
+      expect(redirectingGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(false)
+    })
   })
 
   describe('ROUTER_SYNC', () => {
@@ -213,12 +232,13 @@ describe('ActivateGuardsWrapper', () => {
       expect(result).toBe(redirectCommand)
     })
 
-    it('should return true if one guard fails and another redirects', async () => {
+    it('should return the redirect if one guard fails and another redirects', async () => {
       const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
       guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.ROUTER_SYNC)
 
       const failingGuard = jest.fn().mockResolvedValue(false)
-      const redirectingGuard = jest.fn().mockResolvedValue(new UrlTree())
+      const urlTree = new UrlTree()
+      const redirectingGuard = jest.fn().mockResolvedValue(urlTree)
       const route = {
         routeConfig: {},
         url: [{ path: 'test' }, { path: 'route' }],
@@ -229,7 +249,7 @@ describe('ActivateGuardsWrapper', () => {
 
       expect(failingGuard).toHaveBeenCalledWith(route, state)
       expect(redirectingGuard).toHaveBeenCalledWith(route, state)
-      expect(result).toBe(true)
+      expect(result).toBe(urlTree)
     })
   })
 

@@ -52,9 +52,14 @@ export class ActivateGuardsWrapper {
       case GUARD_MODE.INITIAL_ROUTER_SYNC:
         return this.executeActivateGuards(logger, route, state, guards, combineToGuardResult)
       // Navigation was already agreed on during the guard check, so only redirects are respected
+      // A redirect wins even if another guard returned false, because false cannot veto here
       case GUARD_MODE.ROUTER_SYNC:
-        return this.executeActivateGuards(logger, route, state, guards, combineToGuardResult).then((result) =>
-          isRedirect(result) ? result : executeRouterSyncGuard()
+        return this.executeActivateGuards(
+          logger,
+          route,
+          state,
+          guards,
+          (results) => results.find((result) => isRedirect(result)) ?? executeRouterSyncGuard()
         )
       // A redirect counts as allowed here: the redirect is performed later during ROUTER_SYNC
       // Returning it would skip GuardsCheckEnd, so the requesting app would wait until the check times out
