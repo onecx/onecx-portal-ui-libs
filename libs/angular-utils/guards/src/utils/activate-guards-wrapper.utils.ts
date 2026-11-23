@@ -12,10 +12,10 @@ import { GuardsGatherer } from '../services/guards-gatherer.service'
 import { GuardsNavigationStateController } from '../services/guards-navigation-controller.service'
 import { GUARD_MODE, GuardsNavigationState } from '../model/guard-navigation.model'
 import {
-  combineToBoolean,
-  combineToGuardResult,
+  combineToActivateGuardResult,
   executeRouterSyncGuard,
   getUrlFromSnapshot,
+  isRedirect,
   logGuardsDebug,
   resolveToPromise,
 } from './guards-utils.utils'
@@ -47,20 +47,24 @@ export class ActivateGuardsWrapper {
       // If navigation cannot be performed, a new event for window.history will be emitted with navigationId === -1
       // This will be handled by the Shell
       // Additionally, during GuardsCheckEnd, the results will be reported so Shell can decide what to do
+      // Redirects (UrlTree or RedirectCommand) are kept so the application can navigate to the redirect target
       case GUARD_MODE.INITIAL_ROUTER_SYNC:
-        return this.executeActivateGuards(logger, route, state, guards, combineToBoolean)
+        return this.executeActivateGuards(logger, route, state, guards, combineToActivateGuardResult)
+      // Navigation was already agreed on during the guard check, so only redirects are respected
       case GUARD_MODE.ROUTER_SYNC:
-        return this.executeActivateGuards(logger, route, state, guards, combineToBoolean).then(() =>
-          executeRouterSyncGuard()
+        return this.executeActivateGuards(logger, route, state, guards, combineToActivateGuardResult).then((result) =>
+          isRedirect(result) ? result : executeRouterSyncGuard()
         )
+      // A redirect counts as allowed here: the redirect is performed later during ROUTER_SYNC
+      // Returning it would skip GuardsCheckEnd, so the requesting app would wait until the check times out
       case GUARD_MODE.GUARD_CHECK:
-        return this.executeActivateGuards(logger, route, state, guards, combineToBoolean).then((result) => {
+        return this.executeActivateGuards(logger, route, state, guards, combineToActivateGuardResult).then((result) => {
           if (result === false) {
             logGuardsDebug('GuardCheck - Route is guarded for activation, resolving false.')
             this.guardsGatherer.resolveRoute(futureUrl, false)
           }
 
-          return result
+          return result !== false
         })
       case GUARD_MODE.NAVIGATION_REQUESTED: {
         //Wait until we received info from others
@@ -76,7 +80,7 @@ export class ActivateGuardsWrapper {
             )
             return false
           }
-          return this.executeActivateGuards(logger, route, state, guards, combineToGuardResult)
+          return this.executeActivateGuards(logger, route, state, guards, combineToActivateGuardResult)
         })
       }
     }
