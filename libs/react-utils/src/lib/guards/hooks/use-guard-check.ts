@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import type { GuardsNavigationState } from '../model/guard-navigation.model'
 import type { GuardsGatherer } from '../services/guards-gatherer'
+import type { WrappedGuards } from '../utils/wrap-guards.utils'
+import { createLogger } from '../utils/logger.utils'
 import { useWrappedGuards } from './use-wrapped-guards'
+
+const logger = createLogger('useGuardCheck')
 
 export interface UseGuardCheckOptions {
   /** Enable or disable the effect. Defaults to true. */
@@ -31,18 +35,45 @@ export function useGuardCheck(options: UseGuardCheckOptions = {}) {
       return
     }
 
-    void wrapped
-      .canMatch()
-      .then((canMatchResult) => (canMatchResult ? wrapped.canActivateChild() : false))
-      .then((canActivateChildResult) => (canActivateChildResult ? wrapped.canActivate() : false))
-      .then((result) => {
-        setLastResult(result)
-        onGuardCheck?.(result)
-      })
+    return runGuardChecks(wrapped, setLastResult, onGuardCheck)
   }, [enabled, wrapped, location.key, onGuardCheck])
 
   return {
     wrapped,
     lastResult,
+  }
+}
+
+/**
+ * Run the canMatch → canActivateChild → canActivate chain and report the result only while the check
+ * is still current, so a result superseded by a newer location is dropped. Rejections are logged.
+ * @param wrapped - wrapped guard helpers to execute.
+ * @param setLastResult - state setter invoked with the check result while the check is still current.
+ * @param onGuardCheck - optional callback invoked with the check result while the check is still current.
+ * @returns cleanup that marks the check as superseded.
+ */
+function runGuardChecks(
+  wrapped: WrappedGuards,
+  setLastResult: (result: boolean) => void,
+  onGuardCheck?: (result: boolean) => void
+): () => void {
+  let cancelled = false
+
+  void wrapped
+    .canMatch()
+    .then((canMatchResult) => (canMatchResult ? wrapped.canActivateChild() : false))
+    .then((canActivateChildResult) => (canActivateChildResult ? wrapped.canActivate() : false))
+    .then((result) => {
+      if (!cancelled) {
+        setLastResult(result)
+        onGuardCheck?.(result)
+      }
+    })
+    .catch((error: unknown) => {
+      logger.error('Guard check failed', error)
+    })
+
+  return () => {
+    cancelled = true
   }
 }
