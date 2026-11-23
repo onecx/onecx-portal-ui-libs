@@ -4,3 +4,8 @@
 .angular
 
 .nx/self-healing
+# Generated Tailwind CSS build output (libs/<lib>/assets/tailwind.css is emitted by the
+# build:styles target). Excluded from prettier for the same reason it is excluded from
+# stylelint (see stylelint.config.mjs): it is regenerated minified by @tailwindcss/cli and
+# prettier's canonical form is not a fixed point the build reproduces.
+libs/*/assets/tailwind.css
