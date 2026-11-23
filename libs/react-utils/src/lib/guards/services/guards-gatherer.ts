@@ -82,11 +82,13 @@ export class GuardsGatherer {
   }
 
   /**
-   * Deactivate gatherer and clear pending checks.
+   * Deactivate gatherer, settle every pending check with the blocking answer, and clear them.
    */
   deactivate(): void {
     this.guardsGatherer?.destroy()
-    delete this.guardsChecks
+    this.guardsChecks?.forEach((resolve) => resolve(false))
+    this.guardsChecks = undefined
+    this.guardsGatherer = undefined
   }
 
   private executeGuardsCallback(request: GuardResultRequest): Promise<GuardResultResponse> {
