@@ -2,7 +2,9 @@ import {
   logGuardsDebug,
   executeRouterSyncGuard,
   combineToGuardResult,
+  combineToActivateGuardResult,
   combineToBoolean,
+  isRedirect,
   resolveToPromise,
   getUrlFromSnapshot,
 } from './guards-utils.utils'
@@ -87,6 +89,42 @@ describe('combineToGuardResult', () => {
     const results = [true, true, true]
     const result = combineToGuardResult(results)
     expect(result).toBe(true)
+  })
+})
+
+describe('combineToActivateGuardResult', () => {
+  it('should return false if any guard result is false and no guard redirects', () => {
+    const result = combineToActivateGuardResult([true, false, true])
+    expect(result).toBe(false)
+  })
+
+  it('should return the redirect if guard results contain false and a redirect, independent of the order', () => {
+    const mockUrlTree = new UrlTree()
+    expect(combineToActivateGuardResult([false, mockUrlTree])).toBe(mockUrlTree)
+    expect(combineToActivateGuardResult([mockUrlTree, false])).toBe(mockUrlTree)
+  })
+
+  it('should return the first RedirectCommand if any guard result is a RedirectCommand', () => {
+    const mockRedirectCommand = new RedirectCommand(new UrlTree())
+    const result = combineToActivateGuardResult([true, mockRedirectCommand, new UrlTree()])
+    expect(result).toBe(mockRedirectCommand)
+  })
+
+  it('should return true if all guard results are true', () => {
+    const result = combineToActivateGuardResult([true, true, true])
+    expect(result).toBe(true)
+  })
+})
+
+describe('isRedirect', () => {
+  it('should return true for UrlTree and RedirectCommand', () => {
+    expect(isRedirect(new UrlTree())).toBe(true)
+    expect(isRedirect(new RedirectCommand(new UrlTree()))).toBe(true)
+  })
+
+  it('should return false for boolean results', () => {
+    expect(isRedirect(true)).toBe(false)
+    expect(isRedirect(false)).toBe(false)
   })
 })
 
