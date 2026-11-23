@@ -14,6 +14,7 @@ const {
   executeRouterSyncGuard,
   combineToGuardResult,
   combineToBoolean,
+  isRedirect,
   resolveToPromise,
   getUrlFromSnapshot,
 } = guardsUtils
@@ -82,6 +83,18 @@ describe('combineToGuardResult', () => {
     const results = [true, true, true]
     const result = combineToGuardResult(results)
     expect(result).toBe(true)
+  })
+})
+
+describe('isRedirect', () => {
+  it('should return true for UrlTree and RedirectCommand', () => {
+    expect(isRedirect(new UrlTree())).toBe(true)
+    expect(isRedirect(new RedirectCommand(new UrlTree()))).toBe(true)
+  })
+
+  it('should return false for boolean results', () => {
+    expect(isRedirect(true)).toBe(false)
+    expect(isRedirect(false)).toBe(false)
   })
 })
 
