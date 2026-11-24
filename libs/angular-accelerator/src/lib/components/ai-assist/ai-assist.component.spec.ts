@@ -234,9 +234,11 @@ describe('AiAssistComponent', () => {
       `label[for="${component.uid}-suggestion"]`
     ) as HTMLLabelElement
     const statusIcon = fixture.nativeElement.querySelector('.ocx-ai-assist__review-status i') as HTMLElement
-    const leftActions = fixture.nativeElement.querySelector('.ocx-ai-assist__review-secondary-actions') as HTMLElement
+    const actionsRow = fixture.nativeElement.querySelector('.ocx-ai-assist__actions') as HTMLElement
+    const rightActions = fixture.nativeElement.querySelector('.ocx-ai-assist__review-secondary-actions') as HTMLElement
     const retryButton = fixture.debugElement.query(By.css('.ocx-ai-assist__try-again'))
     const replaceButton = fixture.debugElement.query(By.css('.ocx-ai-assist__replace'))
+    const editSettingsButton = fixture.debugElement.query(By.css('.ocx-ai-assist__edit-settings'))
 
     expect(beforeLabel.textContent?.trim()).toBe('Before')
     expect(beforeLabel.parentElement).toBe(before.parentElement)
@@ -246,8 +248,10 @@ describe('AiAssistComponent', () => {
     expect(suggestionLabel.parentElement?.classList).not.toContain('p-floatlabel')
     expect(statusIcon.classList).toContain('pi-check')
     expect(statusIcon.classList).not.toContain('pi-check-circle')
-    expect(leftActions.contains(retryButton.nativeElement)).toBe(true)
-    expect(retryButton.nativeElement.compareDocumentPosition(replaceButton.nativeElement)).toBe(
+    expect(actionsRow.firstElementChild).toBe(retryButton.nativeElement)
+    expect(rightActions.contains(editSettingsButton.nativeElement)).toBe(true)
+    expect(rightActions.contains(replaceButton.nativeElement)).toBe(true)
+    expect(editSettingsButton.nativeElement.compareDocumentPosition(replaceButton.nativeElement)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING
     )
     expect(retryButton.componentInstance.text).toBe(true)
