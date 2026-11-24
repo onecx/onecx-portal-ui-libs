@@ -44,7 +44,7 @@ function makeWrapped(overrides: Partial<WrappedGuards> = {}): WrappedGuards {
 }
 
 function deferred(): { promise: Promise<boolean>; resolve: (value: boolean) => void } {
-  let resolve: (value: boolean) => void = () => {}
+  let resolve: (value: boolean) => void = () => undefined
   const promise = new Promise<boolean>((done) => {
     resolve = done
   })
@@ -65,7 +65,7 @@ describe('useGuardCheck', () => {
   it('given the hook is used without options and the only guard check resolves true, when it completes, then lastResult is true', async () => {
     const { result } = renderGuardCheck(makeWrapped())
 
-    await act(async () => {})
+    await act(async () => undefined)
 
     expect(result.current.lastResult).toBe(true)
   })
@@ -82,7 +82,7 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrappedB)
     rerender()
 
-    await act(async () => {})
+    await act(async () => undefined)
     await act(async () => {
       pendingA.resolve(true)
     })
@@ -98,7 +98,7 @@ describe('useGuardCheck', () => {
 
     const { result } = renderGuardCheck(wrapped, onGuardCheck)
 
-    await act(async () => {})
+    await act(async () => undefined)
 
     expect(mockLogger.error).toHaveBeenCalledWith('Guard check failed', expect.any(Error))
     expect(onGuardCheck).not.toHaveBeenCalled()
@@ -112,7 +112,7 @@ describe('useGuardCheck', () => {
 
     const { result } = renderGuardCheck(makeWrapped(), onGuardCheck)
 
-    await act(async () => {})
+    await act(async () => undefined)
 
     expect(mockLogger.error).toHaveBeenCalledWith('onGuardCheck callback failed', expect.any(Error))
     expect(result.current.lastResult).toBe(true)
