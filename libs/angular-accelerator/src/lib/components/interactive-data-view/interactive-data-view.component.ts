@@ -20,7 +20,7 @@ import {
   signal,
   untracked,
   viewChild,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
@@ -581,6 +581,11 @@ export class InteractiveDataViewComponent implements OnInit {
     this.stateService.activeColumnGroupKey.set(value)
   }
 
+  /** The currently selected column group key, as held in the data view state. */
+  get selectedGroupKey(): string | undefined {
+    return this.stateService.activeColumnGroupKey()
+  }
+
   @Input()
   set data(value: RowListGridData[]) {
     this.stateService.data.set(value)
@@ -609,9 +614,7 @@ export class InteractiveDataViewComponent implements OnInit {
     })
     this.destroyRef.onDestroy(() => subscription.unsubscribe())
 
-    effect(() => {
-      this.registerEventListenerForDataView()
-    })
+    effect(() => this.registerEventListenerForDataView())
 
     effect(() => {
       const filters = this.stateService.filters()
@@ -642,10 +645,7 @@ export class InteractiveDataViewComponent implements OnInit {
       this.pageSizeChanged.emit(pageSize)
     })
 
-    effect(() => {
-      const displayedColumnKeys = this.displayedColumnKeys()
-      this.displayedColumnKeysChange.emit(displayedColumnKeys)
-    })
+    effect(() => this.displayedColumnKeysChange.emit(this.displayedColumnKeys()))
 
     effect(() => {
       this.componentStateChanged.emit({
