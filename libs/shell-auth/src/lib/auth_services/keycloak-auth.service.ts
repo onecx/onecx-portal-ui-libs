@@ -80,7 +80,7 @@ export class KeycloakAuthService implements AuthService {
 
     await this.setupEventListener()
 
-    return this.completeInit({
+    return this.completeInit(this.keycloak, {
       onLoad: 'check-sso',
       checkLoginIframe: false,
       silentCheckSsoRedirectUri: enableSilentSSOCheck ? this.getSilentSSOUrl() : undefined,
@@ -91,10 +91,10 @@ export class KeycloakAuthService implements AuthService {
     })
   }
 
-  private async completeInit(options: KeycloakInitOptions): Promise<boolean> {
+  private async completeInit(keycloak: Keycloak, options: KeycloakInitOptions): Promise<boolean> {
     let authenticated
     try {
-      authenticated = await this.keycloak?.init(options)
+      authenticated = await keycloak.init(options)
     } catch (err) {
       this.logger.warn(`Keycloak err: ${err}, try force login`)
     }
@@ -102,7 +102,7 @@ export class KeycloakAuthService implements AuthService {
       return true
     }
     try {
-      await this.keycloak?.login(this.config)
+      await keycloak.login(this.config)
     } catch (err) {
       this.logger.error(`KC ERROR ${err} as json ${JSON.stringify(err)}`)
       throw err
