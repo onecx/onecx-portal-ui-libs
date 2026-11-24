@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { By } from '@angular/platform-browser'
 import { Select } from '@openng/optimus-ui/select'
 import { TranslateModule } from '@ngx-translate/core'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { expectNoAxeViolations, provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -39,6 +39,29 @@ describe('DataListGridSortingComponent', () => {
   it('should create', () => {
     fixture.detectChanges()
     expect(component).toBeTruthy()
+  })
+
+  describe('accessibility', () => {
+    beforeEach(async () => {
+      fixture.componentRef.setInput('columns', [makeColumn({ id: 'a', nameKey: 'Column A', sortable: true })])
+      stateService.sortColumn.set('a')
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+    })
+
+    it('should have no axe violations', async () => {
+      await expectNoAxeViolations(fixture.nativeElement)
+    })
+
+    it('should render the selected sorting option as text without aria-label on the role-less span', () => {
+      const combobox: HTMLElement = fixture.nativeElement.querySelector(
+        '#dataListGridSortingDropdown span[role="combobox"]'
+      )
+
+      expect(combobox.textContent).toContain('Column A')
+      expect(fixture.nativeElement.querySelectorAll('span[aria-label]:not([role])').length).toBe(0)
+    })
   })
 
   it('should not autofocus the sorting select', () => {

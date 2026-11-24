@@ -43,7 +43,13 @@ describe('DiagramComponent', () => {
     window.__setForcedColorsActive?.(false)
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
-      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorOptimusModule, TranslateModule.forRoot(), OcxTooltipDirective],
+      imports: [
+        NoopAnimationsModule,
+        FormsModule,
+        AngularAcceleratorOptimusModule,
+        TranslateModule.forRoot(),
+        OcxTooltipDirective,
+      ],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -149,6 +155,21 @@ describe('DiagramComponent', () => {
     expect(component.shownDiagramTypes()).toEqual(expectedDiagramLayouts)
     expect(diagramTypeSelectButton).toBeTruthy()
     expect(diagramTypeSelectButtonOptions.length).toBe(2)
+  })
+
+  // The unit-test axe run (happy-dom) does not flag a nameless custom-element host with role="button" (p-togglebutton),
+  // so the sr-only DOM assertion is the guard for the button names. The Storybook axe run covers button-name.
+  it('should give every diagram type toggle button a visually hidden accessible name', async () => {
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const toggleButtons: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('p-togglebutton'))
+    expect(toggleButtons.map((button) => button.querySelector('.sr-only')?.textContent?.trim())).toEqual([
+      'Switch to pie chart',
+      'Switch to horizontal bar chart',
+    ])
+    toggleButtons.forEach((button) => expect(button.querySelector('.sr-only')?.closest('[aria-hidden]')).toBeNull())
   })
 
   it('should change the rendered diagram whenever the select button is used to change the diagramType', async () => {
@@ -330,7 +351,7 @@ describe('DiagramComponent', () => {
     component.diagramType.set(DiagramType.PIE)
     expect(component.useFullHeight()).toBe(false)
   })
-  
+
   it('should emit data clicked event', async () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const chartHarness = await diagram.getChart()
