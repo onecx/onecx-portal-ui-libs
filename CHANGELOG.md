@@ -1,3 +1,37 @@
+## [9.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.3.0...v9.4.0) (2026-11-23)
+
+### Features
+
+* **ci:** add automatic and manual AI pull request reviews ([#1990](https://github.com/onecx/onecx-portal-ui-libs/issues/1990)) ([bbc5340](https://github.com/onecx/onecx-portal-ui-libs/commit/bbc5340030bb805b0ff3c0e18bfafda127397a80))
+
+### Bug Fixes
+
+* **a11y:** dialog accessible name, description and named close button ([#1902](https://github.com/onecx/onecx-portal-ui-libs/issues/1902)) ([42b6c57](https://github.com/onecx/onecx-portal-ui-libs/commit/42b6c57e4f9cadf1c6f19bfdca3aed244c73926a)), closes [onecx/internal-tasks#1099](https://github.com/onecx/internal-tasks/issues/1099) [onecx/internal-tasks#1100](https://github.com/onecx/internal-tasks/issues/1100)
+* **a11y:** dialogs move focus inside and restore it to the opener on close ([#1912](https://github.com/onecx/onecx-portal-ui-libs/issues/1912)) ([a68b547](https://github.com/onecx/onecx-portal-ui-libs/commit/a68b5476ef3c35137ef1b6e29c4310afcd2d77b9)), closes [onecx/internal-tasks#1099](https://github.com/onecx/internal-tasks/issues/1099)
+* **a11y:** Reflow dialog header, content and footer at 320x256 ([#1888](https://github.com/onecx/onecx-portal-ui-libs/issues/1888)) ([7ed08c4](https://github.com/onecx/onecx-portal-ui-libs/commit/7ed08c47204176afda0bd4fd382cc4502ed7c8ac)), closes [onecx/internal-tasks#1114](https://github.com/onecx/internal-tasks/issues/1114)
+* Add shared pre-commit QA hooks to onecx-portal-ui-libs ([#1976](https://github.com/onecx/onecx-portal-ui-libs/issues/1976)) ([6cad4bc](https://github.com/onecx/onecx-portal-ui-libs/commit/6cad4bc75434478699d273bd2cdc49c71a090f52))
+* **angular-accelerator:** disable autofocus in custom-group-column-selector ([#1931](https://github.com/onecx/onecx-portal-ui-libs/issues/1931)) ([17c0bd4](https://github.com/onecx/onecx-portal-ui-libs/commit/17c0bd44b49b1b498ad0501a42cd6aa11ac79d58)), closes [onecx/internal-tasks#515](https://github.com/onecx/internal-tasks/issues/515)
+* **angular-accelerator:** disable autofocus on p-selectbutton in data-layout-selection ([#1932](https://github.com/onecx/onecx-portal-ui-libs/issues/1932)) ([bd46747](https://github.com/onecx/onecx-portal-ui-libs/commit/bd46747390ba38beeafd57daecc91f9f35b07d17)), closes [onecx/internal-tasks#517](https://github.com/onecx/internal-tasks/issues/517)
+* **angular-accelerator:** disable autofocus on table checkboxes in data-table ([#1933](https://github.com/onecx/onecx-portal-ui-libs/issues/1933)) ([cd813a1](https://github.com/onecx/onecx-portal-ui-libs/commit/cd813a106f40b0275e435e1e7b2b888a0eeeaed4)), closes [onecx/internal-tasks#518](https://github.com/onecx/internal-tasks/issues/518)
+* **angular-accelerator:** show data table filter tooltip above the icon ([#1980](https://github.com/onecx/onecx-portal-ui-libs/issues/1980)) ([8485de5](https://github.com/onecx/onecx-portal-ui-libs/commit/8485de598654a1dddcd5751aeccf16897a03dd7d))
+* **angular-utils:** keep guard redirects in every guard mode ([#2008](https://github.com/onecx/onecx-portal-ui-libs/issues/2008)) ([a1d906e](https://github.com/onecx/onecx-portal-ui-libs/commit/a1d906e24d83d13a19abe93fef96c145aa810db2))
+* **ci:** dispatch AI reviews with the PR author's own token ([#1994](https://github.com/onecx/onecx-portal-ui-libs/issues/1994)) ([a7294c2](https://github.com/onecx/onecx-portal-ui-libs/commit/a7294c23e6ecb7e918e928e281962c61d5085bba))
+* **ci:** load AI review automation from main for all PR targets ([#1992](https://github.com/onecx/onecx-portal-ui-libs/issues/1992)) ([ee269fe](https://github.com/onecx/onecx-portal-ui-libs/commit/ee269fe3a5d0a855ed44d66f7a80efd72ebb0cd8))
+* **ci:** verify author access when association hides team membership ([#1991](https://github.com/onecx/onecx-portal-ui-libs/issues/1991)) ([b860d69](https://github.com/onecx/onecx-portal-ui-libs/commit/b860d6944aa8be73567d5cc4d88270e1ec83873e))
+* data table filter icon tooltip ([#1961](https://github.com/onecx/onecx-portal-ui-libs/issues/1961)) ([6501f40](https://github.com/onecx/onecx-portal-ui-libs/commit/6501f4055060b544e5b3a567b4dcc3c45349084d))
+* **data-table:** translate selected translation_key filter when its rows are absent ([#1822](https://github.com/onecx/onecx-portal-ui-libs/issues/1822)) ([49be8d2](https://github.com/onecx/onecx-portal-ui-libs/commit/49be8d2edaa2813243db158e91dc6ac2946e5b38)), closes [#1819](https://github.com/onecx/onecx-portal-ui-libs/issues/1819) [onecx/onecx-portal-ui-libs#1819](https://github.com/onecx/onecx-portal-ui-libs/issues/1819)
+* implement issue [#714](https://github.com/onecx/onecx-portal-ui-libs/issues/714) - Filter action (icon) not accessible via TAB ([#1826](https://github.com/onecx/onecx-portal-ui-libs/issues/1826)) ([49d641b](https://github.com/onecx/onecx-portal-ui-libs/commit/49d641b986742c91c60a63fc7aa2887423421b12))
+* make the pre-commit gates work for new code ([#1996](https://github.com/onecx/onecx-portal-ui-libs/issues/1996)) ([4a07d59](https://github.com/onecx/onecx-portal-ui-libs/commit/4a07d599e99baa4f7ad285eb13553715245509c6))
+* use a branch analysis instead of a synthetic pull request in sonar:staged ([#2009](https://github.com/onecx/onecx-portal-ui-libs/issues/2009)) ([719db1b](https://github.com/onecx/onecx-portal-ui-libs/commit/719db1b3d04036b107c3e906160f78727a53c872))
+
+### Chores
+
+* **deps-dev:** bump jest-environment-jsdom from 30.4.1 to 30.5.2 ([#1831](https://github.com/onecx/onecx-portal-ui-libs/issues/1831)) ([d8398c1](https://github.com/onecx/onecx-portal-ui-libs/commit/d8398c19bdf087c09284af5e1c4efd9fe2e6497c))
+* **deps-dev:** bump jest-environment-node from 30.4.1 to 30.5.2 ([#1975](https://github.com/onecx/onecx-portal-ui-libs/issues/1975)) ([355bca9](https://github.com/onecx/onecx-portal-ui-libs/commit/355bca9794143bcfc045026afa61360f87d8cba7))
+* **deps-dev:** bump postcss-import from 16.1.1 to 16.2.0 ([#1833](https://github.com/onecx/onecx-portal-ui-libs/issues/1833)) ([5612080](https://github.com/onecx/onecx-portal-ui-libs/commit/56120805455a42ecc8499631f0bc65ceda63c226))
+* **deps:** bump zod from 4.4.3 to 4.6.7 ([#1835](https://github.com/onecx/onecx-portal-ui-libs/issues/1835)) ([87783f4](https://github.com/onecx/onecx-portal-ui-libs/commit/87783f46b53ea767d42df2246e4cf2b260c1f372))
+* disable dependabot version update PRs ([#1988](https://github.com/onecx/onecx-portal-ui-libs/issues/1988)) ([785c911](https://github.com/onecx/onecx-portal-ui-libs/commit/785c911c07f9e6025e7237a1b72970247f36f498))
+
 ## [9.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.2.0...v9.3.0) (2026-11-13)
 
 ### Features
