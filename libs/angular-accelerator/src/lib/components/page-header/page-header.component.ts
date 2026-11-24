@@ -21,7 +21,7 @@ import {
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
-import { Observable, concat, map, of, switchMap, tap } from 'rxjs'
+import { Observable, concat, forkJoin, map, of, switchMap, tap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
@@ -87,6 +87,13 @@ export interface HomeItem {
 
 export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
 
+/** Source of an accessible name: either a translation key (with parameters) or a literal text. */
+export interface NameSource {
+  key?: string
+  parameters?: Record<string, unknown>
+  text?: string
+}
+
 @Component({
   standalone: false,
   selector: 'ocx-page-header',
@@ -146,14 +153,18 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   overflowActions$: Observable<MenuItem[]> = toObservable(this.actions).pipe(
     map(this.filterOverflowActions),
     switchMap((actions) => {
-      return this.getActionTranslationKeys(actions).pipe(map((translations) => ({ actions, translations })))
-    }),
-    switchMap(({ actions, translations }) => {
-      return this.filterActionsBasedOnPermissions(actions).pipe(
-        map((filteredActions) => ({ filteredActions, translations }))
+      return forkJoin([this.getActionTranslationKeys(actions), this.getActionAriaNames(actions)]).pipe(
+        map(([translations, ariaNames]) => ({ actions, translations, ariaNames }))
       )
     }),
-    map(({ filteredActions, translations }) => this.mapOverflowActionsToMenuItems(filteredActions, translations))
+    switchMap(({ actions, translations, ariaNames }) => {
+      return this.filterActionsBasedOnPermissions(actions).pipe(
+        map((filteredActions) => ({ filteredActions, translations, ariaNames }))
+      )
+    }),
+    map(({ filteredActions, translations, ariaNames }) =>
+      this.mapOverflowActionsToMenuItems(filteredActions, translations, ariaNames)
+    )
   )
   inlineActions$: Observable<Action[]> = toObservable(this.actions).pipe(
     map(this.filterInlineActions),
@@ -246,40 +257,35 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   private readonly warnedItems = new Set<string>()
 
-  private translateKey(key: TranslationKey | undefined): string | undefined {
+  private toNameSource(key: TranslationKey | undefined): NameSource | undefined {
     if (!key) return undefined
-    const translated =
-      typeof key === 'string'
-        ? this.translateService.instant(key)
-        : this.translateService.instant(key.key, key.parameters)
-    return translated || undefined
+    return typeof key === 'string' ? { key } : { key: key.key, parameters: key.parameters }
   }
 
   /**
-   * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
+   * Accessible name source of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
    * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
+   * The template translates the returned key with the translate pipe.
    */
-  getInlineActionAriaLabel(action: Action): string | undefined {
-    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
-    if (visibleLabel) return undefined
+  getInlineActionAriaLabel(action: Action): NameSource | undefined {
+    if (action.labelKey || action.label) return undefined
     return (
-      this.translateKey(action.ariaLabelKey) ||
-      action.ariaLabel ||
-      this.translateKey(action.titleKey) ||
-      action.title ||
-      undefined
+      this.toNameSource(action.ariaLabelKey) ||
+      (action.ariaLabel ? { text: action.ariaLabel } : undefined) ||
+      this.toNameSource(action.titleKey) ||
+      (action.title ? { text: action.title } : undefined)
     )
   }
 
   /**
-   * Accessible name of the object detail action button:
+   * Accessible name source of the object detail action button:
    * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
    */
-  getActionItemAriaLabel(item: ObjectDetailItem): string {
+  getActionItemAriaLabel(item: ObjectDetailItem): NameSource {
     const name =
-      this.translateKey(item.actionItemAriaLabelKey) ||
-      item.actionItemAriaLabel ||
-      this.translateKey(item.actionItemTooltipKey)
+      this.toNameSource(item.actionItemAriaLabelKey) ||
+      (item.actionItemAriaLabel ? { text: item.actionItemAriaLabel } : undefined) ||
+      this.toNameSource(item.actionItemTooltipKey)
     if (name) return name
     if (isDevMode() && !this.warnedItems.has(item.label)) {
       this.warnedItems.add(item.label)
@@ -287,12 +293,12 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
         `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
       )
     }
-    return item.label
+    return { text: item.label }
   }
 
-  /** Text alternative for an icon-only object detail value. */
-  getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
-    return this.translateKey(item.valueTooltipKey)
+  /** Text alternative source for an icon-only object detail value. */
+  getIconOnlyDetailText(item: ObjectDetailItem): NameSource | undefined {
+    return this.toNameSource(item.valueTooltipKey)
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {
@@ -348,10 +354,23 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     return translationKeys.length ? this.translateService.get(translationKeys) : of({})
   }
 
-  private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
+  private getActionAriaNames(actions: Action[]): Observable<Map<Action, string | undefined>> {
+    const names = actions.map((a) => {
+      const source = this.getInlineActionAriaLabel(a)
+      const name$ = source?.key ? this.translateService.get(source.key, source.parameters) : of(source?.text)
+      return name$.pipe(map((name): [Action, string | undefined] => [a, name || undefined]))
+    })
+    return names.length ? forkJoin(names).pipe(map((entries) => new Map(entries))) : of(new Map())
+  }
+
+  private mapOverflowActionsToMenuItems(
+    actions: Action[],
+    translations: { [key: string]: string },
+    ariaNames: Map<Action, string | undefined>
+  ): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
       id: a.id,
-      label: a.labelKey ? translations[a.labelKey] : a.label || this.getInlineActionAriaLabel(a),
+      label: a.labelKey ? translations[a.labelKey] : a.label || ariaNames.get(a),
       icon: a.icon,
       tooltipOptions: {
         tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,

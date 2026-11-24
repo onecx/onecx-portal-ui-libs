@@ -785,7 +785,9 @@ describe('PageHeaderComponent', () => {
     it('should use grid layout classes when grid view is enabled', () => {
       fixture.componentRef.setInput('enableGridView', true)
       expect(component.objectPanelLayoutClasses()).toBe('grid grid-cols-12 gap-y-2 m-0')
-      expect(component.objectInfoLayoutClasses()).toBe('col-span-12 flex gap-4 md:col-span-6 items-center p-0 lg:col-span-4')
+      expect(component.objectInfoLayoutClasses()).toBe(
+        'col-span-12 flex gap-4 md:col-span-6 items-center p-0 lg:col-span-4'
+      )
     })
 
     it('should divide 12 by the grid column count when gridLayoutDesktopColumns is set', () => {
@@ -952,18 +954,31 @@ describe('PageHeaderComponent', () => {
       expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title only')
     })
 
-    it('should resolve inline action names from translation keys and fall back through the chain', () => {
+    it('should resolve inline action names from translation keys and fall back through the chain', async () => {
       const translate = TestBed.inject(TranslateService)
-      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key', EMPTY: '' })
+      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key' })
       translate.use('en')
       expect(component.getInlineActionAriaLabel({ labelKey: 'LBL', ariaLabel: 'x' } as Action)).toBeUndefined()
-      expect(
-        component.getInlineActionAriaLabel({ ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } } as Action)
-      ).toBe('Hello World')
-      expect(component.getInlineActionAriaLabel({ ariaLabelKey: 'EMPTY', titleKey: 'TITLE' } as Action)).toBe(
-        'Title key'
-      )
       expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
+      expect(component.getInlineActionAriaLabel({ titleKey: 'TITLE' } as Action)).toEqual({ key: 'TITLE' })
+
+      fixture.componentRef.setInput('actions', [
+        {
+          id: 'a1',
+          icon: 'pi pi-lock',
+          ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } },
+          show: 'always',
+          actionCallback: cb,
+        },
+        { id: 'a2', icon: 'pi pi-lock', titleKey: 'TITLE', show: 'always', actionCallback: cb },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('#a1 button, button#a1').getAttribute('aria-label')).toBe(
+        'Hello World'
+      )
+      expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title key')
     })
 
     it('should fall back to the accessible name chain for icon-only overflow actions without a label', async () => {
