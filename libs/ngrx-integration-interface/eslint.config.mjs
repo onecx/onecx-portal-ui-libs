@@ -1,11 +1,12 @@
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
-import baseConfig from '../../eslint.config.mjs'
+import baseConfig, { ngrxLinterRulesConfig } from '../../eslint.config.mjs'
 import nx from '@nx/eslint-plugin'
 import jsoncEslintParser from 'jsonc-eslint-parser'
 
 export default [
   ...baseConfig,
+  ngrxLinterRulesConfig,
   ...nx.configs['flat/angular'],
   {
     files: ['**/*.ts'],
