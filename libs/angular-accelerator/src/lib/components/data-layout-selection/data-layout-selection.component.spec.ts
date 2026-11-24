@@ -6,6 +6,7 @@ import { By } from '@angular/platform-browser'
 import { SelectButton, SelectButtonModule } from '@openng/optimus-ui/selectbutton'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 
 describe('DataLayoutSelectionComponent', () => {
   let component: DataLayoutSelectionComponent
@@ -23,6 +24,11 @@ describe('DataLayoutSelectionComponent', () => {
     fixture = TestBed.createComponent(DataLayoutSelectionComponent)
     component = fixture.componentInstance
     stateService = TestBed.inject(DataViewStateService)
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create', () => {

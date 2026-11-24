@@ -3,7 +3,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { PTableCheckboxHarness } from '@onecx/angular-testing'
+import { PTableCheckboxHarness, expectNoAxeViolations } from '@onecx/angular-testing'
 import { DataTableHarness, provideTranslateTestingService } from '../../../../testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
@@ -21,6 +21,8 @@ import { Component, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@ang
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 import { planRowGroups } from '../../utils/row-grouping-planner'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
@@ -31,8 +33,7 @@ import { ResultsAnnouncementService } from '../../services/results-announcement.
 // raise the test/hook ceiling to keep the assertions deterministic rather than timing-flaky.
 jest.setTimeout(60000)
 
-@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
- template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 class TestRouteComponent {}
 
 @Component({
@@ -52,10 +53,14 @@ class GroupingHostComponent {
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-data-table [rows]="rows" [columns]="columns" [rowGrouping]="rowGrouping">
-      <ng-template #groupCell let-groupKey="groupKey" let-memberCount="memberCount" let-rowObject="rowObject" let-column="column">
-        <span data-testid="custom-group">
-          CUSTOM:[{{ groupKey }}] members={{ memberCount }}
-        </span>
+      <ng-template
+        #groupCell
+        let-groupKey="groupKey"
+        let-memberCount="memberCount"
+        let-rowObject="rowObject"
+        let-column="column"
+      >
+        <span data-testid="custom-group"> CUSTOM:[{{ groupKey }}] members={{ memberCount }} </span>
       </ng-template>
     </ocx-data-table>
   `,
@@ -286,7 +291,7 @@ describe('DataTableComponent', () => {
     fixture = TestBed.createComponent(DataTableComponent)
     component = fixture.componentInstance
     component.rows.set(mockData as any)
-    component.columns = (mockColumns as any)
+    component.columns = mockColumns as any
     fixture.componentRef.setInput('paginator', true)
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
@@ -295,6 +300,10 @@ describe('DataTableComponent', () => {
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     router = TestBed.inject(Router)
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create the data table component', () => {
@@ -345,7 +354,8 @@ describe('DataTableComponent', () => {
       translateService.setTranslation('en', { COLUMN_HEADER_NAME: { NAME: 'Name' } }, true)
     })
 
-    const getLabel = (): HTMLElement => fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+    const getLabel = (): HTMLElement =>
+      fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
 
     const getTooltipText = (label: HTMLElement) =>
       document.getElementById(label.getAttribute('aria-describedby') ?? '')?.querySelector('.p-tooltip-text')
@@ -579,13 +589,13 @@ describe('DataTableComponent', () => {
         }
       })
     )
-    component.columns = ([
+    component.columns = [
       {
         columnType: ColumnType.NUMBER,
         id: 'name',
         nameKey: 'COLUMN_HEADER_NAME.NAME',
       },
-    ])
+    ]
     fixture.componentRef.setInput('paginator', true)
     fixture.detectChanges()
 
@@ -723,14 +733,14 @@ describe('DataTableComponent', () => {
   })
 
   const setUpActionButtonMockData = async () => {
-    component.columns = ([
+    component.columns = [
       ...mockColumns,
       {
         columnType: ColumnType.STRING,
         id: 'ready',
         nameKey: 'Ready',
       },
-    ] as any)
+    ] as any
 
     component.rows.set([
       {
@@ -958,7 +968,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should assign id to additional action button', async () => {
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           permission: 'VIEW',
           callback: () => {
@@ -966,7 +976,7 @@ describe('DataTableComponent', () => {
           },
           id: 'actionId',
         },
-      ])
+      ]
       fixture.detectChanges()
       await fixture.whenStable()
 
@@ -1007,7 +1017,7 @@ describe('DataTableComponent', () => {
       fixture.componentRef.setInput('viewPermission', 'TABLE#VIEW')
       fixture.componentRef.setInput('editPermission', 'TABLE#EDIT')
       fixture.componentRef.setInput('deletePermission', 'TABLE#DELETE')
-      component.additionalActions = ([])
+      component.additionalActions = []
 
       fixture.detectChanges()
 
@@ -1033,7 +1043,7 @@ describe('DataTableComponent', () => {
     it('should show custom inline actions if user has permission', async () => {
       userService.permissionsTopic$.publish(['ADDITIONAL#VIEW'])
 
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           permission: 'ADDITIONAL#VIEW',
           callback: () => {
@@ -1041,7 +1051,7 @@ describe('DataTableComponent', () => {
           },
           id: 'actionId',
         },
-      ])
+      ]
       fixture.detectChanges()
 
       const tableActions = await dataTable.getActionButtons()
@@ -1058,7 +1068,7 @@ describe('DataTableComponent', () => {
     it('should show overflow menu when user has permission for at least one action', async () => {
       userService.permissionsTopic$.publish(['OVERFLOW#VIEW'])
 
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           permission: 'OVERFLOW#VIEW',
           callback: () => {
@@ -1068,7 +1078,7 @@ describe('DataTableComponent', () => {
           labelKey: 'Label',
           showAsOverflow: true,
         },
-      ])
+      ]
       fixture.detectChanges()
 
       await (await dataTable.getOverflowActionMenuButton())?.click()
@@ -1088,7 +1098,7 @@ describe('DataTableComponent', () => {
     it('should display action buttons based on multiple permissions', async () => {
       userService.permissionsTopic$.publish(['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2', 'OVERFLOW#VIEW', 'OVERFLOW#VIEW2'])
 
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           permission: ['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2'],
           callback: () => {
@@ -1105,7 +1115,7 @@ describe('DataTableComponent', () => {
           labelKey: 'Label',
           showAsOverflow: true,
         },
-      ])
+      ]
       fixture.detectChanges()
 
       const tableActions = await dataTable.getActionButtons()
@@ -1144,17 +1154,17 @@ describe('DataTableComponent', () => {
             ready: false,
           },
         ] as any)
-        component.additionalActions = ([])
+        component.additionalActions = []
       })
       it('should render inline action button with routerLink', async () => {
         jest.spyOn(console, 'log')
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'routerLinkAction',
             routerLink: '/inline',
             permission: 'VIEW',
           },
-        ])
+        ]
         fixture.detectChanges()
         await fixture.whenStable()
 
@@ -1170,14 +1180,14 @@ describe('DataTableComponent', () => {
       it('should render overflow action button with routerLink', async () => {
         jest.spyOn(console, 'log')
 
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'routerLinkAction',
             routerLink: '/overflow',
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ])
+        ]
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -1196,13 +1206,13 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkFunction = jest.fn(() => '/function-link')
 
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'functionRouterLink',
             routerLink: routerLinkFunction,
             permission: 'VIEW',
           },
-        ])
+        ]
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1215,13 +1225,13 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
 
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'promiseFunctionRouterLink',
             routerLink: routerLinkPromiseFunction,
             permission: 'VIEW',
           },
-        ])
+        ]
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1233,13 +1243,13 @@ describe('DataTableComponent', () => {
       it('should handle routerLink as Promise<string>', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
 
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'promiseRouterLink',
             routerLink: Promise.resolve('/promise-link'),
             permission: 'VIEW',
           },
-        ])
+        ]
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1251,14 +1261,14 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkFunction = jest.fn(() => '/overflow-function')
 
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'overflowFunctionRouterLink',
             routerLink: routerLinkFunction,
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ])
+        ]
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -1274,14 +1284,14 @@ describe('DataTableComponent', () => {
       it('should prioritize routerLink over actionCallback when both are provided', async () => {
         const callbackSpy = jest.fn()
 
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'routerLinkWithCallback',
             callback: callbackSpy,
             routerLink: '/prioritized-link',
             permission: 'VIEW',
           },
-        ])
+        ]
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1294,7 +1304,7 @@ describe('DataTableComponent', () => {
       it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
         const callbackSpy = jest.fn()
 
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'overflowRouterLinkWithCallback',
             callback: callbackSpy,
@@ -1302,7 +1312,7 @@ describe('DataTableComponent', () => {
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ])
+        ]
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -1317,25 +1327,286 @@ describe('DataTableComponent', () => {
         expect(callbackSpy).not.toHaveBeenCalled()
       })
 
-
-
       it('should execute actionCallback when no routerLink is provided', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions = ([
+        component.additionalActions = [
           {
             id: 'callbackOnlyAction',
             callback: callbackSpy,
             permission: 'VIEW',
           },
-        ])
+        ]
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
 
         expect(spy).not.toHaveBeenCalled()
         expect(callbackSpy).toHaveBeenCalledWith(component.rows()[0])
+      })
+    })
+  })
+
+  describe('accessible names of row-level buttons', () => {
+    let warnSpy: jest.SpyInstance
+    const buttons = (selector: string): HTMLElement[] =>
+      Array.from(fixture.nativeElement.querySelectorAll(selector)) as HTMLElement[]
+
+    beforeEach(() => {
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+      translateService.setTranslation(
+        'en',
+        {
+          OCX_DATA_TABLE: {
+            ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
+            EXPAND_ROW_ARIA_LABEL: 'Toggle row details: {{row}}',
+            MORE_ACTIONS: 'More actions',
+            ACTIONS: { VIEW: 'View', EDIT: 'Edit', DELETE: 'Delete', DEFAULT: 'Action' },
+          },
+        },
+        true
+      )
+      translateService.setTranslation(
+        'de',
+        {
+          OCX_DATA_TABLE: {
+            ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
+            EXPAND_ROW_ARIA_LABEL: 'Zeilendetails umschalten: {{row}}',
+            MORE_ACTIONS: 'Weitere Aktionen',
+            ACTIONS: { VIEW: 'Anzeigen', EDIT: 'Bearbeiten', DELETE: 'Löschen', DEFAULT: 'Aktion' },
+          },
+        },
+        true
+      )
+      translateService.use('en')
+      component.rows.set([
+        { id: 'r1', name: 'First row' },
+        { id: 'r2', name: 'Second row' },
+      ] as any)
+      fixture.componentRef.setInput('rowLabelField', 'name')
+    })
+
+    afterEach(() => warnSpy.mockRestore())
+
+    it('should name built-in action buttons with the row label and keep them unique', () => {
+      component.editTableRow.subscribe(() => undefined)
+      component.deleteTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      fixture.componentRef.setInput('deletePermission', 'DELETE')
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Edit: First row', 'Delete: First row', 'Edit: Second row', 'Delete: Second row'])
+      expect(new Set(labels).size).toBe(labels.length)
+      const ids = buttons('button[id]').map((b) => b.id)
+      expect(new Set(ids).size).toBe(ids.length)
+    })
+
+    it('should not use translation key, date or relative date columns as row label', () => {
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      component.columns = [
+        { id: 'status', columnType: ColumnType.TRANSLATION_KEY, nameKey: 'S' },
+        { id: 'startDate', columnType: ColumnType.DATE, nameKey: 'D' },
+        { id: 'modificationDate', columnType: ColumnType.RELATIVE_DATE, nameKey: 'M' },
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'N' },
+      ] as any
+      fixture.detectChanges()
+      expect(
+        component.rowLabel({ id: 'r1', status: 'STATUS.ACTIVE', startDate: '2023-09-12T09:34:11Z', name: 'Nice name' })
+      ).toBe('Nice name')
+      expect(component.rowLabel({ id: 'r2', status: 'STATUS.ACTIVE' })).toBe('r2')
+    })
+
+    it('should use the translated action name in German without English text', () => {
+      component.editTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      translateService.use('de')
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Bearbeiten: First row', 'Bearbeiten: Second row'])
+    })
+
+    it('should fall back to the first displayed column value and the row id for the row label', () => {
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      fixture.detectChanges()
+      expect(component.rowLabel({ id: 'r1', name: 'First row' })).toBe('First row')
+      expect(component.rowLabel({ id: 'only-id' })).toBe('only-id')
+    })
+
+    it('should shorten long row labels in action button names to at most 100 characters', () => {
+      component.editTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      component.rows.set([{ id: 'r1', name: 'x'.repeat(250) }] as any)
+      fixture.detectChanges()
+
+      const label = buttons('[name="data-table-action-button"]')[0]?.getAttribute('aria-label') ?? ''
+      const rowLabel = label.slice(label.indexOf(': ') + 2)
+      expect(rowLabel.length).toBe(100)
+      expect(rowLabel.endsWith('\u2026')).toBe(true)
+      expect(component.rowLabel({ id: 'r1', name: 'x'.repeat(250) })).toBe(rowLabel)
+    })
+
+    it('should never render an empty aria-label or title for actions without labelKey and warn', () => {
+      userServiceMockPublish(['ADDITIONAL#VIEW', 'OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'inline', permission: 'ADDITIONAL#VIEW', callback: () => undefined },
+        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      const inline = buttons('[name="data-table-action-button"]')
+      expect(inline.map((b) => b.getAttribute('aria-label'))).toEqual(['Action: First row', 'Action: Second row'])
+      inline.forEach((b) => expect(b.getAttribute('title')).toBe('Action'))
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('has no labelKey'))
+    })
+
+    it('should not render an empty overflow menu item for actions without labelKey', async () => {
+      userServiceMockPublish(['OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      await (await dataTable.getOverflowActionMenuButton())?.click()
+      const overflowMenu = await dataTable.getOverflowMenu()
+      expect(overflowMenu).not.toBeNull()
+      const menuItems = (await overflowMenu?.getAllMenuItems()) ?? []
+      expect(menuItems.length).toBe(1)
+      expect(await menuItems[0].getText()).toBe('Action')
+    })
+
+    it('should name the overflow trigger with the row label', () => {
+      userServiceMockPublish(['OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'o', labelKey: 'L', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-overflow-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['More actions: First row', 'More actions: Second row'])
+    })
+
+    it('should name the expand toggle with the row label', () => {
+      fixture.componentRef.setInput('expandable', true)
+      component.parentTemplates.set([{ getType: () => 'expansion' } as any])
+      fixture.detectChanges()
+
+      const labels = buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Toggle row details: First row', 'Toggle row details: Second row'])
+      const titles = buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('title'))
+      expect(titles).toEqual(labels)
+
+      translateService.use('de')
+      fixture.detectChanges()
+      expect(buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('aria-label'))).toEqual([
+        'Zeilendetails umschalten: First row',
+        'Zeilendetails umschalten: Second row',
+      ])
+    })
+
+    function userServiceMockPublish(permissions: string[]) {
+      TestBed.inject(UserServiceMock).permissionsTopic$.publish(permissions)
+    }
+  })
+
+  describe('accessible names of row selection checkboxes', () => {
+    const readTranslations = (lang: string) =>
+      JSON.parse(readFileSync(join(__dirname, `../../../../assets/i18n/${lang}.json`), 'utf-8'))
+    const checkboxInputs = (): HTMLInputElement[] =>
+      Array.from(fixture.nativeElement.querySelectorAll('tbody input[type="checkbox"]')) as HTMLInputElement[]
+    const checkboxLabels = () => checkboxInputs().map((input) => input.getAttribute('aria-label'))
+
+    beforeEach(() => {
+      translateService.setTranslation('en', readTranslations('en'), true)
+      translateService.setTranslation('de', readTranslations('de'), true)
+      translateService.use('en')
+      component.columns = [
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'N' },
+        { id: 'details', columnType: ColumnType.STRING, nameKey: 'D' },
+      ] as any
+      component.rows.set([
+        { id: '195ee34e-41c6-47b7-8fc4-3f245dee7651', name: 'First row', secret: 'hidden value', details: { a: 1 } },
+        { id: '5f8bb05b-d089-485e-a234-0bb6ff25234e', name: 'Second row', secret: 'hidden value' },
+      ] as any)
+      component.selectionChanged.subscribe(() => undefined)
+    })
+
+    it('should name the checkbox "Select row: <row label>" using visible columns only', () => {
+      fixture.detectChanges()
+
+      const labels = checkboxLabels()
+      expect(labels).toEqual(['Select row: First row', 'Select row: Second row'])
+      labels.forEach((label) => {
+        expect(label).not.toContain('195ee34e')
+        expect(label).not.toContain('5f8bb05b')
+        expect(label).not.toContain('hidden value')
+        expect(label).not.toContain('[object Object]')
+        expect(label?.length).toBeLessThanOrEqual(100 + 'Select row: '.length)
+      })
+    })
+
+    it('should use the German translation', () => {
+      translateService.use('de')
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Zeile auswählen: First row', 'Zeile auswählen: Second row'])
+    })
+
+    it('should use a generic name instead of the row id if no visible column has a value', () => {
+      component.rows.set([{ id: '195ee34e-41c6-47b7-8fc4-3f245dee7651', secret: 'hidden value' }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row'])
+    })
+
+    it('should skip object values of visible columns when the name is empty', () => {
+      component.rows.set([{ id: 'r1', name: '', details: { a: 1 } }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row'])
+      expect(checkboxLabels()[0]).not.toContain('[object Object]')
+    })
+
+    it('should shorten long row labels to at most 100 characters', () => {
+      component.rows.set([{ id: 'r1', name: 'x'.repeat(250) }] as any)
+      fixture.detectChanges()
+
+      const rowLabel = checkboxLabels()[0]?.replace('Select row: ', '') ?? ''
+      expect(rowLabel.length).toBe(100)
+      expect(rowLabel.endsWith('\u2026')).toBe(true)
+    })
+
+    it('should name the disabled checkbox of a selected row that cannot be deselected', () => {
+      fixture.componentRef.setInput('selectionEnabledField', 'selectable')
+      component.rows.set([{ id: 'r1', name: 'Locked row', selectable: false }] as any)
+      component.stateService.selectedRows.set([{ id: 'r1', name: 'Locked row', selectable: false }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row: Locked row'])
+    })
+
+    it('should prefer the rowLabelField', () => {
+      fixture.componentRef.setInput('rowLabelField', 'secret')
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row: hidden value', 'Select row: hidden value'])
+    })
+
+    it('should have no axe label or aria-input-field-name violations', async () => {
+      fixture.detectChanges()
+
+      await expectNoAxeViolations(fixture.nativeElement, { rules: ['label', 'aria-input-field-name'] })
+    })
+
+    it('should provide the selection keys in English and German', () => {
+      ;['en', 'de'].forEach((lang) => {
+        const keys = readTranslations(lang).OCX_DATA_TABLE
+        expect(keys.SELECT_ROW_ARIA_LABEL).toContain('{{row}}')
+        expect(keys.SELECT_ROW_FALLBACK_ARIA_LABEL).toBeTruthy()
+        expect(keys.SELECT_ARIA_LABEL).toBeUndefined()
       })
     })
   })
@@ -1594,7 +1865,9 @@ describe('DataTableComponent', () => {
     it('should return item id', () => {
       const item = { id: 'abc-123' } as Row
       const callRowTrackBy = (c: DataTableComponent, i: any) =>
-        (c.rowTrackByFunction as any).length >= 2 ? (c.rowTrackByFunction as any)(0, i) : (c.rowTrackByFunction as any)(i)
+        (c.rowTrackByFunction as any).length >= 2
+          ? (c.rowTrackByFunction as any)(0, i)
+          : (c.rowTrackByFunction as any)(i)
 
       const result = callRowTrackBy(component, item)
 
@@ -1662,7 +1935,6 @@ describe('DataTableComponent', () => {
     })
 
     it('onPageChange should update page and pageSize in service', () => {
-
       component.onPageChange({ first: 20, rows: 10 })
 
       fixture.detectChanges()
@@ -1869,11 +2141,11 @@ describe('DataTableComponent', () => {
 
   describe('ngOnInit derived streams (class logic)', () => {
     beforeEach(() => {
-      component.columns = ([
+      component.columns = [
         { id: 'status', columnType: ColumnType.STRING } as any,
         { id: 'tr', columnType: ColumnType.TRANSLATION_KEY } as any,
         { id: 'date', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' } as any,
-      ])
+      ]
       component.ngOnInit()
     })
 
@@ -1931,7 +2203,7 @@ describe('DataTableComponent', () => {
       const translateService = TestBed.inject(TranslateService)
       jest.spyOn(translateService, 'get').mockReturnValue(of({ 'BOOK_GENRE.FICTION': 'Fiction' } as any))
 
-      component.columns = ([{ id: 'status', columnType: ColumnType.TRANSLATION_KEY } as any])
+      component.columns = [{ id: 'status', columnType: ColumnType.TRANSLATION_KEY } as any]
       component.stateService.filters.set([{ columnId: 'status', value: 'BOOK_GENRE.FICTION' } as any])
       component.rows.set([])
       component.currentFilterColumn.set({ id: 'status', columnType: ColumnType.TRANSLATION_KEY } as any)
@@ -1946,7 +2218,7 @@ describe('DataTableComponent', () => {
     })
 
     it('currentEqualFilterOptions$ should include a selected filter that has no matching row (non-TRANSLATION_KEY, empty table)', async () => {
-      component.columns = ([{ id: 'status', columnType: ColumnType.STRING } as any])
+      component.columns = [{ id: 'status', columnType: ColumnType.STRING } as any]
       component.stateService.filters.set([{ columnId: 'status', value: 'PENDING' } as any])
       component.rows.set([])
       component.currentFilterColumn.set({ id: 'status', columnType: ColumnType.STRING } as any)
@@ -2012,7 +2284,7 @@ describe('DataTableComponent', () => {
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['P']))
 
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           showAsOverflow: true,
           permission: 'P',
@@ -2020,7 +2292,7 @@ describe('DataTableComponent', () => {
           actionVisibleField: 'visible',
           callback: jest.fn(),
         } as DataAction,
-      ])
+      ]
 
       fixture.detectChanges()
 
@@ -2032,7 +2304,7 @@ describe('DataTableComponent', () => {
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['P']))
 
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           showAsOverflow: true,
           permission: 'P',
@@ -2040,7 +2312,7 @@ describe('DataTableComponent', () => {
           actionVisibleField: 'visible',
           callback: jest.fn(),
         } as DataAction,
-      ])
+      ]
 
       const row: Row = { id: 1, visible: false }
       await expect(firstValueFrom(component.hasVisibleOverflowMenuItems(row))).resolves.toBe(false)
@@ -2063,7 +2335,7 @@ describe('DataTableComponent', () => {
       expect(component.stateService.additionalActions()).toEqual([])
 
       const actions = [{ labelKey: 'X' } as any]
-      component.additionalActions = (actions)
+      component.additionalActions = actions
       expect(component.stateService.additionalActions()).toBe(actions)
     })
 
@@ -2076,7 +2348,7 @@ describe('DataTableComponent', () => {
     })
 
     it('currentEqualFilterOptions$ should return non-TRANSLATION_KEY options with de-duplication and include currentFilters', async () => {
-      component.columns = ([{ id: 'status', columnType: ColumnType.STRING } as any])
+      component.columns = [{ id: 'status', columnType: ColumnType.STRING } as any]
       component.rows.set([
         { id: '1', status: 'A' } as any,
         { id: '2', status: 'A' } as any,
@@ -2097,7 +2369,7 @@ describe('DataTableComponent', () => {
     })
 
     it('overflowMenuItems$ should return [] when there are no permitted actions', async () => {
-      component.additionalActions = ([{ showAsOverflow: true, permission: 'P1' } as any])
+      component.additionalActions = [{ showAsOverflow: true, permission: 'P1' } as any]
       component.currentMenuRow.set({ id: 'r1' } as any)
 
       fixture.detectChanges()
@@ -2113,7 +2385,7 @@ describe('DataTableComponent', () => {
       const row = { id: 'r1', enabled: true, visible: true } as any
       const callback = jest.fn()
 
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           showAsOverflow: true,
           permission: 'P1',
@@ -2124,7 +2396,7 @@ describe('DataTableComponent', () => {
           actionVisibleField: 'visible',
           callback,
         } as any,
-      ])
+      ]
       component.currentMenuRow.set(row)
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['P1'] as any))
@@ -2323,7 +2595,7 @@ describe('DataTableComponent', () => {
     })
 
     it('hasVisibleOverflowMenuItems should be false when there are no actions', async () => {
-      component.additionalActions = ([])
+      component.additionalActions = []
 
       const result = await firstValueFrom(component.hasVisibleOverflowMenuItems({}))
       expect(result).toBe(false)
@@ -2367,7 +2639,7 @@ describe('DataTableComponent', () => {
 
     describe('expandedRows model', () => {
       it('should set expandedRowIds and expandedRowKeys from Row objects', () => {
-        component.expandedRows = ([row1, row2])
+        component.expandedRows = [row1, row2]
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
@@ -2375,7 +2647,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should set expandedRowIds and expandedRowKeys from string ids', () => {
-        component.expandedRows = ([row1.id, row2.id])
+        component.expandedRows = [row1.id, row2.id]
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
@@ -2383,13 +2655,13 @@ describe('DataTableComponent', () => {
       })
 
       it('should overwrite previously expanded rows', () => {
-        component.expandedRows = ([row1])
+        component.expandedRows = [row1]
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id])
         expect(component.expandedRowKeys()).toEqual({ [row1.id]: true })
 
-        component.expandedRows = ([row2])
+        component.expandedRows = [row2]
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row2.id])
@@ -2397,9 +2669,9 @@ describe('DataTableComponent', () => {
       })
 
       it('should clear expandedRowIds and expandedRowKeys when empty array is passed', () => {
-        component.expandedRows = ([row1])
+        component.expandedRows = [row1]
         fixture.detectChanges()
-        component.expandedRows = ([])
+        component.expandedRows = []
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([])
@@ -2407,7 +2679,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should treat null as an empty array and clear expanded state', () => {
-        component.expandedRows = ([row1])
+        component.expandedRows = [row1]
         fixture.detectChanges()
         component.expandedRows = null as any
         fixture.detectChanges()
@@ -2417,7 +2689,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should treat undefined as an empty array and clear expanded state', () => {
-        component.expandedRows = ([row1])
+        component.expandedRows = [row1]
         fixture.detectChanges()
         component.expandedRows = undefined as any
         fixture.detectChanges()
@@ -2427,7 +2699,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should filter out null entries inside the array', () => {
-        component.expandedRows = ([row1, null as any, row2])
+        component.expandedRows = [row1, null as any, row2]
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
@@ -2435,7 +2707,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should filter out undefined entries inside the array', () => {
-        component.expandedRows = ([row1, undefined as any, row2])
+        component.expandedRows = [row1, undefined as any, row2]
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
@@ -2445,21 +2717,21 @@ describe('DataTableComponent', () => {
 
     describe('isRowExpanded', () => {
       it('should return true when row is expanded', () => {
-        component.expandedRows = ([row1])
+        component.expandedRows = [row1]
         fixture.detectChanges()
 
         expect(component.isRowExpanded(row1)).toBe(true)
       })
 
       it('should return false when row is not expanded', () => {
-        component.expandedRows = ([row1])
+        component.expandedRows = [row1]
         fixture.detectChanges()
 
         expect(component.isRowExpanded(row2)).toBe(false)
       })
 
       it('should return false when no rows are expanded', () => {
-        component.expandedRows = ([])
+        component.expandedRows = []
         fixture.detectChanges()
 
         expect(component.isRowExpanded(row1)).toBe(false)
@@ -2468,7 +2740,7 @@ describe('DataTableComponent', () => {
 
     describe('onRowExpand', () => {
       it('should add row id to expandedRowIds if not already present', () => {
-        component.expandedRows = ([])
+        component.expandedRows = []
         fixture.detectChanges()
         component.onRowExpand({ data: row1 })
 
@@ -2476,7 +2748,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should not add duplicate row id to expandedRowIds', () => {
-        component.expandedRows = ([row1])
+        component.expandedRows = [row1]
         fixture.detectChanges()
         component.onRowExpand({ data: row1 })
 
@@ -2511,7 +2783,7 @@ describe('DataTableComponent', () => {
 
     describe('onRowCollapse', () => {
       beforeEach(() => {
-        component.expandedRows = ([row1, row2])
+        component.expandedRows = [row1, row2]
         fixture.detectChanges()
       })
 
@@ -2546,7 +2818,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should remove a primitive id when expandedRows contains primitive ids', () => {
-        component.expandedRows = ([row1.id, row2.id])
+        component.expandedRows = [row1.id, row2.id]
         fixture.detectChanges()
         component.onRowCollapse({ data: row1 })
 
@@ -2557,7 +2829,7 @@ describe('DataTableComponent', () => {
 
     describe('toggleRowExpansion', () => {
       it('should expand a collapsed row', () => {
-        component.expandedRows = ([])
+        component.expandedRows = []
         fixture.detectChanges()
         component.toggleRowExpansion(row1)
 
@@ -2566,7 +2838,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should collapse an expanded row', () => {
-        component.expandedRows = ([row1])
+        component.expandedRows = [row1]
         fixture.detectChanges()
         component.toggleRowExpansion(row1)
 
@@ -2628,27 +2900,27 @@ describe('DataTableComponent', () => {
     })
 
     it('should return true when additionalActions is non-empty', () => {
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           permission: 'VIEW',
           callback: () => {
             // empty callback for testing
           },
         },
-      ])
+      ]
       expect(component.actionColumnVisible).toBe(true)
     })
 
     it('should return false when additionalActions becomes empty', () => {
-      component.additionalActions = ([
+      component.additionalActions = [
         {
           permission: 'VIEW',
           callback: () => {
             // empty callback for testing
           },
         },
-      ])
-      component.additionalActions = ([])
+      ]
+      component.additionalActions = []
       expect(component.actionColumnVisible).toBe(false)
     })
   })
@@ -2693,12 +2965,6 @@ describe('DataTableComponent', () => {
       jest.spyOn(component, 'actionColumnVisible', 'get').mockReturnValue(true)
       expect(component.getRowColspan(true)).toBe(mockColumns.length + 3)
     })
-  })
-
-  it('should return row summary for object entries when getRowSummary is called', () => {
-      const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
-
-      expect(summary).toBe('id: 1,name: Alice,active: true')
   })
 
   describe('accessibility semantics', () => {
@@ -2889,11 +3155,7 @@ describe('DataTableComponent', () => {
         { id: 'r3', name: 'A', status: 'one' },
         { id: 'r4', name: 'D', status: 'excluded' },
       ]
-      const { fixture, child, harness } = await createGroupingHost(
-        GroupingHostComponent,
-        rows,
-        [groupColumns[0]]
-      )
+      const { fixture, child, harness } = await createGroupingHost(GroupingHostComponent, rows, [groupColumns[0]])
       child.sortColumn = 'name'
       child.sortDirection = DataSortDirection.ASCENDING
       child.filters = [
@@ -2905,9 +3167,9 @@ describe('DataTableComponent', () => {
       expect(await harness.getGroupCellLabels()).toEqual([])
       expect(child.rowGroupPlan()).toBeNull()
       expect(child.groupedRows().map((row) => row.id)).toEqual(['r3', 'r2', 'r1'])
-      expect(await Promise.all((await harness.getRows()).map(async (row) =>
-        (await row.host()).getAttribute('id')
-      ))).toEqual(['ocx-data-row-r3', 'ocx-data-row-r2', 'ocx-data-row-r1'])
+      expect(
+        await Promise.all((await harness.getRows()).map(async (row) => (await row.host()).getAttribute('id')))
+      ).toEqual(['ocx-data-row-r3', 'ocx-data-row-r2', 'ocx-data-row-r1'])
       expect(child.isRowGroupStart(rows[0])).toBe(false)
       expect(child.getGroupContext(rows[0])).toBeUndefined()
     })
@@ -2928,9 +3190,9 @@ describe('DataTableComponent', () => {
       expect(await harness.getGroupCellLabels()).toEqual([])
       expect(child.rowGroupPlan()).toBeNull()
       expect(child.groupedRows().map((row) => row.id)).toEqual(['A1', 'B1', 'A2'])
-      expect(await Promise.all((await harness.getRows()).map(async (row) =>
-        (await row.host()).getAttribute('id')
-      ))).toEqual(['ocx-data-row-A1', 'ocx-data-row-B1', 'ocx-data-row-A2'])
+      expect(
+        await Promise.all((await harness.getRows()).map(async (row) => (await row.host()).getAttribute('id')))
+      ).toEqual(['ocx-data-row-A1', 'ocx-data-row-B1', 'ocx-data-row-A2'])
 
       fixture.componentInstance.columns = groupColumns
       fixture.detectChanges()
