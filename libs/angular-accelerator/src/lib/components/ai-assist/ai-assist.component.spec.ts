@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AiAgentResponse,
@@ -221,6 +222,42 @@ describe('AiAssistComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Try again')
   })
 
+  it('should render review labels above the fields and align the low-emphasis retry before replace', async () => {
+    await createComponent()
+    component.open = true
+    component.selectAction('translate')
+    component.inputText = 'Hello'
+    await component.run()
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    const before = fixture.nativeElement.querySelector(`#${component.uid}-before`) as HTMLTextAreaElement
+    const beforeLabel = fixture.nativeElement.querySelector(`label[for="${component.uid}-before"]`) as HTMLLabelElement
+    const suggestion = fixture.nativeElement.querySelector(`#${component.uid}-suggestion`) as HTMLTextAreaElement
+    const suggestionLabel = fixture.nativeElement.querySelector(
+      `label[for="${component.uid}-suggestion"]`
+    ) as HTMLLabelElement
+    const statusIcon = fixture.nativeElement.querySelector('.ocx-ai-assist__review-status i') as HTMLElement
+    const leftActions = fixture.nativeElement.querySelector('.ocx-ai-assist__review-secondary-actions') as HTMLElement
+    const retryButton = fixture.debugElement.query(By.css('.ocx-ai-assist__try-again'))
+    const replaceButton = fixture.debugElement.query(By.css('.ocx-ai-assist__replace'))
+
+    expect(beforeLabel.textContent?.trim()).toBe('Before')
+    expect(beforeLabel.parentElement).toBe(before.parentElement)
+    expect(beforeLabel.parentElement?.classList).not.toContain('p-floatlabel')
+    expect(suggestionLabel.textContent?.trim()).toBe('AI suggestion · editable')
+    expect(suggestionLabel.parentElement).toBe(suggestion.parentElement)
+    expect(suggestionLabel.parentElement?.classList).not.toContain('p-floatlabel')
+    expect(statusIcon.classList).toContain('pi-check')
+    expect(statusIcon.classList).not.toContain('pi-check-circle')
+    expect(leftActions.contains(retryButton.nativeElement)).toBe(true)
+    expect(retryButton.nativeElement.compareDocumentPosition(replaceButton.nativeElement)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    )
+    expect(retryButton.componentInstance.text).toBe(true)
+  })
+
   it('should offer the completion as an editable suggestion and emit it on replace', async () => {
     const replaced = jest.fn()
     await createComponent()
@@ -432,10 +469,41 @@ describe('AiAssistComponent', () => {
     expect(component.errorCode).toBe('TIMEOUT')
     expect(getCompletion).toHaveBeenCalledTimes(1)
 
+    fixture.detectChanges()
+    const tryAgainButton = fixture.debugElement.query(By.css('.ocx-ai-assist__try-again'))
+    expect(tryAgainButton.componentInstance.label).toBe('Try again')
+    expect(tryAgainButton.componentInstance.icon).toBe('pi pi-refresh')
+    expect(tryAgainButton.componentInstance.text).toBe(true)
+
     await component.retry()
 
     expect(getCompletion).toHaveBeenCalledTimes(2)
     expect(component.runState).toBe('success')
+  })
+
+  it('should show specific messages for runtime failures', async () => {
+    await createComponent()
+
+    component.errorCode = 'RUNTIME_TIMEOUT'
+    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.TIMEOUT')
+
+    component.errorCode = 'RUNTIME_UNAVAILABLE'
+    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.UNAVAILABLE')
+
+    component.errorCode = 'RUNTIME_ERROR'
+    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.PROVIDER')
+  })
+
+  it('should recognize provider errors from another federated package copy', async () => {
+    getCompletion.mockRejectedValueOnce({ name: 'AiProviderError', code: 'TIMEOUT' })
+    await createComponent()
+    component.selectAction('summarize')
+    component.inputText = 'Long text'
+
+    await component.run()
+
+    expect(component.runState).toBe('error')
+    expect(component.errorCode).toBe('TIMEOUT')
   })
 
   it('should map an unexpected completion error to the UNKNOWN error code and use the generic message', async () => {
