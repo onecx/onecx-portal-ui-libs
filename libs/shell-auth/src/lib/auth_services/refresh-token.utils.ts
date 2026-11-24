@@ -13,9 +13,12 @@
  * `undefined` when the token is not a decodable JWT or its `exp` is not a number.
  */
 export function getRefreshTokenExp(refreshToken: string): number | undefined {
+  const segments = refreshToken.split('.')
+  if (segments.length !== 3) {
+    return undefined
+  }
   try {
-    const payloadSegment = refreshToken.split('.')[1] ?? ''
-    const base64 = payloadSegment.replaceAll('-', '+').replaceAll('_', '/')
+    const base64 = segments[1].replaceAll('-', '+').replaceAll('_', '/')
     const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=')
     const payload = JSON.parse(atob(padded)) as { exp?: unknown }
     return typeof payload.exp === 'number' ? payload.exp : undefined

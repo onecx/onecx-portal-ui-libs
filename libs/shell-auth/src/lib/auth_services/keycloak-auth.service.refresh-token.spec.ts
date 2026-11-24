@@ -27,16 +27,30 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 
-// Payload encodes to a base64url segment that contains '-' and '_' (RFC 4648 section 5).
-const REFRESH_TOKEN_WITH_SPECIALS =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQxMDI0NDQ4MDAsInN1YiI6InVzZXItMSIsIm5hbWUiOiJab8OrIOKYgyA_Pj8ifQ.signature'
-// Payload encodes to a standard base64url segment (no '-', no '_').
-const REFRESH_TOKEN_VALID =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQxMDI0NDQ4MDAsInN1YiI6InVzZXItMSJ9.signature'
+// The test tokens are built at runtime (not hardcoded literals) so no secret-looking token appears in the source.
+const JWT_HEADER_SEGMENT = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' }), 'utf8').toString('base64url')
+const JWT_SIGNATURE_SEGMENT = 'signature'
+
+function base64UrlSegment(payloadJson: string): string {
+  return Buffer.from(payloadJson, 'utf8').toString('base64url')
+}
+
+function buildJwt(payload: Record<string, unknown> | string): string {
+  return `${JWT_HEADER_SEGMENT}.${base64UrlSegment(typeof payload === 'string' ? payload : JSON.stringify(payload))}.${JWT_SIGNATURE_SEGMENT}`
+}
+
+// Payload encodes to a base64url segment that contains '_' (RFC 4648 section 5).
+const REFRESH_TOKEN_WITH_SPECIALS = buildJwt({ exp: 4102444800, sub: 'user-1', name: 'Zoë ☃ ?>?' })
+// Valid, unexpired token whose payload encodes to a plain base64url segment (no '-', no '_').
+const REFRESH_TOKEN_VALID = buildJwt({ exp: 4102444800, sub: 'user-1' })
 // Expired in the past (exp = 1970).
-const REFRESH_TOKEN_EXPIRED = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEsInN1YiI6InVzZXItMSJ9.signature'
+const REFRESH_TOKEN_EXPIRED = buildJwt({ exp: 1, sub: 'user-1' })
 // Decodable payload (an empty object) that carries no numeric exp claim.
-const REFRESH_TOKEN_WITHOUT_EXP = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.signature'
+const REFRESH_TOKEN_WITHOUT_EXP = buildJwt({})
+// Payload is not valid JSON, so the stored value cannot be a decodable jwt.
+const REFRESH_TOKEN_INVALID_JSON = buildJwt('{not-json')
+// Exactly two dot-separated segments: a valid payload but the wrong JWT segment count.
+const REFRESH_TOKEN_MISSING_SEGMENT = `${JWT_HEADER_SEGMENT}.${base64UrlSegment(JSON.stringify({ exp: 4102444800, sub: 'user-1' }))}`
 
 function buildService(): KeycloakAuthService {
   const configService = { getProperty: jest.fn(async () => 'value') }
@@ -57,7 +71,7 @@ function firstInitOptions(): unknown {
   return mockKeycloakInstances[0]?.init.mock.calls[0]?.[0]
 }
 
-describe('KeycloakAuthService init stored refresh token handling', () => {
+describe('KeycloakAuthService init with a reusable stored refresh token', () => {
   let service: KeycloakAuthService
 
   beforeEach(() => {
@@ -66,7 +80,7 @@ describe('KeycloakAuthService init stored refresh token handling', () => {
     service = buildService()
   })
 
-  it('given a stored refresh token whose payload encodes to base64url containing _ and -, when init() runs, then the stored tokens are passed to keycloak.init', async () => {
+  it('given a stored refresh token whose payload encodes to base64url containing _, when init() runs, then the stored tokens are passed to keycloak.init', async () => {
     storeTokens(REFRESH_TOKEN_WITH_SPECIALS)
 
     await service.init()
@@ -76,6 +90,28 @@ describe('KeycloakAuthService init stored refresh token handling', () => {
       idToken: 'stored-id-token',
       refreshToken: REFRESH_TOKEN_WITH_SPECIALS,
     })
+  })
+
+  it('given a stored refresh token that is valid and not expired, when init() runs, then the stored tokens are passed to keycloak.init', async () => {
+    storeTokens(REFRESH_TOKEN_VALID)
+
+    await service.init()
+
+    expect(firstInitOptions()).toMatchObject({
+      token: 'stored-token',
+      idToken: 'stored-id-token',
+      refreshToken: REFRESH_TOKEN_VALID,
+    })
+  })
+})
+
+describe('KeycloakAuthService init with an unusable stored refresh token', () => {
+  let service: KeycloakAuthService
+
+  beforeEach(() => {
+    localStorage.clear()
+    mockKeycloakInstances.length = 0
+    service = buildService()
   })
 
   it('given a stored refresh token that is not a decodable jwt, when init() runs, then the stored tokens are removed and keycloak.init is called without tokens', async () => {
@@ -99,8 +135,8 @@ describe('KeycloakAuthService init stored refresh token handling', () => {
     expect(localStorage.getItem(KC_REFRESH_TOKEN_LS)).toBeNull()
   })
 
-  it('given a stored refresh token that is expired, when init() runs, then the stored tokens are removed', async () => {
-    storeTokens(REFRESH_TOKEN_EXPIRED)
+  it('given a stored refresh token that is not a three-segment jwt, when init() runs, then the stored tokens are removed', async () => {
+    storeTokens(REFRESH_TOKEN_MISSING_SEGMENT)
 
     await service.init()
 
@@ -109,15 +145,23 @@ describe('KeycloakAuthService init stored refresh token handling', () => {
     expect(localStorage.getItem(KC_REFRESH_TOKEN_LS)).toBeNull()
   })
 
-  it('given a stored refresh token that is valid and not expired, when init() runs, then the stored tokens are passed to keycloak.init', async () => {
-    storeTokens(REFRESH_TOKEN_VALID)
+  it('given a stored refresh token whose payload is not valid json, when init() runs, then the stored tokens are removed', async () => {
+    storeTokens(REFRESH_TOKEN_INVALID_JSON)
 
     await service.init()
 
-    expect(firstInitOptions()).toMatchObject({
-      token: 'stored-token',
-      idToken: 'stored-id-token',
-      refreshToken: REFRESH_TOKEN_VALID,
-    })
+    expect(localStorage.getItem(KC_TOKEN_LS)).toBeNull()
+    expect(localStorage.getItem(KC_ID_TOKEN_LS)).toBeNull()
+    expect(localStorage.getItem(KC_REFRESH_TOKEN_LS)).toBeNull()
+  })
+
+  it('given a stored refresh token that is expired, when init() runs, then the stored tokens are removed', async () => {
+    storeTokens(REFRESH_TOKEN_EXPIRED)
+
+    await service.init()
+
+    expect(localStorage.getItem(KC_TOKEN_LS)).toBeNull()
+    expect(localStorage.getItem(KC_ID_TOKEN_LS)).toBeNull()
+    expect(localStorage.getItem(KC_REFRESH_TOKEN_LS)).toBeNull()
   })
 })
