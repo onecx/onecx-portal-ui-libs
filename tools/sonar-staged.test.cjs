@@ -143,7 +143,7 @@ test('staged ranges come from the index for odd names, renames (whole file, cons
 test('issues are fetched across pages of the analysed branch, not of a pull request', async () => {
   const queries = []
   const server = http.createServer((req, res) => {
-    const query = new URL(req.url, 'https://x').searchParams
+    const query = new URL(req.url, 'http://x').searchParams
     queries.push(query)
     const page = Number(query.get('p'))
     res.setHeader('content-type', 'application/json')
