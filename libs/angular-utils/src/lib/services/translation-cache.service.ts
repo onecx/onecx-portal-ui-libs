@@ -14,10 +14,12 @@ class TranslationCacheTopic extends Topic<string> {
   }
 }
 
-// Reserved failure marker key (ADR 0001): a translation file that failed to load is
-// stored in the shared translation cache as `{ __onecxTranslationLoadFailed: true }`
-// instead of being deleted, so no app on the page requests the missing file again
-// until the page is reloaded.
+// Reserved failure marker key (ADR 0001): a translation file that failed to load with a
+// definitive 404 (the file does not exist) is stored in the shared translation cache as
+// `{ __onecxTranslationLoadFailed: true }` instead of being deleted, so no app on the page
+// requests the missing file again until the page is reloaded. A transient failure (5xx,
+// timeout, network) does NOT write the marker: the entry is left deleted so a later request
+// re-fetches and can recover within the page session.
 //
 // The key is a contract between apps on the same page and must not be renamed: apps
 // may bundle different library versions, and older versions treat any truthy cache
@@ -59,12 +61,16 @@ export class TranslationCacheService implements OnDestroy {
    *
    * If the requested translation file is null, it waits for the translation topic to be published by a different application.
    *
-   * If the translation file previously failed to load, the cache entry is a failure marker
-   * (`{ __onecxTranslationLoadFailed: true }`): requests for the URL then immediately return
-   * an empty translation set without issuing a request, until the page is reloaded.
+   * If the translation file previously failed to load with a definitive 404, the cache entry
+   * is a failure marker (`{ __onecxTranslationLoadFailed: true }`): requests for the URL then
+   * immediately return an empty translation set without issuing a request, until the page is
+   * reloaded. A transient failure (5xx, timeout, network) leaves the entry deleted instead, so
+   * a later request re-fetches and can recover within the page session.
    *
-   * In case of failed load, it logs an error, writes the failure marker to the cache, and publishes the URL to notify other subscribers about the failure.
-   * Callers already waiting for the URL finish with an empty translation set.
+   * In case of a definitive not-found failure it logs an error, writes the failure marker to the
+   * cache, and publishes the URL to notify other subscribers about the failure. In case of any
+   * other failure it logs the error, deletes the entry (so the URL can be retried), and publishes
+   * the URL as well. Callers already waiting for the URL always finish with an empty translation set.
    * @param url
    * @param cacheMissFunction
    * @returns
@@ -93,9 +99,17 @@ export class TranslationCacheService implements OnDestroy {
         this.translationTopic$.publish(url)
       }),
       map(() => window['onecxTranslations'][url]),
-      catchError(() => {
+      catchError((error) => {
         logger.error(`Failed to load translation file: ${url}`)
-        window['onecxTranslations'][url] = { [FAILURE_MARKER_KEY]: true }
+        if (error.status === 404) {
+          // Definitive not-found: no app on the page will request this URL again until the page
+          // is reloaded, so a missing file is not requested over and over.
+          window['onecxTranslations'][url] = { [FAILURE_MARKER_KEY]: true }
+        } else {
+          // Transient failure (5xx, timeout, network error, ...): leave the entry deleted so a
+          // later request re-fetches and can recover within the page session.
+          delete window['onecxTranslations'][url]
+        }
         this.translationTopic$.publish(url)
         return of({})
       }),

@@ -52,7 +52,7 @@ describe('TranslationCacheService', () => {
       done();
     });
 
-    it('should write the failure marker and emit an empty translation set when a load fails', (done) => {
+    it('should write the failure marker and emit an empty translation set when a load fails with a 404', (done) => {
 
       const subject = new ReplaySubject<any>(1);
       translationCache.getTranslationFile('testUrl', () => subject).subscribe((result) => {
@@ -61,7 +61,34 @@ describe('TranslationCacheService', () => {
         done();
       });
 
-      subject.error(new Error('failed'));
+      subject.error({ status: 404 });
+    });
+
+    it('should not write the failure marker and leave the entry deleted when a load fails transiently', (done) => {
+
+      const failingSubject = new ReplaySubject<any>(1);
+      const succeedingSubject = new ReplaySubject<any>(1);
+      let cacheMissCalls = 0;
+
+      translationCache.getTranslationFile('testUrl', () => {
+        cacheMissCalls++;
+        return failingSubject;
+      }).subscribe((result) => {
+        expect(result).toEqual({});
+        // A transient failure must not write the marker, so the entry stays deleted
+        expect(window['onecxTranslations']['testUrl']).toBeUndefined();
+      });
+      failingSubject.error(new Error('transient failure'));
+
+      translationCache.getTranslationFile('testUrl', () => {
+        cacheMissCalls++;
+        return succeedingSubject;
+      }).subscribe(() => {
+        // The URL can be retried within the page session after a transient failure
+        expect(cacheMissCalls).toBe(2);
+        done();
+      });
+      succeedingSubject.next({ key: 'value' });
     });
 
     it('should not re-request a translation file that already failed to load', (done) => {
@@ -74,7 +101,7 @@ describe('TranslationCacheService', () => {
         cacheMissCalls++;
         return failingSubject;
       }).subscribe((v) => { firstResult = v; });
-      failingSubject.error(new Error('failed'));
+      failingSubject.error({ status: 404 });
       expect(firstResult).toEqual({});
 
       translationCache.getTranslationFile('testUrl', () => {
@@ -126,7 +153,7 @@ describe('TranslationCacheService', () => {
         .subscribe((v) => { secondResult = v; }, undefined, () => { secondCompleted = true; maybeDone(); });
 
       expect(counter).toBe(1);
-      subject.error(new Error('failed'));
+      subject.error({ status: 404 });
     });
 
     it('should give an empty translation set to a waiting caller if the entry is still null', (done) => {
