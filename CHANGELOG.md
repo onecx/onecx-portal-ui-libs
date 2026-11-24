@@ -1,3 +1,11 @@
+## [7.16.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.16.0...v7.16.1) (2026-11-23)
+
+### Bug Fixes
+
+* **angular-accelerator:** report the search fields to the search config slot before the first form change (v7) ([#1969](https://github.com/onecx/onecx-portal-ui-libs/issues/1969)) ([ef11c8e](https://github.com/onecx/onecx-portal-ui-libs/commit/ef11c8e281201a9f2a8199ee69d93af18dffb86a))
+* **angular-accelerator:** use ocxTooltip for data table filter icon ([#1963](https://github.com/onecx/onecx-portal-ui-libs/issues/1963)) ([937cea9](https://github.com/onecx/onecx-portal-ui-libs/commit/937cea92c74f0a0e0772c187d50fc891e43e15c3))
+* **angular-utils:** keep guard redirects during router sync (v7) ([#2011](https://github.com/onecx/onecx-portal-ui-libs/issues/2011)) ([4fa3491](https://github.com/onecx/onecx-portal-ui-libs/commit/4fa3491fa3881ada23073877ffa0e962b87a3f92)), closes [onecx/onecx-portal-ui-libs#2008](https://github.com/onecx/onecx-portal-ui-libs/issues/2008)
+
 ## [7.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.15.0...v7.16.0) (2026-11-12)
 
 ### Features
