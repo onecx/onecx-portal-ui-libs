@@ -18,6 +18,13 @@ OneCX Portal UI Libs is using https://semantic-release.gitbook.io/semantic-relea
 
 When a Sonar or CI workflow configuration change is merged into `main`, assess and backport it to every supported maintenance branch (`v5`, `v6`, `v7`, and `v8`). Each backport must include matching workflow and default Sonar property changes, or explicitly document why the branch intentionally differs. Verify the corresponding SonarCloud project branch settings separately.
 
+# Pre-commit quality gates
+
+The `.husky/pre-commit` hook runs `lint` and `prettier` on every commit, and additionally `build`, `test`, `sonar`, `test:arch` and `test:a11y` when `CI` or `FORCE_CI_COMMIT_HOOKS` is set. The `prettier` and `sonar` gates only look at new code:
+
+- `npm run prettier` (= `prettier:staged`) checks the staged files only; `npm run prettier:all` checks the whole repository.
+- `npm run sonar` (= `sonar:staged`) analyzes the libraries with staged source changes and fails only on issues located on added or changed lines. It needs `SONAR_TOKEN` (and optionally `SONAR_HOST_URL`, default `https://sonarcloud.io`) with access to the `onecx_onecx-portal-ui-libs_<lib>` SonarCloud projects. `npm run sonar:lib -- <lib>` runs tests and a full scan for one library, `npm run sonar:all` for all libraries.
+
 # Releasing libs
 
 In order to release new version of libs, use `create-release` action to run the release workflow for **desired branch**.
