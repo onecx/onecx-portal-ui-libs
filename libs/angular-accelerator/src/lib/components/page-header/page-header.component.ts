@@ -250,7 +250,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   private readonly warnedItems = new Set<string>()
 
   private static translationId(key: TranslationKey): string {
-    return typeof key === 'string' ? key : `${key.key}|${JSON.stringify(key.parameters ?? null)}`
+    return typeof key === 'string' ? key : `${key.key}|${JSON.stringify(key.parameters)}`
   }
 
   private readonly injector = inject(Injector)
