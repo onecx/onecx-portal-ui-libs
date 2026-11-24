@@ -17,11 +17,14 @@ import {
   signal,
   ChangeDetectionStrategy,
   isDevMode,
+  Injector,
+  Signal,
+  untracked,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
-import { Observable, combineLatest, concat, map, of, switchMap, tap } from 'rxjs'
+import { Observable, concat, map, of, switchMap, tap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
@@ -250,41 +253,22 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     return typeof key === 'string' ? key : `${key.key}|${JSON.stringify(key.parameters ?? null)}`
   }
 
-  private readonly translationKeys = computed<TranslationKey[]>(() => {
-    const keys: (TranslationKey | undefined)[] = []
-    for (const action of this.actions()) {
-      keys.push(action.labelKey, action.ariaLabelKey, action.titleKey)
-    }
-    for (const item of this.objectDetails() ?? []) {
-      keys.push(item.actionItemAriaLabelKey, item.actionItemTooltipKey, item.valueTooltipKey)
-    }
-    return keys.filter((key): key is TranslationKey => !!key)
-  })
-
-  private readonly translations = toSignal(
-    toObservable(this.translationKeys).pipe(
-      switchMap((keys) =>
-        keys.length
-          ? combineLatest(
-              keys.map((key) =>
-                typeof key === 'string'
-                  ? this.translateService.stream(key)
-                  : this.translateService.stream(key.key, key.parameters)
-              )
-            ).pipe(
-              map(
-                (values) => new Map(keys.map((key, index) => [PageHeaderComponent.translationId(key), values[index]]))
-              )
-            )
-          : of(new Map<string, string>())
-      )
-    ),
-    { initialValue: new Map<string, string>() }
-  )
+  private readonly injector = inject(Injector)
+  private readonly keyTranslations = new Map<string, Signal<string | undefined>>()
 
   private translateKey(key: TranslationKey | undefined): string | undefined {
     if (!key) return undefined
-    return this.translations().get(PageHeaderComponent.translationId(key)) || undefined
+    const id = PageHeaderComponent.translationId(key)
+    let translation = this.keyTranslations.get(id)
+    if (!translation) {
+      const translation$ =
+        typeof key === 'string'
+          ? this.translateService.stream(key)
+          : this.translateService.stream(key.key, key.parameters)
+      translation = untracked(() => toSignal(translation$, { injector: this.injector }))
+      this.keyTranslations.set(id, translation)
+    }
+    return translation() || undefined
   }
 
   hasDisabledReason(action: Action): boolean {
