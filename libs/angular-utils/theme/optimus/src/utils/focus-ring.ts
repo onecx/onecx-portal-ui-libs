@@ -33,10 +33,13 @@ type Rgb = [number, number, number]
 export function parseColor(color: string | null | undefined): Rgb | undefined {
   if (!color) return undefined
   const c = color.trim()
-  const m = /^#([0-9a-f]{3})$/i.exec(c)
+  let m = /^#([0-9a-f]{3})$/i.exec(c)
   if (m) return [...m[1]].map((h) => parseInt(h + h, 16)) as Rgb
-  const hex = /^#([0-9a-f]{6})(?:[0-9a-f]{2})?$/i.exec(c)?.[1]
-  if (hex) return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)) as Rgb
+  m = /^#([0-9a-f]{6})(?:[0-9a-f]{2})?$/i.exec(c)
+  if (m) {
+    const hex = m[1]
+    return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)) as Rgb
+  }
   const f = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i.exec(c)
   if (f) return [Number(f[1]), Number(f[2]), Number(f[3])]
   return undefined
