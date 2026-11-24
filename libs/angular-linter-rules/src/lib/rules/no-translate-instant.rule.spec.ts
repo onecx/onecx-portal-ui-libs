@@ -120,3 +120,50 @@ ruleTester.run('no-translate-instant', noTranslateInstant, {
     },
   ],
 })
+
+const typedRuleTester = new RuleTester({
+  languageOptions: {
+    parser: require('@typescript-eslint/parser'),
+    parserOptions: {
+      projectService: { allowDefaultProject: ['*.ts'] },
+      tsconfigRootDir: `${process.cwd()}/libs/angular-linter-rules`,
+    },
+  },
+} as unknown as any)
+
+const typedFilename = `${process.cwd()}/libs/angular-linter-rules/typed-fixture.ts`
+
+typedRuleTester.run('no-translate-instant with type information', noTranslateInstant, {
+  valid: [
+    {
+      filename: typedFilename,
+      code: `
+      import { TranslateService } from '@ngx-translate/core'
+
+      class A {
+        constructor(private i18n: TranslateService) {}
+        test() {
+          this.i18n.use('en')
+          return this.i18n.get('KEY')
+        }
+      }
+      `,
+    },
+  ],
+  invalid: [
+    {
+      filename: typedFilename,
+      code: `
+      import { TranslateService } from '@ngx-translate/core'
+
+      class A {
+        constructor(private i18n: TranslateService) {}
+        test() {
+          return this.i18n.instant('KEY')
+        }
+      }
+      `,
+      errors: [{ messageId }],
+    },
+  ],
+})

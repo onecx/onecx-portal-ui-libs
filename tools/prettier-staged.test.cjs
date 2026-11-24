@@ -18,6 +18,7 @@ function createFixture(t) {
   mkdirSync(repo)
   mkdirSync(path.join(repo, 'tools'))
   copyFileSync(helperPath, path.join(repo, 'tools', 'prettier-staged.js'))
+  copyFileSync(path.join(__dirname, 'staged-files.js'), path.join(repo, 'tools', 'staged-files.js'))
   mkdirSync(path.join(prettierRoot, 'src'), { recursive: true })
   writeFileSync(path.join(prettierRoot, 'package.json'), JSON.stringify({ main: 'src/index.js' }))
   writeFileSync(
@@ -104,7 +105,7 @@ test('propagates Prettier failures', (t) => {
   assert.equal(result.status, 1)
 })
 
-test('uses the staged Prettier script from the pre-commit hook', (t) => {
+test('runs the prettier script, which is the staged check, from the pre-commit hook', (t) => {
   const fixture = createFixture(t)
   const bin = path.join(fixture.root, 'bin')
   const callsFile = path.join(fixture.root, 'npm-calls.txt')
@@ -132,7 +133,7 @@ test('uses the staged Prettier script from the pre-commit hook', (t) => {
   })
 
   assert.equal(result.status, 0, result.stderr)
-  assert.deepEqual(readFileSync(callsFile, 'utf8').trim().split('\n'), ['run lint', 'run prettier:staged'])
+  assert.deepEqual(readFileSync(callsFile, 'utf8').trim().split('\n'), ['run lint', 'run prettier'])
 })
 
 test('runs the test script when test:ci is not configured', (t) => {
@@ -163,9 +164,41 @@ test('runs the test script when test:ci is not configured', (t) => {
   })
 
   assert.equal(result.status, 0, result.stderr)
+  assert.deepEqual(readFileSync(callsFile, 'utf8').trim().split('\n'), ['run lint', 'run prettier', 'run test'])
+})
+
+test('runs the sonar script under FORCE_CI_COMMIT_HOOKS', (t) => {
+  const fixture = createFixture(t)
+  const bin = path.join(fixture.root, 'bin')
+  const callsFile = path.join(fixture.root, 'npm-calls.txt')
+  const npmPath = path.join(bin, 'npm')
+  const hookPath = path.join(__dirname, '../.husky/pre-commit')
+
+  mkdirSync(bin)
+  writeFileSync(
+    path.join(fixture.repo, 'package.json'),
+    JSON.stringify({ scripts: { lint: 'lint', prettier: 'prettier', test: 'test', sonar: 'sonar' } })
+  )
+  writeFileSync(npmPath, '#!/bin/sh\nprintf "%s\\n" "$*" >> "$NPM_CALLS"\n')
+  chmodSync(npmPath, 0o755)
+
+  const result = spawnSync('/bin/sh', [hookPath], {
+    cwd: fixture.repo,
+    env: {
+      ...process.env,
+      PATH: `${bin}${path.delimiter}${process.env.PATH}`,
+      NPM_CALLS: callsFile,
+      CI: '',
+      FORCE_CI_COMMIT_HOOKS: '1',
+    },
+    encoding: 'utf8',
+  })
+
+  assert.equal(result.status, 0, result.stderr)
   assert.deepEqual(readFileSync(callsFile, 'utf8').trim().split('\n'), [
     'run lint',
     'run prettier',
     'run test',
+    'run sonar',
   ])
 })
