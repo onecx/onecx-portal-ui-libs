@@ -180,7 +180,8 @@ export class KeycloakAuthService implements AuthService {
     })
     this.updateLocalStorage()
     if (onTokenExpiredEnabled) {
-      // Awaiting the refresh lets a rejection from it reach the onTokenExpired handler-failure catch.
+      // proactivelyRefreshToken catches and logs its own updateToken rejection, so the
+      // onTokenExpired handler-failure catch only guards other failures here (e.g. token persistence).
       await this.proactivelyRefreshToken()
     } else {
       this.logger.info(
