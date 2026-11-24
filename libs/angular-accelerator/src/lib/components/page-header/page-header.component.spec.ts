@@ -1156,6 +1156,35 @@ describe('PageHeaderComponent', () => {
       expect(await menuItems[2].getText()).toBe('Visible label')
     })
 
+    it('should name an icon-only overflow action from a translated ariaLabelKey, with titleKey as fallback', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { OVERFLOW_ARIA_KEY: 'Overflow via aria key', OVERFLOW_TITLE_KEY: 'Overflow via title key' })
+      translate.use('en')
+
+      fixture.componentRef.setInput('actions', [
+        { id: 'o1', icon: 'pi pi-lock', ariaLabelKey: 'OVERFLOW_ARIA_KEY', show: 'asOverflow', actionCallback: () => undefined },
+        { id: 'o2', icon: 'pi pi-lock', titleKey: 'OVERFLOW_TITLE_KEY', show: 'asOverflow', actionCallback: () => undefined },
+        { id: 'o3', label: 'Visible label', icon: 'pi pi-lock', ariaLabelKey: 'OVERFLOW_ARIA_KEY', show: 'asOverflow', actionCallback: () => undefined },
+        { id: 'o4', icon: 'pi pi-lock', show: 'asOverflow', actionCallback: () => undefined },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+
+      const overflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      await overflowButton?.click()
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(menuItems).toHaveLength(4)
+      // the translated ariaLabelKey wins over title for the first icon-only action
+      expect(await menuItems[0].getText()).toBe('Overflow via aria key')
+      // the translated titleKey is the last fallback for the second icon-only action
+      expect(await menuItems[1].getText()).toBe('Overflow via title key')
+      // a visible label always wins — the translated ariaLabelKey fallback must not override it
+      expect(await menuItems[2].getText()).toBe('Visible label')
+      // an icon-only action with no label, ariaLabel/Key or title/Key resolves to no accessible text
+      expect(await menuItems[3].getText()).toBe('')
+    })
+
     it('should render no actions for a user without any permissions', async () => {
       userServiceMock.permissionsTopic$.publish([])
 
