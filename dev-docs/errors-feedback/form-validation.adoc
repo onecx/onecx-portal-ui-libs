@@ -1,0 +1,85 @@
+= Accessible Form Validation
+:idprefix:
+:idseparator: -
+
+== Problem
+
+Required, invalid and error state of a form field must not only be visible. Assistive technology needs the label, the required and invalid state and the error text as programmatic information (WCAG 1.3.1, 3.3.1, 3.3.2, 3.3.3, 4.1.2). A failed save that is only shown as a toast disappears before it can be read and is not tied to the dialog the user is working in.
+
+== Building blocks
+
+All building blocks are exported by `@onecx/angular-accelerator` (and by `AngularAcceleratorModule`).
+
+[cols="1,3"]
+|===
+|`ocxForm` (`OcxFormDirective`)
+|On a `<form>` with `[formGroup]` or `ngForm`. On submit of an invalid form it marks all controls as touched and moves focus to the first invalid field. `validate()` does the same on demand and returns whether the form is valid.
+
+|`ocxFormField` (`OcxFormFieldDirective`)
+|On the input (anything with an `NgControl`). Sets `aria-required` (required validator or `required` attribute), `aria-invalid` (invalid and touched, or form submitted) and `aria-describedby` (id of the error text while an error is shown; an existing `aria-describedby` is kept).
+
+|`<ocx-form-field-error>`
+|The error text next to a field. A polite live region, so the text is announced when it appears. `messages` maps validation error keys to translation keys or texts; `required`, `email`, `minlength`, `maxlength`, `min`, `max` and `pattern` have default translations (`OCX_FORM_FIELD.ERROR.*`).
+
+|`<ocx-form-error-summary>`
+|An `role="alert"` region for form-level failures, e.g. a rejected save. Entries with a `fieldId` link to and focus the field. `focus()` moves focus to the region.
+|===
+
+The label association stays in the template: every field needs a visible `<label for="...">`.
+
+== Pattern
+
+[source,html]
+----
+<form [formGroup]="form" ocxForm (ngSubmit)="save()">
+  <ocx-form-error-summary [errors]="errors"></ocx-form-error-summary>
+
+  <label for="name">Name *</label>
+  <input id="name" formControlName="name" ocxFormField #name="ocxFormField" />
+  <ocx-form-field-error [field]="name" [messages]="{ required: 'MY_APP.NAME_REQUIRED' }"></ocx-form-field-error>
+</form>
+----
+
+Submitting an empty form shows the error next to every invalid field and focuses the first one.
+
+`ngSubmit` is emitted for invalid forms as well, so `save()` must check the validity itself before sending anything:
+
+[source,typescript]
+----
+save() {
+  this.errors = []
+  if (!this.form.valid) return // ocxForm shows the field errors and focuses the first invalid field
+  this.api.save(this.form.value).subscribe({
+    error: () => (this.errors = [{ message: 'MY_APP.SAVE_FAILED' }]),
+  })
+}
+----
+
+== Forms in dialogs
+
+The dialog buttons are rendered by the dialog footer and do not submit the form. Implement `DialogButtonClicked`, call `validate()` and return `false` to keep the dialog open. A failed request (HTTP 400) must be caught and mapped to `false` as well, with the failure written to the summary inside the dialog. The component instance stays alive while the dialog is open, so the user's input is preserved.
+
+[source,typescript]
+----
+ocxDialogButtonClicked(state: DialogState<unknown>) {
+  if (state.button !== 'primary') return true
+  this.errors = []
+  if (!this.ocxForm.validate()) return false // field errors are shown, first invalid field is focused
+  return this.api.save(this.form.value).pipe(
+    map(() => true),
+    catchError(() => {
+      this.errors = [{ message: 'MY_APP.SAVE_FAILED' }]
+      setTimeout(() => this.summary.focus()) // after the summary was rendered
+      return of(false) // dialog stays open
+    })
+  )
+}
+----
+
+Server-side errors for a single field can be set with `control.setErrors({ server: 'MY_APP.NAME_TAKEN' })`; `<ocx-form-field-error>` shows string error values as the message.
+
+== Testing
+
+`OcxFormFieldHarness`, `OcxFormFieldErrorHarness` and `OcxFormErrorSummaryHarness` are available from `@onecx/angular-accelerator/testing`. The accessibility rules `label` and `aria-required-attr` of axe-core are checked in `form-field.spec.ts`; the story is `Accessibility/FormField`.
+
+Note: the directives read the control state during change detection and mark the view for check on control events and form submit.
