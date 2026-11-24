@@ -20,7 +20,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { provideRouter, Router } from '@angular/router'
-import { BehaviorSubject, of } from 'rxjs'
+import { BehaviorSubject, firstValueFrom, of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
@@ -853,18 +853,15 @@ describe('PageHeaderComponent', () => {
       expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title only')
     })
 
-    it('should resolve inline action names from translation keys and fall back through the chain', () => {
+    it('should resolve inline action names from translation keys and fall back through the chain', async () => {
       const translate = TestBed.inject(TranslateService)
       translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key', EMPTY: '' })
       translate.use('en')
-      expect(component.getInlineActionAriaLabel({ labelKey: 'LBL', ariaLabel: 'x' } as Action)).toBeUndefined()
-      expect(
-        component.getInlineActionAriaLabel({ ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } } as Action)
-      ).toBe('Hello World')
-      expect(component.getInlineActionAriaLabel({ ariaLabelKey: 'EMPTY', titleKey: 'TITLE' } as Action)).toBe(
-        'Title key'
-      )
-      expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
+      const nameOf = (action: Partial<Action>) => firstValueFrom(component.getInlineActionAriaLabel(action as Action))
+      expect(await nameOf({ labelKey: 'LBL', ariaLabel: 'x' })).toBeUndefined()
+      expect(await nameOf({ ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } })).toBe('Hello World')
+      expect(await nameOf({ ariaLabelKey: 'EMPTY', titleKey: 'TITLE' })).toBe('Title key')
+      expect(await nameOf({})).toBeUndefined()
     })
 
     it('should render the figure image as decorative and the subheader as plain content', async () => {

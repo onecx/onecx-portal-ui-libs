@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { TranslateService } from '@ngx-translate/core'
 import { Topic } from '@onecx/accelerator'
 import { MenuItem } from '@openng/optimus-ui/api'
-import { BehaviorSubject, filter, map, merge, Observable } from 'rxjs'
+import { BehaviorSubject, filter, map, merge, Observable, Subscription } from 'rxjs'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 interface ManualBreadcrumbs {
@@ -35,6 +35,7 @@ export class BreadcrumbService implements OnDestroy {
   private set itemsSource$(source: ManualBreadcrumbsTopic) {
     this._itemSource$ = source
   }
+  private pendingTranslation: Subscription | undefined
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
   _itemsHandler: Observable<MenuItem[]> | undefined
@@ -62,6 +63,7 @@ export class BreadcrumbService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.pendingTranslation?.unsubscribe()
     this._itemSource$?.destroy()
   }
 
@@ -69,7 +71,7 @@ export class BreadcrumbService implements OnDestroy {
     if (route?.data['mfeInfo']) {
       const breadcrumbs: MenuItem[] = []
       const mfeInfo = route.data['mfeInfo']
-      const productLabel = this.translate(mfeInfo.displayName || mfeInfo.productName)
+      const productLabel = this.toLabel(mfeInfo.displayName || mfeInfo.productName)
       if (productLabel) {
         breadcrumbs.push({ label: productLabel, routerLink: route.data['mfeInfo'].baseHref })
       }
@@ -80,11 +82,11 @@ export class BreadcrumbService implements OnDestroy {
         this.createBreadcrumb(route, parentUrl, breadcrumbs)
       }
       this.addBreadcrumb(route.firstChild, parentUrl, breadcrumbs)
-      this.generatedItemsSource.next(breadcrumbs)
+      this.publish(breadcrumbs)
     } else if (route?.data['breadcrumb']) {
       const breadcrumbs: MenuItem[] = []
       this.addBreadcrumb(route, [], breadcrumbs)
-      this.generatedItemsSource.next(breadcrumbs)
+      this.publish(breadcrumbs)
     } else if (route) {
       this.generateBreadcrumbs(route.firstChild)
     }
@@ -105,17 +107,33 @@ export class BreadcrumbService implements OnDestroy {
     // Routes without breadcrumb data have no meaningful name, so they are left out instead of showing a placeholder
     if (route.data['breadcrumb']) {
       const breadcrumb: MenuItem = {
-        label: this.translate(this.getLabel(route.data, route.paramMap)),
+        label: this.toLabel(this.getLabel(route.data, route.paramMap)),
         routerLink: '/' + routeUrl.join('/'),
       }
       breadcrumbs.push(breadcrumb)
     }
   }
 
-  private translate(label: unknown): string | undefined {
-    if (typeof label !== 'string' || !label) return undefined
-    const translated = this.translateService.instant(label)
-    return typeof translated === 'string' ? translated : label
+  private toLabel(label: unknown): string | undefined {
+    return typeof label === 'string' && label ? label : undefined
+  }
+
+  /** Emits the breadcrumbs once their labels are translated; a newer call supersedes a pending one. */
+  private publish(breadcrumbs: MenuItem[]) {
+    this.pendingTranslation?.unsubscribe()
+    const labels = [...new Set(breadcrumbs.map((item) => item.label).filter((label): label is string => !!label))]
+    if (!labels.length) {
+      this.generatedItemsSource.next(breadcrumbs)
+      return
+    }
+    this.pendingTranslation = this.translateService.get(labels).subscribe((translations: Record<string, unknown>) => {
+      this.generatedItemsSource.next(
+        breadcrumbs.map((item) => {
+          const translated = item.label ? translations[item.label] : undefined
+          return typeof translated === 'string' ? { ...item, label: translated } : item
+        })
+      )
+    })
   }
 
   private getLabel(data: Data, params: ParamMap) {

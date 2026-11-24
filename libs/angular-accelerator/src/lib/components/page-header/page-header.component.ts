@@ -17,7 +17,7 @@ import {
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
-import { Observable, concat, map, of, switchMap } from 'rxjs'
+import { Observable, combineLatest, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
@@ -219,28 +219,52 @@ export class PageHeaderComponent implements OnInit {
 
   private readonly warnedItems = new Set<string>()
 
-  private translateKey(key: TranslationKey | undefined): string | undefined {
-    if (!key) return undefined
-    const translated =
+  private readonly translationCache = new WeakMap<
+    object,
+    { signature: string; value$: Observable<string | undefined> }
+  >()
+
+  /** Returns the same observable for an unchanged item, so that the async pipe does not resubscribe on every change detection. */
+  private memoize(
+    item: object,
+    signature: unknown,
+    factory: () => Observable<string | undefined>
+  ): Observable<string | undefined> {
+    const serialized = JSON.stringify(signature)
+    const cached = this.translationCache.get(item)
+    if (cached?.signature === serialized) return cached.value$
+    const value$ = factory()
+    this.translationCache.set(item, { signature: serialized, value$ })
+    return value$
+  }
+
+  private translateKey(key: TranslationKey | undefined): Observable<string | undefined> {
+    if (!key) return of(undefined)
+    const translated$ =
       typeof key === 'string'
-        ? this.translateService.instant(key)
-        : this.translateService.instant(key.key, key.parameters)
-    return translated || undefined
+        ? this.translateService.stream(key)
+        : this.translateService.stream(key.key, key.parameters)
+    return translated$.pipe(map((translated: string) => translated || undefined))
   }
 
   /**
    * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
    * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
    */
-  getInlineActionAriaLabel(action: Action): string | undefined {
-    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
-    if (visibleLabel) return undefined
-    return (
-      this.translateKey(action.ariaLabelKey) ||
-      action.ariaLabel ||
-      this.translateKey(action.titleKey) ||
-      action.title ||
-      undefined
+  getInlineActionAriaLabel(action: Action): Observable<string | undefined> {
+    return this.memoize(
+      action,
+      [action.labelKey, action.label, action.ariaLabelKey, action.ariaLabel, action.titleKey, action.title],
+      () => {
+        const iconOnlyName$ = combineLatest([
+          this.translateKey(action.ariaLabelKey),
+          this.translateKey(action.titleKey),
+        ]).pipe(map(([ariaLabel, title]) => ariaLabel || action.ariaLabel || title || action.title || undefined))
+        if (!action.labelKey) return action.label ? of(undefined) : iconOnlyName$
+        return this.translateService
+          .stream(action.labelKey)
+          .pipe(switchMap((visibleLabel: string) => (visibleLabel ? of(undefined) : iconOnlyName$)))
+      }
     )
   }
 
@@ -248,24 +272,33 @@ export class PageHeaderComponent implements OnInit {
    * Accessible name of the object detail action button:
    * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
    */
-  getActionItemAriaLabel(item: ObjectDetailItem): string {
-    const name =
-      this.translateKey(item.actionItemAriaLabelKey) ||
-      item.actionItemAriaLabel ||
-      this.translateKey(item.actionItemTooltipKey)
-    if (name) return name
-    if (isDevMode() && !this.warnedItems.has(item.label)) {
-      this.warnedItems.add(item.label)
-      console.warn(
-        `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
-      )
-    }
-    return item.label
+  getActionItemAriaLabel(item: ObjectDetailItem): Observable<string | undefined> {
+    return this.memoize(
+      item,
+      [item.label, item.actionItemAriaLabelKey, item.actionItemAriaLabel, item.actionItemTooltipKey],
+      () =>
+        combineLatest([
+          this.translateKey(item.actionItemAriaLabelKey),
+          this.translateKey(item.actionItemTooltipKey),
+        ]).pipe(
+          map(([ariaLabel, tooltip]) => {
+            const name = ariaLabel || item.actionItemAriaLabel || tooltip
+            if (name) return name
+            if (isDevMode() && !this.warnedItems.has(item.label)) {
+              this.warnedItems.add(item.label)
+              console.warn(
+                `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
+              )
+            }
+            return item.label
+          })
+        )
+    )
   }
 
   /** Text alternative for an icon-only object detail value. */
-  getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
-    return this.translateKey(item.valueTooltipKey)
+  getIconOnlyDetailText(item: ObjectDetailItem): Observable<string | undefined> {
+    return this.memoize(item, item.valueTooltipKey ?? null, () => this.translateKey(item.valueTooltipKey))
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {
