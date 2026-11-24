@@ -83,4 +83,8 @@
 [build-utils]
 [release]
 [architecture]
+
+' --- Workspace root: its ESLint config loads the linter rules from source
+[@onecx/onecx-portal-ui-libs] --> [angular-linter-rules]
+[@onecx/onecx-portal-ui-libs] --> [ngrx-linter-rules]
 @enduml
