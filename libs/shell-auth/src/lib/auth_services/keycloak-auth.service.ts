@@ -136,6 +136,13 @@ export class KeycloakAuthService implements AuthService {
 
       this.logger.info(`[KC events] 1 setupEventListener() `, { onTokenExpiredEnabled, onAuthRefreshErrorEnabled })
 
+      const keycloak = this.keycloak
+      const loginAndLogFailure = () => {
+        keycloak.login(this.config).catch((err: unknown) => {
+          this.logger.error('[KC event] login redirect failed', { err })
+        })
+      }
+
       this.keycloak.onAuthError = (errorData) => {
         this.logger.error(`[KC event] 2.1 onAuthError:`, { errorData })
         this.updateLocalStorage()
@@ -143,7 +150,7 @@ export class KeycloakAuthService implements AuthService {
       this.keycloak.onAuthLogout = () => {
         this.logger.info('[KC event] 2.2 onAuthLogout - SSO session ended, navigating to login')
         this.clearKCStateFromLocalstorage()
-        this.keycloak?.login(this.config)
+        loginAndLogFailure()
       }
       this.keycloak.onAuthRefreshSuccess = () => {
         this.updateLocalStorage()
@@ -159,7 +166,7 @@ export class KeycloakAuthService implements AuthService {
         this.updateLocalStorage()
         if (onAuthRefreshErrorEnabled) {
           this.logger.info('[KC event] 2.4.1           onAuthRefreshError - initiating re-login')
-          this.keycloak?.login(this.config)
+          loginAndLogFailure()
         }
       }
       this.keycloak.onAuthSuccess = () => {
@@ -178,9 +185,13 @@ export class KeycloakAuthService implements AuthService {
         this.updateLocalStorage()
         if (onTokenExpiredEnabled) {
           // A semaphore is used to prevent executing multiple updateToken calls in parallel.
-          this.updateTokenSemaphore.use(async () => {
+          void this.updateTokenSemaphore.use(async () => {
             this.logger.info('[KC event] 2.6           onTokenExpired - proactively calling updateToken()')
-            this.keycloak?.updateToken()
+            try {
+              await keycloak.updateToken()
+            } catch (err) {
+              this.logger.warn('[KC event] 2.6           onTokenExpired - updateToken() failed', { err })
+            }
           })
         } else {
           this.logger.info(
