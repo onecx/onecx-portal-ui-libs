@@ -8,10 +8,16 @@ export default {
   ...createReportsConfig('angular-utils'),
   displayName: 'angular-utils',
   preset: '../../jest.preset.js',
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts', '<rootDir>/cdk/**/*.spec.ts'],
+  testMatch: [
+    '<rootDir>/src/lib/**/*.spec.ts',
+    '<rootDir>/guards/**/*.spec.ts',
+    '<rootDir>/cdk/**/*.spec.ts',
+    '<rootDir>/theme/primeng/src/preset/**/*.spec.ts',
+  ],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleNameMapper: {
-    '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
+    '^@primeng/themes/aura$': '<rootDir>/../../node_modules/@primeng/themes/aura/index.mjs',
+    '^@primeng/themes$': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
   },
   transform: {
     '^.+\\.(mjs|js|html)$': [
