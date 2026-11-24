@@ -55,6 +55,33 @@ ruleTester.run('no-subscribe-assignment', noSubscribeAssignment, {
       }
       `,
     },
+    {
+      code: `
+      import { of } from 'rxjs'
+
+      function test() {
+        of(1).subscribe((value) => {
+          if (value) {
+            let resolve: (v: number) => void
+            new Promise<number>((r) => {
+              resolve = r
+            })
+          }
+        })
+      }
+      `,
+    },
+    {
+      filename: `${process.cwd()}/libs/angular-linter-rules/src/some.spec.ts`,
+      code: `
+      import { of } from 'rxjs'
+
+      it('emits', () => {
+        let result = 0
+        of(1).subscribe((value) => (result = value))
+      })
+      `,
+    },
   ],
   invalid: [
     {
