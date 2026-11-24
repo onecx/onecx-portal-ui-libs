@@ -69,6 +69,7 @@
 
   &__run {
     flex: 0 0 auto;
+    margin-left: auto;
   }
 
   &__agent {
@@ -108,6 +109,19 @@
     font-weight: 600;
   }
 
+  &__review-status-icon {
+    display: inline-flex;
+    flex: 0 0 1.5rem;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--p-green-700, #047857);
+    color: var(--p-primary-contrast-color, #fff);
+    font-size: 0.75rem;
+  }
+
   &__review-columns {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
@@ -116,12 +130,28 @@
 
   &__review-column {
     display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     width: 100%;
+
+    label {
+      color: var(--p-text-muted-color, currentColor);
+      font-size: 0.875rem;
+    }
   }
 
   &__actions {
     display: flex;
-    justify-content: flex-end;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  &__review-secondary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 0.5rem;
   }
 

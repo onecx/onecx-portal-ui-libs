@@ -14,7 +14,6 @@
     "TRY_AGAIN": "Try again",
     "CHANGE_SELECTION": "Change selection",
     "REPLACE_TEXT": "Replace text",
-    "RETRY": "Retry",
     "LOADING_AGENTS": "Loading agents...",
     "NO_AGENTS": "No AI agents are available for this application.",
     "ACTIONS": {
@@ -36,7 +35,10 @@
     "ERRORS": {
       "NO_PROVIDER": "No AI provider is configured for this application.",
       "AGENT_NOT_FOUND": "No AI agent is configured for this context.",
-      "GENERIC": "The AI request failed. Please try again."
+      "TIMEOUT": "The AI request took too long. Please try again.",
+      "UNAVAILABLE": "The AI service is temporarily unavailable. Please try again later.",
+      "PROVIDER": "The AI provider couldn't complete the request. Please try again or contact your administrator.",
+      "GENERIC": "We couldn't create a suggestion. Please try again. If the problem persists, contact your administrator."
     }
   },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
