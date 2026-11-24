@@ -58,7 +58,7 @@ describe('KeycloakAuthService.init, given keycloak init rejects or resolves fals
   })
 })
 
-describe('KeycloakAuthService.init, given keycloak init resolves true or login rejects', () => {
+describe('KeycloakAuthService.init, given keycloak init resolves true', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     localStorage.clear()
@@ -72,6 +72,13 @@ describe('KeycloakAuthService.init, given keycloak init resolves true or login r
 
     expect(keycloak.login).not.toHaveBeenCalled()
     expect(result).toBe(true)
+  })
+})
+
+describe('KeycloakAuthService.init, given keycloak init rejects and login rejects', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    localStorage.clear()
   })
 
   it('when init runs, then init rejects with the login error', async () => {
