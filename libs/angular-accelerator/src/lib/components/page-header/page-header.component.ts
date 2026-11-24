@@ -17,15 +17,17 @@ import {
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
-import { Observable, concat, map, of, switchMap } from 'rxjs'
+import { Observable, combineLatest, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { TranslationKey } from '../../model/translation.model'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { TranslationKey, TranslationKeyWithParameters } from '../../model/translation.model'
+import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { Router } from '@angular/router'
 import { RouterLink } from '../../model/data-action'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
+
+const toCacheKey = (k: TranslationKeyWithParameters) => k.key + JSON.stringify(k.parameters ?? {})
 
 /**
  * Action definition.
@@ -219,13 +221,37 @@ export class PageHeaderComponent implements OnInit {
 
   private readonly warnedItems = new Set<string>()
 
+  private readonly translatedKeys = toSignal(
+    toObservable(computed(() => this.collectTranslationKeys())).pipe(
+      switchMap((keys) =>
+        keys.length
+          ? combineLatest(
+              keys.map((k) =>
+                this.translateService.stream(k.key, k.parameters).pipe(map((value) => [toCacheKey(k), value] as const))
+              )
+            ).pipe(map((entries) => new Map<string, string>(entries)))
+          : of(new Map<string, string>())
+      )
+    ),
+    { initialValue: new Map<string, string>() }
+  )
+
+  private collectTranslationKeys(): TranslationKeyWithParameters[] {
+    const keys: TranslationKey[] = []
+    this.actions().forEach((a) =>
+      keys.push(...[a.labelKey, a.ariaLabelKey, a.titleKey].filter((k): k is string => !!k))
+    )
+    this.objectDetails()?.forEach((d) =>
+      keys.push(
+        ...[d.actionItemAriaLabelKey, d.actionItemTooltipKey, d.valueTooltipKey].filter((k): k is TranslationKey => !!k)
+      )
+    )
+    return keys.map((k) => (typeof k === 'string' ? { key: k } : k))
+  }
+
   private translateKey(key: TranslationKey | undefined): string | undefined {
     if (!key) return undefined
-    const translated =
-      typeof key === 'string'
-        ? this.translateService.instant(key)
-        : this.translateService.instant(key.key, key.parameters)
-    return translated || undefined
+    return this.translatedKeys().get(toCacheKey(typeof key === 'string' ? { key } : key)) || undefined
   }
 
   /**
@@ -233,7 +259,7 @@ export class PageHeaderComponent implements OnInit {
    * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
    */
   getInlineActionAriaLabel(action: Action): string | undefined {
-    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
+    const visibleLabel = this.translateKey(action.labelKey) || action.label
     if (visibleLabel) return undefined
     return (
       this.translateKey(action.ariaLabelKey) ||

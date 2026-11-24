@@ -853,18 +853,36 @@ describe('PageHeaderComponent', () => {
       expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title only')
     })
 
-    it('should resolve inline action names from translation keys and fall back through the chain', () => {
+    it('should resolve inline action names from translation keys and fall back through the chain', async () => {
       const translate = TestBed.inject(TranslateService)
-      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key', EMPTY: '' })
+      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello', TITLE: 'Title key', EMPTY: '' })
       translate.use('en')
-      expect(component.getInlineActionAriaLabel({ labelKey: 'LBL', ariaLabel: 'x' } as Action)).toBeUndefined()
-      expect(
-        component.getInlineActionAriaLabel({ ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } } as Action)
-      ).toBe('Hello World')
-      expect(component.getInlineActionAriaLabel({ ariaLabelKey: 'EMPTY', titleKey: 'TITLE' } as Action)).toBe(
-        'Title key'
-      )
-      expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
+      const actions = [
+        { labelKey: 'LBL', ariaLabel: 'x' },
+        { ariaLabelKey: 'ARIA' },
+        { ariaLabelKey: 'EMPTY', titleKey: 'TITLE' },
+        {},
+      ] as Action[]
+      fixture.componentRef.setInput('actions', actions)
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(component.getInlineActionAriaLabel(actions[0])).toBeUndefined()
+      expect(component.getInlineActionAriaLabel(actions[1])).toBe('Hello')
+      expect(component.getInlineActionAriaLabel(actions[2])).toBe('Title key')
+      expect(component.getInlineActionAriaLabel(actions[3])).toBeUndefined()
+    })
+
+    it('should resolve translation keys with parameters', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { ARIA: 'Hello {{name}}' })
+      translate.use('en')
+      const details = [
+        { label: 'Status', actionItemAriaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } },
+      ] as ObjectDetailItem[]
+      fixture.componentRef.setInput('objectDetails', details)
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(component.getActionItemAriaLabel(details[0])).toBe('Hello World')
     })
 
     it('should render the figure image as decorative and the subheader as plain content', async () => {
