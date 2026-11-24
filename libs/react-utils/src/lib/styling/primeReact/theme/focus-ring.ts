@@ -16,7 +16,10 @@ export function parseColor(color: string | null | undefined): Rgb | undefined {
   let m = /^#([0-9a-f]{3})$/i.exec(c)
   if (m) return [...m[1]].map((h) => Number.parseInt(h + h, 16)) as Rgb
   m = /^#([0-9a-f]{6})(?:[0-9a-f]{2})?$/i.exec(c)
-  if (m) return [0, 2, 4].map((i) => Number.parseInt(m![1].slice(i, i + 2), 16)) as Rgb
+  if (m) {
+    const hex = m[1]
+    return [0, 2, 4].map((i) => Number.parseInt(hex.slice(i, i + 2), 16)) as Rgb
+  }
   const f = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i.exec(c)
   if (f) return [Number(f[1]), Number(f[2]), Number(f[3])]
   return undefined

@@ -5,6 +5,12 @@ const sass = require('sass')
 
 const themeScss = path.join(__dirname, 'theme-onecx', 'theme.scss')
 
+function rgb(color: string | undefined): [number, number, number] {
+  const parsed = parseColor(color)
+  if (!parsed) throw new Error(`Unparsable colour ${color}`)
+  return parsed
+}
+
 type Rule = { selector: string; declarations: Record<string, string> }
 
 function parseRules(css: string): Rule[] {
@@ -104,13 +110,13 @@ describe('React theme focus styles', () => {
     for (const border of borders) {
       const color = /#[0-9a-f]{6}/i.exec(border)?.[0]
       expect(color).toBeDefined()
-      expect(contrastRatio(parseColor(color)!, parseColor('#ffffff')!)).toBeGreaterThanOrEqual(3)
+      expect(contrastRatio(rgb(color), rgb('#ffffff'))).toBeGreaterThanOrEqual(3)
     }
     for (const sel of ['.p-checkbox .p-checkbox-box', '.p-radiobutton .p-radiobutton-box']) {
       const border = rules.find((r) => r.selector.trim() === sel && r.declarations['border'])?.declarations['border']
       const color = /#[0-9a-f]{6}/i.exec(border ?? '')?.[0]
       expect(color).toBeDefined()
-      expect(contrastRatio(parseColor(color!)!, parseColor('#ffffff')!)).toBeGreaterThanOrEqual(3)
+      expect(contrastRatio(rgb(color), rgb('#ffffff'))).toBeGreaterThanOrEqual(3)
     }
   })
 })

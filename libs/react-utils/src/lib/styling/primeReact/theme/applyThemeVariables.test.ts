@@ -23,7 +23,7 @@ describe('applyThemeVariables', () => {
     jest.restoreAllMocks()
     // JSDOM CSS parser does not fully support modern at-rules used by runtime styles (@scope/@layer).
     // Suppress parser noise so test output reflects assertion failures only.
-    jest.spyOn(console, 'error').mockImplementation(() => {})
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
   })
 
   it('applies variables to scope roots and injects runtime layer block into scoped styles', () => {
