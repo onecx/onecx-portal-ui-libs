@@ -79,7 +79,7 @@ This Unit is the React-specific half; Unit 5 covers the Angular plumbing. The re
 * *No connector.* Angular's `WebcomponentConnector` subscribes to `RoutesRecognized` / `GuardsCheckStart` / `GuardsCheckEnd` and drives wrap / gather / finalise automatically. React has no such connector; the app composes the four hooks and calls `gather` itself.
 * *`guardCheckKey`.* React adds a `GUARD_CHECK_KEY` state flag. Each fake navigation is given a fresh key from an incrementing counter (`getNextGuardCheckKey`), so a guard check on the *same* URL is still re-processed rather than deduplicated: Angular relies on `onSameUrlNavigation: 'reload'` for the same-URL case instead.
 * *Injection vs plain classes.* The Angular gatherer is `@Injectable({ providedIn: 'root' })` and injects `Router` / `Injector`. The React gatherer and wrappers are plain classes passed their `NavigateFunction` and (optionally) a controller.
-* *Result type.* The Angular `GuardResult` can be `UrlTree` / `RedirectCommand`, so `NAVIGATION_REQUESTED` uses `combineToGuardResult`. The React `GuardResult` is `boolean`, so every mode uses `combineToBoolean`.
+* *Result type.* The Angular `GuardResult` can be `UrlTree` / `RedirectCommand`, so the Angular activate wrapper keeps redirects with `combineToActivateGuardResult`. The React `GuardResult` is `boolean`, so every mode uses `combineToBoolean`.
 
 The protocol, the four modes, the Gatherer round trip and the `revertNavigation` signal are identical in both and are fixed in link:why-cross-app-guards.adoc[Why cross-App guards].
 
