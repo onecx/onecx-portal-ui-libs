@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react'
-import { location, makeWrappedGuards } from './guard-deactivation.spec-helpers'
-import { useGuardDeactivation } from './use-guard-deactivation'
+import type { WrappedGuards } from '../utils/wrap-guards.utils'
+import * as GuardsHooks from './use-guard-deactivation'
 import { useWrappedGuards } from './use-wrapped-guards'
 
 jest.mock('react-router', () => ({
@@ -13,6 +13,16 @@ jest.mock('./use-wrapped-guards', () => ({
   useWrappedGuards: jest.fn(),
 }))
 
+function makeWrappedGuards(canDeactivate: jest.Mock): WrappedGuards {
+  return {
+    canMatch: jest.fn(async () => true),
+    canActivateChild: jest.fn(async () => true),
+    canActivate: jest.fn(async () => true),
+    canDeactivate,
+    guards: { canMatch: [], canActivateChild: [], canActivate: [], canDeactivate: [] },
+  }
+}
+
 function TestComponent({
   onGuardCheck,
   enabled,
@@ -20,7 +30,7 @@ function TestComponent({
   onGuardCheck?: jest.Mock
   enabled?: boolean
 } = {}) {
-  useGuardDeactivation(location('next'), { onGuardCheck, enabled })
+  GuardsHooks.useGuardDeactivation({ pathname: '/next' } as any, { onGuardCheck, enabled })
   return null
 }
 
