@@ -29,8 +29,9 @@
   </ng-template>
 
   @let resolvedActiveColumnsLabel = activeColumnsLabel() || (activeColumnsLabelKey() | translate) ||
-  ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate); @let resolvedInactiveColumnsLabel =
-  inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) ||
+  ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate);
+  <!-- pick list header labels -->
+  @let resolvedInactiveColumnsLabel = inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) ||
   ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
   <p-pickList
     [source]="displayedColumnsModel()"
