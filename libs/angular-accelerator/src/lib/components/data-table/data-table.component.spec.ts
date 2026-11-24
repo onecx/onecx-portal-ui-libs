@@ -347,9 +347,9 @@ describe('DataTableComponent', () => {
 
     const getLabel = (): HTMLElement => fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
 
-    const getTooltipText = (label: HTMLElement) =>
-      document.getElementById(label.getAttribute('aria-describedby') ?? '')?.querySelector('.p-tooltip-text')
-        ?.textContent ?? null
+    // a non-focusable header label is not referenced via aria-describedby, so look the rendered tooltip up directly
+    const getTooltipText = (_label: HTMLElement) =>
+      document.querySelector('body > .p-tooltip .p-tooltip-text')?.textContent ?? null
 
     const trigger = (label: HTMLElement, event: string) => {
       label.dispatchEvent(new Event(event))
