@@ -852,14 +852,18 @@ describe('PageHeaderComponent', () => {
       const translate = TestBed.inject(TranslateService)
       translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key', EMPTY: '' })
       translate.use('en')
-      expect(component.getInlineActionAriaLabel({ labelKey: 'LBL', ariaLabel: 'x' } as Action)).toBeUndefined()
-      expect(
-        component.getInlineActionAriaLabel({ ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } } as Action)
-      ).toBe('Hello World')
-      expect(component.getInlineActionAriaLabel({ ariaLabelKey: 'EMPTY', titleKey: 'TITLE' } as Action)).toBe(
-        'Title key'
-      )
-      expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
+      const actions = [
+        { labelKey: 'LBL', ariaLabel: 'x' },
+        { ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } },
+        { ariaLabelKey: 'EMPTY', titleKey: 'TITLE' },
+        {},
+      ] as Action[]
+      fixture.componentRef.setInput('actions', actions)
+      fixture.detectChanges()
+      expect(component.getInlineActionAriaLabel(actions[0])).toBeUndefined()
+      expect(component.getInlineActionAriaLabel(actions[1])).toBe('Hello World')
+      expect(component.getInlineActionAriaLabel(actions[2])).toBe('Title key')
+      expect(component.getInlineActionAriaLabel(actions[3])).toBeUndefined()
     })
 
     it('should render the figure image as decorative and the subheader as plain content', async () => {

@@ -21,12 +21,12 @@ import {
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
-import { Observable, concat, map, of, switchMap, tap } from 'rxjs'
+import { Observable, combineLatest, concat, map, of, switchMap, tap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { TranslationKey } from '../../model/translation.model'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { TranslationKey, TranslationKeyWithParameters } from '../../model/translation.model'
+import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { Router } from '@angular/router'
 import { RouterLink } from '../../model/data-action'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
@@ -246,13 +246,44 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   private readonly warnedItems = new Set<string>()
 
+  /** Translation keys of all accessible names and text alternatives derived from the actions and object details. */
+  private readonly accessibleNameKeys = computed(() => {
+    const keys: (TranslationKey | undefined)[] = []
+    for (const action of this.actions()) {
+      keys.push(action.labelKey, action.ariaLabelKey, action.titleKey)
+    }
+    for (const item of this.objectDetails() ?? []) {
+      keys.push(item.actionItemAriaLabelKey, item.actionItemTooltipKey, item.valueTooltipKey)
+    }
+    const unique = new Map<string, TranslationKeyWithParameters>()
+    for (const key of keys) {
+      if (!key) continue
+      const normalized = typeof key === 'string' ? { key } : key
+      unique.set(this.translationId(key), normalized)
+    }
+    return [...unique.entries()]
+  })
+
+  private readonly accessibleNames = toSignal(
+    toObservable(this.accessibleNameKeys).pipe(
+      switchMap((entries) =>
+        entries.length
+          ? combineLatest(entries.map(([, k]) => this.translateService.stream(k.key, k.parameters))).pipe(
+              map((values) => new Map(entries.map(([id], i) => [id, values[i] as string])))
+            )
+          : of(new Map<string, string>())
+      )
+    ),
+    { initialValue: new Map<string, string>() }
+  )
+
+  private translationId(key: TranslationKey): string {
+    return typeof key === 'string' ? key : `${key.key}${JSON.stringify(key.parameters ?? {})}`
+  }
+
   private translateKey(key: TranslationKey | undefined): string | undefined {
     if (!key) return undefined
-    const translated =
-      typeof key === 'string'
-        ? this.translateService.instant(key)
-        : this.translateService.instant(key.key, key.parameters)
-    return translated || undefined
+    return this.accessibleNames().get(this.translationId(key)) || undefined
   }
 
   /** A disabled action that explains why; its wrapper is made keyboard-focusable to expose the reason. */
@@ -265,7 +296,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
    * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
    */
   getInlineActionAriaLabel(action: Action): string | undefined {
-    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
+    const visibleLabel = action.labelKey ? this.translateKey(action.labelKey) : action.label
     if (visibleLabel) return undefined
     return (
       this.translateKey(action.ariaLabelKey) ||

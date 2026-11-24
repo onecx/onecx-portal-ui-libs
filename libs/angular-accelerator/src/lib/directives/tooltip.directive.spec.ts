@@ -8,7 +8,6 @@ import { OcxTooltipDirective } from './tooltip.directive'
 import { OcxTooltipHarness } from '@onecx/angular-accelerator/testing'
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
@@ -29,7 +28,6 @@ class TestHostComponent {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
@@ -50,7 +48,6 @@ class TestHostComponentNoID {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
@@ -66,7 +63,6 @@ class TestHostComponentNull {
 const pressTab = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
@@ -94,24 +90,24 @@ class TemplatesHostComponent {
 }
 
 @Component({
-	// eslint-disable-next-line @angular-eslint/prefer-standalone
-	standalone: false,
-	changeDetection: ChangeDetectionStrategy.Eager,
-	template: `
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `
     <span
       class="ocx-tooltip-host ocx-tooltip-host-cursor"
       [style.cursor]="hostCursor"
       [ocxTooltip]="tooltipText"
       [ocxTooltipCursor]="cursor"
-      tooltipPosition="top">
+      tooltipPosition="top"
+    >
       Cursor
     </span>
-  `
+  `,
 })
 class TestHostComponentCursor {
-	tooltipText: string | undefined = 'Tooltip with cursor'
-	cursor: string | null | undefined = 'default'
-	hostCursor: string | undefined = undefined
+  tooltipText: string | undefined = 'Tooltip with cursor'
+  cursor: string | null | undefined = 'default'
+  hostCursor: string | undefined = undefined
 }
 
 describe('OcxTooltip', () => {
@@ -127,7 +123,13 @@ describe('OcxTooltip', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TestHostComponent, TestHostComponentNoID, TestHostComponentNull, TemplatesHostComponent, TestHostComponentCursor],
+      declarations: [
+        TestHostComponent,
+        TestHostComponentNoID,
+        TestHostComponentNull,
+        TemplatesHostComponent,
+        TestHostComponentCursor,
+      ],
       imports: [NoopAnimationsModule, OcxTooltipDirective],
     }).compileComponents()
 
@@ -726,7 +728,9 @@ describe('OcxTooltip', () => {
     it('should expose the configured cursor', () => {
       const defaultDirective = fixture.debugElement.query(By.css(HOST_SELECTOR_1)).injector.get(OcxTooltipDirective)
       const { cursorFixture } = setup({ cursor: 'default' })
-      const cursorDirective = cursorFixture.debugElement.query(By.css(HOST_SELECTOR_CURSOR)).injector.get(OcxTooltipDirective)
+      const cursorDirective = cursorFixture.debugElement
+        .query(By.css(HOST_SELECTOR_CURSOR))
+        .injector.get(OcxTooltipDirective)
 
       expect(defaultDirective.ocxTooltipCursor()).toBe('pointer')
       expect(cursorDirective.ocxTooltipCursor()).toBe('default')
