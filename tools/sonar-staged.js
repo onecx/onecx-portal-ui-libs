@@ -1,4 +1,4 @@
-const { execFileSync, spawnSync } = require('node:child_process')
+const { spawnSync } = require('node:child_process')
 const crypto = require('node:crypto')
 const fs = require('node:fs')
 const os = require('node:os')
@@ -40,7 +40,7 @@ function filterNewCodeIssues(issues, ranges, projectKey, newFiles = new Set(), p
 async function api(host, token, pathname) {
   const response = await fetch(`${host}${pathname}`, {
     signal: AbortSignal.timeout(API_TIMEOUT_MS),
-    headers: { Authorization: `Basic ${Buffer.from(`${token}:`).toString('base64')}` },
+    headers: { Authorization: 'Basic ' + Buffer.from(`${token}:`).toString('base64') },
   })
   if (!response.ok) {
     throw new Error(`Sonar API ${pathname} failed: ${response.status} ${response.statusText}`)
@@ -89,7 +89,7 @@ function groupByLib(ranges) {
   const libs = {}
   for (const [file, fileRanges] of Object.entries(ranges)) {
     const lib = SOURCE_FILE.exec(file)?.[1]
-    if (lib) (libs[lib] ??= {})[file] = fileRanges
+    if (lib) libs[lib] = { ...(libs[lib] ?? {}), [file]: fileRanges }
   }
   return libs
 }
@@ -107,9 +107,8 @@ function projectKeyFor(lib) {
 function exportLib(dir, lib) {
   // root tsconfig*.json and package.json, so libs/<lib>/tsconfig*.json (extends ../../tsconfig.base.json) resolves
   const files = git(['ls-files', '-z', '--', `libs/${lib}`, ':(glob)tsconfig*.json', 'package.json'])
-  execFileSync('git', ['checkout-index', `--prefix=${dir}${path.sep}`, '-z', '--stdin'], {
+  git(['checkout-index', `--prefix=${dir}${path.sep}`, '-z', '--stdin'], {
     input: files,
-    maxBuffer: 64 * 1024 * 1024,
   })
 }
 
@@ -180,9 +179,9 @@ async function analyzeLib(lib, ranges, env, newFiles) {
       env
     )
     if (scan.status !== 0) {
-      throw new Error(
-        `sonarqube-scanner failed for ${lib} (${scan.error ? scan.error.message : `exit ${scan.status}${scan.signal ? `, signal ${scan.signal}` : ''}`})`
-      )
+      const signalSuffix = scan.signal ? `, signal ${scan.signal}` : ''
+      const reason = scan.error ? scan.error.message : `exit ${scan.status}${signalSuffix}`
+      throw new Error(`sonarqube-scanner failed for ${lib} (${reason})`)
     }
     await waitForAnalysis(host, env.SONAR_TOKEN, path.join(workDir, 'report-task.txt'))
     const issues = filterNewCodeIssues(
