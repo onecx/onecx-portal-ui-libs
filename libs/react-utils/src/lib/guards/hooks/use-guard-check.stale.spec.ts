@@ -51,17 +51,19 @@ function deferred(): { promise: Promise<boolean>; resolve: (value: boolean) => v
   return { promise, resolve: (value) => resolve(value) }
 }
 
+function renderGuardCheck(wrapped: WrappedGuards, onGuardCheck?: jest.Mock) {
+  useLocation.mockReturnValue(locationA)
+  ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
+  return renderHook(() => useGuardCheck({ onGuardCheck }))
+}
+
 describe('useGuardCheck', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   it('given the hook is used without options and the only guard check resolves true, when it completes, then lastResult is true', async () => {
-    const wrapped = makeWrapped()
-    useLocation.mockReturnValue(locationA)
-    ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
-
-    const { result } = renderHook(() => useGuardCheck())
+    const { result } = renderGuardCheck(makeWrapped())
 
     await act(async () => {})
 
@@ -74,9 +76,7 @@ describe('useGuardCheck', () => {
     const wrappedB = makeWrapped({ canMatch: jest.fn(async () => false) })
     const onGuardCheck = jest.fn()
 
-    useLocation.mockReturnValue(locationA)
-    ;(useWrappedGuards as jest.Mock).mockReturnValue(wrappedA)
-    const { result, rerender } = renderHook(() => useGuardCheck({ onGuardCheck }))
+    const { result, rerender } = renderGuardCheck(wrappedA, onGuardCheck)
 
     useLocation.mockReturnValue(locationB)
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrappedB)
@@ -96,15 +96,25 @@ describe('useGuardCheck', () => {
     const wrapped = makeWrapped({ canMatch: jest.fn(() => Promise.reject(new Error('guard failed'))) })
     const onGuardCheck = jest.fn()
 
-    useLocation.mockReturnValue(locationA)
-    ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
-
-    const { result } = renderHook(() => useGuardCheck({ onGuardCheck }))
+    const { result } = renderGuardCheck(wrapped, onGuardCheck)
 
     await act(async () => {})
 
-    expect(mockLogger.error).toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith('Guard check failed', expect.any(Error))
     expect(onGuardCheck).not.toHaveBeenCalled()
     expect(result.current.lastResult).toBeNull()
+  })
+
+  it('given the guard check resolves true and onGuardCheck throws, when the hook runs, then the callback error is logged and lastResult is still true', async () => {
+    const onGuardCheck = jest.fn(() => {
+      throw new Error('callback failed')
+    })
+
+    const { result } = renderGuardCheck(makeWrapped(), onGuardCheck)
+
+    await act(async () => {})
+
+    expect(mockLogger.error).toHaveBeenCalledWith('onGuardCheck callback failed', expect.any(Error))
+    expect(result.current.lastResult).toBe(true)
   })
 })

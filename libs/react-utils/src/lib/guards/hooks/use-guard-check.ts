@@ -45,8 +45,25 @@ export function useGuardCheck(options: UseGuardCheckOptions = {}) {
 }
 
 /**
- * Run the canMatch → canActivateChild → canActivate chain and report the result only while the check
- * is still current, so a result superseded by a newer location is dropped. Rejections are logged.
+ * Run the canMatch → canActivateChild → canActivate chain and resolve its boolean result.
+ * @param wrapped - wrapped guard helpers to execute.
+ * @returns the check result, or undefined when a guard rejects (the rejection is logged).
+ */
+function resolveGuardResult(wrapped: WrappedGuards): Promise<boolean | undefined> {
+  return wrapped
+    .canMatch()
+    .then((canMatchResult) => (canMatchResult ? wrapped.canActivateChild() : false))
+    .then((canActivateChildResult) => (canActivateChildResult ? wrapped.canActivate() : false))
+    .catch((error: unknown) => {
+      logger.error('Guard check failed', error)
+      return undefined
+    })
+}
+
+/**
+ * Report the guard result only while the check is still current, so a result superseded by a newer
+ * location is dropped. Guard rejections and callback errors are logged instead of surfacing as
+ * unhandled rejections.
  * @param wrapped - wrapped guard helpers to execute.
  * @param setLastResult - state setter invoked with the check result while the check is still current.
  * @param onGuardCheck - optional callback invoked with the check result while the check is still current.
@@ -59,18 +76,15 @@ function runGuardChecks(
 ): () => void {
   let cancelled = false
 
-  void wrapped
-    .canMatch()
-    .then((canMatchResult) => (canMatchResult ? wrapped.canActivateChild() : false))
-    .then((canActivateChildResult) => (canActivateChildResult ? wrapped.canActivate() : false))
+  void resolveGuardResult(wrapped)
     .then((result) => {
-      if (!cancelled) {
+      if (result !== undefined && !cancelled) {
         setLastResult(result)
         onGuardCheck?.(result)
       }
     })
     .catch((error: unknown) => {
-      logger.error('Guard check failed', error)
+      logger.error('onGuardCheck callback failed', error)
     })
 
   return () => {
