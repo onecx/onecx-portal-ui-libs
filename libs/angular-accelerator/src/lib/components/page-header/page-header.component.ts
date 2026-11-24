@@ -244,40 +244,17 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   private readonly warnedItems = new WeakSet<ObjectDetailItem>()
 
-  private translateKey(key: TranslationKey | undefined): string | undefined {
-    if (!key) return undefined
-    const translated =
-      typeof key === 'string'
-        ? this.translateService.instant(key)
-        : this.translateService.instant(key.key, key.parameters)
-    return translated || undefined
-  }
-
   /**
-   * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
-   * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
-   */
-  getInlineActionAriaLabel(action: Action): string | undefined {
-    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
-    if (visibleLabel) return undefined
-    return (
-      this.translateKey(action.ariaLabelKey) ||
-      action.ariaLabel ||
-      this.translateKey(action.titleKey) ||
-      action.title ||
-      undefined
-    )
-  }
-
-  /**
-   * Accessible name of the object detail action button:
+   * Accessible name of the object detail action button, given the translation candidates already
+   * resolved by the translate pipe in the template:
    * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
    */
-  getActionItemAriaLabel(item: ObjectDetailItem): string {
-    const name =
-      this.translateKey(item.actionItemAriaLabelKey) ||
-      item.actionItemAriaLabel ||
-      this.translateKey(item.actionItemTooltipKey)
+  resolveActionItemAria(
+    item: ObjectDetailItem,
+    ariaLabel: string | undefined,
+    tooltip: string | undefined
+  ): string {
+    const name = ariaLabel || item.actionItemAriaLabel || tooltip
     if (name) return name
     if (isDevMode() && !this.warnedItems.has(item)) {
       this.warnedItems.add(item)
@@ -286,11 +263,6 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
       )
     }
     return item.label
-  }
-
-  /** Text alternative for an icon-only object detail value. */
-  getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
-    return this.translateKey(item.valueTooltipKey)
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {
@@ -342,16 +314,32 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     const translationKeys = [
       ...actions.map((a) => a.labelKey || '').filter((a) => !!a),
       ...actions.map((a) => a.titleKey || '').filter((a) => !!a),
+      ...actions.map((a) => a.ariaLabelKey || '').filter((a) => !!a),
     ]
     return translationKeys.length ? this.translateService.get(translationKeys) : of({})
+  }
+
+  /**
+   * Accessible name of an icon-only overflow action, resolved from the batched translation map:
+   * ariaLabelKey, ariaLabel, titleKey, title. Mirrors the inline branch, where a visible label
+   * always wins (WCAG 2.5.3), so this is only used when there is no label.
+   */
+  private getOverflowActionAriaLabel(action: Action, translations: { [key: string]: string }): string | undefined {
+    return (
+      (action.ariaLabelKey ? translations[action.ariaLabelKey] : undefined) ||
+      action.ariaLabel ||
+      (action.titleKey ? translations[action.titleKey] : undefined) ||
+      action.title ||
+      undefined
+    )
   }
 
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
       id: a.id,
-      // Fall back to the same ariaLabel/title chain the inline branch uses (getInlineActionAriaLabel returns
-      // undefined when a visible label is present, so this only applies to the icon-only case).
-      label: a.labelKey ? translations[a.labelKey] : a.label || this.getInlineActionAriaLabel(a),
+      // Fall back to the same ariaLabel/title chain the inline branch uses (only applied to the
+      // icon-only case, since a visible label always wins).
+      label: a.labelKey ? translations[a.labelKey] : a.label || this.getOverflowActionAriaLabel(a, translations),
       icon: a.icon,
       tooltipOptions: {
         tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
