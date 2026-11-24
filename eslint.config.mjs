@@ -4,6 +4,20 @@ import { fileURLToPath } from 'url'
 import js from '@eslint/js'
 import nx from '@nx/eslint-plugin'
 import jsoncEslintParser from 'jsonc-eslint-parser'
+import { createJiti } from 'jiti'
+
+// The OneCX linter rule plugins are loaded from source so the workspace is linted
+// with its own rules without having to build the plugins first.
+const jiti = createJiti(import.meta.url)
+const { plugin: angularLinterRules } = await jiti.import('./libs/angular-linter-rules/src/index.ts')
+const { plugin: ngrxLinterRules } = await jiti.import('./libs/ngrx-linter-rules/src/index.ts')
+
+// Spread into the eslint.config.mjs of libs that use NgRx.
+export const ngrxLinterRulesConfig = {
+  files: ['**/*.ts'],
+  plugins: { '@onecx/ngrx-linter-rules': ngrxLinterRules },
+  rules: ngrxLinterRules.configs.recommended.rules,
+}
 
 const compat = new FlatCompat({
   baseDirectory: dirname(fileURLToPath(import.meta.url)),
@@ -51,6 +65,11 @@ export default [
       ],
       '@angular-eslint/prefer-standalone': 'off',
     },
+  },
+  {
+    files: ['**/*.ts'],
+    plugins: { '@onecx/angular-linter-rules': angularLinterRules },
+    rules: angularLinterRules.configs.recommended.rules,
   },
   ...nx.configs['flat/javascript'],
   ...compat
