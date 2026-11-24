@@ -68,6 +68,7 @@ describe('KeycloakAuthService, given an initialized service', () => {
     await service.init()
 
     keycloak['onAuthSuccess']()
+    keycloak['onAuthRefreshSuccess']()
     expect(localStorage.getItem('onecx_kc_token')).toBe('new-token')
     expect(localStorage.getItem('onecx_kc_idToken')).toBe('new-id-token')
 
