@@ -280,7 +280,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
   })
 
   describe('[a11y] open button popup semantics', () => {
-    const innerButton = () => fixture.nativeElement.querySelector('#customGroupColumnSelectorButton button') as HTMLButtonElement
+    const innerButton = () =>
+      fixture.nativeElement.querySelector('#customGroupColumnSelectorButton button') as HTMLButtonElement
 
     it('announces haspopup/expanded on the inner button and sets aria-controls only while open', () => {
       fixture.detectChanges()
@@ -317,7 +318,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(await dialog.getAccessibleName()).toBe('My visible title')
     })
   })
-  
+
   describe('columnsChanged computed property', () => {
     it('should return false when the active columns match the committed ones in membership and order', () => {
       const c1 = makeColumn('c1')
@@ -452,8 +453,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       }
       // viewChild() produces a read-only signal, so substitute a writable one for this test.
       Object.defineProperty(component, 'pickList', { value: signal(pickListMock), configurable: true })
-      const pickList = component.pickList()!
-      pickList.setSelectionList(pickList.SOURCE_LIST, [c1])
+      pickListMock.setSelectionList(pickListMock.SOURCE_LIST, [c1])
 
       expect(pickListMock.setSelectionList).toHaveBeenCalledWith(-1, [c1])
       expect(component.columnsChanged()).toBe(false)
