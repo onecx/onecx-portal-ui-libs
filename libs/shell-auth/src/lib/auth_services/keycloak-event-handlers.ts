@@ -59,6 +59,13 @@ function getExpiry(keycloak: Keycloak): string {
   return expiry ? new Date(expiry * 1000).toISOString() : 'unknown'
 }
 
+/** Starts the login redirect from an event handler; a failing redirect is logged instead of left unhandled. */
+function loginAndLogFailure(ctx: KeycloakEventContext): void {
+  ctx.keycloak.login(ctx.auth.config).catch((err: unknown) => {
+    ctx.logger.error('[KC event] login redirect failed', { err })
+  })
+}
+
 function bindOnAuthError(ctx: KeycloakEventContext): void {
   ctx.keycloak.onAuthError = (errorData) => {
     ctx.logger.error(`[KC event] 2.1 onAuthError:`, { errorData })
@@ -70,7 +77,7 @@ function bindOnAuthLogout(ctx: KeycloakEventContext): void {
   ctx.keycloak.onAuthLogout = () => {
     ctx.logger.info('[KC event] 2.2 onAuthLogout - SSO session ended, navigating to login')
     ctx.auth.clearKCStateFromLocalstorage()
-    ctx.keycloak.login(ctx.auth.config)
+    loginAndLogFailure(ctx)
   }
 }
 
@@ -91,7 +98,7 @@ function bindOnAuthRefreshError(ctx: KeycloakEventContext): void {
     ctx.auth.updateLocalStorage()
     if (ctx.onAuthRefreshErrorEnabled) {
       ctx.logger.info('[KC event] 2.4.1           onAuthRefreshError - initiating re-login')
-      ctx.keycloak.login(ctx.auth.config)
+      loginAndLogFailure(ctx)
     }
   }
 }
@@ -114,9 +121,13 @@ function bindOnTokenExpired(ctx: KeycloakEventContext): void {
     ctx.auth.updateLocalStorage()
     if (ctx.onTokenExpiredEnabled) {
       // A semaphore is used to prevent executing multiple updateToken calls in parallel.
-      ctx.auth.updateTokenSemaphore.use(async () => {
+      void ctx.auth.updateTokenSemaphore.use(async () => {
         ctx.logger.info('[KC event] 2.6           onTokenExpired - proactively calling updateToken()')
-        ctx.keycloak.updateToken()
+        try {
+          await ctx.keycloak.updateToken()
+        } catch (err) {
+          ctx.logger.warn('[KC event] 2.6           onTokenExpired - updateToken() failed', { err })
+        }
       })
     } else {
       ctx.logger.info(
