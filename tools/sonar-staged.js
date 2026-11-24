@@ -111,12 +111,12 @@ async function waitForAnalysis(host, token, reportTaskFile) {
   throw new Error('Timed out waiting for the Sonar background task')
 }
 
-async function fetchIssues(host, token, projectKey, pullRequest) {
+async function fetchIssues(host, token, projectKey, branch) {
   const issues = []
   for (let page = 1; ; page++) {
     const query = new URLSearchParams({
       componentKeys: projectKey,
-      pullRequest,
+      branch,
       resolved: 'false',
       organization: ORGANIZATION,
       ps: '500',
@@ -171,17 +171,20 @@ function runScanner(args, cwd, env) {
 }
 
 /**
- * Every run is a Sonar pull-request analysis with its own key, so concurrent runs cannot overwrite each other.
- * These short-lived PR analyses are never merged; SonarCloud removes inactive pull requests automatically
- * (default 30 days, "Number of days before deleting inactive pull requests").
+ * Every run is a Sonar branch analysis of its own synthetic branch, so concurrent runs cannot overwrite each other.
+ * It must not be a pull-request analysis: the projects are bound to GitHub, and SonarCloud rejects a pull-request
+ * key without a real GitHub pull request ("Could not find the pullrequest with key ..."). A real pull-request key
+ * is not used either, as this partial analysis of the staged files would replace that PR's full analysis.
+ * SonarCloud removes inactive branches automatically (default 30 days, "Number of days before deleting inactive
+ * branches").
  */
-function pullRequestKey(env) {
+function analysisBranch(env) {
   return `precommit-${env.USER || env.USERNAME || 'local'}-${crypto.randomBytes(4).toString('hex')}`
 }
 
 async function analyzeLib(lib, ranges, env, newFiles) {
   const projectKey = projectKeyFor(lib)
-  const pullRequest = pullRequestKey(env)
+  const branch = analysisBranch(env)
   const host = env.SONAR_HOST_URL || DEFAULT_HOST
   const prefix = `libs/${lib}/`
   const relative = (file) => file.slice(prefix.length)
@@ -215,9 +218,7 @@ async function analyzeLib(lib, ranges, env, newFiles) {
         '-Dsonar.javascript.lcov.reportPaths=',
         '-Dsonar.testExecutionReportPaths=',
         `-Dsonar.working.directory=${workDir}`,
-        `-Dsonar.pullrequest.key=${pullRequest}`,
-        `-Dsonar.pullrequest.branch=${pullRequest}`,
-        '-Dsonar.pullrequest.base=main',
+        `-Dsonar.branch.name=${branch}`,
       ],
       libDir,
       env
@@ -229,7 +230,7 @@ async function analyzeLib(lib, ranges, env, newFiles) {
     }
     await waitForAnalysis(host, env.SONAR_TOKEN, path.join(workDir, 'report-task.txt'))
     const issues = filterNewCodeIssues(
-      await fetchIssues(host, env.SONAR_TOKEN, projectKey, pullRequest),
+      await fetchIssues(host, env.SONAR_TOKEN, projectKey, branch),
       ranges,
       projectKey,
       newFiles,
