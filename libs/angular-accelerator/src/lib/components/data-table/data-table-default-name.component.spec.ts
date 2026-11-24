@@ -12,6 +12,8 @@ import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optim
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DataTableHarness, provideTranslateTestingService } from '../../../../testing'
 import { ColumnType } from '../../model/column-type.model'
+import { TemplateType } from './data-table.component'
+import type { PrimeTemplate } from '@openng/optimus-ui/api'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 class TestRouteComponent {}
@@ -92,5 +94,31 @@ describe('DataTableComponent default name', () => {
     expect(component.name()).toBe('myExplicitName')
     const table: HTMLElement | null = fixture.nativeElement.querySelector('p-table')
     expect(table?.getAttribute('id')).toBe('dataTable_myExplicitName')
+  })
+
+  describe('getColumnTypeTemplate', () => {
+    it('given no built-in cell and no custom template, when resolving a string cell template, then null is returned', async () => {
+      const component = await createTable()
+      jest.spyOn(component, 'stringCell').mockReturnValue(undefined)
+
+      expect(component.getColumnTypeTemplate([], ColumnType.STRING, TemplateType.CELL)).toBeNull()
+    })
+
+    it('given no built-in cell but a custom string cell template, when resolving a string cell template, then the custom template is returned', async () => {
+      const component = await createTable()
+      jest.spyOn(component, 'stringCell').mockReturnValue(undefined)
+      const custom = { name: 'stringCell', template: {} } as unknown as PrimeTemplate
+
+      expect(component.getColumnTypeTemplate([custom], ColumnType.STRING, TemplateType.CELL)).toBe(custom.template)
+    })
+
+    it('given a built-in cell and a custom template, when resolving a string cell template, then the built-in cell wins', async () => {
+      const component = await createTable()
+      const builtIn = {} as any
+      jest.spyOn(component, 'stringCell').mockReturnValue(builtIn)
+      const custom = { name: 'stringCell', template: {} } as unknown as PrimeTemplate
+
+      expect(component.getColumnTypeTemplate([custom], ColumnType.STRING, TemplateType.CELL)).toBe(builtIn)
+    })
   })
 })
