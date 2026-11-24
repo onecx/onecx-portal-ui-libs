@@ -1,17 +1,23 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESTree } from '@typescript-eslint/utils'
+import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils'
 
-const createRule = ESLintUtils.RuleCreator((name) => `https://github.com/onecx/onecx-portal-ui-libs/tree/main/libs/angular-linter-rules#${name}`)
+const createRule = ESLintUtils.RuleCreator(
+  (name) => `https://github.com/onecx/onecx-portal-ui-libs/tree/main/libs/angular-linter-rules#${name}`
+)
 
 type Options = []
 type MessageIds = 'assignmentOutside'
 
 function isSubscribeCall(node: TSESTree.CallExpression): boolean {
-  return node.callee.type === AST_NODE_TYPES.MemberExpression &&
+  return (
+    node.callee.type === AST_NODE_TYPES.MemberExpression &&
     node.callee.property.type === AST_NODE_TYPES.Identifier &&
     node.callee.property.name === 'subscribe'
+  )
 }
 
-function getFunctionArg(node: TSESTree.CallExpression): TSESTree.FunctionExpression | TSESTree.ArrowFunctionExpression | undefined {
+function getFunctionArg(
+  node: TSESTree.CallExpression
+): TSESTree.FunctionExpression | TSESTree.ArrowFunctionExpression | undefined {
   for (const arg of node.arguments) {
     if (arg.type === AST_NODE_TYPES.ArrowFunctionExpression || arg.type === AST_NODE_TYPES.FunctionExpression) {
       return arg
@@ -46,22 +52,11 @@ function getAssignedIdentifiers(pattern: PatternLike): TSESTree.Identifier[] {
   }
 }
 
-function getDeclaredVariablesInFunctionBody(
-  body: TSESTree.BlockStatement | TSESTree.Expression,
-): Set<string> {
-  const names = new Set<string>()
-  if (body.type !== AST_NODE_TYPES.BlockStatement) return names
+const defaultAllowedFilePatterns = [/\.spec\.ts$/i, /\.test\.ts$/i, /\/testing\//i, /\/mocks\//i]
 
-  for (const stmt of body.body) {
-    if (stmt.type !== AST_NODE_TYPES.VariableDeclaration) continue
-    for (const decl of stmt.declarations) {
-      for (const id of getAssignedIdentifiers(decl.id as any)) {
-        names.add(id.name)
-      }
-    }
-  }
-
-  return names
+function isAllowedTestFile(filename: string): boolean {
+  if (!filename || filename === '<input>' || filename === '<text>') return false
+  return defaultAllowedFilePatterns.some((re) => re.test(filename))
 }
 
 export const noSubscribeAssignment = createRule<Options, MessageIds>({
@@ -74,11 +69,14 @@ export const noSubscribeAssignment = createRule<Options, MessageIds>({
     },
     schema: [],
     messages: {
-      assignmentOutside: 'Avoid assigning to outer-scope variables inside `subscribe`. Prefer `map/tap` + `async` pipe or return the value.',
+      assignmentOutside:
+        'Avoid assigning to outer-scope variables inside `subscribe`. Prefer `map/tap` + `async` pipe or return the value.',
     },
   },
   defaultOptions: [],
   create(context) {
+    if (isAllowedTestFile(context.filename)) return {}
+
     return {
       CallExpression(node) {
         if (!isSubscribeCall(node)) return
@@ -87,17 +85,29 @@ export const noSubscribeAssignment = createRule<Options, MessageIds>({
         if (!callback) return
 
         const callbackBody = callback.body
-        const localDeclarations = getDeclaredVariablesInFunctionBody(callbackBody)
+        const sourceCode = context.sourceCode
+
+        // resolves the assigned variable through the scopes, so declarations in nested blocks and functions count as local
+        const isDeclaredInCallback = (identifier: TSESTree.Identifier): boolean => {
+          for (let scope: TSESLint.Scope.Scope | null = sourceCode.getScope(identifier); scope; scope = scope.upper) {
+            const variable = scope.set.get(identifier.name)
+            if (variable) {
+              return variable.defs.some(
+                (def) => def.name.range[0] >= callback.range[0] && def.name.range[1] <= callback.range[1]
+              )
+            }
+          }
+          return false
+        }
 
         const reportIfOuter = (identifier: TSESTree.Identifier) => {
-          if (localDeclarations.has(identifier.name)) return
+          if (isDeclaredInCallback(identifier)) return
           context.report({
             node: identifier,
             messageId: 'assignmentOutside',
           })
         }
 
-        const sourceCode = context.sourceCode
         const visitor = (n: TSESTree.Node) => {
           if (n.type === AST_NODE_TYPES.AssignmentExpression) {
             if (n.left.type === AST_NODE_TYPES.MemberExpression) {
@@ -124,7 +134,10 @@ export const noSubscribeAssignment = createRule<Options, MessageIds>({
             if (n.argument.type === AST_NODE_TYPES.Identifier) {
               reportIfOuter(n.argument)
             }
-            if (n.argument.type === AST_NODE_TYPES.MemberExpression && n.argument.object.type === AST_NODE_TYPES.ThisExpression) {
+            if (
+              n.argument.type === AST_NODE_TYPES.MemberExpression &&
+              n.argument.object.type === AST_NODE_TYPES.ThisExpression
+            ) {
               context.report({ node: n.argument, messageId: 'assignmentOutside' })
             }
             return
