@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { Router } from '@angular/router'
+import { RedirectCommand, Router, UrlTree } from '@angular/router'
 import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
 import { GuardsNavigationStateController } from '../services/guards-navigation-controller.service'
 import { provideGuardsGathererMock } from '@onecx/angular-utils/mocks'
@@ -104,6 +104,66 @@ describe('ActivateGuardsWrapper', () => {
       expect(mockGuard).toHaveBeenCalledWith(route, state)
       expect(result).toBe(false)
     })
+
+    it('should run guard and return UrlTree for redirecting guard check', async () => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
+
+      const urlTree = new UrlTree()
+      const mockGuard = jest.fn().mockResolvedValue(urlTree)
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, [mockGuard])
+
+      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(urlTree)
+    })
+
+    it('should run guard and return RedirectCommand for redirecting guard check', async () => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
+
+      const redirectCommand = new RedirectCommand(new UrlTree())
+      const mockGuard = jest.fn().mockResolvedValue(redirectCommand)
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, [mockGuard])
+
+      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(redirectCommand)
+    })
+
+    it.each([
+      ['failing guard first', true],
+      ['redirecting guard first', false],
+    ])('should return the redirect if one guard fails and another redirects (%s)', async (_, failingFirst) => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
+
+      const urlTree = new UrlTree()
+      const failingGuard = jest.fn().mockResolvedValue(false)
+      const redirectingGuard = jest.fn().mockResolvedValue(urlTree)
+      const guards = failingFirst ? [failingGuard, redirectingGuard] : [redirectingGuard, failingGuard]
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, guards)
+
+      expect(failingGuard).toHaveBeenCalledWith(route, state)
+      expect(redirectingGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(urlTree)
+    })
   })
 
   describe('ROUTER_SYNC', () => {
@@ -122,6 +182,83 @@ describe('ActivateGuardsWrapper', () => {
 
       expect(mockGuard).toHaveBeenCalledWith(route, state)
       expect(result).toBe(true)
+    })
+
+    it('should run guards and return true for failed guard check', async () => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.ROUTER_SYNC)
+
+      const mockGuard = jest.fn().mockResolvedValue(false)
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, [mockGuard])
+
+      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(true)
+    })
+
+    it('should run guards and return UrlTree for redirecting guard check', async () => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.ROUTER_SYNC)
+
+      const urlTree = new UrlTree()
+      const mockGuard = jest.fn().mockResolvedValue(urlTree)
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, [mockGuard])
+
+      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(urlTree)
+    })
+
+    it('should run guards and return RedirectCommand for redirecting guard check', async () => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.ROUTER_SYNC)
+
+      const redirectCommand = new RedirectCommand(new UrlTree())
+      const mockGuard = jest.fn().mockResolvedValue(redirectCommand)
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, [mockGuard])
+
+      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(redirectCommand)
+    })
+
+    it.each([
+      ['failing guard first', true],
+      ['redirecting guard first', false],
+    ])('should return the redirect if one guard fails and another redirects (%s)', async (_, failingFirst) => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.ROUTER_SYNC)
+
+      const urlTree = new UrlTree()
+      const failingGuard = jest.fn().mockResolvedValue(false)
+      const redirectingGuard = jest.fn().mockResolvedValue(urlTree)
+      const guards = failingFirst ? [failingGuard, redirectingGuard] : [redirectingGuard, failingGuard]
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, guards)
+
+      expect(failingGuard).toHaveBeenCalledWith(route, state)
+      expect(redirectingGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(urlTree)
     })
   })
 
@@ -163,6 +300,51 @@ describe('ActivateGuardsWrapper', () => {
       expect(result).toBe(true)
       expect(guardsGathererSpy).not.toHaveBeenCalled()
     })
+
+    it('should run guards and return true for redirecting guard check', async () => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
+
+      const guardsGathererSpy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
+      const mockGuard = jest.fn().mockResolvedValue(new UrlTree())
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, [mockGuard])
+
+      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(true)
+      expect(guardsGathererSpy).not.toHaveBeenCalled()
+    })
+
+    it.each([
+      ['failing guard first', true],
+      ['redirecting guard first', false],
+    ])('should return true if one guard fails and another redirects (%s)', async (_, failingFirst) => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
+
+      const guardsGathererSpy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
+      const urlTree = new UrlTree()
+      const failingGuard = jest.fn().mockResolvedValue(false)
+      const redirectingGuard = jest.fn().mockResolvedValue(urlTree)
+      const guards = failingFirst ? [failingGuard, redirectingGuard] : [redirectingGuard, failingGuard]
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, guards)
+
+      expect(failingGuard).toHaveBeenCalledWith(route, state)
+      expect(redirectingGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(true)
+      expect(guardsGathererSpy).not.toHaveBeenCalled()
+    })
   })
 
   describe('NAVIGATION_REQUESTED', () => {
@@ -200,6 +382,30 @@ describe('ActivateGuardsWrapper', () => {
 
       expect(mockGuard).toHaveBeenCalledWith(route, state)
       expect(result).toBe(true)
+    })
+
+    it.each([
+      ['failing guard first', true],
+      ['redirecting guard first', false],
+    ])('should return the redirect if one guard fails and another redirects (%s)', async (_, failingFirst) => {
+      const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
+      guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
+      guardsNavigationStateController.getGuardCheckPromise = jest.fn().mockReturnValue(Promise.resolve(true))
+      const urlTree = new UrlTree()
+      const failingGuard = jest.fn().mockResolvedValue(false)
+      const redirectingGuard = jest.fn().mockResolvedValue(urlTree)
+      const guards = failingFirst ? [failingGuard, redirectingGuard] : [redirectingGuard, failingGuard]
+      const route = {
+        routeConfig: {},
+        url: [{ path: 'test' }, { path: 'route' }],
+      } as any
+      const state = {} as any
+
+      const result = await wrapper.canActivate(route, state, guards)
+
+      expect(failingGuard).toHaveBeenCalledWith(route, state)
+      expect(redirectingGuard).toHaveBeenCalledWith(route, state)
+      expect(result).toBe(urlTree)
     })
   })
 

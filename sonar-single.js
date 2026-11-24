@@ -3,7 +3,7 @@ const fs = require('fs')
 
 /**
  * Script to run SonarQube analysis for a single library
- * Usage: npm run sonar -- <library-name>
+ * Usage: npm run sonar:lib -- <library-name>
  */
 
 function runSonarForLib(lib) {
@@ -28,8 +28,8 @@ function runSonarForLib(lib) {
 // Main logic
 if (process.argv.length <= 2) {
   console.error('Error: Library name is required')
-  console.error('Usage: npm run sonar -- <library-name>')
-  console.error('Example: npm run sonar -- angular-auth')
+  console.error('Usage: npm run sonar:lib -- <library-name>')
+  console.error('Example: npm run sonar:lib -- angular-auth')
 
   // Show available libraries
   if (fs.existsSync('libs')) {
