@@ -20,7 +20,7 @@ import {
   signal,
   untracked,
   viewChild,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
@@ -45,7 +45,7 @@ import { DataListGridSortingComponentState } from '../data-list-grid-sorting/dat
 import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState } from '../data-view/data-view.component'
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
-import { observableOutput } from '../../utils/observable-output.utils'
+import { ObservableOutputEmitterRef, observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
 import { InteractiveExpandedRows, ViewLayout } from '../../model/view-layout.model'
@@ -776,33 +776,23 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   registerEventListenerForDataView() {
-    if (this.deleteItem.observed()) {
-      if (!this.dataViewComponent()?.deleteItem.observed()) {
-        this.dataViewComponent()?.deleteItem.subscribe((event) => {
-          this.onDeleteElement(event)
-        })
-      }
-    }
-    if (this.viewItem.observed()) {
-      if (!this.dataViewComponent()?.viewItem.observed()) {
-        this.dataViewComponent()?.viewItem.subscribe((event) => {
-          this.onViewElement(event)
-        })
-      }
-    }
-    if (this.editItem.observed()) {
-      if (!this.dataViewComponent()?.editItem.observed()) {
-        this.dataViewComponent()?.editItem.subscribe((event) => {
-          this.onEditElement(event)
-        })
-      }
-    }
-    if (this.selectionChanged.observed()) {
-      if (!this.dataViewComponent()?.selectionChanged.observed()) {
-        this.dataViewComponent()?.selectionChanged.subscribe((event) => {
-          this.onRowSelectionChange(event)
-        })
-      }
+    this.forwardDataViewOutput(this.deleteItem, this.dataViewComponent()?.deleteItem, (event) =>
+      this.onDeleteElement(event)
+    )
+    this.forwardDataViewOutput(this.viewItem, this.dataViewComponent()?.viewItem, (event) => this.onViewElement(event))
+    this.forwardDataViewOutput(this.editItem, this.dataViewComponent()?.editItem, (event) => this.onEditElement(event))
+    this.forwardDataViewOutput(this.selectionChanged, this.dataViewComponent()?.selectionChanged, (event) =>
+      this.onRowSelectionChange(event)
+    )
+  }
+
+  private forwardDataViewOutput<T>(
+    parent: ObservableOutputEmitterRef<T>,
+    child: ObservableOutputEmitterRef<T> | undefined,
+    handler: (event: T) => void
+  ) {
+    if (parent.observed() && child && !child.observed()) {
+      child.subscribe(handler)
     }
   }
 
