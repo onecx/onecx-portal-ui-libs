@@ -1,0 +1,125 @@
+[#update-onecx-libs-v9]
+= Update the OneCX UI libraries to v9
+
+Update the `@onecx/*` packages from v8.x to v9.x. This bump is the **component-library swap**: from this point the OneCX libraries are built on Optimus UI instead of PrimeNG, and PrimeFlex is replaced by Tailwind CSS v4 (covered in xref:./primeflex-to-tailwind-v4.adoc[PrimeFlex to Tailwind CSS v4]).
+
+Complete the xref:./migrate-to-optimus-ui-v1.adoc[before-step] and the xref:./update-nx-angular-version-22.adoc[toolchain upgrade] first, so that Optimus UI v1 is already installed and the workspace is on Angular 22.
+
+== Update the OneCX packages
+
+Update all used `@onecx/*` packages to version `^9.0.0`:
+
+[source, bash]
+----
+npm install @onecx/<package-name>@^9
+----
+
+== Swap the component library packages
+
+This bump moves the component library from PrimeNG to Optimus UI.
+
+* `@openng/optimus-ui` moves from v1 (installed in the xref:./migrate-to-optimus-ui-v1.adoc[before-step]) to `^2.0.2`. Optimus UI v2 declares Angular 22 peer dependencies (`@angular/*` `^22.1.4`), so it now resolves cleanly on the upgraded workspace — the `--legacy-peer-deps` / `overrides` workaround that v1 needed on Angular 21 is no longer required.
+* Remove `primeng`, `primeflex`, and the remaining PrimeNG packages (`primeicons`, `@primeng/*`, `@primeuix/*`, `primelocale`).
+
+[source, bash]
+----
+npm install @openng/optimus-ui@^2.0.2 \
+  @openng/icons@^1.0.0 \
+  @openng/optimus-ui-themes@^2.0.2 \
+  @openng/optimus-ui-locale@^2.0.2
+npm uninstall primeng primeflex primeicons primelocale
+----
+
+If the PrimeUix themes or styled packages are used directly, replace `@primeuix/themes` and `@primeuix/styled` with `@openng/optimus-ui-themes` and `@openng/optimus-ui-styled` respectively.
+
+[NOTE]
+====
+This is where the `primeng` package finally leaves the workspace. Until this step, `primeng` and `@openng/*` coexisted because the OneCX libraries v8 still peer-depended on `primeng`.
+====
+
+== OneCX-facing renames
+
+A handful of OneCX API names that referenced PrimeNG have been renamed. Update any import or reference of the old name.
+
+[cols="2,2"]
+|===
+| Old | New
+
+| `AngularAcceleratorPrimeNgModule`
+| `AngularAcceleratorOptimusModule`
+
+| `@onecx/angular-utils/theme/primeng` (theme entry point)
+| `@onecx/angular-utils/theme/optimus`
+
+| `OverrideType.PRIMENG` (`@onecx/integration-interface`)
+| `OverrideType.OPTIMUS`
+
+| `PrimeIcon`
+| `OptimusIcon`
+
+| `patchPrimeNgAutoFocus` (`@onecx/angular-accelerator`)
+| `patchOptimusAutoFocus`
+
+| `replacePrimengPrefix`, `scopePrimengCss` (`@onecx/angular-utils`)
+| `replaceOptimusPrefix`, `scopeOptimusCss`
+
+| `assets/i18n/primeng/` (theme-override i18n assets)
+| `assets/i18n/optimus/`
+
+| `providePrimeNG(...)`
+| `provideOptimus(...)`
+
+| `/^primeng.*$/` (module-federation shared-scope pattern)
+| `/^@openng\/optimus-ui.*$/`
+
+|===
+
+[NOTE]
+====
+The module rename applies only to direct imports of the **aggregator module**. The facade `AngularAcceleratorModule` keeps its name across v8 and v9 and imports the component-library modules automatically, so applications using only the facade need no module rename. `AngularAcceleratorPrimeNgModule` / `AngularAcceleratorOptimusModule` is an optional aggregator re-exporting the Optimus UI modules the accelerator uses under the hood. There is **no automatic migration** for this rename (`ng update` does not rewrite it); update any direct import to `AngularAcceleratorOptimusModule` by hand, since the old name no longer resolves in v9 and an unchanged import fails to compile.
+
+The `providePrimeNG` / `provideOptimus` rename applies only to a direct standalone call. The OneCX providers (`provideThemeConfig` from `@onecx/angular-utils/theme/optimus` and the accelerator) already configure Optimus UI transitively, so an application built on the standard OneCX stack has no `providePrimeNG` call to rename. A standalone `providePrimeNG(...)` call must be changed to `provideOptimus(...)` (the equivalent `@openng/optimus-ui` function).
+====
+
+The theme entry point is renamed in place — the exported API is unchanged (`provideThemeConfig`, `CustomPreset`, `ThemeConfigService`, …), only the path moves:
+
+[source,typescript]
+----
+// before
+import { provideThemeConfig, CustomPreset } from '@onecx/angular-utils/theme/primeng'
+
+// after
+import { provideThemeConfig, CustomPreset } from '@onecx/angular-utils/theme/optimus'
+----
+
+[NOTE]
+====
+The `OverrideType` change is a breaking change for the `current-theme` v1 integration topic: a `ThemeOverride` previously typed `type: OverrideType.PRIMENG` now uses `type: OverrideType.OPTIMUS` (the enum value string changes from `PRIMENG` to `OPTIMUS`).
+====
+
+The theme-override i18n namespace emitted by `@onecx/angular-accelerator` moves from `assets/i18n/primeng/` to `assets/i18n/optimus/`. Where that asset path is referenced directly (for example in a bundler config), update it.
+
+For a module-federation workspace, update the shared-scope pattern for the component library from `/^primeng.*$/` to `/^@openng\/optimus-ui.*$/` so the shared scope covers the Optimus UI packages.
+
+== Known breakage areas
+
+[IMPORTANT]
+====
+The `p-dialog` / `DynamicDialog` `header` input became a **signal** rather than a plain `string`/`TemplateRef` input. Where `header` is bound directly, verify the dialog still renders its header as expected and update the binding if the API changed. This is the area most likely to break silently, so confirm it explicitly before merging.
+====
+
+`@openng/optimus-ui-themes` types are not a byte-for-byte match with PrimeNG's. Notably, `definePreset(...)` returns Optimus's `Preset` type, whose `semantic` member is typed as `unknown`. Code that reaches into `preset.semantic.colorScheme` (for example to seed a dark-mode block) hits an `Object is of type 'unknown'` compile error. The runtime object is unchanged; narrow the value to the shape it is read as:
+
+[source,typescript]
+----
+;(preset as unknown as { semantic: { colorScheme: { dark: Record<string, never> } } }).semantic.colorScheme.dark = {}
+----
+
+== Verification
+
+After completing the bump:
+
+1. No `primeng`, `primeicons`, `@primeng/*`, or `@primeuix/*` imports or dependencies remain — everything is `@openng/*` or OneCX.
+2. The renamed module and theme entry point compile (the old names no longer resolve).
+3. Run the test suite and a manual Storybook smoke test, paying particular attention to `p-dialog` / `DynamicDialog` (see the known breakage areas above).
+4. Confirm the application builds and the xref:./keep-build-angular-22-2-3-and-webpack.adoc[build-angular / webpack pins] are still in place.
