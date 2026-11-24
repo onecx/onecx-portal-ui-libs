@@ -1,11 +1,13 @@
 import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils'
+import { isTranslateServiceCall } from '../utils/translate-service.utils'
 
 const createRule = ESLintUtils.RuleCreator(
-  (name) => `https://github.com/onecx/onecx-portal-ui-libs/tree/main/libs/angular-linter-rules#${name}`,
+  (name) => `https://github.com/onecx/onecx-portal-ui-libs/tree/main/libs/angular-linter-rules#${name}`
 )
 
 type Options = []
 type MessageIds = 'preferTranslateParams'
+type Context = TSESLint.RuleContext<MessageIds, Options>
 
 const defaultAllowedFilePatterns = [/\.spec\.ts$/i, /\.test\.ts$/i, /\/testing\//i, /\/mocks\//i]
 
@@ -14,31 +16,38 @@ function isAllowedTestFile(filename: string): boolean {
   return defaultAllowedFilePatterns.some((re) => re.test(filename))
 }
 
-function isTranslateGetOrStreamCallExpression(node: TSESTree.Node): node is TSESTree.CallExpression {
+function isMethodCall(node: TSESTree.Node, methods: string[]): node is TSESTree.CallExpression {
   if (node.type !== AST_NODE_TYPES.CallExpression) return false
   if (node.callee.type !== AST_NODE_TYPES.MemberExpression) return false
   if (node.callee.property.type !== AST_NODE_TYPES.Identifier) return false
-  return node.callee.property.name === 'get' || node.callee.property.name === 'stream'
+  return methods.includes(node.callee.property.name)
 }
 
-function isTranslateInstantCallExpression(node: TSESTree.Node): node is TSESTree.CallExpression {
-  if (node.type !== AST_NODE_TYPES.CallExpression) return false
-  if (node.callee.type !== AST_NODE_TYPES.MemberExpression) return false
-  if (node.callee.property.type !== AST_NODE_TYPES.Identifier) return false
-  return node.callee.property.name === 'instant'
+// get/stream are common method names (Map, HttpHeaders, Injector, ...), so the receiver must be a TranslateService
+function isTranslateGetOrStreamCallExpression(context: Context, node: TSESTree.Node): boolean {
+  return isMethodCall(node, ['get', 'stream']) && isTranslateServiceCall(context, node)
 }
 
-function isTranslateGetOrStreamPipeCallExpression(node: TSESTree.Node): node is TSESTree.CallExpression {
+// instant is specific to ngx-translate, so any receiver counts
+function isTranslateInstantCallExpression(node: TSESTree.Node): boolean {
+  return isMethodCall(node, ['instant'])
+}
+
+function isTranslateGetOrStreamPipeCallExpression(
+  context: Context,
+  node: TSESTree.Node
+): node is TSESTree.CallExpression {
   if (node.type !== AST_NODE_TYPES.CallExpression) return false
   if (node.callee.type !== AST_NODE_TYPES.MemberExpression) return false
   if (node.callee.property.type !== AST_NODE_TYPES.Identifier) return false
   if (node.callee.property.name !== 'pipe') return false
 
   const obj = node.callee.object
-  return isTranslateGetOrStreamCallExpression(obj)
+  return isTranslateGetOrStreamCallExpression(context, obj)
 }
 
-function containsBinaryPlus(context: TSESLint.RuleContext<MessageIds, Options>, node: TSESTree.Node): boolean {
+/** Whether a `+` concatenation occurs in the node; a `+` that builds a lookup key (`obj[a + b]`) does not count. */
+function containsBinaryPlus(context: Context, node: TSESTree.Node): boolean {
   let found = false
 
   const visit = (n: TSESTree.Node): void => {
@@ -51,6 +60,7 @@ function containsBinaryPlus(context: TSESLint.RuleContext<MessageIds, Options>, 
 
     const keys = context.sourceCode.visitorKeys[n.type] ?? []
     for (const key of keys) {
+      if (n.type === AST_NODE_TYPES.MemberExpression && n.computed && key === 'property') continue
       const value = (n as unknown as Record<string, unknown>)[key]
       if (!value) continue
 
@@ -107,8 +117,8 @@ export const preferTranslateParams = createRule<Options, MessageIds>({
       BinaryExpression(node) {
         if (node.operator !== '+') return
         if (
-          isTranslateGetOrStreamCallExpression(node.left) ||
-          isTranslateGetOrStreamCallExpression(node.right) ||
+          isTranslateGetOrStreamCallExpression(context, node.left) ||
+          isTranslateGetOrStreamCallExpression(context, node.right) ||
           isTranslateInstantCallExpression(node.left) ||
           isTranslateInstantCallExpression(node.right) ||
           isTranslatePipeExpression(node.left) ||
@@ -118,14 +128,19 @@ export const preferTranslateParams = createRule<Options, MessageIds>({
         }
       },
       TemplateLiteral(node) {
-        if (!node.expressions.some((expr) => isTranslateGetOrStreamCallExpression(expr) || isTranslateInstantCallExpression(expr))) {
+        if (
+          !node.expressions.some(
+            (expr) => isTranslateGetOrStreamCallExpression(context, expr) || isTranslateInstantCallExpression(expr)
+          )
+        ) {
           return
         }
         context.report({ node, messageId: 'preferTranslateParams' })
       },
       CallExpression(node) {
-        if (!isTranslateGetOrStreamPipeCallExpression(node)) return
-        if (!containsBinaryPlus(context, node)) return
+        // only the pipe operators process the translated text; the keys passed to get/stream may be built with `+`
+        if (!isTranslateGetOrStreamPipeCallExpression(context, node)) return
+        if (!node.arguments.some((arg) => containsBinaryPlus(context, arg))) return
         context.report({ node, messageId: 'preferTranslateParams' })
       },
     }
