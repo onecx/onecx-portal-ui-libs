@@ -122,4 +122,10 @@ describe('BreadcrumbService', () => {
 
     expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['GROUP'])
   })
+
+  it('keeps unnamed crumbs next to translated ones', () => {
+    setup(snapshot({ breadcrumb: 'x', breadcrumbFn: () => '' }, ['page'], snapshot({ breadcrumb: 'PAGE' }, ['sub'])))
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual([undefined, 'Page'])
+  })
 })
