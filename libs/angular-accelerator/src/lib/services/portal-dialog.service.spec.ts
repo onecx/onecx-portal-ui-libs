@@ -1299,25 +1299,6 @@ describe('PortalDialogService', () => {
     })
     describe('opening and closing', () => {
       const flush = () => new Promise((resolve) => setTimeout(resolve, 20))
-      const waitForFocus = (selector: string, timeoutMs: number) =>
-        new Promise<boolean>((resolve) => {
-          const startedAt = performance.now()
-          const onFocus = (event: FocusEvent) => {
-            if (event.target instanceof HTMLElement && event.target.matches(selector)) {
-              cleanup(performance.now() - startedAt <= timeoutMs)
-            }
-          }
-          const timeout = setTimeout(() => cleanup(false), timeoutMs)
-          const cleanup = (focusedWithinTimeout: boolean) => {
-            clearTimeout(timeout)
-            document.removeEventListener('focus', onFocus, true)
-            resolve(focusedWithinTimeout)
-          }
-          document.addEventListener('focus', onFocus, true)
-          if (document.activeElement instanceof HTMLElement && document.activeElement.matches(selector)) {
-            cleanup(performance.now() - startedAt <= timeoutMs)
-          }
-        })
       const mockVisibleOffsetParent = () => {
         const descriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent')
         Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
@@ -1362,15 +1343,16 @@ describe('PortalDialogService', () => {
         )
       })
 
-      it('should focus the first form field within 300 ms', async () => {
+      it('should focus the first form field within 300 ms of opening', async () => {
         const restoreOffsetParent = mockVisibleOffsetParent()
-        const firstFieldFocused = waitForFocus('#name', 300)
+        jest.useFakeTimers()
         try {
           fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2')
+          await jest.advanceTimersByTimeAsync(300)
 
-          expect(await firstFieldFocused).toBe(true)
-          expect(document.activeElement).toBe(document.querySelector('#name'))
+          expect(document.activeElement?.id).toBe('name')
         } finally {
+          jest.useRealTimers()
           restoreOffsetParent()
         }
       })
