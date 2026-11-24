@@ -1,0 +1,35 @@
+:mcp_setup_guide_fallback: https://onecx.github.io/docs/documentation/current/onecx-docs-dev/ai/mcp_server_setup.html
+
+.AI Migration Agent
+[%collapsible]
+====
+
+**Before You Start**
+
+Make sure you have the Recommended MCP servers configured before running the migration agent. For detailed setup instructions, see the xref:documentation:onecx-docs-dev:ai/mcp_server_setup.adoc[MCP Server Setup Guide] ({mcp_setup_guide_fallback}[published reference]).
+
+**Setup**
+
+1. Clone or pull the latest version of the repository:
++
+[source, bash]
+----
+git clone https://github.com/onecx/onecx-ai-refactoring-agents.git
+# or if already cloned:
+cd onecx-ai-refactoring-agents && git pull
+----
+
+2. Follow the setup instructions in the repository  https://github.com/onecx/onecx-ai-refactoring-agents/blob/main/angular/updates/README.md[README].
+
+**Usage**
+
+To migrate from Angular 21 to Angular 22, use the following command in your AI assistant:
+
+[source, bash]
+----
+/migrate-22
+----
+
+The migration agent will guide you through the pre-migration and post-migration steps.
+
+====
