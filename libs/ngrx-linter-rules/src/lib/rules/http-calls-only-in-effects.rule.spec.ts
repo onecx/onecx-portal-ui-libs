@@ -84,6 +84,40 @@ ruleTester.run('http-calls-only-in-effects', httpCallsOnlyInEffects, {
         }
       `,
     },
+    {
+      filename: `${process.cwd()}/libs/ngrx-linter-rules/src/app/component-services.ts`,
+      code: `
+        import { Component, Injector, inject } from '@angular/core'
+        import { TranslateService } from '@ngx-translate/core'
+        import { UserService } from '@onecx/angular-integration-interface'
+        @Component({ selector: 'x', template: '' })
+        export class Cmp {
+          private readonly injector = inject(Injector)
+          private readonly translateService = inject(TranslateService)
+          constructor(private readonly userService: UserService) {}
+          ngOnInit() {
+            this.injector.get('DataViewComponent', null)
+            this.translateService.get('KEY')
+            return this.userService.getPermissions()
+          }
+        }
+      `,
+    },
+    {
+      // a hand-written service cannot be told apart from non-HTTP services without type information
+      filename: `${process.cwd()}/libs/ngrx-linter-rules/src/app/component-wrapper.ts`,
+      code: `
+        import { Component, inject } from '@angular/core'
+        import { ProductService } from './product.service'
+        @Component({ selector: 'x', template: '' })
+        export class Cmp {
+          private readonly productService = inject(ProductService)
+          ngOnInit() {
+            return this.productService.getProducts()
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -128,6 +162,21 @@ ruleTester.run('http-calls-only-in-effects', httpCallsOnlyInEffects, {
 
           ngOnInit() {
             return this.api.getUser({})
+          }
+        }
+      `,
+      errors: [{ messageId }],
+    },
+    {
+      filename: `${process.cwd()}/libs/ngrx-linter-rules/src/app/component5.ts`,
+      code: `
+        import { Component, inject } from '@angular/core'
+        import { HttpClient } from '@angular/common/http'
+        @Component({ selector: 'x', template: '' })
+        export class Cmp {
+          private readonly client = inject(HttpClient)
+          ngOnInit() {
+            return this.client.get('/api')
           }
         }
       `,
