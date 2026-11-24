@@ -1,0 +1,112 @@
+[#upgrade-nx-to-angular-22]
+= Upgrade NX Application to Angular 22
+
+This guide describes how to upgrade an NX-based OneCX application to Angular 22. Complete the pre-migration steps from the main migration guide (in particular xref:./migrate-to-optimus-ui-v1.adoc[Migrate the application's own PrimeNG usage to Optimus UI v1]) before continuing.
+
+[NOTE]
+====
+The OneCX UI libraries v9 ship with this upgrade. The toolchain step and the xref:./update-onecx-libs-v9.adoc[v9 libraries bump] are part of the same upgrade — do not leave the toolchain on Angular 22 while the `@onecx/*` packages stay on v8.
+====
+
+== Update @onecx/nx-plugin
+
+Update `@onecx/nx-plugin` to the Nx 23 line, alongside the `nx`/`@nx/*` packages. `@onecx/nx-plugin` is versioned independently of the `@onecx/*` libs in this repository, so it does not follow the libs `^9.0.0` scheme — install the Nx 23 release of the plugin matching the `nx`/`@nx/*` versions the workspace pins (the OneCX Shell Angular 22 preloader uses `23.3.0`):
+
+[source, bash]
+----
+npm install @onecx/nx-plugin@<version>
+----
+
+[NOTE]
+====
+Like `@onecx/nx-plugin@^22.1.3` in the xref:onecx-portal-ui-libs:migrations/angular-21/update-nx-angular-version-21.adoc[Angular 21 guide], the Nx 23 line of `@onecx/nx-plugin` is not published to the public npm registry. Install it from the registry that the `@onecx/*` packages are resolved from.
+====
+
+== Update NX and Angular packages
+
+Update the Angular and NX packages in the workspace by running:
+
+[source, bash]
+----
+nx migrate latest --interactive
+----
+
+Apply all proposed updates up to Angular 22.
+
+For details on NX / Angular compatibility, refer to the https://nx.dev/docs/technologies/angular/guides/angular-nx-version-matrix[Angular NX Version Matrix].
+
+For details on `nx migrate`, refer to the official documentation: https://nx.dev/docs/guides/tips-n-tricks/advanced-update[NX Migrate Documentation].
+
+If the project is not an NX workspace, follow the official Angular update guide to perform the version upgrade: https://angular.dev/update-guide?v=21.0-22.0[Angular Update Guide].
+
+== Update package versions in `package.json`
+
+1. Update the packages to the versions listed in the table below.
+2. After updating `package.json`, run `npm install` to install the new versions. If peer dependency errors appear, update the affected packages to compatible versions.
+
+[cols="2,2,3"]
+|===
+| Package | Required Version | Notes
+
+| `@angular/*`
+| `^22.2.3`
+| All Angular framework packages
+
+| `typescript`
+| `~6.0.2`
+| TypeScript 6
+
+| `zone.js`
+| `~0.16.0`
+| Zone.js for Angular 22
+
+| `nx`, `@nx/*`
+| `23.x`
+| NX 23 for Angular 22
+
+|===
+
+[NOTE]
+====
+If dependency conflicts that reference old versions persist, reinstall dependencies from scratch:
+
+[source, bash]
+----
+rm -rf node_modules package-lock.json .angular dist ~/.angular/cache && npm cache clean --force && npm install
+----
+====
+
+[IMPORTANT]
+====
+Make sure to migrate the updated packages and resolve any breaking changes. Refer to the official documentation of each package for migration guides and instructions.
+====
+
+== Run NX migration
+
+After updating package versions, run:
+
+[source, bash]
+----
+nx migrate --run-migrations
+----
+
+[IMPORTANT]
+====
+While applying the toolchain update, keep the `@angular-devkit/build-angular` and `webpack` pins documented in xref:./keep-build-angular-22-2-3-and-webpack.adoc[Keep build-angular at 22.2.3 and webpack at 5.111.0].
+====
+
+After this step, proceed with the remaining migration steps, starting with xref:./update-onecx-libs-v9.adoc[Update the OneCX UI libraries to v9].
+
+== Cleanup Migration Dependencies
+
+After completing all migration steps, remove migration-only dependencies that are no longer required:
+
+[source, bash]
+----
+npm uninstall @onecx/nx-migration-utils @nx/devkit
+----
+
+[NOTE]
+====
+`@onecx/nx-migration-utils` is removed entirely in v8 (the package itself is no longer published); this uninstall is mandatory, not optional cleanup.
+====
