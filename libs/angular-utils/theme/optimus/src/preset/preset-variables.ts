@@ -297,15 +297,13 @@ export default {
           // disabledColor: '{surface.500}',
           disabledColor: '{surface.400}', // lighter color than default
 
-          // INFO: --emphasis-low is used for default input border color
-          // TODO: Check with surface value
-          // TODO: Can be borderColor: rgba(0, 0, 0, 0.38)
-          // borderColor: '{surface.300}',
-          borderColor: '{surface.200}', // lighter color than default
-          // INFO: --emphasis-high is used for default input border color
-          // TODO: Check with surface value
-          // TODO: Can be hoverBorderColor: rgba(0, 0, 0, 0.87)
-          hoverBorderColor: '{surface.400}',
+          // INFO: WCAG 1.4.11 (non-text contrast): the boundary of a form field has to reach 3:1 against
+          // the content (#ffffff) and body (#f7f7f7) background. surface.400 gives 3.32:1 / 3.10:1.
+          // Also used by checkbox and radiobutton (they reference {form.field.border.color}).
+          // The contrast is verified in form-field-contrast.spec.ts (axe cannot check it in jsdom).
+          borderColor: '{surface.400}',
+          // INFO: has to stay clearly distinguishable from borderColor (>= 1.5:1), surface.600 gives 1.85:1
+          hoverBorderColor: '{surface.600}',
 
           // INFO: --emphasis-high is used for default input text color
           // TODO: Check with surface value
