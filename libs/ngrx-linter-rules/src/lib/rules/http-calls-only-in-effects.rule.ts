@@ -12,7 +12,10 @@ function isAllowedTestFile(filename: string): boolean {
   return defaultAllowedFilePatterns.some((re) => re.test(filename))
 }
 
-function classContainsCreateEffectCall(context: TSESLint.RuleContext<MessageIds, Options>, node: TSESTree.ClassDeclaration): boolean {
+function classContainsCreateEffectCall(
+  context: TSESLint.RuleContext<MessageIds, Options>,
+  node: TSESTree.ClassDeclaration
+): boolean {
   const classText = context.sourceCode.getText(node)
   return /\bcreateEffect\s*\(/.test(classText)
 }
@@ -184,9 +187,11 @@ export const httpCallsOnlyInEffects = createRule<Options, MessageIds>({
 
     const isGeneratedFile = /\/generated\//i.test(filename)
     const generatedImportNames = collectGeneratedImportNames(context.sourceCode.ast)
-    const isGeneratedClassName = (name: string): boolean => /ApiService$/i.test(name) || /ControllerService$/i.test(name)
+    const isGeneratedClassName = (name: string): boolean =>
+      /ApiService$/i.test(name) || /ControllerService$/i.test(name)
+    // only HttpClient and generated OpenAPI clients perform HTTP calls; other injected services (Injector, TranslateService, ...) do not
     const isLikelyHttpServiceTypeName = (name: string): boolean =>
-      isGeneratedClassName(name) || /Service$/i.test(name) || /Api$/i.test(name)
+      /HttpClient$/.test(name) || isGeneratedClassName(name) || /Api$/i.test(name) || generatedImportNames.has(name)
 
     const injectedServicePropertiesByClass = new WeakMap<TSESTree.ClassDeclaration, Set<string>>()
     const classStack: TSESTree.ClassDeclaration[] = []
@@ -226,6 +231,8 @@ export const httpCallsOnlyInEffects = createRule<Options, MessageIds>({
           if (member.key.type !== 'Identifier') continue
           if (!member.value) continue
           if (!isInjectCall(member.value)) continue
+          const [token] = member.value.arguments
+          if (token?.type !== 'Identifier' || !isLikelyHttpServiceTypeName(token.name)) continue
           injectedProps.add(member.key.name)
         }
 
@@ -278,7 +285,6 @@ export const httpCallsOnlyInEffects = createRule<Options, MessageIds>({
         const isCallOnThisInjected = isCallOnThisInjectedProperty(node, injectedProps)
         const isCallOnHttpLikeProperty = !!calledThisProp && isSuspiciousHttpLikeName(calledThisProp)
         const isCallOnGeneratedService = isCallOnGeneratedServiceName(node, generatedImportNames)
-
 
         if (
           !(isAnyHttpLikeCall(node) && isCallOnInjected) &&
