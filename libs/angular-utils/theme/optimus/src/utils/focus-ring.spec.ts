@@ -37,7 +37,7 @@ describe('focus ring token resolver', () => {
   })
 
   it('keeps a primary colour that already has enough contrast', () => {
-    expect(findAccessibleColor(parseColor('#274b5f')!, [[255, 255, 255]])).toBe('#274b5f')
+    expect(findAccessibleColor(parseColor('#274b5f') ?? [0, 0, 0], [[255, 255, 255]])).toBe('#274b5f')
   })
 
   it('falls back to black or white when no mix reaches the contrast', () => {
