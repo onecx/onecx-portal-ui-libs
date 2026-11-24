@@ -22,7 +22,10 @@ export class CustomUseStyle extends UseStyle {
   private readonly logger = createLogger('CustomUseStyle')
   private readonly appStateService: AppStateService = inject(AppStateService)
   private readonly skipStyleScoping: boolean | null = inject(SKIP_STYLE_SCOPING, { optional: true })
-  private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig> | null = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
+  private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig> | null = inject(
+    REMOTE_COMPONENT_CONFIG,
+    { optional: true }
+  )
   private readonly themeOverrides: ThemeOverrides = inject(THEME_OVERRIDES, { optional: true })
   private readonly injector = inject(Injector)
 
@@ -31,7 +34,7 @@ export class CustomUseStyle extends UseStyle {
   }
   // Optimus defines CSS variables and styles globally in <style> elements
   // Each Application needs to isolate the CSS variables and styles from others
-  override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
+  override use(css: any, options: any = {}): { id: any; name: any; el: any; css: any } {
     getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
       css = scopeOptimusCss(replaceRootWithScope(replaceOptimusPrefix(css, scopeId)), scopeId)
 
@@ -51,7 +54,9 @@ export class CustomUseStyle extends UseStyle {
     if (!this.themeOverrides) return Promise.resolve()
 
     const overrides = Promise.resolve(
-      typeof this.themeOverrides === 'function' ? runInInjectionContext(this.injector,() => this.themeOverrides()) : this.themeOverrides
+      typeof this.themeOverrides === 'function'
+        ? runInInjectionContext(this.injector, () => this.themeOverrides())
+        : this.themeOverrides
     )
     return overrides.then((resolvedOverrides) => {
       const variablesData = toVariables(resolvedOverrides)
