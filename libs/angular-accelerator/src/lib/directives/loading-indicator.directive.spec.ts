@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs'
+import { join } from 'path'
 import { Component, DebugElement } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
@@ -268,6 +270,25 @@ describe('LoadingIndicatorDirective', () => {
       fixture.detectChanges()
       expect(nativeElement.classList.contains('element-overlay')).toBe(true)
       expect(nativeElement.querySelector('.loader')).toBeTruthy()
+    })
+  })
+
+  describe('Reduced motion (WCAG 2.3.3 / 2.2.2) stylesheet coverage', () => {
+    // The spinner animation and its reduced-motion override are pure CSS (no JS reads
+    // `matchMedia` to toggle it), so they can only be covered by asserting on the stylesheet
+    // itself rather than the rendered DOM.
+    const stylesheet = readFileSync(join(__dirname, 'loading-indicator.directive.scss'), 'utf-8')
+
+    it('should spin the loader by default', () => {
+      expect(stylesheet).toMatch(/animation:\s*rotation 1s linear infinite/)
+    })
+
+    it('should disable the loader animation when the user prefers reduced motion', () => {
+      // The @media block must target .loader and set `animation: none` so a static ring is shown.
+      const reducedMotionRule = /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*\.loader\s*\{[\s\S]*animation:\s*none[\s\S]*\}/.exec(
+        stylesheet
+      )
+      expect(reducedMotionRule).not.toBeNull()
     })
   })
 })
