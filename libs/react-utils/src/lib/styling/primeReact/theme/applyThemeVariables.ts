@@ -48,7 +48,7 @@ function mapThemeToCSSVariables(themeProperties: Record<string, Record<string, u
   const cssVariables: Record<string, string> = {}
 
   for (const [key, value] of Object.entries(flattenedProperties)) {
-    const normalizedKey = toKebabCase(key).replace(/^app-?/, '')
+    const normalizedKey = toKebabCase(key).replace(/^app-/, '')
     const cssVarName = `--app-${normalizedKey}`
     cssVariables[cssVarName] = value
   }
