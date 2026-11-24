@@ -9,7 +9,14 @@ More information about the library can be found [here](https://onecx.github.io/d
 npm install @onecx/angular-linter-rules
 ```
 
+## Rules
+
+- `no-subscribe-assignment` - reports assignments inside a `subscribe` callback to variables declared outside of it (including class members). Test files are skipped.
+- `no-translate-instant` - reports `TranslateService.instant(...)` outside of tests.
+- `prefer-translate-params` - reports translated strings that are concatenated instead of using translation parameters. Test files are skipped.
+
 ## Additional Commands
+
 - `npx nx run angular-linter-rules:build` - Builds the library and outputs the result to the `dist` folder.
 - `npx nx run angular-linter-rules:test` - Runs the unit tests for the library.
 - `npx nx run angular-linter-rules:lint` - Lints the library's codebase.
