@@ -15,22 +15,7 @@ import {
 } from '@onecx/angular-utils'
 import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-utils'
 import { RemoteComponentConfig } from '@onecx/angular-utils'
-
-class ElementMock {
-  // extension
-  tagName: string
-  // Element data
-  isConnected = false
-  textContent = ''
-  attribute = ''
-  constructor(tagName: string) {
-    this.tagName = tagName
-  }
-
-  setAttribute(attr: string, value: string) {
-    this.attribute = `${attr}="${value}"`
-  }
-}
+import { ElementMock } from './element-mock'
 
 function removeSpacesAndNewlines(str?: string) {
   return str?.replace(/\s+/g, '')
@@ -46,8 +31,8 @@ describe('CustomUseStyleService', () => {
     querySelector(selectors: string) {
       return styleList.find((s) => `style[${s.attribute}]` === selectors) ?? null
     },
-    createElement(tagName: string) {
-      return new ElementMock(tagName) as any as HTMLElement
+    createElement(_tagName: string) {
+      return new ElementMock() as any as HTMLElement
     },
     head: {
       appendChild(node: ElementMock) {
@@ -228,7 +213,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="shell-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--p-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="shell-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--p-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -301,7 +286,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -374,7 +359,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -395,7 +380,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -416,7 +401,7 @@ describe('CustomUseStyleService', () => {
       configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -440,7 +425,7 @@ describe('CustomUseStyleService', () => {
       configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -463,7 +448,7 @@ describe('CustomUseStyleService', () => {
       configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -509,7 +494,7 @@ describe('CustomUseStyleService', () => {
         },
       ])
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:purple;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--${prefix}-primary-color:purple;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
