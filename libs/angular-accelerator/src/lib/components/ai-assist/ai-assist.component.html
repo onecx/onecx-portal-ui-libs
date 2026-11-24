@@ -70,33 +70,33 @@
         </div>
       </div>
       <div class="ocx-ai-assist__actions">
+        <p-button
+          class="ocx-ai-assist__try-again"
+          type="button"
+          severity="secondary"
+          icon="pi pi-refresh"
+          iconPos="left"
+          [text]="true"
+          [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
+          (onClick)="tryAgain()"
+        ></p-button>
         <div class="ocx-ai-assist__review-secondary-actions">
           <p-button
-            class="ocx-ai-assist__change-selection"
+            class="ocx-ai-assist__edit-settings"
             type="button"
             severity="secondary"
             icon="pi pi-sliders-h"
-            [label]="'OCX_AI_ASSIST.CHANGE_SELECTION' | translate"
+            [label]="'OCX_AI_ASSIST.EDIT_SETTINGS' | translate"
             (onClick)="editSettings()"
           ></p-button>
           <p-button
-            class="ocx-ai-assist__try-again"
+            class="ocx-ai-assist__replace"
             type="button"
-            severity="secondary"
-            icon="pi pi-refresh"
-            iconPos="left"
-            [text]="true"
-            [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
-            (onClick)="tryAgain()"
+            icon="pi pi-check"
+            [label]="'OCX_AI_ASSIST.REPLACE_TEXT' | translate"
+            (onClick)="replace()"
           ></p-button>
         </div>
-        <p-button
-          class="ocx-ai-assist__replace"
-          type="button"
-          icon="pi pi-check"
-          [label]="'OCX_AI_ASSIST.REPLACE_TEXT' | translate"
-          (onClick)="replace()"
-        ></p-button>
       </div>
     </div>
     } @else {
