@@ -26,7 +26,7 @@ export class KeycloakAuthService implements AuthService {
     let refreshToken = localStorage.getItem(KC_REFRESH_TOKEN_LS)
     if (token && refreshToken) {
       const refreshTokenExp = getRefreshTokenExp(refreshToken)
-      if (isStoredRefreshTokenExpired(refreshTokenExp, new Date().getTime())) {
+      if (isStoredRefreshTokenExpired(refreshTokenExp, Date.now())) {
         this.logger.info(
           `[KC init] 1 Stored refresh token expired or undecodable at ${formatStoredRefreshTokenExpiry(refreshTokenExp)}, clearing stored tokens`
         )

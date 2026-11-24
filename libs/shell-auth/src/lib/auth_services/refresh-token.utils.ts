@@ -15,7 +15,7 @@
 export function getRefreshTokenExp(refreshToken: string): number | undefined {
   try {
     const payloadSegment = refreshToken.split('.')[1] ?? ''
-    const base64 = payloadSegment.replace(/-/g, '+').replace(/_/g, '/')
+    const base64 = payloadSegment.replaceAll('-', '+').replaceAll('_', '/')
     const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=')
     const payload = JSON.parse(atob(padded)) as { exp?: unknown }
     return typeof payload.exp === 'number' ? payload.exp : undefined
