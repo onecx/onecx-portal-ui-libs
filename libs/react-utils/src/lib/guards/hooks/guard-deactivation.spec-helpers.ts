@@ -1,11 +1,6 @@
 import type { Location } from 'react-router'
 import type { WrappedGuards } from '../utils/wrap-guards.utils'
 
-/** Result returned by the guards a deactivation spec does not exercise. */
-async function allow(): Promise<boolean> {
-  return true
-}
-
 /**
  * Build a Location for guard-deactivation specs.
  * @param key - navigation key of the location.
@@ -22,9 +17,9 @@ export function location(key: string): Location {
  */
 export function makeWrappedGuards(canDeactivate: () => Promise<boolean>): WrappedGuards {
   return {
-    canMatch: allow,
-    canActivateChild: allow,
-    canActivate: allow,
+    canMatch: jest.fn().mockResolvedValue(true),
+    canActivateChild: jest.fn().mockResolvedValue(true),
+    canActivate: jest.fn().mockResolvedValue(true),
     canDeactivate,
     guards: { canMatch: [], canActivateChild: [], canActivate: [], canDeactivate: [] },
   }
