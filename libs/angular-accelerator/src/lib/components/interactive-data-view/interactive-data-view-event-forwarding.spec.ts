@@ -85,7 +85,7 @@ describe('InteractiveDataViewComponent event forwarding', () => {
     })
   })
 
-  it('given the parent has no consumer, when registering and the child emits, then the payload is not forwarded to the parent', () => {
+  it('given the parent deleteItem consumer unsubscribes after registration, when the child emits, then the payload is not forwarded to the parent', () => {
     const { component } = createComponent()
     const parentListener = jest.fn()
     const forwarding = component.deleteItem.subscribe(parentListener)
