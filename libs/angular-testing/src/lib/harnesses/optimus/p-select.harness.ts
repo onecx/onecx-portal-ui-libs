@@ -2,7 +2,7 @@ import { BaseHarnessFilters, ContentContainerComponentHarness, HarnessPredicate 
 import { ListItemHarness } from '../list-item.harness'
 
 export interface PSelectHarnessFilters extends BaseHarnessFilters {
-  id?: string
+  id?: string | RegExp
   inputId?: string
 }
 

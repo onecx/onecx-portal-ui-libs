@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router'
 import { DataViewModule } from '@openng/optimus-ui/dataview'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideTranslateTestingService, expectNoAxeViolations } from '@onecx/angular-testing'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
@@ -239,6 +239,10 @@ describe('DataViewComponent', () => {
     userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create', () => {

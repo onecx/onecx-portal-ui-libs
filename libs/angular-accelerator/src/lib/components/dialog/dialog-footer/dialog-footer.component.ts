@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../../utils/instance-id.utils'
 import {
   Component,
   ElementRef,
@@ -45,6 +46,8 @@ export const defaultDialogData: ButtonDialogData = {
   changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class DialogFooterComponent implements OnInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-dialog-footer')
   dynamicDialogConfig = inject(DynamicDialogConfig)
   dynamicDialogRef = inject(DynamicDialogRef)
 
@@ -78,7 +81,7 @@ export class DialogFooterComponent implements OnInit {
         secondaryButton?.nativeElement.focus()
       } else if (config.autoFocusButton === 'custom') {
         const button = this.customButtons().find((customButton) => {
-          return customButton.nativeElement.id === config.autoFocusButtonCustomId
+          return customButton.nativeElement.id === config.autoFocusButtonCustomId + this.idSuffix
         })
         setTimeout(() => {
           button?.nativeElement.focus()

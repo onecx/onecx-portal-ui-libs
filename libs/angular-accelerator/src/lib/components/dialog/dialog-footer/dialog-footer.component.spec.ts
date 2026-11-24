@@ -1,7 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 import { OpenngIcons } from '@openng/optimus-ui/api'
+import { of, Subject } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
-import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../../testing'
+import {
+  DialogFooterHarness,
+  expectInstanceScopedIds,
+  INSTANCE_ID_AXE_RULES,
+  provideTranslateTestingService,
+  TestbedHarnessEnvironment,
+} from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import {
   defaultDialogData,
@@ -42,6 +50,10 @@ describe('DialogFooterComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     dialogFooterHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DialogFooterHarness)
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create dialog-footer component', () => {
@@ -502,6 +514,71 @@ describe('DialogFooterComponent', () => {
 
         expect(await dialogFooterHarness.getCustomButtonSeverity('customTest')).toBe(severity)
       }
+    })
+  })
+
+  describe('[a11y] two instances on one page (stacked dialogs)', () => {
+    it('should keep the button ids unique per instance', async () => {
+      const second = TestBed.createComponent(DialogFooterComponent)
+      const dialogData = {
+        ...defaultDialogData,
+        config: {
+          ...defaultDialogData.config,
+          customButtons: [{ id: 'customTest', key: 'CUSTOM_PRI', alignment: 'right' as const }],
+        },
+      }
+      for (const f of [fixture, second]) {
+        f.componentInstance.dialogData.set(dialogData)
+        f.componentInstance['setupCustomButtons'](dialogData)
+        f.detectChanges()
+      }
+
+      expect(fixture.nativeElement.querySelector('#buttonDialogPrimaryButton')).not.toBeNull()
+      expect(fixture.nativeElement.querySelector('#customTest')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#buttonDialogPrimaryButton-1')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#buttonDialogSecondaryButton-1')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#customTest-1')).not.toBeNull()
+      expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
+      await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
+
+      const secondHarness = await TestbedHarnessEnvironment.harnessForFixture(second, DialogFooterHarness)
+      expect(await secondHarness.getPrimaryButtonLabel()).toBe('Confirm')
+      expect(await secondHarness.getSecondaryButtonLabel()).toBe('Cancel')
+      expect(await secondHarness.getCustomButton('customTest')).toBeTruthy()
+    })
+
+    it('should auto focus the custom button of its own instance', async () => {
+      const dialogData = {
+        ...defaultDialogData,
+        config: {
+          ...defaultDialogData.config,
+          autoFocusButton: 'custom' as const,
+          autoFocusButtonCustomId: 'customTest',
+          customButtons: [{ id: 'customTest', key: 'CUSTOM_PRI', alignment: 'right' as const }],
+        },
+      }
+      fixture.componentInstance.dynamicDialogConfig.data = {
+        ...dialogData,
+        portalDialogServiceData: {
+          primaryButtonEnabled$: of(true),
+          secondaryButtonEnabled$: of(true),
+          customButtonEnabled$: of({ id: 'customTest', enabled: true }),
+          buttonClicked$: new Subject(),
+        },
+      }
+      const focused: string[] = []
+      const focusSpy = jest.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (this: HTMLElement) {
+        focused.push(this.id)
+      })
+      const second = TestBed.createComponent(DialogFooterComponent)
+      second.detectChanges()
+      await second.whenStable()
+      await new Promise((resolve) => setTimeout(resolve))
+
+      expect(focused).toEqual(['customTest-1'])
+      focusSpy.mockRestore()
+      second.destroy()
+      fixture.componentInstance.dynamicDialogConfig.data = undefined
     })
   })
 })

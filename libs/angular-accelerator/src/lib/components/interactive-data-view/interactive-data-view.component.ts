@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import {
   Component,
   DestroyRef,
@@ -79,6 +80,8 @@ export interface ColumnGroupData {
   ],
 })
 export class InteractiveDataViewComponent implements OnInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-interactive-data-view')
   private readonly slotService = inject(SlotService)
   private readonly destroyRef = inject(DestroyRef)
   readonly stateService = inject(DataViewStateService)
@@ -98,6 +101,8 @@ export class InteractiveDataViewComponent implements OnInit {
   tableSelectionEnabledField = input<string | undefined>(undefined)
   tableAllowSelectAll = input<boolean>(true)
   name = input<string>('Data')
+  /** Field used to name a row/item in accessible names of its buttons (e.g. "Edit: Product A"). */
+  rowLabelField = input<string | undefined>(undefined)
   titleLineId = input<string | undefined>(undefined)
   subtitleLineIds = input<string[] | undefined>(undefined)
   supportedViewLayouts = input<ViewLayout[]>(['grid', 'list', 'table'])
