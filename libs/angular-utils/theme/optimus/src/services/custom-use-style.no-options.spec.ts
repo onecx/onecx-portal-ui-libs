@@ -11,20 +11,7 @@ import {
   shellScopeId,
   SKIP_STYLE_SCOPING,
 } from '@onecx/angular-utils'
-
-class ElementMock {
-  tagName: string
-  isConnected = false
-  textContent = ''
-  attribute = ''
-  constructor(tagName: string) {
-    this.tagName = tagName
-  }
-
-  setAttribute(attr: string, value: string) {
-    this.attribute = `${attr}="${value}"`
-  }
-}
+import { ElementMock } from './element-mock'
 
 function removeSpacesAndNewlines(str?: string) {
   return str?.replace(/\s+/g, '')
@@ -44,8 +31,8 @@ describe('CustomUseStyleService without options', () => {
     querySelector(selectors: string) {
       return styleList.find((s) => `style[${s.attribute}]` === selectors) ?? null
     },
-    createElement(tagName: string) {
-      return new ElementMock(tagName)
+    createElement(_tagName: string) {
+      return new ElementMock()
     },
     head: {
       appendChild(node: ElementMock) {
