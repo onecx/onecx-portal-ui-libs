@@ -42,9 +42,13 @@
     } @case ('error') {
     <p-message severity="error" [text]="errorMessageKey | translate"></p-message>
     <p-button
+      class="ocx-ai-assist__try-again"
       type="button"
       severity="secondary"
-      [label]="'OCX_AI_ASSIST.RETRY' | translate"
+      icon="pi pi-refresh"
+      iconPos="left"
+      [text]="true"
+      [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
       (onClick)="loadAgents()"
     ></p-button>
     } @case ('empty') {
@@ -52,35 +56,42 @@
     } @case ('ready') { @if (isReviewReady) {
     <div class="ocx-ai-assist__review">
       <div class="ocx-ai-assist__review-status">
-        <i class="pi pi-check-circle" aria-hidden="true"></i>
+        <i class="ocx-ai-assist__review-status-icon pi pi-check" aria-hidden="true"></i>
         {{ 'OCX_AI_ASSIST.READY_TO_REVIEW' | translate }}
       </div>
       <div class="ocx-ai-assist__review-columns">
-        <p-floatlabel variant="on" class="ocx-ai-assist__review-column">
-          <textarea pTextarea [id]="uid + '-before'" class="w-full" rows="6" readonly [value]="inputText"></textarea>
+        <div class="ocx-ai-assist__review-column">
           <label [for]="uid + '-before'">{{ 'OCX_AI_ASSIST.BEFORE' | translate }}</label>
-        </p-floatlabel>
-        <p-floatlabel variant="on" class="ocx-ai-assist__review-column">
-          <textarea pTextarea [id]="uid + '-suggestion'" class="w-full" rows="6" [(ngModel)]="suggestion"></textarea>
+          <textarea pTextarea [id]="uid + '-before'" class="w-full" rows="6" readonly [value]="inputText"></textarea>
+        </div>
+        <div class="ocx-ai-assist__review-column">
           <label [for]="uid + '-suggestion'">{{ 'OCX_AI_ASSIST.AI_SUGGESTION' | translate }}</label>
-        </p-floatlabel>
+          <textarea pTextarea [id]="uid + '-suggestion'" class="w-full" rows="6" [(ngModel)]="suggestion"></textarea>
+        </div>
       </div>
       <div class="ocx-ai-assist__actions">
+        <div class="ocx-ai-assist__review-secondary-actions">
+          <p-button
+            class="ocx-ai-assist__change-selection"
+            type="button"
+            severity="secondary"
+            icon="pi pi-sliders-h"
+            [label]="'OCX_AI_ASSIST.CHANGE_SELECTION' | translate"
+            (onClick)="editSettings()"
+          ></p-button>
+          <p-button
+            class="ocx-ai-assist__try-again"
+            type="button"
+            severity="secondary"
+            icon="pi pi-refresh"
+            iconPos="left"
+            [text]="true"
+            [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
+            (onClick)="tryAgain()"
+          ></p-button>
+        </div>
         <p-button
-          type="button"
-          severity="secondary"
-          icon="pi pi-sliders-h"
-          [label]="'OCX_AI_ASSIST.CHANGE_SELECTION' | translate"
-          (onClick)="editSettings()"
-        ></p-button>
-        <p-button
-          type="button"
-          severity="secondary"
-          icon="pi pi-undo"
-          [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
-          (onClick)="tryAgain()"
-        ></p-button>
-        <p-button
+          class="ocx-ai-assist__replace"
           type="button"
           icon="pi pi-check"
           [label]="'OCX_AI_ASSIST.REPLACE_TEXT' | translate"
@@ -156,6 +167,7 @@
       <p-button
         type="button"
         class="ocx-ai-assist__run"
+        icon="pi pi-sparkles"
         [label]="'OCX_AI_ASSIST.RUN' | translate"
         [disabled]="!canRun"
         (onClick)="run()"
@@ -166,17 +178,25 @@
     } @if (runState === 'error') {
     <p-message severity="error" [text]="errorMessageKey | translate"></p-message>
     <p-button
+      class="ocx-ai-assist__try-again"
       type="button"
       severity="secondary"
-      [label]="'OCX_AI_ASSIST.RETRY' | translate"
+      icon="pi pi-refresh"
+      iconPos="left"
+      [text]="true"
+      [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
       (onClick)="retry()"
     ></p-button>
     } @if (runState === 'success' && !isReviewReady) {
     <div class="ocx-ai-assist__result">
       <p-message severity="warn" [text]="'OCX_AI_ASSIST.ERRORS.GENERIC' | translate"></p-message>
       <p-button
+        class="ocx-ai-assist__try-again"
         type="button"
         severity="secondary"
+        icon="pi pi-refresh"
+        iconPos="left"
+        [text]="true"
         [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
         (onClick)="tryAgain()"
       ></p-button>
