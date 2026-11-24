@@ -99,7 +99,7 @@ export class KeycloakAuthService implements AuthService {
       return stored
     }
     const parsedToken = JSON.parse(atob(stored.refreshToken.split('.')[1]))
-    if (parsedToken.exp * 1000 >= new Date().getTime()) {
+    if (parsedToken.exp * 1000 >= Date.now()) {
       this.logger.info(
         `[KC init] 1 Stored refresh token valid until ${new Date(parsedToken.exp * 1000).toISOString()}, will attempt to reuse`
       )
@@ -180,7 +180,8 @@ export class KeycloakAuthService implements AuthService {
     })
     this.updateLocalStorage()
     if (onTokenExpiredEnabled) {
-      this.proactivelyRefreshToken()
+      // Awaiting the refresh lets a rejection from it reach the onTokenExpired handler-failure catch.
+      await this.proactivelyRefreshToken()
     } else {
       this.logger.info(
         '[KC event] 2.6            onTokenExpired - proactive refresh disabled, token will stay expired until next API call triggers updateTokenIfNeeded()'
