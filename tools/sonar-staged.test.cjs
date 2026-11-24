@@ -1,10 +1,11 @@
 const assert = require('node:assert/strict')
-const { execFileSync, spawnSync } = require('node:child_process')
+const { spawnSync } = require('node:child_process')
 const fs = require('node:fs')
 const http = require('node:http')
 const os = require('node:os')
 const path = require('node:path')
 const { test } = require('node:test')
+const { git } = require('./staged-files.js')
 const {
   parseHunkRanges,
   hasSonarConfig,
@@ -89,11 +90,10 @@ test('staged source without SONAR_TOKEN fails, nothing staged passes', async () 
 test('the CLI exits 1 without SONAR_TOKEN when a library source is staged', () => {
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'sonar-staged-cli-'))
   try {
-    const git = (...args) => execFileSync('git', args, { cwd: repo })
-    git('init', '-q')
+    git(['init', '-q'], { cwd: repo })
     fs.mkdirSync(path.join(repo, 'libs/a/src'), { recursive: true })
     fs.writeFileSync(path.join(repo, 'libs/a/src/a.ts'), 'export {}\n')
-    git('add', '.')
+    git(['add', '.'], { cwd: repo })
     const env = { ...process.env }
     delete env.SONAR_TOKEN
     const result = spawnSync(process.execPath, [path.join(__dirname, 'sonar-staged.js')], {
@@ -112,22 +112,21 @@ test('staged ranges come from the index for odd names, renames (whole file, cons
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'sonar-staged-test-'))
   const cwd = process.cwd()
   try {
-    const git = (...args) => execFileSync('git', args, { cwd: repo })
-    git('init', '-q')
-    git('config', 'user.email', 't@example.com')
-    git('config', 'user.name', 'T')
-    git('config', 'diff.noprefix', 'true')
-    git('config', 'diff.mnemonicPrefix', 'true')
+    git(['init', '-q'], { cwd: repo })
+    git(['config', 'user.email', 't@example.com'], { cwd: repo })
+    git(['config', 'user.name', 'T'], { cwd: repo })
+    git(['config', 'diff.noprefix', 'true'], { cwd: repo })
+    git(['config', 'diff.mnemonicPrefix', 'true'], { cwd: repo })
     fs.mkdirSync(path.join(repo, 'libs/a/src'), { recursive: true })
     fs.writeFileSync(path.join(repo, 'libs/a/src/old.ts'), 'a\nb\nc\nd\ne\n')
     fs.writeFileSync(path.join(repo, 'libs/a/src/mod.ts'), 'a\nb\n')
-    git('add', '.')
-    git('commit', '-q', '-m', 'base')
-    git('mv', 'libs/a/src/old.ts', 'libs/a/src/renamed ü.ts')
+    git(['add', '.'], { cwd: repo })
+    git(['commit', '-q', '-m', 'base'], { cwd: repo })
+    git(['mv', 'libs/a/src/old.ts', 'libs/a/src/renamed ü.ts'], { cwd: repo })
     fs.writeFileSync(path.join(repo, 'libs/a/src/mod.ts'), 'a\nB\n')
     fs.writeFileSync(path.join(repo, 'libs/a/src/a b ä.ts'), 'one\n')
     fs.writeFileSync(path.join(repo, 'README.md'), 'doc\n')
-    git('add', '.')
+    git(['add', '.'], { cwd: repo })
     process.chdir(repo)
     assert.deepEqual(stagedSourceRanges(), {
       'libs/a/src/a b ä.ts': [[1, 1]],
