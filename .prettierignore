@@ -2,5 +2,7 @@
 .docusaurus/
 **/CHANGELOG.md
 .angular
+# generated, minified build output (see stylelint.config.mjs ignoreFiles)
+libs/*/assets/tailwind.css
 
 .nx/self-healing
