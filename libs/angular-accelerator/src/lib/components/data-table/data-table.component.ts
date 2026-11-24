@@ -50,10 +50,7 @@ import { DisplayedResultsAnnouncer } from '../../services/results-announcement.s
 import { InteractiveExpandedRows } from '../../model/view-layout.model'
 import { planRowGroups, RowGroupPlan } from '../../utils/row-grouping-planner'
 import type { RowGroup } from '../../utils/row-grouping-planner'
-import type {
-  DataTableGroupCellContext,
-  DataTableRowGroupingConfig,
-} from '../../model/data-table-row-grouping.model'
+import type { DataTableGroupCellContext, DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -96,7 +93,7 @@ export interface DataTableComponentState {
       useFactory: (parentService: DataViewStateService | null) => parentService ?? new DataViewStateService(),
       deps: [[new Optional(), new SkipSelf(), DataViewStateService]],
     },
-  ]
+  ],
 })
 export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly router = inject(Router)
@@ -110,12 +107,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   rows = model<Row[]>([])
   previousRows = computedPrevious(this.rows)
-  
+
   @Input()
   set selectedRows(value: Row[]) {
     this.stateService.selectedRows.set(value)
   }
-  
+
   selectedIds = signal<Array<string | number>>([])
 
   @Input()
@@ -123,12 +120,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     this.stateService.filters.set(value)
   }
   previousFilters = computedPrevious(() => this.stateService.filters())
-  
+
   @Input()
   set sortDirection(value: DataSortDirection) {
     this.stateService.sortDirection.set(value)
   }
-  
+
   @Input()
   set sortColumn(value: string) {
     this.stateService.sortColumn.set(value)
@@ -462,13 +459,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
       if (currentFilterColumn.columnType === ColumnType.DATE) {
         const uniqueValues = [
-          ...new Map(
-            columnValues.map(value => [
-              new Date(value as any).getTime(),
-              value,
-            ])
-          ).values(),
-        ];
+          ...new Map(columnValues.map((value) => [new Date(value as any).getTime(), value])).values(),
+        ]
 
         return of({
           options: uniqueValues.map(
@@ -752,7 +744,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   ngOnInit(): void {
-    this.name.set(this.name() || this.router.url.replace(/[^A-Za-z0-9]/, '_'))
+    this.name.set(this.name() || this.router.url.replace(/[^A-Za-z0-9]/g, '_'))
   }
 
   translateColumnValues(columnValues: string[]): Observable<any> {
@@ -836,7 +828,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   onMultiselectFilterChange(column: DataTableColumn, event: any) {
-    const filters = this.stateService.filters()
+    const filters = this.stateService
+      .filters()
       .filter((filter) => filter.columnId !== column.id)
       .concat(
         event.value.map((value: Primitive) => ({
@@ -1054,11 +1047,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     }
 
     const templateNames = this.templatesDataMap[templateType].templateNames as Record<ColumnType, string[]>
-    return (
-      template ??
-      findTemplate(templates, templateNames[columnType])?.template ??
-      null
-    )
+    return template ?? findTemplate(templates, templateNames[columnType])?.template ?? null
   }
 
   getTemplate(column: DataTableColumn, templateType: TemplateType): Observable<TemplateRef<any> | null> {
@@ -1122,17 +1111,14 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private createMenuItemCommand(action: DataAction, row: any): () => void {
     return () => handleActionSync(this.router, action, row)
   }
-  
+
   getRowSummary(rowObject: any): string {
     let summary = ''
     const columns = Object.entries(rowObject)
     columns.forEach(([key, value], index) => {
       summary += `${key}: ${value}${index < columns.length - 1 ? ',' : ''}`
     })
-    
+
     return summary.trim()
   }
 }
-
-
-
