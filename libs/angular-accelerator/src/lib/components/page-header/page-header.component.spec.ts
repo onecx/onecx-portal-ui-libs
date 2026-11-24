@@ -818,6 +818,13 @@ describe('PageHeaderComponent', () => {
       expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(1)
     })
 
+    it('should warn only once per object detail and fall back to the label on repeated calls', () => {
+      const item: ObjectDetailItem = { label: 'Venue', value: 'AIE' }
+      expect(component.getActionItemAriaLabel(item)).toBe('Venue')
+      expect(component.getActionItemAriaLabel(item)).toBe('Venue')
+      expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(1)
+    })
+
     it('should render the object detail action button at least 24x24 px via the min-size class', async () => {
       await actionButtonName({})
       const btn: HTMLElement = fixture.nativeElement.querySelector('[name="object-detail-value"] button')
@@ -857,6 +864,7 @@ describe('PageHeaderComponent', () => {
         { ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } },
         { ariaLabelKey: 'EMPTY', titleKey: 'TITLE' },
         {},
+        { ariaLabelKey: { key: 'TITLE' } },
       ] as Action[]
       fixture.componentRef.setInput('actions', actions)
       fixture.detectChanges()
@@ -864,6 +872,7 @@ describe('PageHeaderComponent', () => {
       expect(component.getInlineActionAriaLabel(actions[1])).toBe('Hello World')
       expect(component.getInlineActionAriaLabel(actions[2])).toBe('Title key')
       expect(component.getInlineActionAriaLabel(actions[3])).toBeUndefined()
+      expect(component.getInlineActionAriaLabel(actions[4])).toBe('Title key')
     })
 
     it('should render the figure image as decorative and the subheader as plain content', async () => {
