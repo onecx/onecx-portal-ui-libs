@@ -144,6 +144,21 @@ describe('KeycloakAuthService init and events', () => {
       expect(localStorage.getItem('onecx_kc_token')).toBe('refreshed')
     })
 
+    it('when onAuthRefreshSuccess fires without token expiry info, then it still persists', () => {
+      keycloak.tokenParsed = undefined
+      keycloak.onAuthRefreshSuccess?.()
+      expect(localStorage.getItem('onecx_kc_token')).toBe('token')
+    })
+
+    it('when onTokenExpired fires after the keycloak instance is gone, then nothing is refreshed or persisted', async () => {
+      const onTokenExpired = keycloak.onTokenExpired
+      ;(service as unknown as { keycloak: undefined }).keycloak = undefined
+      onTokenExpired?.()
+      await flush()
+      expect(keycloak.updateToken).not.toHaveBeenCalled()
+      expect(localStorage.getItem('onecx_kc_token')).toBeNull()
+    })
+
     it('when onAuthRefreshError fires and re-login is enabled, then login is triggered', () => {
       keycloak.onAuthRefreshError?.()
       expect(keycloak.login).toHaveBeenCalled()
