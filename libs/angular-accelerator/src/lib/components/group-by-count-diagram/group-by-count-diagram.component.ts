@@ -15,6 +15,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ObjectUtils } from '../../utils/objectutils'
 import { toObservable } from '@angular/core/rxjs-interop'
+import { DiagramDataSelectedEvent } from '../diagram/diagram.component'
 
 export interface GroupByCountDiagramComponentState {
   activeDiagramType?: DiagramType
@@ -33,6 +34,7 @@ export class GroupByCountDiagramComponent {
   diagramType = model<DiagramType>(DiagramType.PIE)
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
+  titleHeadingLevel = input<number>(2)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
@@ -60,7 +62,7 @@ export class GroupByCountDiagramComponent {
   
   colors = model<Record<string, string>>({})
 
-  dataSelected = output<any>()
+  dataSelected = output<DiagramDataSelectedEvent>()
   diagramTypeChanged = output<DiagramType>()
   componentStateChanged = output<GroupByCountDiagramComponentState>()
 
@@ -123,7 +125,7 @@ export class GroupByCountDiagramComponent {
     })
   }
 
-  dataClicked(event: any) {
+  dataClicked(event: DiagramDataSelectedEvent) {
     this.dataSelected.emit(event)
   }
 

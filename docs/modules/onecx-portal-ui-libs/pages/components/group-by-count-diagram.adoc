@@ -40,6 +40,8 @@ To find out how to work with the GroupByCountDiagram component, please visit the
 | `column` | `<<diagram-column, DiagramColumn>>` | - | Defines which columns and its type to be displayed.
 | `fillMissingColors` | `boolean` | `true` | Determines if diagram should generate the colors for the data that does not have any set. Set to false will result in using the provided colors only if every data item has one. When at least one item does not have a color set, diagram will generate all colors.
 | `colors` | `Record<string, string>` | `{}` | Defines custom color for data items.
+| `chartTitleKey` | `string` | `''` | Translation key for the title rendered above the chart as a heading.
+| `titleHeadingLevel` | `number` | `2` | Level (1-6) of the heading rendered for `chartTitleKey`. Choose it so that the heading fits into the heading outline of the page.
 |===
 
 [#outputs]
@@ -49,13 +51,37 @@ To find out how to work with the GroupByCountDiagram component, please visit the
 |===
 | Property name | Type | Description
 
-| `dataSelected` | `EventEmitter<any>` | Emits data object upon clicking a diagram element.
+| `dataSelected` | `OutputEmitterRef<<<diagram-data-selected-event, DiagramDataSelectedEvent>>>` | Emits the selected entry when a chart segment is clicked or a legend entry is activated with the mouse or the keyboard (Enter or Space).
 | `diagramTypeChanged` | `EventEmitter<<<diagram-type, DiagramType>>>` | Emits the `<<diagram-type, DiagramType>>` when one of the supported diagram types is selected to switch the type.
 | `componentStateChanged` | `EventEmitter<<<group-by-count-diagram-component-state, GroupByCountDiagramComponentState>>>` | Emits the selected `<<diagram-type, DiagramType>>` to ensure consistent component state.
 |===
 
+[#legend]
+== Legend
+
+The legend is rendered as an HTML list below the chart for every diagram type (pie, horizontal bar and vertical bar); the built-in Chart.js legend is disabled. Each entry is a native button that shows the color of the segment, its label and, for screen readers, its count. Clicking an entry or activating it with Enter or Space selects the entry and emits `dataSelected`, exactly like clicking the matching chart segment. Entries no longer toggle the visibility of segments. When there is no data, no legend is rendered.
+
+Set `customLegends` to show the legend in two columns inside a scroll container.
+
 [#types]
 == Types
+
+[#diagram-data-selected-event]
+=== DiagramDataSelectedEvent
+
+.DiagramDataSelectedEvent interface
+
+[source, javascript]
+----
+    export interface DiagramDataSelectedEvent {
+        // position of the selected entry in the diagram data
+        index: number
+        // the selected entry
+        data: DiagramData
+    }
+
+    export type DiagramData = { label: string; value: number; backgroundColor?: string }
+----
 
 [#diagram-type]
 === DiagramType

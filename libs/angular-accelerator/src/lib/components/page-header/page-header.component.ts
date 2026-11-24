@@ -15,7 +15,11 @@ import {
   model,
   output,
   signal,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  isDevMode,
+  Injector,
+  Signal,
+  untracked,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -25,7 +29,7 @@ import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { Router } from '@angular/router'
 import { RouterLink } from '../../model/data-action'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
@@ -243,6 +247,69 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     this.figureImageLoadError.set(true)
   }
 
+  private readonly warnedItems = new Set<string>()
+
+  private static translationId(key: TranslationKey): string {
+    return typeof key === 'string' ? key : `${key.key}|${JSON.stringify(key.parameters)}`
+  }
+
+  private readonly injector = inject(Injector)
+  private readonly keyTranslations = new Map<string, Signal<string | undefined>>()
+
+  private translateKey(key: TranslationKey | undefined): string | undefined {
+    if (!key) return undefined
+    const id = PageHeaderComponent.translationId(key)
+    let translation = this.keyTranslations.get(id)
+    if (!translation) {
+      const translation$ =
+        typeof key === 'string'
+          ? this.translateService.stream(key)
+          : this.translateService.stream(key.key, key.parameters)
+      translation = untracked(() => toSignal(translation$, { injector: this.injector }))
+      this.keyTranslations.set(id, translation)
+    }
+    return translation() || undefined
+  }
+
+  hasDisabledReason(action: Action): boolean {
+    return !!action.disabled && !!(action.disabledTooltipKey || action.disabledTooltip)
+  }
+
+  /**
+   * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
+   * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
+   */
+  getInlineActionAriaLabel(action: Action): string | undefined {
+    const visibleLabel = action.labelKey ? this.translateKey(action.labelKey) : action.label
+    if (visibleLabel) return undefined
+    return (
+      this.translateKey(action.ariaLabelKey) ||
+      action.ariaLabel ||
+      this.translateKey(action.titleKey) ||
+      action.title ||
+      undefined
+    )
+  }
+
+  getActionItemAriaLabel(item: ObjectDetailItem): string {
+    const name =
+      this.translateKey(item.actionItemAriaLabelKey) ||
+      item.actionItemAriaLabel ||
+      this.translateKey(item.actionItemTooltipKey)
+    if (name) return name
+    if (isDevMode() && !this.warnedItems.has(item.label)) {
+      this.warnedItems.add(item.label)
+      console.warn(
+        `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
+      )
+    }
+    return item.label
+  }
+
+  getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
+    return this.translateKey(item.valueTooltipKey)
+  }
+
   public generateItemStyle(item: ObjectDetailItem): string {
     let style = ''
     if (item.icon) style = style.concat(style, ' ', 'gap-1 items-center')
@@ -326,11 +393,13 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     breadcrumbItems.forEach((item: Element, index: number) => {
       const text = (item as HTMLElement)?.innerText?.trim()
       if (!text) return
-      
-      this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
-        this.renderer.setAttribute(item, 'aria-label', ariaLabel)
-      })
-      
+
+      this.translateService
+        .get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text })
+        .subscribe((ariaLabel) => {
+          this.renderer.setAttribute(item, 'aria-label', ariaLabel)
+        })
+
       if (index === breadcrumbItems.length - 1) {
         this.renderer.setAttribute(item, 'aria-current', 'page')
       }

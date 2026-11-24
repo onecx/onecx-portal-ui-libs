@@ -6,7 +6,9 @@
   [diagramType]="diagramType()"
   [chartTitleKey]="chartTitleKey()"
   [chartDescriptionKey]="chartDescriptionKey()"
-  (onDataSelect)="dataClicked($event)"
+  [titleHeadingLevel]="titleHeadingLevel()"
+  [customLegends]="customLegends()"
+  (dataSelected)="dataClicked($event)"
   [supportedDiagramTypes]="supportedDiagramTypes()"
   (diagramTypeChanged)="onDiagramTypeChanged($event)"
 ></ocx-diagram>
