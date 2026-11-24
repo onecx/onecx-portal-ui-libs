@@ -1,10 +1,9 @@
-import { readFile } from 'node:fs/promises'
+import { appendFile, readFile } from 'node:fs/promises'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 const allowedActions = new Set(['opened', 'synchronize', 'ready_for_review'])
-const allowedAssociations = new Set(['OWNER', 'MEMBER', 'COLLABORATOR'])
 const allowedPermissions = new Set(['write', 'maintain', 'admin'])
 const maxGuidanceLength = 4000
 
@@ -46,7 +45,6 @@ async function loadRequest(env) {
     'GITHUB_REPOSITORY',
     'GITHUB_WORKSPACE',
     'AI_REVIEW_DISPATCH_REPOSITORY',
-    'GH_TOKEN',
     'GH_READ_TOKEN',
   ]
   if (required.some((key) => !env[key])) validationError()
@@ -155,7 +153,9 @@ function safelyRunGh(args, env, token) {
   }
 }
 
-export async function dispatchReview(env = process.env) {
+// With checkOnly, stop before the dispatch token is needed and record whether
+// to dispatch, so the workflow reads Vault only for an eligible PR author.
+export async function dispatchReview(env = process.env, { checkOnly = false } = {}) {
   let request
   try {
     request = await loadRequest(env)
@@ -196,21 +196,28 @@ export async function dispatchReview(env = process.env) {
     process.stderr.write('Review dispatch validation failed.\n')
     return 1
   }
-  if (
-    !allowedAssociations.has(pullRequest.author_association) &&
-    pullRequest.user.login.toLowerCase() !== request.actor.toLowerCase()
-  ) {
-    const authorAuthorization = safelyRunGh(
-      ['api', `repos/${request.sourceRepository}/collaborators/${pullRequest.user.login}/permission`],
-      env,
-      env.GH_READ_TOKEN
+  // The review runs as the requester with the tokens from their own Vault path,
+  // so only the PR author may request it: never borrow another user's identity.
+  if (pullRequest.user.login.toLowerCase() !== request.actor.toLowerCase()) {
+    process.stdout.write(
+      '::notice::Review not requested: AI reviews run with the pull request author’s own tokens, so only the author can request one.\n'
     )
+    return 0
+  }
+  if (checkOnly) {
     try {
-      assertWritePermission(authorAuthorization)
+      await appendFile(env.GITHUB_OUTPUT, 'dispatch=true\n')
     } catch {
-      process.stderr.write('Review dispatch author authorization failed.\n')
+      process.stderr.write('Review dispatch check output failed.\n')
       return 1
     }
+    return 0
+  }
+  if (!env.GH_TOKEN) {
+    process.stderr.write(
+      `Review dispatch token missing: store github_token_onecx under secret/data/users/${request.actor}/tokens in Vault.\n`
+    )
+    return 1
   }
   const args = [
     'workflow',
@@ -243,7 +250,7 @@ export async function dispatchReview(env = process.env) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
-  dispatchReview().then((status) => {
+  dispatchReview(process.env, { checkOnly: process.argv.includes('--check') }).then((status) => {
     process.exitCode = status
   })
 }
