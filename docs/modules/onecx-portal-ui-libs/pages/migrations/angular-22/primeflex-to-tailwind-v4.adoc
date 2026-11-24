@@ -1,0 +1,79 @@
+[#primeflex-to-tailwind-v4]
+= PrimeFlex to Tailwind CSS v4
+
+As part of the move to Optimus UI, `primeflex` is replaced with **Tailwind CSS v4**. This changes how the OneCX accelerator components are styled and affects the utility-CSS contract the application consumes.
+
+[#utility-css-contract]
+== Utility CSS contract
+
+Starting with v9, the `@onecx/angular-accelerator` and `@onecx/angular-standalone-shell` libraries no longer depend on PrimeFlex. Instead, each ships a **compiled, scoped CSS file** — `assets/tailwind.css` — built with Tailwind CSS v4 and the Optimus UI styled-mode preset (`@openng/optimus-ui-tailwindcss`). This file is the single stylesheet that styles the OneCX utility layout: **keep consuming it**. The accelerator exposes it through its `style` export, so an application that already imports `@onecx/angular-accelerator`'s style picks it up without any change.
+
+The compiled CSS is deliberately scoped and safe to drop into an application that styles its own components:
+
+* **No global reset.** It does not pull in Tailwind's preflight (the browser-style reset), so it will not override the application's element defaults or reset the application's base styles.
+* **Scoped utility generation.** Only the utilities the OneCX components actually use are emitted, from the library's own templates — not a blanket set applied to the application's markup.
+* **Optimus-aware semantics.** It carries the Optimus UI styled-mode utilities and theme tokens, so the same semantic names the components use are available.
+
+If a utility is not emitted by the OneCX components, it can be defined in the application's own Tailwind CSS. The Optimus UI preset exposes the semantic utilities and color tokens as regular Tailwind CSS, so the application's utilities stay on-theme:
+
+[source,css]
+----
+@utility text-brand-subtle {
+  color: var(--color-primary-200);
+}
+
+@utility bg-surface-card {
+  background: var(--color-surface-0);
+}
+----
+
+Because the library's file is a fully-resolved stylesheet rather than a Tailwind entry point, it can be imported alongside the application's own Tailwind CSS without the two conflicting.
+
+[#own-tailwind]
+== Applications with their own Tailwind CSS
+
+If the application already runs its own Tailwind CSS pipeline, wire the `postcss.config.json` to the OneCX Tailwind PostCSS plugin so both pipelines agree on the Optimus UI preset and tokens:
+
+[source,json]
+----
+{
+  "plugins": {
+    "@onecx/build-utils/plugins/tailwind-postcss": {}
+  }
+}
+----
+
+* The plugin was added to `@onecx/build-utils` in **v9.2.0**.
+* It requires `@tailwindcss/postcss` (the Tailwind CSS v4 PostCSS entry point) to be installed.
+
+If the application does not run its own Tailwind CSS, no configuration is required — the library's compiled `assets/tailwind.css` is consumed as before.
+
+[#merge-global-css]
+== Applying the styles from multiple stylesheets (`MergeGlobalCssPlugin`)
+
+In a microfrontend / module-federation build, each stylesheet entry is emitted as its own CSS asset — the application's global `styles.css` and the OneCX accelerator's scoped `tailwind.css`. A consumer that only imports `styles.css` therefore does not pick up the OneCX utility CSS.
+
+To apply the styles from all of these stylesheets, fold them into a single `styles.css` with `MergeGlobalCssPlugin` from `@onecx/build-utils/plugins/merge-global-css`. The plugin collects the configured bundles, concatenates them in cascade order (later wins), and emits the result as `styles.css`, so a single, predictable stylesheet carries the application's global styles and the OneCX utility CSS together.
+
+In the application's `webpack.config.js`:
+
+[source,javascript]
+----
+const { MergeGlobalCssPlugin } = require('@onecx/build-utils/plugins/merge-global-css')
+
+module.exports = {
+  plugins: [
+    new MergeGlobalCssPlugin({ bundles: ['styles', 'tailwind'] })
+  ]
+}
+----
+
+* `bundles` selects the emitted CSS bundles to fold, in cascade order (later wins). The default `['styles', 'tailwind']` covers the application's global styles plus the OneCX accelerator's `tailwind.css`.
+* `webpack` and `webpack-sources` are provided by the consuming application's build toolchain; the plugin resolves them at build time.
+
+[#what-is-unaffected]
+== What is unaffected
+
+* The Optimus UI component themes are unchanged — this migration touches only the utility CSS.
+* The `pi` / `pi-*` CSS icon classes emitted by `@openng/icons` are unchanged (Optimus UI inherits PrimeNG's icon CSS class names), so any CSS or class-matching against `pi-*` continues to work.
+* Application-level OneCX integration (routing, module federation, shell integration) is unchanged.
