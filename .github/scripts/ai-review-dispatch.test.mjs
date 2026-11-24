@@ -22,8 +22,7 @@ async function fixture(t, options = {}) {
     html_url: 'https://github.com/example/consumer/pull/42',
     state: 'open',
     draft: false,
-    user: { login: 'contributor', type: 'User' },
-    author_association: 'MEMBER',
+    user: { login: actor, type: 'User' },
     base: { repo: { full_name: 'example/consumer' }, sha: 'base-sha' },
     head: { repo: { full_name: 'example/consumer' } },
     ...options.pullRequest,
@@ -70,7 +69,7 @@ if (args[0] === 'api') {
     process.exit(1)
   }
   if (args[1].endsWith('/permission')) {
-    process.stdout.write(args[1].includes('/collaborators/contributor/') ? process.env.FAKE_AUTHOR_PERMISSION : process.env.FAKE_PERMISSION)
+    process.stdout.write(process.env.FAKE_PERMISSION)
   } else {
     if (process.env.FAKE_MODE === 'pr-failure') process.exit(1)
     process.stdout.write(process.env.FAKE_PR)
@@ -82,7 +81,8 @@ if (args[0] === 'api') {
 `
   )
   await chmod(gh, 0o755)
-  const result = spawnSync(process.execPath, [script], {
+  const outputPath = path.join(root, 'github-output')
+  const result = spawnSync(process.execPath, options.check ? [script, '--check'] : [script], {
     cwd: root,
     encoding: 'utf8',
     env: {
@@ -94,15 +94,14 @@ if (args[0] === 'api') {
       GITHUB_REPOSITORY: 'example/consumer',
       GITHUB_REF: options.ref ?? 'refs/heads/main',
       GITHUB_WORKSPACE: workspace,
+      GITHUB_OUTPUT: outputPath,
       AI_REVIEW_DISPATCH_REPOSITORY: options.target ?? 'private/destination',
       AI_REVIEW_DISPATCH_REF: options.dispatchRef ?? '',
-      GH_TOKEN: options.dispatchToken ?? 'service-secret',
+      GH_TOKEN: options.dispatchToken ?? 'author-secret',
       GH_READ_TOKEN: 'repository-read-secret',
       FAKE_LOG: logPath,
       FAKE_MODE: options.ghMode ?? 'success',
       FAKE_PERMISSION: options.permissionResponse ?? JSON.stringify({ permission: options.permission ?? 'write' }),
-      FAKE_AUTHOR_PERMISSION:
-        options.authorPermissionResponse ?? JSON.stringify({ permission: options.authorPermission ?? 'write' }),
       FAKE_PR: options.prResponse ?? JSON.stringify({ ...pullRequest, ...options.currentPullRequest }),
     },
   })
@@ -112,31 +111,27 @@ if (args[0] === 'api') {
   } catch (error) {
     if (error.code !== 'ENOENT') throw error
   }
-  for (const secret of [
-    'service-secret',
-    'repository-read-secret',
-    'private/destination',
-    'raw auth',
-    'raw dispatch',
-  ]) {
+  for (const secret of ['author-secret', 'repository-read-secret', 'private/destination', 'raw auth', 'raw dispatch']) {
     assert.equal(`${result.stdout}${result.stderr}`.includes(secret), false, `output exposed ${secret}`)
   }
-  return { result, calls }
+  let output = ''
+  try {
+    output = await readFile(outputPath, 'utf8')
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+  }
+  return { result, calls, output }
 }
 
-function assertDispatched({ result, calls }, authorLookup = false, dispatchRef = 'main') {
+function assertDispatched({ result, calls, output }, dispatchRef = 'main') {
   assert.equal(result.status, 0, result.stderr)
+  assert.equal(output, '')
   assert.deepEqual(
     calls.map(({ token }) => token),
-    authorLookup
-      ? ['repository-read-secret', 'repository-read-secret', 'repository-read-secret', 'service-secret']
-      : ['repository-read-secret', 'repository-read-secret', 'service-secret']
+    ['repository-read-secret', 'repository-read-secret', 'author-secret']
   )
   assert.deepEqual(calls[0].args, ['api', 'repos/example/consumer/collaborators/maintainer/permission'])
   assert.deepEqual(calls[1].args, ['api', 'repos/example/consumer/pulls/42'])
-  if (authorLookup) {
-    assert.deepEqual(calls[2].args, ['api', 'repos/example/consumer/collaborators/contributor/permission'])
-  }
   assert.deepEqual(calls.at(-1).args, [
     'workflow',
     'run',
@@ -156,7 +151,7 @@ function assertDispatched({ result, calls }, authorLookup = false, dispatchRef =
   ])
 }
 
-test('dispatches automatic reviews with a service token, not the event actor PAT', async (t) => {
+test('dispatches automatic reviews with the PR author’s own token', async (t) => {
   assertDispatched(await fixture(t))
 })
 
@@ -170,11 +165,7 @@ test('release-target PRs still dispatch the central main workflow by default', a
 })
 
 test('an explicit trusted dispatch ref overrides main without using the PR target ref', async (t) => {
-  assertDispatched(
-    await fixture(t, { ref: 'refs/heads/v7', dispatchRef: 'release/review-v2' }),
-    false,
-    'release/review-v2'
-  )
+  assertDispatched(await fixture(t, { ref: 'refs/heads/v7', dispatchRef: 'release/review-v2' }), 'release/review-v2')
 })
 
 test('manual Actions dispatch looks up an existing PR on the default branch', async (t) => {
@@ -209,53 +200,51 @@ test('a fork requester still needs write access to the consumer repository', asy
   assert.match(result.stderr, /authorization failed/i)
 })
 
-test('accepts a team fork author reported as CONTRIBUTOR when repository permissions prove admin access', async (t) => {
+test('skips requests from anyone but the PR author without using a dispatch token', async (t) => {
   for (const eventName of ['pull_request_target', 'issue_comment', 'workflow_dispatch']) {
     await t.test(eventName, async (t) => {
-      assertDispatched(
-        await fixture(t, {
-          eventName,
-          pullRequest: {
-            author_association: 'CONTRIBUTOR',
-            head: { repo: { full_name: 'teammate/fork' } },
-          },
-          authorPermission: 'admin',
-        }),
-        true
-      )
+      const { result, calls } = await fixture(t, {
+        eventName,
+        pullRequest: { user: { login: 'contributor', type: 'User' } },
+        dispatchToken: '',
+      })
+      assert.equal(result.status, 0, result.stderr)
+      assert.equal(calls.length, 2)
+      assert.match(result.stdout, /only the author can request/i)
     })
   }
 })
 
-test('rejects an unassociated author without verified repository write access', async (t) => {
-  const { result, calls } = await fixture(t, {
-    eventName: 'workflow_dispatch',
-    pullRequest: { author_association: 'CONTRIBUTOR' },
-    authorPermission: 'read',
-  })
-  assert.equal(result.status, 1)
-  assert.equal(calls.length, 3)
-  assert.match(result.stderr, /author authorization failed/i)
-})
+test('the check step approves only the PR author, before any dispatch token exists', async (t) => {
+  for (const eventName of ['pull_request_target', 'issue_comment', 'workflow_dispatch']) {
+    await t.test(eventName, async (t) => {
+      const author = await fixture(t, { eventName, check: true, dispatchToken: '' })
+      assert.equal(author.result.status, 0, author.result.stderr)
+      assert.equal(author.calls.length, 2)
+      assert.equal(author.output, 'dispatch=true\n')
 
-test('reuses verified requester permissions when the CONTRIBUTOR author is the requester', async (t) => {
-  assertDispatched(
-    await fixture(t, {
-      eventName: 'workflow_dispatch',
-      pullRequest: { author_association: 'CONTRIBUTOR', user: { login: 'maintainer', type: 'User' } },
+      const other = await fixture(t, {
+        eventName,
+        check: true,
+        dispatchToken: '',
+        pullRequest: { user: { login: 'contributor', type: 'User' } },
+      })
+      assert.equal(other.result.status, 0, other.result.stderr)
+      assert.equal(other.calls.length, 2)
+      assert.equal(other.output, '')
+
+      const readOnly = await fixture(t, { eventName, check: true, dispatchToken: '', permission: 'read' })
+      assert.equal(readOnly.result.status, 1)
+      assert.equal(readOnly.output, '')
     })
-  )
+  }
 })
 
-test('author permission lookup failures remain explicit and redacted', async (t) => {
-  const { result, calls } = await fixture(t, {
-    eventName: 'workflow_dispatch',
-    pullRequest: { author_association: 'CONTRIBUTOR' },
-    authorPermissionResponse: '{broken',
-  })
+test('fails with the Vault path when the PR author has no dispatch token', async (t) => {
+  const { result, calls } = await fixture(t, { dispatchToken: '' })
   assert.equal(result.status, 1)
-  assert.equal(calls.length, 3)
-  assert.match(result.stderr, /author authorization failed/i)
+  assert.equal(calls.length, 2)
+  assert.match(result.stderr, /secret\/data\/users\/maintainer\/tokens/)
 })
 
 test('rejects unrelated or untrusted events before using GitHub credentials', async (t) => {
@@ -275,7 +264,6 @@ test('rejects unrelated or untrusted events before using GitHub credentials', as
     { eventName: 'issue_comment', commentUser: { login: 'someone-else' } },
     { eventName: 'issue_comment', commentUser: { type: 'Bot' } },
     { target: '' },
-    { dispatchToken: '' },
   ]
   for (const options of cases) {
     await t.test(JSON.stringify(options), async (t) => {
