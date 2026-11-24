@@ -1,6 +1,7 @@
 import { createPalette, standardColorAdjustment } from '../utils/create-color-palette'
 
 import defaultVariables from './default-theme-variables'
+import { resolveFocusRingColors } from '../utils/focus-ring'
 import breadcrumb from './component-presets/breadcrumb'
 import autocomplete from './component-presets/autocomplete'
 import button from './component-presets/button'
@@ -11,6 +12,16 @@ import floatlabel from './component-presets/floatlabel'
 import inputtext from './component-presets/inputtext'
 import paginator from './component-presets/paginator'
 import fileupload from './component-presets/fileupload'
+
+// INFO: Focus ring colours resolved from the default theme colours (>= 3:1, WCAG 1.4.11). ThemeConfig resolves them
+// again for the active theme. Token names (CSS variables): --p-focus-ring-*, --p-onecx-focus-ring-color and
+// --p-onecx-focus-ring-inverse-color
+const focusRingColors = resolveFocusRingColors({
+  primaryColor: defaultVariables.general.primaryColor,
+  surfaceColor: defaultVariables.general.contentBgColor,
+  bodyBgColor: defaultVariables.general.bodyBgColor,
+  topbarBgColor: defaultVariables.topbar.topbarBgColor,
+})
 
 // Structure of this object has to match https://github.com/primefaces/primeuix/tree/main/packages/themes/src/presets/aura
 export default {
@@ -35,14 +46,17 @@ export default {
         ...defaultVariables.sidebar,
         ...defaultVariables.general,
         errorColor: '#b00020',
+        // Focus ring on dark surfaces (top bar, menu); use instead of focus.ring.color there
+        focusRingColor: focusRingColors.color,
+        focusRingInverseColor: focusRingColors.inverseColor,
         animationDuration: '0.2s',
       },
     },
     transitionDuration: '0.2s',
     focusRing: {
-      width: '1px',
+      width: '2px',
       style: 'solid',
-      color: '{primary.color}',
+      color: focusRingColors.color,
       offset: '2px',
       shadow: 'none',
     },
@@ -72,10 +86,11 @@ export default {
         paddingY: '0.875rem', // equal to paddingX
       },
       borderRadius: '{border.radius.md}',
+      // INFO: Ring in addition to the border colour change on focus
       focusRing: {
-        width: '0',
-        style: 'none',
-        color: 'transparent',
+        width: '{focus.ring.width}',
+        style: '{focus.ring.style}',
+        color: '{focus.ring.color}',
         offset: '0',
         shadow: 'none',
       },
