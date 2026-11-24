@@ -278,8 +278,10 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     if (!key) return undefined
     const translated =
       typeof key === 'string'
-        ? this.translateService.instant(key)
-        : this.translateService.instant(key.key, key.parameters)
+        ? // eslint-disable-next-line @onecx/angular-linter-rules/no-translate-instant -- called synchronously from the template to compute the aria-label
+          this.translateService.instant(key)
+        : // eslint-disable-next-line @onecx/angular-linter-rules/no-translate-instant -- called synchronously from the template to compute the aria-label
+          this.translateService.instant(key.key, key.parameters)
     return translated || undefined
   }
 
@@ -293,6 +295,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
    * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
    */
   getInlineActionAriaLabel(action: Action): string | undefined {
+    // eslint-disable-next-line @onecx/angular-linter-rules/no-translate-instant -- called synchronously from the template to compute the aria-label
     const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
     if (visibleLabel) return undefined
     return (
