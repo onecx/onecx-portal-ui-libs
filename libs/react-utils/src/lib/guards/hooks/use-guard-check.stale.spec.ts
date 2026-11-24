@@ -44,11 +44,11 @@ function makeWrapped(overrides: Partial<WrappedGuards> = {}): WrappedGuards {
 }
 
 function deferred(): { promise: Promise<boolean>; resolve: (value: boolean) => void } {
-  let resolve: (value: boolean) => void = () => undefined
+  let resolve!: (value: boolean) => void
   const promise = new Promise<boolean>((done) => {
     resolve = done
   })
-  return { promise, resolve: (value) => resolve(value) }
+  return { promise, resolve }
 }
 
 function renderGuardCheck(wrapped: WrappedGuards, onGuardCheck?: jest.Mock) {
