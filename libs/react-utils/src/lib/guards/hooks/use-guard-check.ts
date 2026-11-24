@@ -62,8 +62,10 @@ function resolveGuardResult(wrapped: WrappedGuards): Promise<boolean | undefined
 
 /**
  * Report the guard result only while the check is still current, so a result superseded by a newer
- * location is dropped. Guard rejections and callback errors are logged instead of surfacing as
- * unhandled rejections.
+ * location is dropped. Guard rejections are logged by resolveGuardResult; a synchronous throw from
+ * the caller's onGuardCheck callback is caught at the call site and logged distinctly so the two
+ * failure classes are not conflated; the trailing catch is a safety net for rejections the chain
+ * would otherwise leave unhandled.
  * @param wrapped - wrapped guard helpers to execute.
  * @param setLastResult - state setter invoked with the check result while the check is still current.
  * @param onGuardCheck - optional callback invoked with the check result while the check is still current.
@@ -80,11 +82,15 @@ function runGuardChecks(
     .then((result) => {
       if (result !== undefined && !cancelled) {
         setLastResult(result)
-        onGuardCheck?.(result)
+        try {
+          onGuardCheck?.(result)
+        } catch (error) {
+          logger.error('onGuardCheck callback failed', error)
+        }
       }
     })
     .catch((error: unknown) => {
-      logger.error('onGuardCheck callback failed', error)
+      logger.error('Guard check result handling failed', error)
     })
 
   return () => {
