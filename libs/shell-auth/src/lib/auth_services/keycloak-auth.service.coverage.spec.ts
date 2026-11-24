@@ -244,6 +244,26 @@ describe('KeycloakAuthService', () => {
       expect(localStorage.getItem(KC_TOKEN_LS)).toBe('t')
     })
 
+    it('given the login started by onAuthLogout fails, then the failure is swallowed and logged', async () => {
+      await initialized()
+      mockLoginImpl = () => Promise.reject(new Error('login failed'))
+
+      expect(() => kc().onAuthLogout?.()).not.toThrow()
+      await new Promise((resolve) => setTimeout(resolve))
+
+      expect(kc().login).toHaveBeenCalledWith({ some: 'config' })
+    })
+
+    it('given proactive refresh is enabled and updateToken fails, then onTokenExpired does not throw', async () => {
+      await initialized({ [CONFIG_KEY.KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED]: 'true' })
+      kc().updateToken.mockRejectedValue(new Error('refresh failed'))
+
+      kc().onTokenExpired?.()
+      await new Promise((resolve) => setTimeout(resolve))
+
+      expect(kc().updateToken).toHaveBeenCalledTimes(1)
+    })
+
     it('given onAuthRefreshError fires and the re-login is enabled, then a login is triggered', async () => {
       await initialized({ [CONFIG_KEY.KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED]: 'true' })
 
