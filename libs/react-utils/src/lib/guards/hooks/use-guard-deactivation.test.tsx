@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react'
-import type { WrappedGuards } from '../utils/wrap-guards.utils'
+import { location, makeWrappedGuards } from './guard-deactivation.spec-helpers'
 import * as GuardsHooks from './use-guard-deactivation'
 import { useWrappedGuards } from './use-wrapped-guards'
 
@@ -13,16 +13,6 @@ jest.mock('./use-wrapped-guards', () => ({
   useWrappedGuards: jest.fn(),
 }))
 
-function makeWrappedGuards(canDeactivate: jest.Mock): WrappedGuards {
-  return {
-    canMatch: jest.fn(async () => true),
-    canActivateChild: jest.fn(async () => true),
-    canActivate: jest.fn(async () => true),
-    canDeactivate,
-    guards: { canMatch: [], canActivateChild: [], canActivate: [], canDeactivate: [] },
-  }
-}
-
 function TestComponent({
   onGuardCheck,
   enabled,
@@ -30,7 +20,7 @@ function TestComponent({
   onGuardCheck?: jest.Mock
   enabled?: boolean
 } = {}) {
-  GuardsHooks.useGuardDeactivation({ pathname: '/next' } as any, { onGuardCheck, enabled })
+  GuardsHooks.useGuardDeactivation(location('next'), { onGuardCheck, enabled })
   return null
 }
 

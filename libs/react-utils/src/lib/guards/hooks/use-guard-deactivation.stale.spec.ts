@@ -1,7 +1,7 @@
 import type { Location } from 'react-router'
 import { useLocation } from 'react-router'
 import { renderHook, waitFor } from '@testing-library/react'
-import type { WrappedGuards } from '../utils/wrap-guards.utils'
+import { location, makeWrappedGuards } from './guard-deactivation.spec-helpers'
 import { useGuardDeactivation } from './use-guard-deactivation'
 import { useWrappedGuards } from './use-wrapped-guards'
 
@@ -31,20 +31,6 @@ const mockError = (jest.requireMock('../utils/logger.utils') as { __mockLogger: 
 
 const useLocationMock = useLocation as jest.Mock
 const useWrappedGuardsMock = useWrappedGuards as jest.Mock
-
-function location(key: string): Location {
-  return { pathname: '/', search: '', hash: '', state: null, key }
-}
-
-function makeWrappedGuards(canDeactivate: jest.Mock): WrappedGuards {
-  return {
-    canMatch: jest.fn(async () => true),
-    canActivateChild: jest.fn(async () => true),
-    canActivate: jest.fn(async () => true),
-    canDeactivate,
-    guards: { canMatch: [], canActivateChild: [], canActivate: [], canDeactivate: [] },
-  }
-}
 
 const nextLocation: Location = location('next')
 

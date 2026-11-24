@@ -28,6 +28,7 @@ export default {
     '<rootDir>/src/lib/**/*.{ts,tsx,js,jsx}',
     '!<rootDir>/src/lib/**/index.ts',
     '!<rootDir>/src/lib/**/logger.utils.ts',
+    '!<rootDir>/src/lib/**/*.spec-helpers.ts',
     '!<rootDir>/src/lib/**/*.spec.ts',
     '!<rootDir>/src/lib/**/*.spec.tsx',
     '!<rootDir>/src/lib/**/*.test.ts',
