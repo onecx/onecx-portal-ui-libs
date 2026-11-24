@@ -140,6 +140,9 @@ dist
 
 .nx
 
+# Serena LSP tooling: local project config and caches must not be committed
+.serena/
+
 libs/angular-accelerator/tmp/
 
 .copy-build-to
