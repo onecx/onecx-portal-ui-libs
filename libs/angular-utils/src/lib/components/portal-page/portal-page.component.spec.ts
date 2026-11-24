@@ -7,6 +7,7 @@ import { PortalPageComponent } from './portal-page.component'
 import { PermissionService } from '../../services/permission.service'
 import { of } from 'rxjs'
 import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
 
 describe('PortalPageComponent', () => {
   let component: PortalPageComponent
@@ -42,6 +43,7 @@ describe('PortalPageComponent', () => {
   it('should show unauthorized message when access is denied', fakeAsync(() => {
     const permissionService = TestBed.inject(PermissionService) as unknown as { hasPermission: jest.Mock }
     permissionService.hasPermission.mockReturnValue(of(false))
+    TestBed.inject(TranslateService).use('en')
 
     fixture.componentRef.setInput('permission', 'TEST_PERMISSION')
     fixture.detectChanges()
@@ -54,6 +56,7 @@ describe('PortalPageComponent', () => {
 
     const span = fixture.nativeElement.querySelector('span') as HTMLElement | null
     expect(span).not.toBeNull()
+    expect(span.textContent).toContain('TEST_PERMISSION')
   }))
 
   it('should not show unauthorized message when access is granted (immediate)', () => {
