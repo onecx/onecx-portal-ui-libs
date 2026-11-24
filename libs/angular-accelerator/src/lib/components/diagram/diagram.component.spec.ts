@@ -11,7 +11,9 @@ import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optim
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
-import { DiagramComponent, DiagramLayouts } from './diagram.component'
+import * as d3 from 'd3-scale-chromatic'
+import { contrastRatio, MIN_GRAPHICS_CONTRAST, parseColor, Rgb } from '../../utils/diagram-contrast-utils'
+import { DiagramComponent, DiagramDataSelectedEvent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
 
 declare global {
@@ -43,7 +45,13 @@ describe('DiagramComponent', () => {
     window.__setForcedColorsActive?.(false)
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
-      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorOptimusModule, TranslateModule.forRoot(), OcxTooltipDirective],
+      imports: [
+        NoopAnimationsModule,
+        FormsModule,
+        AngularAcceleratorOptimusModule,
+        TranslateModule.forRoot(),
+        OcxTooltipDirective,
+      ],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -241,9 +249,37 @@ describe('DiagramComponent', () => {
     expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toEqual(true)
   })
 
-  it('should interpolate colors by default', () => {
+  it('should use the categorical palette by default', () => {
+    const interpolateSpy = jest.spyOn(ColorUtils, 'interpolateColors')
+
+    fixture.detectChanges()
+
+    expect(component.colorPalette()).toBe('categorical')
+    expect(interpolateSpy).not.toHaveBeenCalled()
+    expect(component.chartData()?.datasets).toEqual([
+      {
+        data: diagramData.map((d) => d.value),
+        backgroundColor: d3.schemeTableau10.slice(0, diagramData.length),
+      },
+    ])
+  })
+
+  it('should repeat the categorical hues when there are more entries than hues', () => {
+    const amount = d3.schemeTableau10.length + 2
+    fixture.componentRef.setInput(
+      'data',
+      Array.from({ length: amount }, (_, i) => ({ label: `segment${i}`, value: i + 1 }))
+    )
+    fixture.detectChanges()
+
+    const colors = (component.chartData()?.datasets[0] as unknown as { backgroundColor: string[] }).backgroundColor
+    expect(colors.slice(-2)).toEqual(d3.schemeTableau10.slice(0, 2))
+  })
+
+  it('should interpolate colors with the sequential palette (opt-out)', () => {
     const mockResult = diagramData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+    fixture.componentRef.setInput('colorPalette', 'sequential')
 
     fixture.detectChanges()
 
@@ -276,6 +312,7 @@ describe('DiagramComponent', () => {
     ]
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+    fixture.componentRef.setInput('colorPalette', 'sequential')
     fixture.componentRef.setInput('fillMissingColors', false)
 
     fixture.componentRef.setInput('data', mockData)
@@ -295,6 +332,7 @@ describe('DiagramComponent', () => {
     ]
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+    fixture.componentRef.setInput('colorPalette', 'sequential')
 
     fixture.componentRef.setInput('data', mockData)
     fixture.detectChanges()
@@ -303,6 +341,21 @@ describe('DiagramComponent', () => {
       {
         data: [1, 2],
         backgroundColor: ['blue', '0'],
+      },
+    ])
+  })
+
+  it('should fill missing colors from the categorical palette', () => {
+    fixture.componentRef.setInput('data', [
+      { label: 'test0', value: 1, backgroundColor: 'blue' },
+      { label: 'test1', value: 2 },
+    ])
+    fixture.detectChanges()
+
+    expect(component.chartData()?.datasets).toEqual([
+      {
+        data: [1, 2],
+        backgroundColor: ['blue', d3.schemeTableau10[0]],
       },
     ])
   })
@@ -330,17 +383,27 @@ describe('DiagramComponent', () => {
     component.diagramType.set(DiagramType.PIE)
     expect(component.useFullHeight()).toBe(false)
   })
-  
-  it('should emit data clicked event', async () => {
+
+  it('should emit the selected entry when a chart segment is clicked', async () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const chartHarness = await diagram.getChart()
-    let dataSelectedEvent: number | undefined
+    let dataSelectedEvent: DiagramDataSelectedEvent | undefined
 
     component.dataSelected.subscribe((event) => (dataSelectedEvent = event))
-    fixture.debugElement.query(By.css('p-chart')).triggerEventHandler('onDataSelect', [{}, {}, {}])
+    fixture.debugElement.query(By.css('p-chart')).triggerEventHandler('onDataSelect', { element: { index: 2 } })
 
-    expect(dataSelectedEvent).toEqual(3)
+    expect(dataSelectedEvent).toEqual({ index: 2, data: diagramData[2] })
     expect(chartHarness).toBeTruthy()
+  })
+
+  it('should not emit when the selected index has no data entry', () => {
+    const emitSpy = jest.spyOn(component.dataSelected, 'emit')
+
+    component.selectData(diagramData.length)
+    fixture.componentRef.setInput('data', undefined)
+    component.selectData(0)
+
+    expect(emitSpy).not.toHaveBeenCalled()
   })
 
   it('should not set chartOptions and amoutOfData when data is null', () => {
@@ -372,6 +435,121 @@ describe('DiagramComponent', () => {
 
       const expectedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim()
       expect(component.chartOptions().plugins?.legend?.labels?.color).toEqual(expectedColor)
+    })
+  })
+
+  describe('Accessibility', () => {
+    it('should render a legend button per entry that reads "label: count" without color codes', async () => {
+      const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+      const legendItems = await diagram.getLegendItems()
+
+      expect(legendItems.length).toBe(diagramData.length)
+      expect(await legendItems[1].getAttribute('type')).toBe('button')
+      expect(await legendItems[1].text()).toBe('test1: 2')
+      expect(component.chartOptions().plugins?.legend?.display).toBe(false)
+    })
+
+    it('should select an entry from the keyboard via the legend', async () => {
+      const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+      const legendItems = await diagram.getLegendItems()
+      let dataSelectedEvent: DiagramDataSelectedEvent | undefined
+      component.dataSelected.subscribe((event) => (dataSelectedEvent = event))
+
+      await legendItems[3].focus()
+      expect(await legendItems[3].isFocused()).toBe(true)
+      // a native button turns Enter and Space into a click
+      await legendItems[3].click()
+
+      expect(dataSelectedEvent).toEqual({ index: 3, data: diagramData[3] })
+    })
+
+    it('should not render an empty legend list when there is no data', () => {
+      fixture.componentRef.setInput('data', [])
+      fixture.detectChanges()
+
+      expect(fixture.nativeElement.querySelector('.diagram-legend')).toBeNull()
+      expect(fixture.nativeElement.querySelector('ul[aria-label]')).toBeNull()
+    })
+
+    it('should render the two column legend in a scroll container with custom legends', async () => {
+      fixture.componentRef.setInput('customLegends', true)
+      fixture.detectChanges()
+
+      const container = fixture.debugElement.query(By.css('.diagram-legend')).nativeElement as HTMLElement
+      expect(container.classList).toContain('custom-legends-container')
+      expect(container.getAttribute('aria-hidden')).toBeNull()
+    })
+
+    it('should not add a focus stop on the chart', () => {
+      fixture.detectChanges()
+
+      const chart = fixture.debugElement.query(By.css('p-chart')).nativeElement as HTMLElement
+      expect(chart.hasAttribute('tabindex')).toBe(false)
+      expect(chart.hasAttribute('aria-describedby')).toBe(false)
+    })
+
+    it('should render the title as a heading with a configurable level', async () => {
+      fixture.componentRef.setInput('chartTitleKey', 'OCX_DIAGRAM.SUM')
+      const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+
+      expect(await (await diagram.getTitle())?.getProperty('tagName')).toBe('H2')
+      for (const level of [1, 3, 4, 5, 6]) {
+        fixture.componentRef.setInput('titleHeadingLevel', level)
+        expect(await (await diagram.getTitle())?.getProperty('tagName')).toBe(`H${level}`)
+      }
+      expect(fixture.nativeElement.querySelector('caption').textContent).toContain('Total')
+    })
+
+    it('should list label and count in the screen reader table without color codes', () => {
+      fixture.componentRef.setInput('data', [{ label: 'test0', value: 1, backgroundColor: '#ff0000' }])
+      fixture.detectChanges()
+
+      const table = fixture.nativeElement.querySelector('table') as HTMLTableElement
+      expect(table.querySelector('caption')).toBeNull()
+      expect(table.querySelectorAll('thead th').length).toBe(2)
+      const cells = Array.from(table.querySelectorAll('tbody tr:first-child > *'))
+      expect(cells.map((cell) => [cell.tagName, cell.textContent?.trim()])).toEqual([
+        ['TH', 'test0'],
+        ['TD', '1'],
+      ])
+      expect(table.textContent).not.toContain('#ff0000')
+    })
+
+    describe('palette', () => {
+      const themes = [
+        { name: 'light', background: '#ffffff', text: '#212529' },
+        { name: 'dark', background: '#1e1e1e', text: '#f8f9fa' },
+      ]
+
+      beforeEach(() => jest.restoreAllMocks())
+
+      afterEach(() => {
+        document.documentElement.style.removeProperty('--content-bg-color')
+        document.documentElement.style.removeProperty('--text-color')
+      })
+
+      const palettes = ['categorical', 'sequential'] as const
+      it.each(themes.flatMap((theme) => palettes.map((palette) => ({ ...theme, palette }))))(
+        'should give 12 generated $palette segments at least 3:1 against the $name background and separate them by a background border',
+        ({ background, text, palette }) => {
+          fixture.componentRef.setInput('colorPalette', palette)
+          document.documentElement.style.setProperty('--content-bg-color', background)
+          document.documentElement.style.setProperty('--text-color', text)
+          fixture.componentRef.setInput(
+            'data',
+            Array.from({ length: 12 }, (_, i) => ({ label: `segment${i}`, value: i + 1 }))
+          )
+          fixture.detectChanges()
+
+          const dataset = component.chartData()?.datasets[0] as { backgroundColor: string[]; borderColor?: string }
+          const bg = parseColor(background) as Rgb
+          expect(dataset.backgroundColor.length).toBe(12)
+          dataset.backgroundColor.forEach((color) => {
+            expect(contrastRatio(parseColor(color) as Rgb, bg)).toBeGreaterThanOrEqual(MIN_GRAPHICS_CONTRAST)
+          })
+          expect(dataset.borderColor).toBe(background)
+        }
+      )
     })
   })
 })

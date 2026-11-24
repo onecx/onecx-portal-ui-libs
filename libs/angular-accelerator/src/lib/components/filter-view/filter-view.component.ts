@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import {
   Component,
   computed,
@@ -11,6 +12,9 @@ import {
   TemplateRef,
   viewChild,
   viewChildren,
+  ElementRef,
+  Injector,
+  afterNextRender,
   ChangeDetectionStrategy
 } from '@angular/core'
 import { Filter, FilterType } from '../../model/filter.model'
@@ -55,9 +59,12 @@ export interface FilterViewComponentState {
   providers: [DataViewStateService],
 })
 export class FilterViewComponent {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-filter-view')
   readonly translateService = inject(TranslateService)
   readonly liveAnnouncer = inject(LiveAnnouncer)
   private readonly destroyRef = inject(DestroyRef)
+  private readonly injector = inject(Injector)
   
   ColumnType = ColumnType
   FilterType = FilterType
@@ -106,11 +113,30 @@ export class FilterViewComponent {
 
   readonly panel = viewChild(Popover)
   readonly manageButton = viewChild<Button>('manageButton')
+  readonly addFilterChip = viewChild<ElementRef<HTMLButtonElement>>('addFilterChip')
+  readonly chipRemoveButtons = viewChildren<ElementRef<HTMLButtonElement>>('chipRemoveButton')
 
   readonly defaultTemplates = viewChildren(PrimeTemplate)
   readonly defaultTemplates$ = toObservable(this.defaultTemplates)
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
+  /** Unique per instance so aria-controls never points at another filter view's panel. */
+  readonly panelId = `ocxFilterViewPanel${this.idSuffix}`
+  /** Id of the hidden "Remove filter" text that prefixes the accessible name of every chip remove button. */
+  readonly chipRemoveLabelId = `ocxFilterViewChipRemoveLabel${this.idSuffix}`
+  readonly panelPt = { root: { id: this.panelId } }
+  readonly panelOpen = signal(false)
+  /**
+   * ARIA state of the manage button. Set on the inner native button (pass-through of the root element),
+   * never on the p-button host, which has no role.
+   */
+  readonly manageButtonPt = computed(() => ({
+    root: {
+      'aria-haspopup': 'dialog',
+      'aria-expanded': String(this.panelOpen()),
+      'aria-controls': this.panelOpen() ? this.panelId : null,
+    },
+  }))
 
   private readonly portalDialogService = inject(PortalDialogService)
 
@@ -193,6 +219,10 @@ export class FilterViewComponent {
   private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   constructor() {    
+    // the popover is destroyed while open (template switch): onHide never fires, so reset the trigger state
+    effect(() => {
+      if (!this.panel()) this.panelOpen.set(false)
+    })
     effect(() => {
       const t = this.templates()
 
@@ -282,6 +312,31 @@ export class FilterViewComponent {
     this.stateService.filters.set(filters)
   }
 
+  /**
+   * Removes the filter of the chip at the given position and keeps keyboard focus in the filter view,
+   * as the removed chip's button is gone: focus goes to the next remove button, else the previous one,
+   * else the add filter chip, else the manage button (shown instead of the chips below desktop size).
+   */
+  onChipRemoveClick(filter: Filter, index: number) {
+    this.onChipRemove(filter)
+    afterNextRender({ read: () => this.focusAfterChipRemoval(index) }, { injector: this.injector })
+  }
+
+  private focusAfterChipRemoval(index: number) {
+    const removeButtons = this.chipRemoveButtons()
+    const target: HTMLElement | undefined =
+      removeButtons[index]?.nativeElement ??
+      removeButtons[index - 1]?.nativeElement ??
+      this.addFilterChip()?.nativeElement ??
+      this.manageButton()?.el.nativeElement.firstChild
+    target?.focus()
+  }
+
+  /** Id of the visible text of the chip at the given position; used to name its remove button. */
+  chipTextId(index: number): string {
+    return `ocxFilterViewChipText${this.idSuffix}-${index}`
+  }
+
   onFilterDelete(row: Row) {
     const filters = this.stateService.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
     this.stateService.filters.set(filters)
@@ -360,7 +415,8 @@ export class FilterViewComponent {
   }
 
   showPanel(event: any) {
-    this.trigger.set(event.srcElement)
+    // currentTarget is the button itself, also when the click started on its inner text
+    this.trigger.set(event.currentTarget ?? event.srcElement)
     this.panel()?.toggle(event)
   }
 
@@ -374,6 +430,19 @@ export class FilterViewComponent {
 
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
+  }
+
+  /**
+   * Returns a printable filter value for accessible names, or undefined if the value
+   * cannot be represented as plain text (objects, dates, ...), in which case a generic name is used.
+   */
+  removeFilterValue(row: Row): string | undefined {
+    const value = row['value']
+    if (typeof value === 'string' || typeof value === 'number') {
+      const text = String(value).trim()
+      return text || undefined
+    }
+    return undefined
   }
 
   getRowObjectFromFiterData(filter: Filter): Record<string, unknown> {

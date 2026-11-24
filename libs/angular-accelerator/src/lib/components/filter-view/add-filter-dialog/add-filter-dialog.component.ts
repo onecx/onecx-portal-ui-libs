@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../../utils/instance-id.utils'
 import { CommonModule } from '@angular/common'
 import { Component, LOCALE_ID, computed, effect, inject, input, linkedSignal, untracked } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -36,6 +37,8 @@ import { DialogPrimaryButtonDisabled, DialogResult } from '../../../services/por
   templateUrl: './add-filter-dialog.component.html',
 })
 export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogPrimaryButtonDisabled {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-add-filter-dialog')
   private readonly translateService = inject(TranslateService)
   private readonly locale = inject(LOCALE_ID)
 

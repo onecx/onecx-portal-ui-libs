@@ -50,6 +50,10 @@ export default {
       options: [DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR, DiagramType.PIE],
       control: { type: 'select' },
     },
+    colorPalette: {
+      options: ['categorical', 'sequential'],
+      control: { type: 'select' },
+    },
   },
   decorators: [
     applicationConfig({
@@ -295,4 +299,18 @@ export const WithChartFillingContainerHeight = {
     showAllLabels: true,
     allLabelKeys: FRUIT_TYPE
   }
+}
+
+export const SequentialPalette = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    column: {
+      id: 'fruitType',
+      type: ColumnType.STRING,
+    },
+    sumKey: 'Total',
+    colorPalette: 'sequential',
+  },
 }

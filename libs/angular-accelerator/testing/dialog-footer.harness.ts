@@ -1,10 +1,11 @@
+import { instanceScopedId } from './instance-scoped-id'
 import { ContentContainerComponentHarness, PButtonDirectiveHarness, type PButtonSeverity } from '@onecx/angular-testing'
 
 export class DialogFooterHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-dialog-footer'
 
-  getPrimaryButton = this.locatorFor(PButtonDirectiveHarness.with({ id: 'buttonDialogPrimaryButton' }))
-  getSecondaryButton = this.locatorForOptional(PButtonDirectiveHarness.with({ id: 'buttonDialogSecondaryButton' }))
+  getPrimaryButton = this.locatorFor(PButtonDirectiveHarness.with({ id: instanceScopedId('buttonDialogPrimaryButton') }))
+  getSecondaryButton = this.locatorForOptional(PButtonDirectiveHarness.with({ id: instanceScopedId('buttonDialogSecondaryButton') }))
 
   async clickPrimaryButton() {
     await (await this.getPrimaryButton()).click()
@@ -49,7 +50,7 @@ export class DialogFooterHarness extends ContentContainerComponentHarness {
   /**
    * Gets a custom button harness by its ID (optional - returns null if not found)
    */
-  getCustomButton = (id: string) => this.locatorForOptional(PButtonDirectiveHarness.with({ id }))()
+  getCustomButton = (id: string) => this.locatorForOptional(PButtonDirectiveHarness.with({ id: instanceScopedId(id) }))()
 
   /**
    * Gets the severity of a custom button by its ID

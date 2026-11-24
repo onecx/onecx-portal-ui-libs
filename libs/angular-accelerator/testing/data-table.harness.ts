@@ -15,7 +15,7 @@ import {
 } from '@onecx/angular-testing'
 
 export interface DataTableHarnessFilters extends BaseHarnessFilters {
-  id?: string
+  id?: string | RegExp
 }
 
 export class DataTableHarness extends ContentContainerComponentHarness {

@@ -109,7 +109,7 @@ ObjectDetailItem is used to define the detail item to be displayed for the page 
 | `actionItemIcon? | `PrimeIcon` | Icon for the detail item action button.
 | `actionItemCallback? | `() => void` | Callback to be used when the detail item action button is clicked.
 | `actionItemTooltip? | `string` | Text for the detail action button tooltip.
-| `actionItemAriaLabelKey? | `string` | Translation key for the the aria label of the detail action button.
+| `actionItemAriaLabelKey` | `TranslationKey` | Translation key for the accessible name of the icon-only detail action button. *Required* when `actionItemCallback` is set (since v9, see xref:migrations/angular-22/accessibility-breaking-changes.adoc[accessibility breaking changes]).
 | `actionItemAriaLabel? | `string` | Text for the aria label of the detail action button.
 | [.line-through]`tooltip? | [.line-through]`string` | Deprecated. Use `valueTooltip` instead.
 |===

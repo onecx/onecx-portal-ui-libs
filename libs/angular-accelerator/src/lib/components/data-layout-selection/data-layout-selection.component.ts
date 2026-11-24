@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import { Component, computed, inject, Input, input, OnInit, output, ChangeDetectionStrategy } from '@angular/core'
 import { OpenngIcons } from '@openng/optimus-ui/api'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
@@ -49,6 +50,8 @@ export interface DataLayoutSelectionComponentState {
   styleUrls: ['./data-layout-selection.component.scss'],
 })
 export class DataLayoutSelectionComponent implements OnInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-data-layout-selection')
   readonly stateService = inject(DataViewStateService)
   supportedViewLayouts = input<Array<string>>([])
 
