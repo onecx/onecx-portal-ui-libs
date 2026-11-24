@@ -3,7 +3,7 @@ const crypto = require('node:crypto')
 const fs = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
-const { git, stagedFiles } = require('./staged-files.js')
+const { git, overlapsRanges, parseHunkRanges, stagedRanges } = require('./staged-files.js')
 
 const SOURCE_FILE = /^libs\/([^/]+)\/src\/.+\.(?:ts|tsx|js|jsx|html)$/
 // same as sonar.test.inclusions in the libs' sonar-project.properties: these files are analysed as tests
@@ -13,58 +13,14 @@ const DEFAULT_HOST = 'https://sonarcloud.io'
 const ORGANIZATION = 'onecx'
 const PROJECT_PREFIX = 'onecx_onecx-portal-ui-libs_'
 
-/**
- * Parses the `git diff -U0` output of ONE file into the added/changed line ranges of its new side.
- * The file name is known from `git diff --name-only -z`, so no path header is parsed: names with
- * spaces, quotes or non-ASCII characters and diff.noprefix cannot cause a mismatch.
- * Throws when the output has no `diff --git` header (nothing parseable), so a staged file is never skipped silently.
- * A header without hunks (mode change, empty new file, pure deletion) has no new lines and yields no ranges.
- */
-function parseHunkRanges(diff, file) {
-  if (!/^diff --git /m.test(diff)) {
-    throw new Error(`sonar:staged: cannot parse the staged diff of ${file}`)
-  }
-  const ranges = []
-  for (const line of diff.split('\n')) {
-    const hunk = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/.exec(line)
-    if (hunk) {
-      const start = Number(hunk[1])
-      const count = hunk[2] === undefined ? 1 : Number(hunk[2])
-      if (count > 0) ranges.push([start, start + count - 1])
-    }
-  }
-  return ranges
-}
-
 /** Reads the staged added/changed ranges of every staged analysable source file. */
 function stagedSourceRanges() {
-  const ranges = {}
-  for (const file of stagedFiles().filter((f) => SOURCE_FILE.test(f))) {
-    const diff = git([
-      '-c',
-      'core.quotePath=false',
-      'diff',
-      '--cached',
-      '--no-ext-diff',
-      '--no-color',
-      '--src-prefix=a/',
-      '--dst-prefix=b/',
-      '-U0',
-      '--',
-      file,
-    ])
-    ranges[file] = parseHunkRanges(diff, file)
-  }
-  return ranges
+  return stagedRanges((f) => SOURCE_FILE.test(f))
 }
 
 /** Staged files that are newly added (git status A). */
 function stagedNewFiles() {
   return new Set(git(['diff', '--cached', '--name-only', '-z', '--diff-filter=A']).split('\0').filter(Boolean))
-}
-
-function overlapsRanges(ranges, first, last) {
-  return ranges.some(([from, to]) => first <= to && last >= from)
 }
 
 /** Keeps only issues located on added/changed lines of staged files, and file-level issues of newly added files. */
@@ -111,12 +67,12 @@ async function waitForAnalysis(host, token, reportTaskFile) {
   throw new Error('Timed out waiting for the Sonar background task')
 }
 
-async function fetchIssues(host, token, projectKey, pullRequest) {
+async function fetchIssues(host, token, projectKey, branch) {
   const issues = []
   for (let page = 1; ; page++) {
     const query = new URLSearchParams({
       componentKeys: projectKey,
-      pullRequest,
+      branch,
       resolved: 'false',
       organization: ORGANIZATION,
       ps: '500',
@@ -171,17 +127,20 @@ function runScanner(args, cwd, env) {
 }
 
 /**
- * Every run is a Sonar pull-request analysis with its own key, so concurrent runs cannot overwrite each other.
- * These short-lived PR analyses are never merged; SonarCloud removes inactive pull requests automatically
- * (default 30 days, "Number of days before deleting inactive pull requests").
+ * Every run is a Sonar branch analysis of its own synthetic branch, so concurrent runs cannot overwrite each other.
+ * It must not be a pull-request analysis: the projects are bound to GitHub, and SonarCloud rejects a pull-request
+ * key without a real GitHub pull request ("Could not find the pullrequest with key ..."). A real pull-request key
+ * is not used either, as this partial analysis of the staged files would replace that PR's full analysis.
+ * SonarCloud removes inactive branches automatically (default 30 days, "Number of days before deleting inactive
+ * branches").
  */
-function pullRequestKey(env) {
+function analysisBranch(env) {
   return `precommit-${env.USER || env.USERNAME || 'local'}-${crypto.randomBytes(4).toString('hex')}`
 }
 
 async function analyzeLib(lib, ranges, env, newFiles) {
   const projectKey = projectKeyFor(lib)
-  const pullRequest = pullRequestKey(env)
+  const branch = analysisBranch(env)
   const host = env.SONAR_HOST_URL || DEFAULT_HOST
   const prefix = `libs/${lib}/`
   const relative = (file) => file.slice(prefix.length)
@@ -215,9 +174,7 @@ async function analyzeLib(lib, ranges, env, newFiles) {
         '-Dsonar.javascript.lcov.reportPaths=',
         '-Dsonar.testExecutionReportPaths=',
         `-Dsonar.working.directory=${workDir}`,
-        `-Dsonar.pullrequest.key=${pullRequest}`,
-        `-Dsonar.pullrequest.branch=${pullRequest}`,
-        '-Dsonar.pullrequest.base=main',
+        `-Dsonar.branch.name=${branch}`,
       ],
       libDir,
       env
@@ -229,7 +186,7 @@ async function analyzeLib(lib, ranges, env, newFiles) {
     }
     await waitForAnalysis(host, env.SONAR_TOKEN, path.join(workDir, 'report-task.txt'))
     const issues = filterNewCodeIssues(
-      await fetchIssues(host, env.SONAR_TOKEN, projectKey, pullRequest),
+      await fetchIssues(host, env.SONAR_TOKEN, projectKey, branch),
       ranges,
       projectKey,
       newFiles,
