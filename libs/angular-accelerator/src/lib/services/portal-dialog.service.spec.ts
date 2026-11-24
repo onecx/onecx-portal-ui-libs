@@ -1299,26 +1299,6 @@ describe('PortalDialogService', () => {
     })
     describe('opening and closing', () => {
       const flush = () => new Promise((resolve) => setTimeout(resolve, 20))
-      // Resolves as soon as an element matching `selector` receives focus. The timeout only guards against
-      // a focus that never happens; it is not a timing expectation, so the test does not depend on machine load.
-      const waitForFocus = (selector: string, timeoutMs: number) =>
-        new Promise<boolean>((resolve) => {
-          const onFocus = (event: FocusEvent) => {
-            if (event.target instanceof HTMLElement && event.target.matches(selector)) {
-              cleanup(true)
-            }
-          }
-          const timeout = setTimeout(() => cleanup(false), timeoutMs)
-          const cleanup = (focused: boolean) => {
-            clearTimeout(timeout)
-            document.removeEventListener('focus', onFocus, true)
-            resolve(focused)
-          }
-          document.addEventListener('focus', onFocus, true)
-          if (document.activeElement instanceof HTMLElement && document.activeElement.matches(selector)) {
-            cleanup(true)
-          }
-        })
       const mockVisibleOffsetParent = () => {
         const descriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent')
         Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
@@ -1363,18 +1343,19 @@ describe('PortalDialogService', () => {
         )
       })
 
-      it('should focus the first form field of a component dialog', async () => {
+      it('should focus the first form field within 300 ms of opening', async () => {
         const restoreOffsetParent = mockVisibleOffsetParent()
-        const firstFieldFocused = waitForFocus('#name', 5000)
+        jest.useFakeTimers()
         try {
           fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2')
+          await jest.advanceTimersByTimeAsync(300)
 
-          expect(await firstFieldFocused).toBe(true)
-          expect(document.activeElement).toBe(document.querySelector('#name'))
+          expect(document.activeElement?.id).toBe('name')
         } finally {
+          jest.useRealTimers()
           restoreOffsetParent()
         }
-      }, 10000)
+      })
 
       it('should respect an explicit focusOnShow false (spread order)', async () => {
         jest.spyOn(pDialogService, 'open')
