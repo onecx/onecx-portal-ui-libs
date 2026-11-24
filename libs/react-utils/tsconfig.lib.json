@@ -5,6 +5,7 @@
     "types": ["node", "vite/client"]
   },
   "exclude": [
+    "**/*.spec-helpers.ts",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",

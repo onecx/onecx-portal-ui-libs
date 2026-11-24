@@ -9,6 +9,7 @@
   "include": [
     "jest.config.ts",
     "src/**/*.test.ts",
+    "src/**/*.spec-helpers.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.tsx",

@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import type { Location } from 'react-router'
+import { createLogger } from '../utils/logger.utils'
 import { useWrappedGuards } from './use-wrapped-guards'
 import type { UseGuardCheckOptions } from './use-guard-check'
+
+const logger = createLogger('useGuardDeactivation')
 
 /**
  * Run canDeactivate guards for a next location.
@@ -21,7 +24,7 @@ export function useGuardDeactivation(nextLocation: Location, options: UseGuardCh
       return
     }
 
-    void wrapped.canDeactivate(nextLocation).then((result) => {
+    return trackDeactivationCheck(wrapped.canDeactivate(nextLocation), (result) => {
       setLastResult(result)
       onGuardCheck?.(result)
     })
@@ -30,5 +33,30 @@ export function useGuardDeactivation(nextLocation: Location, options: UseGuardCh
   return {
     wrapped,
     lastResult,
+  }
+}
+
+/**
+ * Follow a deactivation check, dropping its result once superseded and logging failures.
+ * @param check - promise resolving to the deactivation result.
+ * @param onResult - callback applied with the result of the current check.
+ * @returns cleanup that supersedes the check.
+ */
+function trackDeactivationCheck(check: Promise<boolean>, onResult: (result: boolean) => void): () => void {
+  let cancelled = false
+
+  void check.then(
+    (result) => {
+      if (!cancelled) {
+        onResult(result)
+      }
+    },
+    (error) => {
+      logger.error('canDeactivate check failed', error)
+    }
+  )
+
+  return () => {
+    cancelled = true
   }
 }
