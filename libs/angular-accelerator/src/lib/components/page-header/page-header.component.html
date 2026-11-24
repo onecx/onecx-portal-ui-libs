@@ -47,6 +47,8 @@
       0) {
       <div class="toolbar flex flex-wrap gap-1 sm:gap-2">
         @for (action of inlineActions; track action) {
+        @let visibleLabel = action.labelKey ? (action.labelKey | translate) : action.label;
+        @let inlineAriaLabel = visibleLabel ? null : ((action.ariaLabelKey ? (action.ariaLabelKey | translate) : null) || action.ariaLabel || (action.titleKey ? (action.titleKey | translate) : null) || action.title || null);
         <span
           [ocxTooltip]="action.disabled ? (action.disabledTooltipKey ? (action.disabledTooltipKey | translate) : action.disabledTooltip) : (action.titleKey ? (action.titleKey | translate) : action.title)"
           tooltipPosition="top"
@@ -61,13 +63,13 @@
             class="action-button p-button no-underline"
             [ngClass]="action.btnClass"
             [attr.data-testid]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
-            [attr.aria-label]="getInlineActionAriaLabel(action)"
+            [attr.aria-label]="inlineAriaLabel"
           >
             @if (action.icon) {
             <i class="p-button-icon" [ngClass]="action.icon"></i>
             }
-            @if (action.label || action.labelKey) {
-            <span class="p-button-label">{{ action.labelKey ? (action.labelKey | translate) : action.label }}</span>
+            @if (visibleLabel) {
+            <span class="p-button-label">{{ visibleLabel }}</span>
             }
           </a>
           } @else {
@@ -80,8 +82,8 @@
             (onClick)="action.actionCallback?.()"
             [disabled]="action.disabled ? action.disabled : false"
             [attr.data-testid]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
-            [label]="action.labelKey ? (action.labelKey | translate) : action.label"
-            [ariaLabel]="getInlineActionAriaLabel(action)"
+            [label]="visibleLabel"
+            [ariaLabel]="inlineAriaLabel"
           ></p-button>
           }
         </span>
@@ -136,6 +138,9 @@
   <div class="object-panel" [ngClass]="getObjectPanelLayoutClasses()">
     @if (objectDetails) { @for (item of objectDetails; track item) {
     <div class="object-info" [ngClass]="getObjectInfoLayoutClasses()">
+      @let valueTooltip = item.valueTooltipKey ? ((typeof item.valueTooltipKey === 'string' ? item.valueTooltipKey : item.valueTooltipKey.key) | translate : (typeof item.valueTooltipKey === 'object' ? item.valueTooltipKey.parameters : undefined)) : undefined;
+      @let actionAria = item.actionItemAriaLabelKey ? ((typeof item.actionItemAriaLabelKey === 'string' ? item.actionItemAriaLabelKey : item.actionItemAriaLabelKey.key) | translate : (typeof item.actionItemAriaLabelKey === 'object' ? item.actionItemAriaLabelKey.parameters : undefined)) : undefined;
+      @let actionTooltip = item.actionItemTooltipKey ? ((typeof item.actionItemTooltipKey === 'string' ? item.actionItemTooltipKey : item.actionItemTooltipKey.key) | translate : (typeof item.actionItemTooltipKey === 'object' ? item.actionItemTooltipKey.parameters : undefined)) : undefined;
       <span
         class="flex font-medium text-600 object-info-grid-label"
         name="object-detail-label"
@@ -161,14 +166,14 @@
             @if (item.icon) {
             <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon" aria-hidden="true"></i>
             } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}} @if (item.icon && !item.value) {
-            <span class="sr-only">{{ getIconOnlyDetailText(item) }}</span>
+            <span class="sr-only">{{ valueTooltip }}</span>
             }
           </span>
           @if (item.actionItemIcon && item.actionItemCallback) {
           <p-button
             [icon]="item.actionItemIcon"
             styleClass="p-button-text p-0 w-full object-info-action-button"
-            [ariaLabel]="getActionItemAriaLabel(item)"
+            [ariaLabel]="resolveActionItemAria(item, actionAria, actionTooltip)"
             [ocxTooltip]="item.actionItemTooltipKey ? ((typeof item.actionItemTooltipKey === 'string' ? item.actionItemTooltipKey : item.actionItemTooltipKey.key) | translate : (typeof item.actionItemTooltipKey === 'object' ? item.actionItemTooltipKey.parameters : undefined)) : ''"
             tooltipPosition="top"
             tooltipEvent="hover"
