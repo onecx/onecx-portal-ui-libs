@@ -6,8 +6,13 @@
 [#overview]
 == Overview
 
+[IMPORTANT]
+====
+ This guide is a work in progress. Angular 22 support and OneCX UI libraries v9 are not final yet. Angular 22 support is provided with OneCX Shell v3.
+====
+
 This guide provides step-by-step instructions for migrating OneCX applications from Angular 21 to Angular 22.
-As part of upgrading to Angular 22, the OneCX UI libraries must be updated to version 9.
+As part of upgrading to Angular 22, you must update your OneCX UI libraries to version 9. This library update is not a standalone migration but a required part of the Angular version upgrade process, as OneCX v9 libraries provide Angular 22 compatibility and include required breaking changes.
 
 OneCX UI libraries v9 change the component library the `@onecx/*` libraries are built on: from **PrimeNG** to **Optimus UI**, an open-source, community-maintained fork of PrimeNG that preserves the PrimeNG API. The reason for the move is that PrimeNG is no longer open source and is not compatible with the Angular 22 build; moving to Optimus UI keeps the OneCX libraries fully open source while letting consuming apps change little — the same PrimeNG-style selectors, inputs, and providers keep working. PrimeFlex is replaced by **Tailwind CSS v4** at the same time.
 
@@ -25,6 +30,13 @@ Before starting this migration:
 * The OneCX UI libraries v8.x are installed
 * The application builds and the tests are green before the migration starts
 * A working development environment is available
+
+[#ai-driven-migration-assistance]
+== AI Driven Migration Assistance
+
+To simplify the migration process, you can use the AI-driven migration assistant. The https://github.com/onecx/onecx-ai-refactoring-agents[OneCX AI Refactoring Agents] repository provides a dedicated migration agent to automate the OneCX Angular migration process. Below is the migration agent setup, which you can copy and use with your preferred AI tool. These agents have been tested with GitHub Copilot (Claude Sonnet 4.6) in agent mode.
+
+include::ai-prompt-21-to-22.adoc[]
 
 [#migration-steps-before-angular-22]
 == Migration Steps before upgrading to Angular 22
