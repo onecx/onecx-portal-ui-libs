@@ -129,7 +129,7 @@ export class BreadcrumbService implements OnDestroy {
     this.pendingTranslation = this.translateService.get(labels).subscribe((translations: Record<string, unknown>) => {
       this.generatedItemsSource.next(
         breadcrumbs.map((item) => {
-          const translated = item.label ? translations[item.label] : undefined
+          const translated = translations[item.label as string]
           return typeof translated === 'string' ? { ...item, label: translated } : item
         })
       )

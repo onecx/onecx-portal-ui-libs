@@ -298,7 +298,7 @@ export class PageHeaderComponent implements OnInit {
 
   /** Text alternative for an icon-only object detail value. */
   getIconOnlyDetailText(item: ObjectDetailItem): Observable<string | undefined> {
-    return this.memoize(item, item.valueTooltipKey ?? null, () => this.translateKey(item.valueTooltipKey))
+    return this.memoize(item, [item.valueTooltipKey], () => this.translateKey(item.valueTooltipKey))
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {

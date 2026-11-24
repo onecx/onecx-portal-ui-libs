@@ -864,6 +864,23 @@ describe('PageHeaderComponent', () => {
       expect(await nameOf({})).toBeUndefined()
     })
 
+    it('should name an inline action by its title when the label key translates to an empty text', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { EMPTY: '' })
+      translate.use('en')
+      const action = { labelKey: 'EMPTY', title: 'Title' } as Action
+      expect(await firstValueFrom(component.getInlineActionAriaLabel(action))).toBe('Title')
+    })
+
+    it('should warn only once per detail label and reuse the name stream of an unchanged item', async () => {
+      const first = { label: 'Venue', value: 'AIE' } as ObjectDetailItem
+      const second = { label: 'Venue', value: 'AIE' } as ObjectDetailItem
+      expect(await firstValueFrom(component.getActionItemAriaLabel(first))).toBe('Venue')
+      expect(await firstValueFrom(component.getActionItemAriaLabel(second))).toBe('Venue')
+      expect(component.getActionItemAriaLabel(first)).toBe(component.getActionItemAriaLabel(first))
+      expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(1)
+    })
+
     it('should render the figure image as decorative and the subheader as plain content', async () => {
       fixture.componentRef.setInput('figureImage', 'assets/x.png')
       fixture.componentRef.setInput('subheader', 'Sub')
