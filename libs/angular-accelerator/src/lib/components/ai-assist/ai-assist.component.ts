@@ -131,13 +131,23 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   }
 
   get errorMessageKey(): string {
-    if (this.errorCode === 'NO_PROVIDER') {
-      return 'OCX_AI_ASSIST.ERRORS.NO_PROVIDER'
+    switch (this.errorCode) {
+      case 'NO_PROVIDER':
+        return 'OCX_AI_ASSIST.ERRORS.NO_PROVIDER'
+      case 'AGENT_NOT_FOUND':
+        return 'OCX_AI_ASSIST.ERRORS.AGENT_NOT_FOUND'
+      case 'TIMEOUT':
+      case 'RUNTIME_TIMEOUT':
+        return 'OCX_AI_ASSIST.ERRORS.TIMEOUT'
+      case 'RUNTIME_UNAVAILABLE':
+        return 'OCX_AI_ASSIST.ERRORS.UNAVAILABLE'
+      case 'PROVIDER_ERROR':
+      case 'RETRIES_EXHAUSTED':
+      case 'RUNTIME_ERROR':
+        return 'OCX_AI_ASSIST.ERRORS.PROVIDER'
+      default:
+        return 'OCX_AI_ASSIST.ERRORS.GENERIC'
     }
-    if (this.errorCode === 'AGENT_NOT_FOUND') {
-      return 'OCX_AI_ASSIST.ERRORS.AGENT_NOT_FOUND'
-    }
-    return 'OCX_AI_ASSIST.ERRORS.GENERIC'
   }
 
   /**
