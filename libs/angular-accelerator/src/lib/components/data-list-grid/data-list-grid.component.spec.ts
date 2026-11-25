@@ -731,6 +731,38 @@ describe('DataListGridComponent', () => {
     })
   })
 
+  describe('row action URLs', () => {
+    it('should mark view and edit actions as observed when URLs are configured', () => {
+      component.viewActionUrl = '/details'
+      component.editActionUrl = '/edit'
+
+      expect(component.viewItemObserved).toBe(true)
+      expect(component.editItemObserved).toBe(true)
+    })
+
+    it('should execute view and edit commands when no URLs are configured', () => {
+      component.viewPermission = 'GRID#VIEW'
+      component.editPermission = 'GRID#EDIT'
+      component.viewItem.subscribe(() => undefined)
+      component.editItem.subscribe(() => undefined)
+      const viewEmitSpy = jest.spyOn(component.viewItem, 'emit')
+      const editEmitSpy = jest.spyOn(component.editItem, 'emit')
+      const selectedItem = component.data[0]
+      const menuItems = (component as any).mapGridMenuItems(
+        ['GRID#VIEW', 'GRID#EDIT'],
+        [],
+        selectedItem,
+        {}
+      )
+
+      menuItems[0].command()
+      menuItems[1].command()
+
+      expect(viewEmitSpy).toHaveBeenCalledWith(selectedItem)
+      expect(editEmitSpy).toHaveBeenCalledWith(selectedItem)
+    })
+  })
+
   describe('permissions for action buttons', () => {
     let userService: UserServiceMock
 

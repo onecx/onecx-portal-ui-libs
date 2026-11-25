@@ -148,7 +148,7 @@
             }"
             [attr.aria-label]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
             *ocxIfPermission="viewPermission"
-            [attr.name]="'data-list-action-link'"
+            [attr.data-testid]="'data-list-action-button'"
             icon="pi pi-eye"
           ></a>
           }
@@ -190,7 +190,7 @@
             }"
             [attr.aria-label]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
             *ocxIfPermission="editPermission"
-            [attr.name]="'data-list-action-link'"
+            [attr.data-testid]="'data-list-action-button'"
           ></a>
           }
           } @if (deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))) {

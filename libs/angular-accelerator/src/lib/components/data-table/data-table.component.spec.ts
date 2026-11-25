@@ -923,6 +923,45 @@ describe('DataTableComponent', () => {
       expect(navigateSpy).toHaveBeenCalledWith(['/details/rowId'])
     })
 
+    it.each([
+      ['a string', '/details'],
+      ['a promise', Promise.resolve('/details')],
+    ])('should navigate when a routerLink is provided as %s', async (_, routerLink) => {
+      const router = TestBed.inject(Router)
+      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+      await component.onAdditionalActionClick(
+        {
+          permission: 'ADDITIONAL#VIEW',
+          routerLink,
+        },
+        component.rows[0]
+      )
+
+      expect(navigateSpy).toHaveBeenCalledWith(['/details'])
+    })
+
+    it('should navigate when a routerLink function returns a string', async () => {
+      const router = TestBed.inject(Router)
+      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+      const routerLink = jest.fn((row: Row) => `/details/${row.id}`)
+
+      await component.onAdditionalActionClick(
+        {
+          permission: 'ADDITIONAL#VIEW',
+          routerLink,
+        },
+        component.rows[0]
+      )
+
+      expect(routerLink).toHaveBeenCalledWith(component.rows[0])
+      expect(navigateSpy).toHaveBeenCalledWith(['/details/rowId'])
+    })
+
+    it('should not resolve a row URL without a row', () => {
+      expect(component.resolveRowActionUrl((row) => `/details/${row.id}`, null)).toBeUndefined()
+    })
+
     it('should show overflow menu when user has permission for at least one action', async () => {
       userService.permissionsTopic$.publish(['OVERFLOW#VIEW'])
 

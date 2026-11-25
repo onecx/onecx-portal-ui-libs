@@ -38,7 +38,7 @@
         title="{{ 'OCX_DATA_TABLE.ACTIONS.VIEW' | translate }}"
         [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
         icon="pi pi-eye"
-        [attr.name]="'data-table-action-link'"
+        [attr.data-testid]="'data-table-action-button'"
       ></a>
       }
       } @if (editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))) {
@@ -70,7 +70,7 @@
         title="{{ 'OCX_DATA_TABLE.ACTIONS.EDIT' | translate }}"
         [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
         icon="pi pi-pencil"
-        [attr.name]="'data-table-action-link'"
+        [attr.data-testid]="'data-table-action-button'"
       ></a>
       }
       } @if (deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject,
