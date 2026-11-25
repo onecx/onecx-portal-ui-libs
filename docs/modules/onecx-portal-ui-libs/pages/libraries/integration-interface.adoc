@@ -182,7 +182,7 @@ include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[
 Usage::
 Hand the **title of the activated Microfrontend route** to the Shell instead of writing `document.title` directly. This prevents the Shell router and the Microfrontend router from overriding each other's title.
 Shell actions::
-A Shell that supports this Topic announces the capability `documentTitleTopic` (`Capability.DOCUMENT_TITLE_TOPIC` of `ShellCapabilityService`). It stays the single writer of `document.title` and uses the latest published title if its `path` matches the current `document.location.pathname`. Otherwise it keeps its own route title.
+A Shell that supports this Topic announces the capability `documentTitleTopic` (`Capability.DOCUMENT_TITLE_TOPIC` of `ShellCapabilityService`) and stays the single writer of `document.title`. For Microfrontend routes, the Shell keeps the latest title per published `path` and uses the title of the most specific entry matching the current `document.location.pathname`, also when the entry is published after the navigation. A message without `title` (or with an empty one) removes the entry for exactly its `path`. Without a matching entry the Shell uses its own fallback title.
 Data::
 **Object** containing the title and the path it belongs to:
 +
@@ -190,8 +190,8 @@ Data::
 |===
 | Name | Type | Description
 
-| title? | `string` | Title of the activated Microfrontend route. `undefined` means the route has no title and the Shell uses its fallback.
-| path | `string` | `document.location.pathname` the title belongs to.
+| title? | `string` | Title for the pages matched by `path`. `undefined` or empty removes the entry for exactly this `path`.
+| path | `string` | Exact path (`document.location.pathname`) or path pattern the title belongs to, see Path patterns.
 |===
 +
 Angular Microfrontends opt in by registering the `MfeTitleStrategy` from `@onecx/angular-webcomponents`. It publishes the route title on this Topic if the Shell has the capability, and sets `document.title` like Angular's default title strategy otherwise:
@@ -203,6 +203,15 @@ import { provideMfeTitleStrategy } from '@onecx/angular-webcomponents'
   providers: [provideMfeTitleStrategy()],
 })
 export class OneCXMyAppModule {}
+
+Path patterns::
+`path` is either an exact path or a pattern. Wildcards are only recognized as whole path segments:
++
+* `*` matches exactly one segment, e.g. `/admin/users/*` matches `/admin/users/42`.
+* A trailing `**` matches zero or more remaining segments, e.g. `/admin/**` matches `/admin` and `/admin/users/42`.
+* A segment mixing text and wildcards (e.g. `user*`) is literal, a non-trailing `**` behaves like `*`, and a trailing `/` is ignored.
++
+If several entries match, the one with the **most literal characters** wins, then the one with fewer wildcard segments, then the most recently published one. An exact path therefore always wins over a pattern covering it. The `MfeTitleStrategy` publishes exact paths.
 
 [#events-topic]
 === Events Topic
