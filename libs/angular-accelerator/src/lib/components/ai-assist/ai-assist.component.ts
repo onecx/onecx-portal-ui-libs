@@ -200,13 +200,13 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.loadState = 'loading'
     this.errorCode = undefined
     if (this.appId) {
-      this.fetchAgents(this.appId, force)
+      void this.fetchAgents(this.appId, force)
       return
     }
     // The current MFE topic emits only after the shell initialises it. Without a result in time, the panel
     // shows a retryable error instead of staying in the loading state.
     this.appStateService.currentMfe$.pipe(take(1), timeout(MFE_CONTEXT_TIMEOUT_MS)).subscribe({
-      next: (mfe) => this.fetchAgents(mfe?.appId, force),
+      next: (mfe) => void this.fetchAgents(mfe?.appId, force),
       error: () => {
         this.agents = []
         this.errorCode = NO_CONTEXT_ERROR_CODE
