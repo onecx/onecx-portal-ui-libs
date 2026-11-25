@@ -75,8 +75,7 @@ export class ConfigurationService implements OnDestroy {
   public async setProperty(key: string, val: string) {
     return this.semaphore.use(async () => {
       const currentValues = await firstValueFrom(this.config$.asObservable())
-      currentValues[key] = val
-      await this.config$.publish(currentValues)
+      await this.config$.publish({ ...currentValues, [key]: val })
     })
   }
 
