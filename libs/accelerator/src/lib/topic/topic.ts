@@ -37,7 +37,9 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
         acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
         this.readBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
-        this.readBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${acceleratorState['@onecx/accelerator'].topic.tabId}`)
+        this.readBroadcastChannelV2 = new BroadcastChannel(
+          `TopicV2-${this.name}|${this.version}-${acceleratorState['@onecx/accelerator'].topic.tabId}`
+        )
       }
     }
 
@@ -234,7 +236,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     if (m.data?.name === this.name && m.data?.version === this.version) {
       this.logger.debug('received message via window', m.data)
     }
-    switch (m.data.type) {
+    switch (m.data?.type) {
       case TopicMessageType.TopicNext: {
         this.disableBroadcastChannel()
         if (m.data.name === this.name && m.data.version === this.version) {
@@ -290,7 +292,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private disableBroadcastChannelV2() {
-    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel === "V2") {
+    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel === 'V2') {
       this.logger.info('Disabling BroadcastChannel V2 for topic')
     }
     acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = true
