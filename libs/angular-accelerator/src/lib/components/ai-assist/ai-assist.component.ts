@@ -38,6 +38,11 @@ export function resetAiAssistAgentCache(): void {
   agentCache.clear()
 }
 
+function getSharedAgentService(): OneCXAiAgentService {
+  sharedAgentService ??= new OneCXAiAgentService()
+  return sharedAgentService
+}
+
 /**
  * Returns the agents for `appId` from a cache shared by all instances on the page. Concurrent callers share one
  * request, failed requests are not cached, and `force` bypasses a cached result.
@@ -48,7 +53,7 @@ function getAgentsCached(appId: string | undefined, force: boolean): Promise<AiA
   if (!force && cached && cached.expiresAt > Date.now()) {
     return cached.agents
   }
-  const agents = (sharedAgentService ??= new OneCXAiAgentService()).getAgents({ appId })
+  const agents = getSharedAgentService().getAgents({ appId })
   const entry = { agents, expiresAt: Date.now() + AGENT_CACHE_TTL_MS }
   agentCache.set(key, entry)
   agents.catch(() => {
