@@ -3,31 +3,46 @@ import { Store } from '@ngrx/store'
 import { ConfigurationStoreConnectorService } from './configuration-store-connector-service'
 import { OneCxActions } from '../onecx-actions'
 import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { Config } from '@onecx/integration-interface'
+import { FakeTopic } from '@onecx/accelerator'
 
 describe('ConfigurationStoreConnectorService', () => {
   let store: Store
-  let mockConfigService: any
+  let configTopic: FakeTopic<Config>
 
   beforeEach(() => {
-    mockConfigService = { getConfig: jest.fn().mockResolvedValue({ foo: 'bar' }) }
+    configTopic = new FakeTopic<Config>()
     TestBed.configureTestingModule({
       providers: [
         ConfigurationStoreConnectorService,
         { provide: Store, useValue: { dispatch: jest.fn() } },
-        { provide: ConfigurationService, useValue: mockConfigService },
+        { provide: ConfigurationService, useValue: { config$: configTopic } },
       ],
     })
     store = TestBed.inject(Store)
     jest.spyOn(store, 'dispatch')
-    TestBed.inject(ConfigurationStoreConnectorService)
   })
 
-  it('should get config and dispatch configChanged', async () => {
-    const expectedAction = OneCxActions.configChanged({ config: { foo: 'bar' } })
+  it('given the connector is created, when the initial configuration is published, then configChanged is dispatched for it', () => {
+    TestBed.inject(ConfigurationStoreConnectorService)
+    configTopic.publish({ a: '1' })
+    expect(store.dispatch).toHaveBeenCalledTimes(1)
+    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.configChanged({ config: { a: '1' } }))
+  })
 
-    // wait for async announcements
-    await Promise.resolve()
-    expect(mockConfigService.getConfig).toHaveBeenCalled()
-    expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
+  it('given the initial configuration is published, when a changed configuration is published, then configChanged is dispatched for both, in that order', () => {
+    TestBed.inject(ConfigurationStoreConnectorService)
+    configTopic.publish({ a: '1' })
+    configTopic.publish({ a: '1', b: '2' })
+    expect(store.dispatch).toHaveBeenCalledTimes(2)
+    expect(store.dispatch).toHaveBeenNthCalledWith(1, OneCxActions.configChanged({ config: { a: '1' } }))
+    expect(store.dispatch).toHaveBeenNthCalledWith(2, OneCxActions.configChanged({ config: { a: '1', b: '2' } }))
+  })
+
+  it('given the connector is destroyed, when a configuration is published, then no action is dispatched', () => {
+    const connector = TestBed.inject(ConfigurationStoreConnectorService)
+    connector.ngOnDestroy()
+    configTopic.publish({ a: '1' })
+    expect(store.dispatch).not.toHaveBeenCalled()
   })
 })
