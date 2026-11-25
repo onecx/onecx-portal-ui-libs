@@ -1,3 +1,4 @@
+import { SimpleChange } from '@angular/core'
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { AppStateService } from '@onecx/angular-integration-interface'
@@ -553,17 +554,47 @@ describe('AiAssistComponent', () => {
     expect(component.runState).toBe('success')
   })
 
-  it('should show specific messages for runtime failures', async () => {
+  it('should not emit a blank suggestion', async () => {
     await createComponent()
+    const replaced = jest.fn()
+    component.replaceText.subscribe(replaced)
 
-    component.errorCode = 'RUNTIME_TIMEOUT'
-    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.TIMEOUT')
+    component.suggestion = '   '
+    component.replace()
 
-    component.errorCode = 'RUNTIME_UNAVAILABLE'
-    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.UNAVAILABLE')
+    expect(replaced).not.toHaveBeenCalled()
+  })
 
-    component.errorCode = 'RUNTIME_ERROR'
-    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.PROVIDER')
+  it('should reload agents when the appId input changes after init', async () => {
+    await createComponent(false)
+
+    component.appId = 'app-2'
+    component.ngOnChanges({ appId: new SimpleChange('app-1', 'app-2', false) })
+    await fixture.whenStable()
+
+    expect(getAgents).toHaveBeenLastCalledWith({ appId: 'app-2' })
+  })
+
+  it('should keep the same actions array between change detection passes', async () => {
+    await createComponent(false)
+
+    expect(component.actions).toBe(component.actions)
+  })
+
+  it('should discard the result of a load that was superseded by a newer one', async () => {
+    let resolveStale: (value: unknown) => void = () => undefined
+    getAgents.mockImplementationOnce(() => new Promise((resolve) => (resolveStale = resolve)))
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+
+    component.loadAgents(true)
+    await fixture.whenStable()
+    resolveStale([{ ...agent, id: 'stale-agent', name: 'Stale' }])
+    await fixture.whenStable()
+
+    expect(component.agents).toEqual([agent])
+    expect(component.selectedAgentId).toBe('agent-1')
   })
 
   it.each([

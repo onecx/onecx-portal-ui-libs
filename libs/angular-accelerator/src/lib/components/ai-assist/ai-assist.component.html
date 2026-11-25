@@ -93,6 +93,7 @@
             class="ocx-ai-assist__replace"
             type="button"
             icon="pi pi-check"
+            [disabled]="suggestion.trim().length === 0"
             [label]="'OCX_AI_ASSIST.REPLACE_TEXT' | translate"
             (onClick)="replace()"
           ></p-button>
