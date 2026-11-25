@@ -15,7 +15,7 @@ import {
   OneCXAiAgentService,
   OneCXAiCompletionService,
 } from '@onecx/integration-interface'
-import { take } from 'rxjs'
+import { take, timeout } from 'rxjs'
 import {
   AiAssistActionDefinition,
   AiAssistLoadState,
@@ -25,6 +25,37 @@ import {
 } from './ai-assist.model'
 
 const UNKNOWN_ERROR_CODE = 'UNKNOWN'
+const NO_CONTEXT_ERROR_CODE = 'NO_CONTEXT'
+const MFE_CONTEXT_TIMEOUT_MS = 5000
+const AGENT_CACHE_TTL_MS = 60000
+
+const agentCache = new Map<string, { agents: Promise<AiAgentResponse[]>; expiresAt: number }>()
+let sharedAgentService: OneCXAiAgentService | undefined
+
+export function resetAiAssistAgentCache(): void {
+  agentCache.clear()
+}
+
+/**
+ * Returns the agents for `appId` from a cache shared by all instances on the page. Concurrent callers share one
+ * request, failed requests are not cached, and `force` bypasses a cached result.
+ */
+function getAgentsCached(appId: string | undefined, force: boolean): Promise<AiAgentResponse[]> {
+  const key = appId ?? ''
+  const cached = agentCache.get(key)
+  if (!force && cached && cached.expiresAt > Date.now()) {
+    return cached.agents
+  }
+  const agents = (sharedAgentService ??= new OneCXAiAgentService()).getAgents({ appId })
+  const entry = { agents, expiresAt: Date.now() + AGENT_CACHE_TTL_MS }
+  agentCache.set(key, entry)
+  agents.catch(() => {
+    if (agentCache.get(key) === entry) {
+      agentCache.delete(key)
+    }
+  })
+  return agents
+}
 
 let instanceCount = 0
 
@@ -86,19 +117,17 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   /** Prefix of the element ids in this instance, so several assistants can share a page. */
   readonly uid = `ocx-ai-assist-${++instanceCount}`
 
-  private readonly agentService = new OneCXAiAgentService()
   private readonly completionService = new OneCXAiCompletionService()
   private readonly appStateService = inject(AppStateService)
   // Incremented whenever the action, agent, or result is reset, so a late completion can detect it is stale.
   private runCounter = 0
-  private agentsRequested = false
 
   ngOnInit(): void {
     this.selectAction(this.actions[0]?.id)
+    this.loadAgents()
   }
 
   ngOnDestroy(): void {
-    this.agentService.destroy()
     this.completionService.destroy()
   }
 
@@ -136,6 +165,8 @@ export class AiAssistComponent implements OnInit, OnDestroy {
         return 'OCX_AI_ASSIST.ERRORS.NO_PROVIDER'
       case 'AGENT_NOT_FOUND':
         return 'OCX_AI_ASSIST.ERRORS.AGENT_NOT_FOUND'
+      case NO_CONTEXT_ERROR_CODE:
+        return 'OCX_AI_ASSIST.ERRORS.NO_CONTEXT'
       case 'TIMEOUT':
       case 'RUNTIME_TIMEOUT':
         return 'OCX_AI_ASSIST.ERRORS.TIMEOUT'
@@ -152,13 +183,9 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   /**
    * Opens the panel if it is closed, and closes it if it is open.
-   * Agents are requested the first time the panel opens.
    */
   toggle(): void {
     this.open = !this.open
-    if (this.open && !this.agentsRequested) {
-      this.loadAgents()
-    }
   }
 
   /** Closes the panel and resets the action and agent selection to the first options. */
@@ -179,16 +206,23 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   }
 
   /** Reloads the agent list for `appId`, or for the current MFE when `appId` is not set. */
-  loadAgents(): void {
-    this.agentsRequested = true
+  loadAgents(force = false): void {
     this.loadState = 'loading'
     this.errorCode = undefined
     if (this.appId) {
-      this.fetchAgents(this.appId)
+      this.fetchAgents(this.appId, force)
       return
     }
-    // The current MFE topic emits only after the shell initialises it, so this waits for that.
-    this.appStateService.currentMfe$.pipe(take(1)).subscribe((mfe) => this.fetchAgents(mfe?.appId))
+    // The current MFE topic emits only after the shell initialises it. Without a result in time, the panel
+    // shows a retryable error instead of staying in the loading state.
+    this.appStateService.currentMfe$.pipe(take(1), timeout(MFE_CONTEXT_TIMEOUT_MS)).subscribe({
+      next: (mfe) => this.fetchAgents(mfe?.appId, force),
+      error: () => {
+        this.agents = []
+        this.errorCode = NO_CONTEXT_ERROR_CODE
+        this.loadState = 'error'
+      },
+    })
   }
 
   /** Selects the agent used for the next run. Clears any previous result. */
@@ -276,9 +310,9 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.open = false
   }
 
-  private async fetchAgents(appId: string | undefined): Promise<void> {
+  private async fetchAgents(appId: string | undefined, force: boolean): Promise<void> {
     try {
-      this.agents = await this.agentService.getAgents({ appId })
+      this.agents = await getAgentsCached(appId, force)
       this.selectedAgentId = this.agents[0]?.id
       this.loadState = this.agents.length > 0 ? 'ready' : 'empty'
     } catch (error) {

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
@@ -11,7 +11,7 @@ import { NEVER, of } from 'rxjs'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { AiAssistComponent } from './ai-assist.component'
+import { AiAssistComponent, resetAiAssistAgentCache } from './ai-assist.component'
 import { AiAssistActionDefinition, DEFAULT_AI_ASSIST_ACTIONS } from './ai-assist.model'
 import { z } from 'zod'
 
@@ -53,6 +53,7 @@ describe('AiAssistComponent', () => {
   }
 
   beforeEach(async () => {
+    resetAiAssistAgentCache()
     getAgents = jest.spyOn(OneCXAiAgentService.prototype, 'getAgents').mockResolvedValue([agent])
     getCompletion = jest.spyOn(OneCXAiCompletionService.prototype, 'getCompletion').mockResolvedValue({ text: 'Hallo' })
 
@@ -179,9 +180,10 @@ describe('AiAssistComponent', () => {
     expect(fixture.nativeElement.querySelector(panelSelector)).toBeNull()
   })
 
-  it('should request agents only when the panel is first opened', async () => {
+  it('should prefetch agents on init, before the panel is opened, and reuse them when it opens', async () => {
     await createComponent(false)
-    expect(getAgents).not.toHaveBeenCalled()
+    expect(getAgents).toHaveBeenCalledTimes(1)
+    expect(component.loadState).toBe('ready')
 
     await openPanel()
     component.close()
@@ -190,6 +192,72 @@ describe('AiAssistComponent', () => {
     expect(getAgents).toHaveBeenCalledTimes(1)
     expect(component.selectedAgentId).toBe('agent-1')
   })
+
+  it('should share one agent request between instances with the same appId', async () => {
+    const instances = Array.from({ length: 10 }, () => TestBed.createComponent(AiAssistComponent))
+    for (const instance of instances) {
+      instance.detectChanges()
+      await instance.whenStable()
+    }
+
+    expect(getAgents).toHaveBeenCalledTimes(1)
+    expect(instances.every((instance) => instance.componentInstance.loadState === 'ready')).toBe(true)
+  })
+
+  it('should request agents separately for another appId', async () => {
+    await createComponent(false)
+    const other = TestBed.createComponent(AiAssistComponent)
+    other.componentInstance.appId = 'app-2'
+    other.detectChanges()
+    await other.whenStable()
+
+    expect(getAgents).toHaveBeenCalledTimes(2)
+    expect(getAgents).toHaveBeenLastCalledWith({ appId: 'app-2' })
+  })
+
+  it('should not cache a failed agent request', async () => {
+    getAgents.mockRejectedValueOnce(new Error('network down'))
+    await createComponent(false)
+    expect(component.loadState).toBe('error')
+
+    await createComponent(false)
+
+    expect(getAgents).toHaveBeenCalledTimes(2)
+    expect(component.loadState).toBe('ready')
+  })
+
+  it('should bypass the cache when Try again is used', async () => {
+    await createComponent(false)
+    component.loadAgents(true)
+    await fixture.whenStable()
+
+    expect(getAgents).toHaveBeenCalledTimes(2)
+  })
+
+  it('should request agents again after the cache time to live has passed', async () => {
+    let now = 0
+    jest.spyOn(Date, 'now').mockImplementation(() => now)
+    await createComponent(false)
+    now = 60001
+    await createComponent(false)
+
+    expect(getAgents).toHaveBeenCalledTimes(2)
+  })
+
+  it('should show a retryable error when the current MFE does not publish in time', fakeAsync(() => {
+    const appStateService = TestBed.inject(AppStateService) as unknown as { currentMfe$: unknown }
+    appStateService.currentMfe$ = NEVER
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(component.loadState).toBe('loading')
+
+    tick(5000)
+
+    expect(component.loadState).toBe('error')
+    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.NO_CONTEXT')
+    expect(getAgents).not.toHaveBeenCalled()
+  }))
 
   it('should close without an agent selected when no agents are available', async () => {
     getAgents.mockResolvedValue([])
@@ -498,6 +566,7 @@ describe('AiAssistComponent', () => {
     ['RETRIES_EXHAUSTED', 'OCX_AI_ASSIST.ERRORS.PROVIDER'],
     ['TIMEOUT', 'OCX_AI_ASSIST.ERRORS.TIMEOUT'],
     ['NO_PROVIDER', 'OCX_AI_ASSIST.ERRORS.NO_PROVIDER'],
+    ['NO_CONTEXT', 'OCX_AI_ASSIST.ERRORS.NO_CONTEXT'],
     ['SOMETHING_ELSE', 'OCX_AI_ASSIST.ERRORS.GENERIC'],
   ])('should map error code %s to %s', async (code, expectedKey) => {
     await createComponent()

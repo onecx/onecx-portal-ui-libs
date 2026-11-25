@@ -35,6 +35,7 @@
     "ERRORS": {
       "NO_PROVIDER": "No AI provider is configured for this application.",
       "AGENT_NOT_FOUND": "No AI agent is configured for this context.",
+      "NO_CONTEXT": "The application context is not available yet. Please try again.",
       "TIMEOUT": "The AI request took too long. Please try again.",
       "UNAVAILABLE": "The AI service is temporarily unavailable. Please try again later.",
       "PROVIDER": "The AI provider couldn't complete the request. Please try again or contact your administrator.",
