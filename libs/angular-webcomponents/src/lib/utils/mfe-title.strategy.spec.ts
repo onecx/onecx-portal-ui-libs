@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing'
 import { Router, provideRouter } from '@angular/router'
 import { ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { DocumentTitle, DocumentTitleTopic, ShellCapability } from '@onecx/integration-interface'
-import { firstValueFrom, take, toArray } from 'rxjs'
+import { distinctUntilKeyChanged, firstValueFrom, take, toArray } from 'rxjs'
 import { provideMfeTitleStrategy } from './mfe-title.strategy'
 
 @Component({ template: '' })
@@ -68,9 +68,11 @@ describe('MfeTitleStrategy given the shell provides the document title topic cap
     expect(document.title).toBe(ORIGINAL_TITLE)
   })
 
-  it('when navigating to two routes one after another, then the title of each route is published in order', async () => {
+  it('when navigating to two routes one after another, then the distinct title of each route is published in order', async () => {
     const router = setupRouter()
-    const received = firstValueFrom(listenerTopic.asObservable().pipe(take(2), toArray()))
+    const received = firstValueFrom(
+      listenerTopic.asObservable().pipe(distinctUntilKeyChanged('title'), take(2), toArray())
+    )
 
     await router.navigateByUrl('/search')
     await router.navigateByUrl('/untitled')
