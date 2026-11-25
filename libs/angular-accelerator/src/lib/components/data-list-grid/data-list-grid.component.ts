@@ -37,7 +37,7 @@ import {
   switchMap,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
-import { DataAction, RowActionUrl, RouterLink as DataActionRouterLink } from '../../model/data-action'
+import { DataAction, DataActionRouterLink, RowActionUrl } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'

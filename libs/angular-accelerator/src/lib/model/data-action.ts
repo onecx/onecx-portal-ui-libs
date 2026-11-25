@@ -1,4 +1,8 @@
-export type RouterLink = string | ((data?: any) => string) | ((data?: any) => Promise<string>) | Promise<string>
+export type DataActionRouterLink =
+  | string
+  | ((data?: any) => string)
+  | ((data?: any) => Promise<string>)
+  | Promise<string>
 /**
  * Internal Angular router link, optionally resolved per row. Relative values (including './' and '../')
  * resolve against the activated route; a leading '/' resolves from the Angular router root.
@@ -18,5 +22,5 @@ export interface DataAction {
   actionEnabledField?: string
   showAsOverflow?: boolean
   callback?: (data: any) => void
-  routerLink?: RouterLink
+  routerLink?: DataActionRouterLink
 }
