@@ -182,7 +182,7 @@ include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[
 Usage::
 Hand the **document title of the activated Microfrontend route** over to the Shell, so that the Shell stays the single writer of `document.title`. Microfrontends publish to this Topic only if the Shell announces the `ShellCapability.DOCUMENT_TITLE_TOPIC` (`'documentTitleTopic'`) capability.
 Shell actions::
-For Microfrontend routes, the Shell uses the title of the latest message as page title if the message's `path` equals the current `document.location.pathname`. Messages for other paths are ignored. Without a matching message the Shell keeps its default title.
+For Microfrontend routes, the Shell keeps the latest title per published `path` and uses the title of the most specific entry matching the current `document.location.pathname`, also when the entry is published after the navigation. A message without `title` (or with an empty one) removes the entry for exactly its `path`. Without a matching entry the Shell uses its own fallback title.
 Data::
 **DocumentTitle object** with the following structure:
 +
@@ -191,11 +191,20 @@ Data::
 |===
 |Property name |Type | Description
 
-|path |`string` | Value of `document.location.pathname` the title belongs to.
-|title? |`string` | Title of the activated Microfrontend route. `undefined` if the route has no title, so the Shell uses its fallback title.
+|path |`string` | Exact path (`document.location.pathname`) or path pattern the title belongs to, see Path patterns.
+|title? |`string` | Title for the pages matched by `path`. `undefined` or empty removes the entry for exactly this `path`.
 |===
 
 NOTE: Angular Microfrontends that are bootstrapped as web components with their own router opt in by adding `provideMfeTitleStrategy()` from `@onecx/angular-webcomponents` to their providers. The `MfeTitleStrategy` publishes the route title to this Topic if the Shell supports it and otherwise sets `document.title` like Angular's default title strategy, so the behaviour on older Shells is unchanged.
+
+Path patterns::
+`path` is either an exact path or a pattern. Wildcards are only recognized as whole path segments:
++
+* `*` matches exactly one segment, e.g. `/admin/users/*` matches `/admin/users/42`.
+* A trailing `**` matches zero or more remaining segments, e.g. `/admin/**` matches `/admin` and `/admin/users/42`.
+* A segment mixing text and wildcards (e.g. `user*`) is literal, a non-trailing `**` behaves like `*`, and a trailing `/` is ignored.
++
+If several entries match, the one with the **most literal characters** wins, then the one with fewer wildcard segments, then the most recently published one. An exact path therefore always wins over a pattern covering it. The `MfeTitleStrategy` publishes exact paths.
 
 [#events-topic]
 === Events Topic
