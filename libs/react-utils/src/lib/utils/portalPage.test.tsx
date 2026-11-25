@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { PortalPage } from './portalPage'
 
 jest.mock('./logger.utils', () => {
@@ -50,8 +50,8 @@ describe('PortalPage', () => {
     const { useUserService } = require('@onecx/react-integration-interface')
     useUserService.mockReturnValue({ hasPermission: jest.fn(() => Promise.resolve(false)) })
 
-    const { container, getByText } = render(<PortalPage permission="admin">Secret Content</PortalPage>)
-    const unauthorized = await waitFor(() => getByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE'), { timeout: 5000 })
+    const { container, findByText } = render(<PortalPage permission="admin">Secret Content</PortalPage>)
+    const unauthorized = await findByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
     expect(unauthorized).toBeDefined()
     expect(container.textContent).not.toContain('Secret Content')
   })
@@ -60,12 +60,12 @@ describe('PortalPage', () => {
     const { useUserService } = require('@onecx/react-integration-interface')
     useUserService.mockReturnValue({ hasPermission: jest.fn(() => Promise.reject(new Error('fail'))) })
 
-    const { getByText } = render(
+    const { findByText } = render(
       <PortalPage permission="admin" helpArticleId="help-123">
         Secret Content
       </PortalPage>
     )
-    const unauthorized = await waitFor(() => getByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE'), { timeout: 5000 })
+    const unauthorized = await findByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
     expect(unauthorized).toBeDefined()
     expect(mockLogger.warn).toHaveBeenCalledWith('Failed to resolve permission for PortalPage', expect.any(Error))
   })
