@@ -814,6 +814,10 @@ describe('DataListGridComponent', () => {
         expect(await listActions[0].getAttribute('icon')).toEqual('pi pi-eye')
         expect(await listActions[1].getAttribute('icon')).toEqual('pi pi-pencil')
         expect(await listActions[2].getAttribute('icon')).toEqual('pi pi-trash')
+        expect(await listActions[0].getAttribute('data-testid')).toEqual('data-list-action-button')
+        expect(await listActions[1].getAttribute('data-testid')).toEqual('data-list-action-button')
+        expect(await listActions[2].getAttribute('data-testid')).toEqual('data-list-action-button')
+        expect(await listActions[0].getAttribute('name')).toBeNull()
 
         userService.permissionsTopic$.publish([])
 
@@ -834,8 +838,12 @@ describe('DataListGridComponent', () => {
         const editLink = fixture.nativeElement.querySelector('#id1-editButton') as HTMLAnchorElement
         expect(viewLink.tagName).toBe('A')
         expect(viewLink.getAttribute('href')).toBe('/details/id1')
+        expect(viewLink.getAttribute('data-testid')).toBe('data-list-action-button')
+        expect(viewLink.getAttribute('name')).toBeNull()
         expect(editLink.tagName).toBe('A')
         expect(editLink.getAttribute('href')).toBe('/edit/id1')
+        expect(editLink.getAttribute('data-testid')).toBe('data-list-action-button')
+        expect(editLink.getAttribute('name')).toBeNull()
 
         userService.permissionsTopic$.publish([])
         fixture.detectChanges()

@@ -129,7 +129,7 @@
             (click)="onViewRow(item)"
             *ocxIfPermission="viewPermission"
             [disabled]="!!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)"
-            [attr.name]="'data-list-action-button'"
+            [attr.data-testid]="'data-list-action-button'"
           ></button>
           } @else if (resolvedViewActionUrl) {
           @let viewActionDisabled = !!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField);
@@ -170,7 +170,7 @@
             (click)="onEditRow(item)"
             *ocxIfPermission="editPermission"
             [disabled]="!!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)"
-            [attr.name]="'data-list-action-button'"
+            [attr.data-testid]="'data-list-action-button'"
           ></button>
           } @else if (resolvedEditActionUrl) {
           @let editActionDisabled = !!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField);
@@ -209,7 +209,7 @@
             (click)="onDeleteRow(item)"
             *ocxIfPermission="deletePermission"
             [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)"
-            [attr.name]="'data-list-action-button'"
+            [attr.data-testid]="'data-list-action-button'"
           ></button>
           } @for (action of inlineListActions$ | async; track action) { @if ((!action.actionVisibleField ||
           fieldIsTruthy(item, action.actionVisibleField))) { @if (typeof action.routerLink === 'string' &&
@@ -243,7 +243,7 @@
             }"
             [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
             [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
-            [attr.name]="'data-list-action-button'"
+            [attr.data-testid]="'data-list-action-button'"
           ></button>
           } } } @if (hasVisibleOverflowMenuItems(item, (permittedOverflowListActions$ | async) ?? [])) {
           <p-menu #menu [model]="(overflowListMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>

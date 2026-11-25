@@ -797,6 +797,10 @@ describe('DataTableComponent', () => {
       expect(await tableActions[0].getAttribute('id')).toEqual('rowId-viewButton')
       expect(await tableActions[1].getAttribute('id')).toEqual('rowId-editButton')
       expect(await tableActions[2].getAttribute('id')).toEqual('rowId-deleteButton')
+      expect(await tableActions[0].getAttribute('data-testid')).toEqual('data-table-action-button')
+      expect(await tableActions[1].getAttribute('data-testid')).toEqual('data-table-action-button')
+      expect(await tableActions[2].getAttribute('data-testid')).toEqual('data-table-action-button')
+      expect(await tableActions[0].getAttribute('name')).toBeNull()
 
       userService.permissionsTopic$.publish([])
 
@@ -816,8 +820,12 @@ describe('DataTableComponent', () => {
       const editLink = fixture.nativeElement.querySelector('#rowId-editButton') as HTMLAnchorElement
       expect(viewLink.tagName).toBe('A')
       expect(viewLink.getAttribute('href')).toBe('/details/rowId')
+      expect(viewLink.getAttribute('data-testid')).toBe('data-table-action-button')
+      expect(viewLink.getAttribute('name')).toBeNull()
       expect(editLink.tagName).toBe('A')
       expect(editLink.getAttribute('href')).toBe('/edit/rowId')
+      expect(editLink.getAttribute('data-testid')).toBe('data-table-action-button')
+      expect(editLink.getAttribute('name')).toBeNull()
     })
 
     it('should keep link actions subject to permission and visibility rules', async () => {
