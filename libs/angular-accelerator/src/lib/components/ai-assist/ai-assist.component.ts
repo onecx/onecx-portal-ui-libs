@@ -225,7 +225,6 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
   /** Reloads the agent list for `appId`, or for the current MFE when `appId` is not set. */
   loadAgents(force = false): void {
     this.loadState = 'loading'
-    this.errorCode = undefined
     const loadId = ++this.agentsLoadCounter
     if (this.appId) {
       void this.fetchAgents(this.appId, force, loadId)
@@ -341,7 +340,7 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
         return
       }
       this.agents = agents
-      this.selectedAgentId = this.agents[0]?.id
+      this.selectAgent(this.agents[0]?.id)
       this.loadState = this.agents.length > 0 ? 'ready' : 'empty'
     } catch (error) {
       if (loadId !== this.agentsLoadCounter) {

@@ -41,7 +41,6 @@
       "optional": true
     }
   },
-  "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/styles.scss"
