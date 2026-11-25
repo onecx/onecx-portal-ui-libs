@@ -30,7 +30,6 @@
     "@openng/optimus-ui": "^2.0.2",
     "zod": "^4.1.12"
   },
-  "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/tailwind.css"

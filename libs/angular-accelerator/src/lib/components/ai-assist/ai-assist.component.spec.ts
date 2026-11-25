@@ -603,6 +603,21 @@ describe('AiAssistComponent', () => {
     expect(getAgents).toHaveBeenLastCalledWith({ appId: 'app-2' })
   })
 
+  it('should clear a previous suggestion when the agent list is reloaded for a new appId', async () => {
+    await createComponent()
+    component.selectAction('translate')
+    component.inputText = 'Hallo'
+    await component.run()
+    expect(component.hasSuggestion).toBe(true)
+
+    component.appId = 'app-2'
+    component.ngOnChanges({ appId: new SimpleChange('app-1', 'app-2', false) })
+    await fixture.whenStable()
+
+    expect(component.hasSuggestion).toBe(false)
+    expect(component.suggestion).toBe('')
+  })
+
   it('should keep the same actions array between change detection passes', async () => {
     await createComponent(false)
 

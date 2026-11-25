@@ -37,7 +37,6 @@
       "AGENT_NOT_FOUND": "Für diesen Kontext ist kein KI-Agent konfiguriert.",
       "NO_CONTEXT": "Der Anwendungskontext ist noch nicht verfügbar. Bitte versuchen Sie es erneut.",
       "TIMEOUT": "Die KI-Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut.",
-      "UNAVAILABLE": "Der KI-Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
       "PROVIDER": "Der KI-Provider konnte die Anfrage nicht abschließen. Bitte versuchen Sie es erneut oder wenden Sie sich an Ihre Administration.",
       "GENERIC": "Der Vorschlag konnte nicht erstellt werden. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an Ihre Administration."
     }
