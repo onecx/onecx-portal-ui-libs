@@ -27,20 +27,7 @@
     "ngxtension": "^7.1.0",
     "rxjs": "~7.8.1",
     "@protobi/exceljs": "^4.4.0-protobi.9",
-    "@openng/optimus-ui": "^2.0.2",
-    "primeng": "^19.0.0",
-    "@storybook/angular": "^8.3.2",
-    "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^6.31.0",
-    "@primeng/themes": "^19.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@nx/devkit": {
-      "optional": true
-    },
-    "@onecx/nx-migration-utils": {
-      "optional": true
-    }
+    "@openng/optimus-ui": "^2.0.2"
   },
   "dependencies": {
     "zod": "^4.1.12"
