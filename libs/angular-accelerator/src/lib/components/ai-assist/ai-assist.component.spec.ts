@@ -498,6 +498,19 @@ describe('AiAssistComponent', () => {
     expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.PROVIDER')
   })
 
+  it.each([
+    ['PROVIDER_ERROR', 'OCX_AI_ASSIST.ERRORS.PROVIDER'],
+    ['RETRIES_EXHAUSTED', 'OCX_AI_ASSIST.ERRORS.PROVIDER'],
+    ['TIMEOUT', 'OCX_AI_ASSIST.ERRORS.TIMEOUT'],
+    ['NO_PROVIDER', 'OCX_AI_ASSIST.ERRORS.NO_PROVIDER'],
+    ['SOMETHING_ELSE', 'OCX_AI_ASSIST.ERRORS.GENERIC'],
+  ])('should map error code %s to %s', async (code, expectedKey) => {
+    await createComponent()
+
+    component.errorCode = code
+    expect(component.errorMessageKey).toBe(expectedKey)
+  })
+
   it('should recognize provider errors from another federated package copy', async () => {
     getCompletion.mockRejectedValueOnce({ name: 'AiProviderError', code: 'TIMEOUT' })
     await createComponent()
