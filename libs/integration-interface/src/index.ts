@@ -66,6 +66,8 @@ export * from './lib/topics/icons/v1/icon.topic'
 export * from './lib/services/icon.service'
 export * from './lib/topics/dynamic-translations/v1/dynamic-translations.model'
 export * from './lib/topics/dynamic-translations/v1/dynamic-translations.topic'
+export * from './lib/topics/document-title/v1/document-title.model'
+export * from './lib/topics/document-title/v1/document-title.topic'
 
 export * from './lib/services/dynamic-translation.service'
 
