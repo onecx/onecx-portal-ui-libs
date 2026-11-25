@@ -1,5 +1,5 @@
 import { SimpleChange } from '@angular/core'
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
+import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
@@ -243,6 +243,39 @@ describe('AiAssistComponent', () => {
     await createComponent(false)
 
     expect(getAgents).toHaveBeenCalledTimes(2)
+  })
+
+  it('should ignore the timeout of a load that a newer load has superseded', fakeAsync(() => {
+    const appStateService = TestBed.inject(AppStateService) as unknown as { currentMfe$: unknown }
+    appStateService.currentMfe$ = NEVER
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+
+    component.appId = 'app-2'
+    component.loadAgents(true)
+    flush()
+
+    expect(getAgents).toHaveBeenCalledWith({ appId: 'app-2' })
+    expect(component.loadState).toBe('ready')
+    expect(component.errorCode).toBeUndefined()
+  }))
+
+  it('should ignore a failure of a load that a newer load has superseded', async () => {
+    let rejectStale: (reason: unknown) => void = () => undefined
+    getAgents.mockImplementationOnce(() => new Promise((_, reject) => (rejectStale = reject)))
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+
+    component.loadAgents(true)
+    await fixture.whenStable()
+    rejectStale(new Error('stale failure'))
+    await fixture.whenStable()
+
+    expect(component.loadState).toBe('ready')
+    expect(component.agents).toEqual([agent])
+    expect(component.errorCode).toBeUndefined()
   })
 
   it('should show a retryable error when the current MFE does not publish in time', fakeAsync(() => {
