@@ -173,10 +173,12 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.agentsRequested = true
     this.loadState = 'loading'
     this.errorCode = undefined
-    this.appStateService.currentMfe$.pipe(take(1)).subscribe({
-      next: (mfe) => this.fetchAgents(this.appId ?? mfe?.appId),
-      error: () => this.fetchAgents(this.appId),
-    })
+    if (this.appId) {
+      this.fetchAgents(this.appId)
+      return
+    }
+    // The current MFE topic emits only after the shell initialises it, so this waits for that.
+    this.appStateService.currentMfe$.pipe(take(1)).subscribe((mfe) => this.fetchAgents(mfe?.appId))
   }
 
   /** Selects the agent used for the next run. Clears any previous result. */

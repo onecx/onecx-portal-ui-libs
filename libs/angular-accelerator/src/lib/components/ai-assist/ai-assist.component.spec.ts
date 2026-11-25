@@ -7,7 +7,7 @@ import {
   OneCXAiAgentService,
   OneCXAiCompletionService,
 } from '@onecx/integration-interface'
-import { of, throwError } from 'rxjs'
+import { NEVER, of } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
@@ -304,9 +304,9 @@ describe('AiAssistComponent', () => {
     expect(component.initials(undefined)).toBe('')
   })
 
-  it('should load agents for the configured appId when the current MFE cannot be read', async () => {
+  it('should load agents for the configured appId without waiting for the current MFE', async () => {
     const appStateService = TestBed.inject(AppStateService) as unknown as { currentMfe$: unknown }
-    appStateService.currentMfe$ = throwError(() => new Error('no current MFE'))
+    appStateService.currentMfe$ = NEVER
     fixture = TestBed.createComponent(AiAssistComponent)
     component = fixture.componentInstance
     component.appId = 'app-2'
