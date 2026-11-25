@@ -4,9 +4,11 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
@@ -82,7 +84,7 @@ let instanceCount = 0
   styleUrls: ['./ai-assist.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
 })
-export class AiAssistComponent implements OnInit, OnDestroy {
+export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
   /** Actions offered by default. Hosts can replace the built-in Translate, Summarize and Generate set. */
   @Input() defaultActions: AiAssistActionDefinition<unknown>[] = DEFAULT_AI_ASSIST_ACTIONS
   /** Optional actions offered in addition to the default ones. */
@@ -121,19 +123,35 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   private readonly appStateService = inject(AppStateService)
   // Incremented whenever the action, agent, or result is reset, so a late completion can detect it is stale.
   private runCounter = 0
+  private agentsLoadCounter = 0
+  private actionsCache?: { defaults: unknown; additions: unknown; actions: AiAssistActionDefinition<unknown>[] }
 
   ngOnInit(): void {
     this.selectAction(this.actions[0]?.id)
     this.loadAgents()
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['appId'] && !changes['appId'].firstChange) {
+      this.loadAgents()
+    }
+  }
+
   ngOnDestroy(): void {
+    this.runCounter++
+    this.agentsLoadCounter++
     this.completionService.destroy()
   }
 
   /** All offered actions: `defaultActions` followed by `additionalActions`. */
   get actions(): AiAssistActionDefinition<unknown>[] {
-    return [...this.defaultActions, ...this.additionalActions]
+    const cache = this.actionsCache
+    if (cache?.defaults === this.defaultActions && cache.additions === this.additionalActions) {
+      return cache.actions
+    }
+    const actions = [...this.defaultActions, ...this.additionalActions]
+    this.actionsCache = { defaults: this.defaultActions, additions: this.additionalActions, actions }
+    return actions
   }
 
   get selectedAction(): AiAssistActionDefinition<unknown> | undefined {
@@ -168,13 +186,9 @@ export class AiAssistComponent implements OnInit, OnDestroy {
       case NO_CONTEXT_ERROR_CODE:
         return 'OCX_AI_ASSIST.ERRORS.NO_CONTEXT'
       case 'TIMEOUT':
-      case 'RUNTIME_TIMEOUT':
         return 'OCX_AI_ASSIST.ERRORS.TIMEOUT'
-      case 'RUNTIME_UNAVAILABLE':
-        return 'OCX_AI_ASSIST.ERRORS.UNAVAILABLE'
       case 'PROVIDER_ERROR':
       case 'RETRIES_EXHAUSTED':
-      case 'RUNTIME_ERROR':
         return 'OCX_AI_ASSIST.ERRORS.PROVIDER'
       default:
         return 'OCX_AI_ASSIST.ERRORS.GENERIC'
@@ -209,15 +223,19 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   loadAgents(force = false): void {
     this.loadState = 'loading'
     this.errorCode = undefined
+    const loadId = ++this.agentsLoadCounter
     if (this.appId) {
-      void this.fetchAgents(this.appId, force)
+      void this.fetchAgents(this.appId, force, loadId)
       return
     }
     // The current MFE topic emits only after the shell initialises it. Without a result in time, the panel
     // shows a retryable error instead of staying in the loading state.
     this.appStateService.currentMfe$.pipe(take(1), timeout(MFE_CONTEXT_TIMEOUT_MS)).subscribe({
-      next: (mfe) => void this.fetchAgents(mfe?.appId, force),
+      next: (mfe) => void this.fetchAgents(mfe?.appId, force, loadId),
       error: () => {
+        if (loadId !== this.agentsLoadCounter) {
+          return
+        }
         this.agents = []
         this.errorCode = NO_CONTEXT_ERROR_CODE
         this.loadState = 'error'
@@ -305,17 +323,27 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   /** Emits `suggestion` through `replaceText`, clears the result and closes the panel. */
   replace(): void {
+    if (this.suggestion.trim().length === 0) {
+      return
+    }
     this.replaceText.emit(this.suggestion)
     this.resetResult()
     this.open = false
   }
 
-  private async fetchAgents(appId: string | undefined, force: boolean): Promise<void> {
+  private async fetchAgents(appId: string | undefined, force: boolean, loadId: number): Promise<void> {
     try {
-      this.agents = await getAgentsCached(appId, force)
+      const agents = await getAgentsCached(appId, force)
+      if (loadId !== this.agentsLoadCounter) {
+        return
+      }
+      this.agents = agents
       this.selectedAgentId = this.agents[0]?.id
       this.loadState = this.agents.length > 0 ? 'ready' : 'empty'
     } catch (error) {
+      if (loadId !== this.agentsLoadCounter) {
+        return
+      }
       this.agents = []
       this.errorCode = isAiProviderError(error) ? error.code : UNKNOWN_ERROR_CODE
       this.loadState = 'error'
