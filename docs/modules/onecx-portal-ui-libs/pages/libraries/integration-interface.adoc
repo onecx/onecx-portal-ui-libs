@@ -177,6 +177,31 @@ Data::
 
 include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
 
+[#document-title-topic]
+=== Document Title Topic
+Usage::
+Hand the **document title of the active Microfrontend route** to the Shell, so the Shell stays the single writer of `document.title`. Microfrontends only publish to this Topic if the Shell announces the `ShellCapability.DOCUMENT_TITLE_TOPIC` (`'documentTitleTopic'`) capability.
+Shell actions::
+For Microfrontend routes, the Shell uses the latest published title instead of its own route title as long as the published `path` matches `document.location.pathname`. Messages for other paths are ignored. Without a message (or without a `title`), the Shell uses its own fallback title.
+Data::
+**Object** containing the title and the path it belongs to:
++
+[source,typescript]
+interface DocumentTitle {
+    title?: string; // undefined = the Microfrontend route has no title
+    path: string;   // document.location.pathname the title belongs to
+}
+
+Angular Microfrontends (bootstrapped as webcomponents with their own router) opt in by providing the `MfeTitleStrategy` from `@onecx/angular-webcomponents`. If the Shell does not provide the capability, the strategy sets `document.title` like Angular's default title strategy, so the Microfrontend behaves as before in older Shells.
+
+[source,typescript]
+import { provideMfeTitleStrategy } from '@onecx/angular-webcomponents'
+
+@NgModule({
+  providers: [provideMfeTitleStrategy()],
+})
+export class AppModule {}
+
 [#events-topic]
 === Events Topic
 Usage::
