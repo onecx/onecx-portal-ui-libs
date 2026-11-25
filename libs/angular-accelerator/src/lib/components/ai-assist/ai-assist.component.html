@@ -49,7 +49,7 @@
       iconPos="left"
       [text]="true"
       [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
-      (onClick)="loadAgents()"
+      (onClick)="loadAgents(true)"
     ></p-button>
     } @case ('empty') {
     <p-message severity="info" [text]="'OCX_AI_ASSIST.NO_AGENTS' | translate"></p-message>
