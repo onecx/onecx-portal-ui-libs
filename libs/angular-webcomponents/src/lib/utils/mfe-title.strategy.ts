@@ -31,7 +31,7 @@ export class MfeTitleStrategy extends TitleStrategy implements OnDestroy {
     const title = this.buildTitle(snapshot)
     if (this.shellCapabilityService.hasCapability(Capability.DOCUMENT_TITLE_TOPIC)) {
       this.documentTitleTopic ??= new DocumentTitleTopic()
-      this.documentTitleTopic.publish({ title, path: document.location.pathname })
+      void this.documentTitleTopic.publish({ title, path: document.location.pathname })
     } else if (title !== undefined) {
       this.title.setTitle(title)
     }
