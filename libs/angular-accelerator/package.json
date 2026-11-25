@@ -28,7 +28,6 @@
     "primeng": "^20.3.0",
     "zod": "^4.1.12"
   },
-  "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/styles.scss"
