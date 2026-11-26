@@ -1,12 +1,8 @@
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
   OnInit,
-  Renderer2,
   TemplateRef,
   Type,
-  ViewChild,
   ViewEncapsulation,
   computed,
   contentChild,
@@ -15,12 +11,13 @@ import {
   model,
   output,
   signal,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  isDevMode,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
-import { Observable, concat, map, of, switchMap, tap } from 'rxjs'
+import { Observable, combineLatest, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
@@ -94,20 +91,13 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit, AfterViewInit {
+export class PageHeaderComponent implements OnInit {
   private readonly translateService = inject(TranslateService)
   private readonly appStateService = inject(AppStateService)
   private readonly userService = inject(UserService)
   private readonly router = inject(Router)
-  private readonly renderer = inject(Renderer2)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   protected readonly breadcrumbs = inject(BreadcrumbService)
-  private breadcrumbRef?: ElementRef<HTMLElement>
-  @ViewChild('breadcrumbRef', { read: ElementRef })
-  set breadcrumbElementRef(ref: ElementRef<HTMLElement> | undefined) {
-    this.breadcrumbRef = ref
-    this.applyBreadcrumbAriaLabels()
-  }
 
   header = input<string | undefined>(undefined)
 
@@ -210,23 +200,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    if (this.manualBreadcrumbs()) {
-      this.breadcrumbs$ = this.breadcrumbs.itemsHandler.pipe(
-        tap(() => {
-          setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
-        })
-      )
-    } else {
-      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource.pipe(
-        tap(() => {
-          setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
-        })
-      )
-    }
-  }
-
-  ngAfterViewInit() {
-    this.applyBreadcrumbAriaLabels()
+    this.breadcrumbs$ = this.manualBreadcrumbs() ? this.breadcrumbs.itemsHandler : this.breadcrumbs.generatedItemsSource
   }
 
   onAction(action: string) {
@@ -241,6 +215,90 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   handleImageError() {
     this.figureImageLoadError.set(true)
+  }
+
+  private readonly warnedItems = new Set<string>()
+
+  private readonly translationCache = new WeakMap<
+    object,
+    { signature: string; value$: Observable<string | undefined> }
+  >()
+
+  /** Returns the same observable for an unchanged item, so that the async pipe does not resubscribe on every change detection. */
+  private memoize(
+    item: object,
+    signature: unknown,
+    factory: () => Observable<string | undefined>
+  ): Observable<string | undefined> {
+    const serialized = JSON.stringify(signature)
+    const cached = this.translationCache.get(item)
+    if (cached?.signature === serialized) return cached.value$
+    const value$ = factory()
+    this.translationCache.set(item, { signature: serialized, value$ })
+    return value$
+  }
+
+  private translateKey(key: TranslationKey | undefined): Observable<string | undefined> {
+    if (!key) return of(undefined)
+    const translated$ =
+      typeof key === 'string'
+        ? this.translateService.stream(key)
+        : this.translateService.stream(key.key, key.parameters)
+    return translated$.pipe(map((translated: string) => translated || undefined))
+  }
+
+  /**
+   * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
+   * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
+   */
+  getInlineActionAriaLabel(action: Action): Observable<string | undefined> {
+    return this.memoize(
+      action,
+      [action.labelKey, action.label, action.ariaLabelKey, action.ariaLabel, action.titleKey, action.title],
+      () => {
+        const iconOnlyName$ = combineLatest([
+          this.translateKey(action.ariaLabelKey),
+          this.translateKey(action.titleKey),
+        ]).pipe(map(([ariaLabel, title]) => ariaLabel || action.ariaLabel || title || action.title || undefined))
+        if (!action.labelKey) return action.label ? of(undefined) : iconOnlyName$
+        return this.translateService
+          .stream(action.labelKey)
+          .pipe(switchMap((visibleLabel: string) => (visibleLabel ? of(undefined) : iconOnlyName$)))
+      }
+    )
+  }
+
+  /**
+   * Accessible name of the object detail action button:
+   * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
+   */
+  getActionItemAriaLabel(item: ObjectDetailItem): Observable<string | undefined> {
+    return this.memoize(
+      item,
+      [item.label, item.actionItemAriaLabelKey, item.actionItemAriaLabel, item.actionItemTooltipKey],
+      () =>
+        combineLatest([
+          this.translateKey(item.actionItemAriaLabelKey),
+          this.translateKey(item.actionItemTooltipKey),
+        ]).pipe(
+          map(([ariaLabel, tooltip]) => {
+            const name = ariaLabel || item.actionItemAriaLabel || tooltip
+            if (name) return name
+            if (isDevMode() && !this.warnedItems.has(item.label)) {
+              this.warnedItems.add(item.label)
+              console.warn(
+                `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
+              )
+            }
+            return item.label
+          })
+        )
+    )
+  }
+
+  /** Text alternative for an icon-only object detail value. */
+  getIconOnlyDetailText(item: ObjectDetailItem): Observable<string | undefined> {
+    return this.memoize(item, [item.valueTooltipKey], () => this.translateKey(item.valueTooltipKey))
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {
@@ -314,26 +372,5 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   async onActionClick(action: Action): Promise<void> {
     await handleAction(this.router, action)
-  }
-
-  private applyBreadcrumbAriaLabels(): void {
-    const breadcrumbHost = this.breadcrumbRef?.nativeElement
-    if (!breadcrumbHost) {
-      return
-    }
-
-    const breadcrumbItems = breadcrumbHost.querySelectorAll(`.p-breadcrumb-item .p-breadcrumb-item-link`)
-    breadcrumbItems.forEach((item: Element, index: number) => {
-      const text = (item as HTMLElement)?.innerText?.trim()
-      if (!text) return
-      
-      this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
-        this.renderer.setAttribute(item, 'aria-label', ariaLabel)
-      })
-      
-      if (index === breadcrumbItems.length - 1) {
-        this.renderer.setAttribute(item, 'aria-current', 'page')
-      }
-    })
   }
 }

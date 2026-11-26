@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { TranslateService } from '@ngx-translate/core'
 import { Topic } from '@onecx/accelerator'
 import { MenuItem } from '@openng/optimus-ui/api'
-import { BehaviorSubject, filter, map, Observable } from 'rxjs'
+import { BehaviorSubject, filter, map, merge, Observable, Subscription } from 'rxjs'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 interface ManualBreadcrumbs {
@@ -35,6 +35,7 @@ export class BreadcrumbService implements OnDestroy {
   private set itemsSource$(source: ManualBreadcrumbsTopic) {
     this._itemSource$ = source
   }
+  private pendingTranslation: Subscription | undefined
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
   _itemsHandler: Observable<MenuItem[]> | undefined
@@ -51,23 +52,29 @@ export class BreadcrumbService implements OnDestroy {
         filter((e) => e instanceof NavigationEnd)
       )
       .subscribe(() => {
-        const root = this.router.routerState.snapshot.root
-        this.generateBreadcrumbs(root)
+        this.generateBreadcrumbs(this.router.routerState.snapshot.root)
+      })
+    // translations may be loaded or merged after the route was resolved
+    merge(this.translateService.onLangChange, this.translateService.onTranslationChange)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.generateBreadcrumbs(this.router.routerState.snapshot.root)
       })
   }
 
   ngOnDestroy(): void {
+    this.pendingTranslation?.unsubscribe()
     this._itemSource$?.destroy()
   }
 
   private generateBreadcrumbs(route: ActivatedRouteSnapshot | null) {
     if (route?.data['mfeInfo']) {
-      const breadcrumbs: MenuItem[] = [
-        {
-          label: route.data['mfeInfo'].productName,
-          routerLink: route.data['mfeInfo'].baseHref,
-        },
-      ]
+      const breadcrumbs: MenuItem[] = []
+      const mfeInfo = route.data['mfeInfo']
+      const productLabel = this.toLabel(mfeInfo.displayName || mfeInfo.productName)
+      if (productLabel) {
+        breadcrumbs.push({ label: productLabel, routerLink: route.data['mfeInfo'].baseHref })
+      }
       const baseUrl: string[] = (route.data['mfeInfo'].baseHref as string).split('/').filter((value) => value)
       const parentUrl: string[] = route.url.map((url) => url.path)
       const isUsingMatcher = !parentUrl.every((item) => baseUrl.includes(item))
@@ -75,11 +82,11 @@ export class BreadcrumbService implements OnDestroy {
         this.createBreadcrumb(route, parentUrl, breadcrumbs)
       }
       this.addBreadcrumb(route.firstChild, parentUrl, breadcrumbs)
-      this.generatedItemsSource.next(breadcrumbs)
+      this.publish(breadcrumbs)
     } else if (route?.data['breadcrumb']) {
       const breadcrumbs: MenuItem[] = []
       this.addBreadcrumb(route, [], breadcrumbs)
-      this.generatedItemsSource.next(breadcrumbs)
+      this.publish(breadcrumbs)
     } else if (route) {
       this.generateBreadcrumbs(route.firstChild)
     }
@@ -97,19 +104,36 @@ export class BreadcrumbService implements OnDestroy {
   }
 
   private createBreadcrumb(route: ActivatedRouteSnapshot, routeUrl: string[], breadcrumbs: MenuItem[]) {
+    // Routes without breadcrumb data have no meaningful name, so they are left out instead of showing a placeholder
     if (route.data['breadcrumb']) {
       const breadcrumb: MenuItem = {
-        label: this.getLabel(route.data, route.paramMap),
-        routerLink: '/' + routeUrl.join('/'),
-      }
-      breadcrumbs.push(breadcrumb)
-    } else {
-      const breadcrumb: MenuItem = {
-        label: 'NA',
+        label: this.toLabel(this.getLabel(route.data, route.paramMap)),
         routerLink: '/' + routeUrl.join('/'),
       }
       breadcrumbs.push(breadcrumb)
     }
+  }
+
+  private toLabel(label: unknown): string | undefined {
+    return typeof label === 'string' && label ? label : undefined
+  }
+
+  /** Emits the breadcrumbs once their labels are translated; a newer call supersedes a pending one. */
+  private publish(breadcrumbs: MenuItem[]) {
+    this.pendingTranslation?.unsubscribe()
+    const labels = [...new Set(breadcrumbs.map((item) => item.label).filter((label): label is string => !!label))]
+    if (!labels.length) {
+      this.generatedItemsSource.next(breadcrumbs)
+      return
+    }
+    this.pendingTranslation = this.translateService.get(labels).subscribe((translations: Record<string, unknown>) => {
+      this.generatedItemsSource.next(
+        breadcrumbs.map((item) => {
+          const translated = translations[item.label as string]
+          return typeof translated === 'string' ? { ...item, label: translated } : item
+        })
+      )
+    })
   }
 
   private getLabel(data: Data, params: ParamMap) {
@@ -119,6 +143,10 @@ export class BreadcrumbService implements OnDestroy {
     return data['breadcrumb']
   }
 
+  /**
+   * Sets manual breadcrumb items. The last item should target the current route:
+   * aria-current="page" is only set on a routerLink crumb whose routerLink matches the current URL.
+   */
   setItems(items: BreadCrumbMenuItem[]) {
     const translationKeys = [
       ...items.map((i) => i.labelKey ?? '').filter((l) => !!l),
