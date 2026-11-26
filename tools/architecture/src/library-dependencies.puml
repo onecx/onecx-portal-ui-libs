@@ -1,0 +1,90 @@
+@startuml
+' Allowed dependencies between the Nx projects (incl. dependencies of tests and mocks).
+' A dependency that is not listed here fails `npm run test:arch`. Add new edges deliberately:
+' a library must only depend on libraries of the same or a lower layer.
+
+' --- Framework independent core
+[integration-interface] --> [accelerator]
+
+' --- Angular
+[angular-testing] --> [accelerator]
+
+[angular-integration-interface] --> [accelerator]
+[angular-integration-interface] --> [integration-interface]
+[angular-integration-interface] --> [angular-testing]
+
+[angular-utils] --> [accelerator]
+[angular-utils] --> [integration-interface]
+[angular-utils] --> [angular-integration-interface]
+[angular-utils] --> [angular-testing]
+
+[angular-auth] --> [accelerator]
+[angular-auth] --> [integration-interface]
+[angular-auth] --> [angular-integration-interface]
+
+[shell-auth] --> [accelerator]
+[shell-auth] --> [integration-interface]
+[shell-auth] --> [angular-integration-interface]
+[shell-auth] --> [angular-utils]
+
+[angular-remote-components] --> [accelerator]
+[angular-remote-components] --> [integration-interface]
+[angular-remote-components] --> [angular-utils]
+
+[angular-webcomponents] --> [accelerator]
+[angular-webcomponents] --> [integration-interface]
+[angular-webcomponents] --> [angular-integration-interface]
+[angular-webcomponents] --> [angular-utils]
+
+[angular-accelerator] --> [accelerator]
+[angular-accelerator] --> [integration-interface]
+[angular-accelerator] --> [angular-integration-interface]
+[angular-accelerator] --> [angular-utils]
+[angular-accelerator] --> [angular-remote-components]
+[angular-accelerator] --> [angular-testing]
+
+[angular-standalone-shell] --> [accelerator]
+[angular-standalone-shell] --> [integration-interface]
+[angular-standalone-shell] --> [angular-integration-interface]
+[angular-standalone-shell] --> [angular-utils]
+[angular-standalone-shell] --> [angular-auth]
+[angular-standalone-shell] --> [shell-auth]
+[angular-standalone-shell] --> [angular-webcomponents]
+
+' --- NgRx (on top of Angular)
+[ngrx-accelerator] --> [accelerator]
+
+[ngrx-integration-interface] --> [accelerator]
+[ngrx-integration-interface] --> [integration-interface]
+[ngrx-integration-interface] --> [angular-integration-interface]
+
+' --- React
+[react-auth] --> [accelerator]
+
+[react-integration-interface] --> [accelerator]
+[react-integration-interface] --> [integration-interface]
+
+[react-webcomponents] --> [accelerator]
+[react-webcomponents] --> [integration-interface]
+[react-webcomponents] --> [react-integration-interface]
+
+[react-remote-components] --> [accelerator]
+[react-remote-components] --> [integration-interface]
+[react-remote-components] --> [react-integration-interface]
+
+[react-utils] --> [accelerator]
+[react-utils] --> [integration-interface]
+[react-utils] --> [react-integration-interface]
+[react-utils] --> [react-webcomponents]
+
+' --- Standalone tooling without dependencies on other projects
+[angular-linter-rules]
+[ngrx-linter-rules]
+[build-utils]
+[release]
+[architecture]
+
+' --- Workspace root: its ESLint config loads the linter rules from source
+[@onecx/onecx-portal-ui-libs] --> [angular-linter-rules]
+[@onecx/onecx-portal-ui-libs] --> [ngrx-linter-rules]
+@enduml

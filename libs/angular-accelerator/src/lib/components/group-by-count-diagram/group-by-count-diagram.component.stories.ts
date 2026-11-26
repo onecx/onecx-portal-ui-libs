@@ -1,7 +1,7 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular-vite'
 import { BreadcrumbModule } from '@openng/optimus-ui/breadcrumb'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { MenuModule } from '@openng/optimus-ui/menu'

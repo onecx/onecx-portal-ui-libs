@@ -2,7 +2,7 @@ import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { RouterModule } from '@angular/router'
 import { action } from 'storybook/actions'
-import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular-vite'
 import { OpenngIcons } from '@openng/optimus-ui/api'
 import { BreadcrumbModule } from '@openng/optimus-ui/breadcrumb'
 import { ButtonModule } from '@openng/optimus-ui/button'
@@ -322,7 +322,7 @@ const TemplateWithFigureProjection: StoryFn<PageHeaderComponent> = (args) => ({
     </div>
     <div>
       The figure is an html with the following content:
-      <textarea readonly class="block w-full"><div [ngStyle]="{backgroundColor:'var(--p-orange-500)'}" class="text-white"><i class="pi pi-user"></i></div></textarea>
+      <textarea readonly class="block w-full" aria-label="Figure html"><div [ngStyle]="{backgroundColor:'var(--p-orange-500)'}" class="text-white"><i class="pi pi-user"></i></div></textarea>
     </div>
   </ocx-page-header>`,
 })
@@ -398,7 +398,7 @@ const objectDetailsWithIcons: ObjectDetailItem[] = [
     label: 'Status with style',
     value: 'Completed',
     icon: OpenngIcons.CHECK_SQUARE,
-    valueCssClass: 'bg-green-400 text-white rounded-sm p-1',
+    valueCssClass: 'bg-green-800 text-white rounded-sm p-1',
   },
 ]
 

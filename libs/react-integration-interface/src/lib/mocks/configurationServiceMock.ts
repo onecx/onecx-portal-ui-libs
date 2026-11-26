@@ -1,7 +1,7 @@
 import type { Config } from '@onecx/integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
 import { firstValueFrom } from 'rxjs'
-import { CONFIG_KEY } from '@onecx/angular-integration-interface'
+import { CONFIG_KEY } from '../model/config-key.model'
 
 class ConfigurationServiceMock {
   config$ = new FakeTopic<Config>({})

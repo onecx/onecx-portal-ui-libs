@@ -1,4 +1,4 @@
-import { argsToTemplate, Meta, StoryFn } from '@storybook/angular'
+import { argsToTemplate, Meta, StoryFn } from '@storybook/angular-vite'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import {
   InteractiveDataViewComponentSBConfig,

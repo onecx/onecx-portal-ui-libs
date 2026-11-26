@@ -105,6 +105,27 @@ test('propagates Prettier failures', (t) => {
   assert.equal(result.status, 1)
 })
 
+test('skips files taken unchanged from the merged branch during a merge', (t) => {
+  const fixture = createFixture(t)
+  const git = (...args) => execFileSync('git', args, { cwd: fixture.repo, encoding: 'utf8' }).trim()
+  const baseBranch = git('rev-parse', '--abbrev-ref', 'HEAD')
+  git('checkout', '--quiet', '-b', 'incoming')
+  writeFileSync(path.join(fixture.repo, 'incoming.ts'), 'const incoming=1')
+  writeFileSync(path.join(fixture.repo, 'resolved.ts'), 'const resolved=1')
+  git('add', 'incoming.ts', 'resolved.ts')
+  git('commit', '--quiet', '-m', 'chore: incoming')
+  git('checkout', '--quiet', baseBranch)
+  git('merge', '--quiet', '--no-ff', '--no-commit', 'incoming')
+  writeFileSync(path.join(fixture.repo, 'resolved.ts'), 'const resolved = 2')
+  git('add', 'resolved.ts')
+
+  const result = runHelper(fixture)
+  const requests = JSON.parse(readFileSync(fixture.argsFile, 'utf8'))
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.deepEqual(requests, [{ content: 'const resolved = 2', filepath: 'resolved.ts' }])
+})
+
 test('runs the prettier script, which is the staged check, from the pre-commit hook', (t) => {
   const fixture = createFixture(t)
   const bin = path.join(fixture.root, 'bin')

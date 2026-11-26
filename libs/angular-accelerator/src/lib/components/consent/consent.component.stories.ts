@@ -1,6 +1,6 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular-vite'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { RippleModule } from '@openng/optimus-ui/ripple'
 import { StorybookTranslateModule } from '../../storybook-translate.module'

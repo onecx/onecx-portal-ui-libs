@@ -1,7 +1,13 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
+import {
+  Meta,
+  applicationConfig,
+  argsToTemplate,
+  componentWrapperDecorator,
+  moduleMetadata,
+} from '@storybook/angular-vite'
 import { StorybookTranslateModule } from '../../../storybook-translate.module'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { OpenngIcons } from '@openng/optimus-ui/api'

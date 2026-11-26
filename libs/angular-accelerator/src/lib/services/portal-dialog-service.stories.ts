@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, On
 import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
+import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite'
 import { OpenngIcons } from '@openng/optimus-ui/api'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'

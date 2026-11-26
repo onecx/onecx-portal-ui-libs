@@ -1,7 +1,7 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular-vite'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { LoadingIndicatorComponent } from './loading-indicator.component'
 import { StorybookThemeModule } from '../../storybook-theme.module'
