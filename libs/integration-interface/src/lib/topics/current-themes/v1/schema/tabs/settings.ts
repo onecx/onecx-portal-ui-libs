@@ -1,17 +1,20 @@
 import * as z from 'zod'
 import { withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Tabs component settings shape. Non-visual configuration (unstyled, lazy,
  * selectOnFocus, showNavigators, scrollStrategy) rather than design tokens.
  */
-export const tabsSettingsShape = z.object({
-  unstyled: withRef(z.boolean()).optional(),
-  lazy: withRef(z.boolean()).optional(),
-  selectOnFocus: withRef(z.boolean()).optional(),
-  showNavigators: withRef(z.boolean()).optional(),
-  scrollStrategy: withRef(z.union([z.enum(['nearest', 'center']), z.literal(false)])).optional(),
-})
+export const tabsSettingsShape = z
+  .object({
+    unstyled: withRef(z.boolean()).optional(),
+    lazy: withRef(z.boolean()).optional(),
+    selectOnFocus: withRef(z.boolean()).optional(),
+    showNavigators: withRef(z.boolean()).optional(),
+    scrollStrategy: withRef(z.union([z.enum(['nearest', 'center']), z.literal(false)])).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'tabs.settings', axis: 'setting' })
 
 export const tabsSettingsDefaults = {
   unstyled: false,

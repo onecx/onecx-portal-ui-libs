@@ -17,6 +17,7 @@ const dropdownSettingsShape = z.object({
   selectOnFocus: withRef(z.boolean()).optional(),
   autoOptionFocus: withRef(z.boolean()).optional(),
 })
+  .register(themeSchemaRegistry, { id: 'dropdownSettingsShape', axis: 'setting' })
 
 const dropdownContainerStateShape = z.object({
   background: z.union([bg, withRef(z.string())]).optional(),
@@ -35,31 +36,43 @@ const dropdownContainerStateShape = z.object({
   space: space.optional(),
 })
 
-const dropdownContainerVariantShape = z.object({
-  defaultState: dropdownContainerStateShape.prefault({}),
-  hover: dropdownContainerStateShape.prefault({}),
-  focus: dropdownContainerStateShape.prefault({}),
-  active: dropdownContainerStateShape.prefault({}),
-  disabled: dropdownContainerStateShape.prefault({}),
-  invalid: dropdownContainerStateShape.prefault({}),
-})
+// The container's named states — the slot the variant members map to.
+const dropdownContainerVariantShape = z
+  .object({
+    defaultState: dropdownContainerStateShape.prefault({}),
+    hover: dropdownContainerStateShape.prefault({}),
+    focus: dropdownContainerStateShape.prefault({}),
+    active: dropdownContainerStateShape.prefault({}),
+    disabled: dropdownContainerStateShape.prefault({}),
+    invalid: dropdownContainerStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dropdownContainerVariantShape', axis: 'state' })
 
-const dropdownContainerShape = z.object({
-  defaultVariant: dropdownContainerVariantShape.prefault({}),
-  filled: dropdownContainerVariantShape.prefault({}),
-})
+// The container is a child component: it re-roots the fallback (child) and its keys are the named
+// variants (variant). Its per-state token content (`dropdownContainerStateShape`) stays unmarked so
+// the tokens fall back within the container's state scope.
+const dropdownContainerShape = z
+  .object({
+    defaultVariant: dropdownContainerVariantShape.prefault({}),
+    filled: dropdownContainerVariantShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dropdownContainerShape', axis: 'variant', child: true })
 
 const dropdownClearStateShape = z.object({
   icon: icon.optional(),
   color: color.optional(),
 })
 
-const dropdownClearShape = z.object({
-  defaultState: dropdownClearStateShape.prefault({}),
-  hover: dropdownClearStateShape.prefault({}),
-  focus: dropdownClearStateShape.prefault({}),
-  disabled: dropdownClearStateShape.prefault({}),
-})
+// The clear button is a child component whose keys are its named states directly (no variant
+// wrapper), so it opens its own scope (child) and classifies its keys as states.
+const dropdownClearShape = z
+  .object({
+    defaultState: dropdownClearStateShape.prefault({}),
+    hover: dropdownClearStateShape.prefault({}),
+    focus: dropdownClearStateShape.prefault({}),
+    disabled: dropdownClearStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dropdownClearShape', axis: 'state', child: true })
 
 const dropdownOverlayShape = z.object({
   background: z.union([bg, withRef(z.string())]).optional(),
@@ -80,21 +93,27 @@ const dropdownOptionStateShape = z.object({
   padding: withRef(z.string()).optional(),
 })
 
-const dropdownOptionShape = z.object({
-  defaultState: dropdownOptionStateShape.prefault({}),
-  hover: dropdownOptionStateShape.prefault({}),
-  focus: dropdownOptionStateShape.prefault({}),
-  selected: dropdownOptionStateShape.prefault({}),
-  disabled: dropdownOptionStateShape.prefault({}),
-  group: z
-    .object({
-      background: z.union([bg, withRef(z.string())]).optional(),
-      color: color.optional(),
-      font: font.optional(),
-      padding: withRef(z.string()).optional(),
-    })
-    .prefault({}),
-})
+// The option is a child component whose keys are its named states directly (no variant wrapper),
+// so it opens its own scope (child) and classifies its keys as states. `group` is a static token
+// group sitting next to those states and opts out of the state axis (axis: 'none').
+const dropdownOptionShape = z
+  .object({
+    defaultState: dropdownOptionStateShape.prefault({}),
+    hover: dropdownOptionStateShape.prefault({}),
+    focus: dropdownOptionStateShape.prefault({}),
+    selected: dropdownOptionStateShape.prefault({}),
+    disabled: dropdownOptionStateShape.prefault({}),
+    group: z
+      .object({
+        background: z.union([bg, withRef(z.string())]).optional(),
+        color: color.optional(),
+        font: font.optional(),
+        padding: withRef(z.string()).optional(),
+      })
+      .register(themeSchemaRegistry, { id: 'dropdownOptionGroupShape', axis: 'none' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dropdownOptionShape', axis: 'state', child: true })
 
 const dropdownCheckmarkShape = z.object({
   color: color.optional(),
@@ -299,6 +318,9 @@ export const dropdownDefaults = {
   },
 }
 
+// The root carries no axis marker: its keys are component/settings groups, not variant members
+// (the dropdown models variants only inside `container`). The root export is still registered so
+// the walker classifies each child by its own marker (see `dropdownContainerShape`).
 export const dropdown = applyDefaultsRecursive(dropdownShape, dropdownDefaults).register(themeSchemaRegistry, {
   id: 'dropdown',
 })

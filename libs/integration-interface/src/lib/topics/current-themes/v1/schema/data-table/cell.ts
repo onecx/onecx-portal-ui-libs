@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, border, color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import {
   defaultBorderTokens,
   fontTokens,
@@ -23,13 +24,17 @@ const cellDefaultStateShape = z.object({
   truncate: withRef(z.boolean()).optional(),
 })
 
-export const dataTableCellShape = z.object({
-  defaultState: cellDefaultStateShape.prefault({}),
-  hover: stateTokensShape.prefault({}),
-  active: stateTokensShape.prefault({}),
-  selected: stateTokensShape.prefault({}),
-  focus: stateTokensShape.prefault({}),
-})
+// The cell is a child component (re-roots the fallback); its keys ARE the states, so they are
+// state members and the state token content (cellDefaultStateShape/stateTokensShape) stays unmarked.
+export const dataTableCellShape = z
+  .object({
+    defaultState: cellDefaultStateShape.prefault({}),
+    hover: stateTokensShape.prefault({}),
+    active: stateTokensShape.prefault({}),
+    selected: stateTokensShape.prefault({}),
+    focus: stateTokensShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dataTable.cell', axis: 'state', child: true })
 
 /**
  * Full cell `defaultState` tokens — the baseline cell a header/footer/body row

@@ -47,6 +47,11 @@ export const messageDefaults = {
 // EXPORT — shape + defaults applied once
 // ------------------------------------------------------------------
 
+// Message is flattened like `badge` (no `variant`/`state` wrappers): the root's own keys are the
+// named variants (`defaultVariant`/`outlined`/`simple`), and each variant's value is a severity
+// container. `settings` (axis: 'setting') and `sm`/`lg` (axis: 'none') opt out of the root's variant
+// axis. The axis containers are the root (variant) and the three inner severity blocks.
 export const message = applyDefaultsRecursive(messageShape, messageDefaults).register(themeSchemaRegistry, {
   id: 'message',
+  axis: 'variant',
 })

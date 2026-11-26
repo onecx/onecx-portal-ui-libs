@@ -28,7 +28,7 @@ import { applyDefaultsRecursive } from './defaults-helper'
 /**
  * Workspace settings for the textarea — boolean flags plus the variant selector. No defaults;
  * PrimeNG decides. Kept as a root-level sibling of the variant slots (carried over from the legacy
- * schema).
+ * schema). Marked `setting` so its keys never register as variant members of the root scope.
  */
 export const textareaSettings = z
   .object({
@@ -37,7 +37,7 @@ export const textareaSettings = z
     variant: withRef(z.enum(['filled', 'outlined'])).optional(),
     fluid: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'textareaSettings' })
+  .register(themeSchemaRegistry, { id: 'textareaSettings', axis: 'setting' })
 
 /** A named size (sm/md/lg) of the textarea: font size plus its two-axis padding. */
 export const textareaSize = z
@@ -69,13 +69,15 @@ const textareaStateShape = z.object({
 })
 
 /** A single variant: defaultState plus the named states. */
-const textareaVariantShape = z.object({
-  defaultState: textareaStateShape.prefault({}),
-  hover: textareaStateShape.prefault({}),
-  focus: textareaStateShape.prefault({}),
-  disabled: textareaStateShape.prefault({}),
-  invalid: textareaStateShape.prefault({}),
-})
+const textareaVariantShape = z
+  .object({
+    defaultState: textareaStateShape.prefault({}),
+    hover: textareaStateShape.prefault({}),
+    focus: textareaStateShape.prefault({}),
+    disabled: textareaStateShape.prefault({}),
+    invalid: textareaStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'textareaVariantShape', axis: 'state' })
 
 /**
  * Pure textarea shape: the outlined baseline (`defaultVariant`) and the `filled` custom variant.
@@ -216,6 +218,10 @@ export const textareaDefaults = {
 // EXPORT — shape + defaults applied once
 // ------------------------------------------------------------------
 
+// The root's own keys are the variants (`defaultVariant`, `filled`); `settings` opts out via
+// `axis: 'setting'`, so it never registers as a variant member. Each variant block re-classes its
+// own keys as states (see `textareaVariantShape`).
 export const textarea = applyDefaultsRecursive(textareaShape, textareaDefaults).register(themeSchemaRegistry, {
   id: 'textarea',
+  axis: 'variant',
 })

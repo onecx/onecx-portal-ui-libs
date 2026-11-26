@@ -35,6 +35,11 @@ export const tabsDefaults = {
   tab: tabsTabDefaults,
 }
 
+// The tabs root has no variant axis (no `defaultVariant` key), so it stays unmarked here —
+// adding `axis: 'variant'` would spuriously open a root scope. Its children are either settings
+// (`settings`/`viewport`, `axis: 'setting'`) or the state-scoped child components `tab`/`navButton`
+// (`axis: 'state', child: true`); the static token groups (`tablist`, `tabpanel` and the root
+// background/color/gap/shadow) are left unmarked.
 export const tabs = applyDefaultsRecursive(tabsShape, tabsDefaults).register(themeSchemaRegistry, {
   id: 'tabs',
 })

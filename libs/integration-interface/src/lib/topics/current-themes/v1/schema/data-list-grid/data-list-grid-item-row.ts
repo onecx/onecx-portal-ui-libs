@@ -40,11 +40,13 @@ const itemRowStateShape = z.object({
   focusRing: borderWithShadow.optional(),
 })
 
-export const dataListGridItemRowShape = z.object({
-  defaultState: itemRowStateShape.optional(),
-  hover: itemRowStateShape.partial().optional(),
-  focus: itemRowStateShape.partial().optional(),
-})
+export const dataListGridItemRowShape = z
+  .object({
+    defaultState: itemRowStateShape.optional(),
+    hover: itemRowStateShape.partial().optional(),
+    focus: itemRowStateShape.partial().optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'dataListGridItemRowShape', axis: 'state', child: true })
 
 export const dataListGridItemRowDefaults = {
   defaultState: {

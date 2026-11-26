@@ -3,11 +3,13 @@ import { applyDefaultsRecursive } from '../defaults-helper'
 import { bg, border, borderWithShadow, color, icon, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
-const chipSettingsShape = z.object({
-  unstyled: withRef(z.boolean()).optional(),
-  disabled: withRef(z.boolean()).optional(),
-  removable: withRef(z.boolean()).optional(),
-})
+const chipSettingsShape = z
+  .object({
+    unstyled: withRef(z.boolean()).optional(),
+    disabled: withRef(z.boolean()).optional(),
+    removable: withRef(z.boolean()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'chipSettingsShape', axis: 'setting' })
 
 const borderDefaults = {
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
@@ -59,11 +61,13 @@ const chipStateShape = z.object({
   cursor: withRef(z.string()).optional(),
 })
 
-const chipVariantShape = z.object({
-  defaultState: chipStateShape.optional(),
-  hover: chipStateShape.optional(),
-  disabled: chipStateShape.optional(),
-})
+const chipVariantShape = z
+  .object({
+    defaultState: chipStateShape.optional(),
+    hover: chipStateShape.optional(),
+    disabled: chipStateShape.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'chipVariantShape', axis: 'state' })
 
 export const chipShape = z.object({
   settings: chipSettingsShape.optional(),
@@ -123,7 +127,10 @@ export const chipDefaults = {
   },
 }
 
-export const chip = applyDefaultsRecursive(chipShape, chipDefaults).register(themeSchemaRegistry, { id: 'chip' })
+export const chip = applyDefaultsRecursive(chipShape, chipDefaults).register(themeSchemaRegistry, {
+  id: 'chip',
+  axis: 'variant',
+})
 
 export class ChipSchema {
   static readonly schema = chip
