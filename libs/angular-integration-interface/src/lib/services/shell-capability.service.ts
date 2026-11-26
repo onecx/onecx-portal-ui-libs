@@ -10,6 +10,7 @@ export enum Capability {
   CURRENT_LOCATION_TOPIC = 'currentLocationTopic',
   PARAMETERS_TOPIC = 'parametersTopic',
   ACTIVENESS_AWARE_MENUS = 'activenessAwareMenus',
+  DOCUMENT_TITLE_TOPIC = 'documentTitleTopic',
 }
 
 @Injectable({ providedIn: 'root' })
