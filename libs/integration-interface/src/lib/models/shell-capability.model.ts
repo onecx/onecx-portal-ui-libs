@@ -3,6 +3,7 @@ export enum ShellCapability {
   PARAMETERS_TOPIC = 'parametersTopic',
   ACTIVENESS_AWARE_MENUS = 'activenessAwareMenus',
   DYNAMIC_TRANSLATIONS_TOPIC = 'dynamicTranslationsTopic',
+  DOCUMENT_TITLE_TOPIC = 'documentTitleTopic',
 }
 
 declare global {
