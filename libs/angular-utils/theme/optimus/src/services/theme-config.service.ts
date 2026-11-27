@@ -1,9 +1,12 @@
-import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
+import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject, isDevMode } from '@angular/core'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { Theme as OneCXTheme, OverrideType, ThemeOverride } from '@onecx/integration-interface'
 import { Base } from '@openng/optimus-ui/base'
 import { Optimus } from '@openng/optimus-ui/config'
 import ThemeConfig from '../utils/theme-config'
+import defaultThemeVariables from '../preset/default-theme-variables'
+import { createLogger } from '../utils/logger.utils'
+import { warnOnLowThemeContrast } from '../utils/theme-contrast'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from '@openng/optimus-ui/usestyle'
 import { Theme } from '@openng/optimus-ui-styled'
@@ -38,6 +41,7 @@ export class ThemeConfigService {
   private themeService = inject(ThemeService);
   private optimus = inject(Optimus);
   private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING);
+  private readonly logger = createLogger('ThemeConfigService')
 
   constructor() {
     this.themeService.currentTheme$.subscribe((theme) => {
@@ -70,6 +74,7 @@ export class ThemeConfigService {
     const oldThemeVariables = oldTheme.properties
     const overridesFolded = this.isAdvancedTheming ? this.foldOverrides(this.parseOptimusOverridesValue(oldTheme.overrides)) : {}
 
+    this.warnOnLowContrast(oldThemeVariables)
     const themeConfig = new ThemeConfig(oldThemeVariables)
     const preset = await (await import('../preset/custom-preset')).CustomPreset
     this.optimus.setThemeConfig({
@@ -78,5 +83,10 @@ export class ThemeConfigService {
         options: { darkModeSelector: false },
       },
     })
+  }
+
+  private warnOnLowContrast(themeVariables: OneCXTheme['properties']): void {
+    if (!isDevMode()) return
+    warnOnLowThemeContrast(themeVariables as any, this.logger, defaultThemeVariables as any)
   }
 }
