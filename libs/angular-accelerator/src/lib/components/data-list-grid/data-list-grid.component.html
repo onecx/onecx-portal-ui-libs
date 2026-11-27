@@ -61,18 +61,44 @@
       <div class="flex flex-row justify-between items-center">
         <div class="data-grid-items flex-row">
           <div class="item-name font-medium mr-3 text-2xl">
-            @let itemTitle = resolveFieldData(item, titleLineId()) || ''; @if (itemTitle && viewItemObserved &&
-            (hasViewPermission$ | async)) {
-            <button
-              type="button"
-              class="item-name-link p-0 border-0 bg-transparent text-left cursor-pointer underline text-primary"
-              [attr.name]="'data-grid-item-title-button'"
-              (click)="onViewRow(item)"
-            >
-              {{ itemTitle }}
-            </button>
+            @let gridItemTitle = resolveFieldData(item, titleLineId()) || '';
+            <ng-template #gridTitle>
+              @if (gridItemTitle && viewItemObserved && (hasViewPermission$ | async)) {
+              <button
+                type="button"
+                class="item-name-link p-0 border-0 bg-transparent text-left cursor-pointer underline text-primary"
+                [attr.name]="'data-grid-item-title-button'"
+                (click)="onViewRow(item)"
+              >
+                {{ gridItemTitle }}
+              </button>
+              } @else {
+              <span>{{ gridItemTitle }}</span>
+              }
+            </ng-template>
+            @if (titleLineId() && gridItemTitle) {
+            @switch (itemTitleLevel()) {
+            @case (1) {
+            <h1 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="gridTitle"></ng-container></h1>
+            }
+            @case (2) {
+            <h2 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="gridTitle"></ng-container></h2>
+            }
+            @case (3) {
+            <h3 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="gridTitle"></ng-container></h3>
+            }
+            @case (4) {
+            <h4 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="gridTitle"></ng-container></h4>
+            }
+            @case (5) {
+            <h5 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="gridTitle"></ng-container></h5>
+            }
+            @case (6) {
+            <h6 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="gridTitle"></ng-container></h6>
+            }
+            }
             } @else {
-            <span>{{ itemTitle }}</span>
+            <ng-container [ngTemplateOutlet]="gridTitle"></ng-container>
             }
           </div>
           <ng-container
@@ -110,8 +136,29 @@
     <div class="data-list-items p-1" [ngClass]="{ 'list-border-divider': !first }">
       <div class="item-name-row flex flex-row justify-between">
         <div class="item-name mr-3 text-2xl font-medium content-center">
-          @if (titleLineId()) {
-          <span>{{ resolveFieldData(item, titleLineId()) || '' }}</span>
+          @let listItemTitle = resolveFieldData(item, titleLineId());
+          @if (titleLineId() && listItemTitle) {
+          <ng-template #listTitle><span>{{ listItemTitle }}</span></ng-template>
+          @switch (itemTitleLevel()) {
+            @case (1) {
+              <h1 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="listTitle"></ng-container></h1>
+            }
+            @case (2) {
+              <h2 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="listTitle"></ng-container></h2>
+            }
+            @case (3) {
+              <h3 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="listTitle"></ng-container></h3>
+            }
+            @case (4) {
+              <h4 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="listTitle"></ng-container></h4>
+            }
+            @case (5) {
+              <h5 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="listTitle"></ng-container></h5>
+            }
+            @case (6) {
+              <h6 class="m-0 text-2xl font-medium"><ng-container [ngTemplateOutlet]="listTitle"></ng-container></h6>
+            }
+          }
           }
         </div>
         <div class="flex flex-row">

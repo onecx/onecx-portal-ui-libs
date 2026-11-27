@@ -13,6 +13,7 @@ import {
   viewChildren,
   ChangeDetectionStrategy
 } from '@angular/core'
+import { normalizeHeadingLevel } from '../../utils/heading-level.utils'
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
@@ -85,6 +86,11 @@ export class FilterViewComponent {
   )
   readonly chipStyleClass = input('')
   readonly tableStyle = input<{ [klass: string]: any }>({ 'max-height': '50vh' })
+  /**
+   * Heading level (1-6) of the filter panel title. Defaults to 2 as the page header renders the level 1 heading.
+   */
+  readonly panelTitleHeadingLevel = input<number>(2)
+  protected readonly panelTitleLevel = computed(() => normalizeHeadingLevel(this.panelTitleHeadingLevel()))
   readonly panelStyle = input<{ [klass: string]: any }>({ 'max-width': '90%' })
 
   readonly filtered = output<Filter[]>()

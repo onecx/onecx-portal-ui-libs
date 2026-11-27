@@ -1,3 +1,4 @@
+import { normalizeHeadingLevel } from '../../utils/heading-level.utils'
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core'
 
 const STORAGE_KEY = 'onecx-consent'
@@ -83,6 +84,13 @@ export class ConsentComponent {
    * When set, consent is stored and matched as `<url>::<purpose>`.
    */
   purpose = input<string | undefined>(undefined)
+
+  /**
+   * Heading level (1-6) of the consent title. Defaults to 2 as the page header renders the level 1 heading.
+   */
+  titleHeadingLevel = input<number>(2)
+
+  protected readonly headingLevel = computed(() => normalizeHeadingLevel(this.titleHeadingLevel()))
 
   /** Translation key for the consent dialog title. */
   titleKey = input<string>('OCX_CONSENT.TITLE')
