@@ -671,6 +671,33 @@ describe('SyncedRouterProvider', () => {
     delete historyRecord['__onecxRouterSyncWrapped']
   })
 
+  it('does not publish back a topic target that commits after the navigation timed out', () => {
+    jest.useFakeTimers()
+    try {
+      renderRouter()
+      expect(mockLocationListeners).toHaveLength(1)
+      const target = `${appBase}/subpage/record-1?tab=details#summary`
+      mockNavigateDisabled = true
+      act(() => {
+        window.history.pushState({}, '', target)
+        mockLocationListeners[0]({ url: target, isFirst: false })
+      })
+      act(() => {
+        jest.advanceTimersByTime(1000)
+      })
+      mockNavigateDisabled = false
+      mockPublishedLocations.length = 0
+
+      fireEvent.click(screen.getByText('Navigate in React'))
+
+      expect(screen.getByTestId('location').textContent).toBe(target)
+      expect(mockPublishedLocations).toEqual([])
+    } finally {
+      mockNavigateDisabled = false
+      jest.useRealTimers()
+    }
+  })
+
   it('treats an own publish without an echo as stale after its TTL', () => {
     jest.useFakeTimers()
     try {
