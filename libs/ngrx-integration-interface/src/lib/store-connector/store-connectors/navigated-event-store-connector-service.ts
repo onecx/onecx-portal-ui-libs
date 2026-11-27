@@ -7,6 +7,7 @@ import { Capability, ShellCapabilityService } from '@onecx/angular-integration-i
 import { Observable } from 'rxjs'
 import { OneCxActions } from '../onecx-actions'
 import { AppStateService } from '@onecx/angular-integration-interface'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
 export function provideNavigatedEventStoreConnector() {
   return [
@@ -15,6 +16,7 @@ export function provideNavigatedEventStoreConnector() {
   ]
 }
 
+@UntilDestroy()
 @Injectable()
 export class NavigatedEventStoreConnectorService implements OnDestroy {
   private appStateService = inject(AppStateService)
@@ -34,7 +36,7 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
       observable = this.eventsTopic$.pipe(filter((e) => e.type === EventType.NAVIGATED))
     }
-    observable.subscribe((navigatedEvent) => {
+    observable.pipe(untilDestroyed(this)).subscribe((navigatedEvent) => {
       let event: unknown = navigatedEvent as CurrentLocationTopicPayload
       if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
         event = (navigatedEvent as TopicEventType).payload
