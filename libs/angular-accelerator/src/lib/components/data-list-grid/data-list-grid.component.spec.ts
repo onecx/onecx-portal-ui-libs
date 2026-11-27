@@ -731,6 +731,38 @@ describe('DataListGridComponent', () => {
     })
   })
 
+  describe('row action URLs', () => {
+    it('should mark view and edit actions as observed when URLs are configured', () => {
+      component.viewActionUrl = '/details'
+      component.editActionUrl = '/edit'
+
+      expect(component.viewItemObserved).toBe(true)
+      expect(component.editItemObserved).toBe(true)
+    })
+
+    it('should execute view and edit commands when no URLs are configured', () => {
+      component.viewPermission = 'GRID#VIEW'
+      component.editPermission = 'GRID#EDIT'
+      component.viewItem.subscribe(() => undefined)
+      component.editItem.subscribe(() => undefined)
+      const viewEmitSpy = jest.spyOn(component.viewItem, 'emit')
+      const editEmitSpy = jest.spyOn(component.editItem, 'emit')
+      const selectedItem = component.data[0]
+      const menuItems = (component as any).mapGridMenuItems(
+        ['GRID#VIEW', 'GRID#EDIT'],
+        [],
+        selectedItem,
+        {}
+      )
+
+      menuItems[0].command()
+      menuItems[1].command()
+
+      expect(viewEmitSpy).toHaveBeenCalledWith(selectedItem)
+      expect(editEmitSpy).toHaveBeenCalledWith(selectedItem)
+    })
+  })
+
   describe('permissions for action buttons', () => {
     let userService: UserServiceMock
 
@@ -782,11 +814,71 @@ describe('DataListGridComponent', () => {
         expect(await listActions[0].getAttribute('icon')).toEqual('pi pi-eye')
         expect(await listActions[1].getAttribute('icon')).toEqual('pi pi-pencil')
         expect(await listActions[2].getAttribute('icon')).toEqual('pi pi-trash')
+        expect(await listActions[0].getAttribute('data-testid')).toEqual('data-list-action-button')
+        expect(await listActions[1].getAttribute('data-testid')).toEqual('data-list-action-button')
+        expect(await listActions[2].getAttribute('data-testid')).toEqual('data-list-action-button')
+        expect(await listActions[0].getAttribute('name')).toBeNull()
 
         userService.permissionsTopic$.publish([])
 
         listActions = await listGrid.getActionButtons('list')
         expect(listActions.length).toBe(0)
+      })
+
+      it('should render row-specific view and edit URLs as router links', async () => {
+        userService.permissionsTopic$.publish(['LIST#VIEW', 'LIST#EDIT'])
+        component.viewActionUrl = (row) => `/details/${row.id}`
+        component.editActionUrl = (row) => `/edit/${row.id}`
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+        await listGrid.getDefaultListItems()
+
+        const viewLink = fixture.nativeElement.querySelector('#id1-viewButton') as HTMLAnchorElement
+        const editLink = fixture.nativeElement.querySelector('#id1-editButton') as HTMLAnchorElement
+        expect(viewLink.tagName).toBe('A')
+        expect(viewLink.getAttribute('href')).toBe('/details/id1')
+        expect(viewLink.getAttribute('data-testid')).toBe('data-list-action-button')
+        expect(viewLink.getAttribute('name')).toBeNull()
+        expect(editLink.tagName).toBe('A')
+        expect(editLink.getAttribute('href')).toBe('/edit/id1')
+        expect(editLink.getAttribute('data-testid')).toBe('data-list-action-button')
+        expect(editLink.getAttribute('name')).toBeNull()
+
+        userService.permissionsTopic$.publish([])
+        fixture.detectChanges()
+        await fixture.whenStable()
+        expect(fixture.nativeElement.querySelector('#id1-viewButton')).toBeNull()
+        expect(fixture.nativeElement.querySelector('#id1-editButton')).toBeNull()
+      })
+
+      it('should render a disabled view link when the URL action is not enabled for the row', async () => {
+        userService.permissionsTopic$.publish(['LIST#VIEW'])
+        component.viewActionUrl = '/details'
+        component.viewActionEnabledField = 'ready'
+        component.data = component.data.map((item) => ({ ...item, ready: false }))
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+        await listGrid.getDefaultListItems()
+
+        const viewLink = fixture.nativeElement.querySelector('#id1-viewButton') as HTMLAnchorElement
+        expect(viewLink.tagName).toBe('A')
+        expect(viewLink.getAttribute('href')).toBeNull()
+        expect(viewLink.getAttribute('aria-disabled')).toBe('true')
+        expect(viewLink.getAttribute('tabindex')).toBe('-1')
+        expect(viewLink.classList.contains('p-disabled')).toBe(true)
+      })
+
+      it('should hide a URL action when its row resolver returns undefined', async () => {
+        userService.permissionsTopic$.publish(['LIST#VIEW'])
+        component.viewActionUrl = () => undefined
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+        await listGrid.getDefaultListItems()
+
+        expect(fixture.nativeElement.querySelector('#id1-viewButton')).toBeNull()
       })
 
       it('should show custom inline actions if user has the required permission', async () => {
@@ -961,7 +1053,7 @@ describe('DataListGridComponent', () => {
         it('should handle routerLink as function returning string', async () => {
           userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
           const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
-          const routerLinkFunction = jest.fn(() => '/function-link')
+          const routerLinkFunction = jest.fn((row: { id: string }) => `/function-link/${row.id}`)
 
           component.additionalActions = [
             {
@@ -979,7 +1071,8 @@ describe('DataListGridComponent', () => {
           await tableActions[0].click()
 
           expect(routerLinkFunction).toHaveBeenCalledTimes(1)
-          expect(spy).toHaveBeenCalledWith(['/function-link'])
+          expect(routerLinkFunction).toHaveBeenCalledWith(component.data[0])
+          expect(spy).toHaveBeenCalledWith([`/function-link/${component.data[0].id}`])
         })
       })
     })
@@ -1013,6 +1106,39 @@ describe('DataListGridComponent', () => {
         await gridMenuButton.click()
         gridActions = await listGrid.getActionButtons('grid')
         expect(gridActions.length).toBe(0)
+      })
+
+      it('should render row-specific view and edit URLs as router links in the grid menu', async () => {
+        userService.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT'])
+        component.viewActionUrl = (row) => `/details/${row.id}`
+        component.editActionUrl = (row) => `/edit/${row.id}`
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const gridMenuButton = await listGrid.getGridMenuButton()
+        await gridMenuButton.click()
+        await fixture.whenStable()
+
+        expect(document.body.querySelector('a[href="/details/id1"]')).not.toBeNull()
+        expect(document.body.querySelector('a[href="/edit/id1"]')).not.toBeNull()
+      })
+
+      it('should retain disabled and hidden state for URL actions in the grid menu', () => {
+        component.viewActionUrl = '/details'
+        component.viewActionEnabledField = 'ready'
+        component.viewActionVisibleField = 'visible'
+
+        const [viewMenuItem] = (component as any).mapGridMenuItems(
+          ['GRID#VIEW'],
+          [],
+          { id: 'id1', ready: false, visible: false },
+          { GRID_VIEW_KEY: 'View' }
+        )
+
+        expect(viewMenuItem.routerLink).toBe('/details')
+        expect(viewMenuItem.disabled).toBe(true)
+        expect(viewMenuItem.visible).toBe(false)
+        expect(viewMenuItem.command).toBeUndefined()
       })
 
       it('should show custom additional action buttons when user has the required permission', async () => {

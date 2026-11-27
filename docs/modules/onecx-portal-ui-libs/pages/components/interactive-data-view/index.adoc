@@ -10,6 +10,60 @@ This document aims to showcase how to manage InteractiveDataView Component.
 // TODO: How to import
 // TODO: How to use - storybook
 
+[#row-action-urls]
+== Row action URLs
+
+`DataView`, `DataTable`, and `DataListGrid` expose `viewActionUrl` and `editActionUrl` to navigate directly from a row's view and edit actions. Both use the `RowActionUrl` type: a `string` or a function `(data?) => string | undefined`.
+
+.Row action URL inputs
+[cols="1,2,5"]
+|===
+| Input | Type | Description
+
+| `viewActionUrl`
+| `RowActionUrl`
+| Sets the route for the row's view action.
+
+| `editActionUrl`
+| `RowActionUrl`
+| Sets the route for the row's edit action.
+|===
+
+For example, use a fixed URL to send all rows to the same route, or use a row callback to include a row identifier:
+
+[source, typescript]
+----
+viewActionUrl = '/items/details'
+editActionUrl = (item: Item) => `/items/${item.id}/edit`
+----
+
+The callback runs for the row whose action is being rendered or invoked. Return `undefined` to hide that row's action. The existing permission, visibility-field, and enabled-field checks still apply. When a URL input is set, it takes precedence over the corresponding view or edit output event; when it is omitted, the component continues to emit that event as before.
+
+These values are Angular router links, not external links. Relative routes (including `./` and `../`) resolve against the active route; a leading `/` resolves from the router root. Relative routes can be used to retain workspace or microfrontend route prefixes.
+
+[#data-action-router-link]
+=== DataAction routerLink
+
+Additional row actions can also resolve their route from the row using `DataAction.routerLink`. It accepts a fixed string, a function returning a string, a function returning a `Promise<string>`, or a `Promise<string>` directly:
+
+[source, typescript]
+----
+const actions: DataAction[] = [
+  {
+    id: 'open-item',
+    permission: 'ITEM_VIEW',
+    routerLink: (item: Item) => `/items/${item.id}`
+  },
+  {
+    id: 'open-latest-item',
+    permission: 'ITEM_VIEW',
+    routerLink: async (item: Item) => loadItemRoute(item.id)
+  }
+]
+----
+
+The row is passed to the function when the action is invoked. The resolved string is used as the router destination. In the table and list-grid inline actions, a fixed string is rendered as a router link; function or promise values are resolved when the action is clicked. If `routerLink` is not provided, the action's callback is invoked instead.
+
 // TODO: Overview of properties
 // TODO: Overview of interfaces related
 

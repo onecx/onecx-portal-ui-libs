@@ -112,6 +112,8 @@
         </div>
         <div class="flex flex-row">
           @if (viewItemObserved && (!viewActionVisibleField || fieldIsTruthy(item, viewActionVisibleField))) {
+          @let resolvedViewActionUrl = resolveRowActionUrl(viewActionUrl, item);
+          @if (viewActionUrl === undefined) {
           <button
             id="{{resolveFieldData(item, 'id')}}-viewButton"
             type="button"
@@ -127,9 +129,32 @@
             (click)="onViewRow(item)"
             *ocxIfPermission="viewPermission"
             [disabled]="!!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)"
-            [attr.name]="'data-list-action-button'"
+            [attr.data-testid]="'data-list-action-button'"
           ></button>
+          } @else if (resolvedViewActionUrl) {
+          @let viewActionDisabled = !!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField);
+          <a
+            id="{{resolveFieldData(item, 'id')}}-viewButton"
+            [routerLink]="viewActionDisabled ? null : resolvedViewActionUrl"
+            [attr.aria-disabled]="viewActionDisabled"
+            [attr.tabindex]="viewActionDisabled ? -1 : null"
+            pButton
+            class="p-button-rounded p-button-text mb-1 mr-2 viewListItemButton"
+            [class.p-disabled]="viewActionDisabled"
+            [ocxTooltip]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
+            tooltipPosition="top"
+            [tooltipOptions]="{
+              disabled: viewActionDisabled
+            }"
+            [attr.aria-label]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
+            *ocxIfPermission="viewPermission"
+            [attr.data-testid]="'data-list-action-button'"
+            icon="pi pi-eye"
+          ></a>
+          }
           } @if (editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))) {
+          @let resolvedEditActionUrl = resolveRowActionUrl(editActionUrl, item);
+          @if (editActionUrl === undefined) {
           <button
             id="{{resolveFieldData(item, 'id')}}-editButton"
             type="button"
@@ -145,8 +170,29 @@
             (click)="onEditRow(item)"
             *ocxIfPermission="editPermission"
             [disabled]="!!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)"
-            [attr.name]="'data-list-action-button'"
+            [attr.data-testid]="'data-list-action-button'"
           ></button>
+          } @else if (resolvedEditActionUrl) {
+          @let editActionDisabled = !!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField);
+          <a
+            id="{{resolveFieldData(item, 'id')}}-editButton"
+            [routerLink]="editActionDisabled ? null : resolvedEditActionUrl"
+            [attr.aria-disabled]="editActionDisabled"
+            [attr.tabindex]="editActionDisabled ? -1 : null"
+            pButton
+            class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
+            [class.p-disabled]="editActionDisabled"
+            icon="pi pi-pencil"
+            [ocxTooltip]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
+            tooltipPosition="top"
+            [tooltipOptions]="{
+              disabled: editActionDisabled
+            }"
+            [attr.aria-label]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
+            *ocxIfPermission="editPermission"
+            [attr.data-testid]="'data-list-action-button'"
+          ></a>
+          }
           } @if (deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))) {
           <button
             id="{{resolveFieldData(item, 'id')}}-deleteButton"
@@ -163,7 +209,7 @@
             (click)="onDeleteRow(item)"
             *ocxIfPermission="deletePermission"
             [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)"
-            [attr.name]="'data-list-action-button'"
+            [attr.data-testid]="'data-list-action-button'"
           ></button>
           } @for (action of inlineListActions$ | async; track action) { @if ((!action.actionVisibleField ||
           fieldIsTruthy(item, action.actionVisibleField))) { @if (typeof action.routerLink === 'string' &&
@@ -197,7 +243,7 @@
             }"
             [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
             [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
-            [attr.name]="'data-list-action-button'"
+            [attr.data-testid]="'data-list-action-button'"
           ></button>
           } } } @if (hasVisibleOverflowMenuItems(item, (permittedOverflowListActions$ | async) ?? [])) {
           <p-menu #menu [model]="(overflowListMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
