@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { TextDecoder, TextEncoder } from 'node:util'
 import { createElement, Fragment, useContext } from 'react'
 import type { CurrentLocationTopicPayload } from '@onecx/integration-interface'
+import type { NavigateFunction, NavigateOptions, To } from 'react-router'
 
 const loggerError = jest.fn()
 
@@ -68,11 +69,12 @@ jest.mock('react-router', () => {
   const actual = jest.requireActual<typeof import('react-router')>('react-router')
   return {
     ...actual,
-    useNavigate: () => {
+    useNavigate: (): NavigateFunction => {
       const navigate = actual.useNavigate()
-      return (to: Parameters<typeof navigate>[0], options?: Parameters<typeof navigate>[1]) => {
+      const mockedNavigate = (to: To, options?: NavigateOptions) => {
         if (!mockNavigateDisabled) navigate(mockNavigateRedirectTo ?? to, options)
       }
+      return mockedNavigate as unknown as NavigateFunction
     },
   }
 })
