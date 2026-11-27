@@ -177,6 +177,40 @@ Data::
 
 include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
 
+[#document-title-topic]
+=== Document Title Topic
+Usage::
+Hand the **document title of the active Microfrontend route** to the Shell, so the Shell stays the single writer of `document.title`. Microfrontends only publish to this Topic if the Shell announces the `ShellCapability.DOCUMENT_TITLE_TOPIC` (`'documentTitleTopic'`) capability.
+Shell actions::
+For Microfrontend routes, the Shell keeps the latest title per published `path` and uses the title of the most specific entry matching the current `document.location.pathname`, also when the entry is published after the navigation. A message without `title` (or with an empty one) removes the entry for exactly its `path`. Without a matching entry the Shell uses its own fallback title.
+Data::
+**Object** containing the title and the path it belongs to:
++
+[source,typescript]
+interface DocumentTitle {
+    title?: string; // undefined or empty = remove the entry for this path
+    path: string;   // exact path or path pattern (see Path patterns) the title belongs to
+}
+
+Angular Microfrontends (bootstrapped as webcomponents with their own router) opt in by providing the `MfeTitleStrategy` from `@onecx/angular-webcomponents`. If the Shell does not provide the capability, the strategy sets `document.title` like Angular's default title strategy, so the Microfrontend behaves as before in older Shells.
+
+[source,typescript]
+import { provideMfeTitleStrategy } from '@onecx/angular-webcomponents'
+
+@NgModule({
+  providers: [provideMfeTitleStrategy()],
+})
+export class AppModule {}
+
+Path patterns::
+`path` is either an exact path or a pattern. Wildcards are only recognized as whole path segments:
++
+* `*` matches exactly one segment, e.g. `/admin/users/*` matches `/admin/users/42`.
+* A trailing `**` matches zero or more remaining segments, e.g. `/admin/**` matches `/admin` and `/admin/users/42`.
+* A segment mixing text and wildcards (e.g. `user*`) is literal, a non-trailing `**` behaves like `*`, and a trailing `/` is ignored.
++
+If several entries match, the one with the **most literal characters** wins, then the one with fewer wildcard segments, then the most recently published one. An exact path therefore always wins over a pattern covering it. The `MfeTitleStrategy` publishes exact paths.
+
 [#events-topic]
 === Events Topic
 Usage::
