@@ -3,13 +3,9 @@
 
 @if (showWithdraw()) {
 <div class="w-full flex justify-center mt-1">
-  <a
-    (click)="resetConsent()"
-    class="cursor-pointer text-primary underline"
-    [attr.aria-label]="withdrawKey() | translate"
-  >
+  <button pButton type="button" [text]="true" class="ocx-consent__withdraw" (click)="resetConsent()">
     {{ withdrawKey() | translate }}
-  </a>
+  </button>
 </div>
 } } @else {
 <section
