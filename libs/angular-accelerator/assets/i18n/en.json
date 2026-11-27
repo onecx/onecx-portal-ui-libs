@@ -44,6 +44,15 @@
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Confirm",
     "CANCEL": "Cancel",
+    "DEFAULT_NAME": "Dialog",
+    "CLOSE": "Close dialog",
+    "SEVERITY": {
+      "SUCCESS": "Success",
+      "INFO": "Information",
+      "WARNING": "Warning",
+      "ERROR": "Error",
+      "QUESTION": "Question"
+    },
     "CONTENT_REGION": "Dialog content"
   },
   "OCX_CONSENT": {
@@ -250,7 +259,7 @@
     "SUBHEADER": "Page Content",
     "MORE_ACTIONS": "More actions",
     "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
-    "HOME_ARIA_LABEL": "Go to home page",
+    "HOME_ARIA_LABEL": "Go to {{page}} page",
     "BREADCRUMB_ARIA_LABEL": "Go to {{breadcrumb}} page"
   },
   "OCX_DIAGRAM": {

@@ -56,14 +56,26 @@ actor-specific tokens from Vault or requires consumer OIDC permissions.
 Author permission lookup failures and insufficient author access fail with
 `Review dispatch author authorization failed.` without exposing raw GitHub output.
 
-The workflow checks out only the trusted PR base commit for automatic requests,
-or the default branch for manual requests, with credential persistence disabled.
-It never checks out PR-head content. Manual Actions runs from other branches are
+The workflow loads its dispatcher, tests, and optional review guidance from
+`main` for every trigger, with credential persistence disabled. It does not
+inherit the PR target branch or base commit: release branches may have no
+automation files installed. It never checks out PR-head content.
+To explicitly use another trusted automation branch, tag, or commit, set the
+Actions repository variable `AI_REVIEW_AUTOMATION_REF`. This is a maintainer
+configuration choice, not a PR-supplied value.
+
+The central workflow is dispatched separately with `--ref main`, regardless of
+the consumer checkout or PR target. Set the Actions repository variable
+`AI_REVIEW_DISPATCH_REF` only when intentionally running another central
+workflow branch or tag. Both variables are optional and default to `main`;
+they do not replace the confidential destination secret.
+
+Manual Actions runs from branches other than the repository default branch are
 skipped. For fork reviews, the central review reads the head through this
 repository's `refs/pull/<number>/head`; it does not need separate access to the
 fork or permission to push to it.
 Optional additive review focus can be supplied in `.github/ai-review.md`
-on the trusted base/default branch (at most 4,000 JavaScript UTF-16 code units).
+on the selected trusted automation ref (at most 4,000 JavaScript UTF-16 code units).
 Missing or empty guidance uses the standard focus; oversized or unreadable
 guidance fails explicitly.
 
@@ -78,3 +90,8 @@ Offline dispatcher validation (no credentials or dependencies required):
 ```sh
 node --test .github/scripts/ai-review-dispatch.test.mjs
 ```
+
+Keep the adjacent `ai-review-dispatch.test-helpers.mjs` with the tests when
+deploying trusted automation. Test helpers and environment validation are
+extracted from the packaged setup to satisfy this repository's Clean Code guardrail;
+the authorization and dispatch contract is unchanged.

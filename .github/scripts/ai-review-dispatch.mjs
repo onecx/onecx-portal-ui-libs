@@ -38,7 +38,7 @@ function validatePullRequest(pullRequest, sourceRepository, number) {
   return parsedUrl.href
 }
 
-async function loadRequest(env) {
+function validateEnvironment(env) {
   const required = [
     'GITHUB_EVENT_NAME',
     'GITHUB_EVENT_PATH',
@@ -50,7 +50,10 @@ async function loadRequest(env) {
     'GH_READ_TOKEN',
   ]
   if (required.some((key) => !env[key])) validationError()
+}
 
+async function loadRequest(env) {
+  validateEnvironment(env)
   const sourceRepository = env.GITHUB_REPOSITORY
   const targetRepository = env.AI_REVIEW_DISPATCH_REPOSITORY
   const actor = env.GITHUB_ACTOR
@@ -219,7 +222,7 @@ export async function dispatchReview(env = process.env) {
     '--repo',
     request.targetRepository,
     '--ref',
-    'main',
+    env.AI_REVIEW_DISPATCH_REF || 'main',
     '-f',
     `pr_url=${pullRequestUrl}`,
     '-f',

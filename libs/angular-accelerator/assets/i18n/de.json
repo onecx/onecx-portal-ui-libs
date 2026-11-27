@@ -44,6 +44,15 @@
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Bestätigen",
     "CANCEL": "Abbrechen",
+    "DEFAULT_NAME": "Dialog",
+    "CLOSE": "Dialog schließen",
+    "SEVERITY": {
+      "SUCCESS": "Erfolg",
+      "INFO": "Information",
+      "WARNING": "Warnung",
+      "ERROR": "Fehler",
+      "QUESTION": "Frage"
+    },
     "CONTENT_REGION": "Dialoginhalt"
   },
   "OCX_CONSENT": {
