@@ -277,12 +277,18 @@ describe('LoadingIndicatorDirective', () => {
   describe('Reduced motion (WCAG 2.3.3 / 2.2.2) stylesheet coverage', () => {
     // The spinner animation and its reduced-motion override are pure CSS (no JS reads
     // `matchMedia` to toggle it), so they can only be covered by asserting on the stylesheet
-    // rather than the rendered DOM. SCSS is compiled to real CSS and the
-    // declarations that actually end up *inside* the reduced-motion `@media` block are inspected, so a
-    // matching rule that accidentally leaked outside the block (or that a greedy source
-    // regex would still match) cannot make the test pass.
-    const source = readFileSync(join(__dirname, 'loading-indicator.directive.scss'), 'utf-8')
-    const compiledCss = sass.compileString(source).css
+    // rather than the rendered DOM. The default spin is defined in the directive stylesheet,
+    // while the reduced-motion override lives in the shared `reduced-motion.scss` asset so that
+    // reduced-motion handling for every Optimus component stays in one place. SCSS is compiled to
+    // real CSS and the declarations that actually end up *inside* the reduced-motion `@media`
+    // block are inspected, so a matching rule that accidentally leaked outside the block (or that
+    // a greedy source regex would still match) cannot make the test pass.
+    const spinnerCss = sass.compileString(
+      readFileSync(join(__dirname, 'loading-indicator.directive.scss'), 'utf-8'),
+    ).css
+    const reducedMotionCss = sass.compileString(
+      readFileSync(join(__dirname, '../../../assets/reduced-motion.scss'), 'utf-8'),
+    ).css
 
     // Returns the declarations of every top-level `@media (prefers-reduced-motion: reduce)`
     // block, extracted from balanced braces so the media query's own closing brace is never
@@ -310,15 +316,21 @@ describe('LoadingIndicatorDirective', () => {
     }
 
     it('should spin the loader by default', () => {
-      expect(compiledCss).toMatch(/animation:\s*rotation 1s linear infinite/)
+      expect(spinnerCss).toMatch(/animation:\s*rotation 1s linear infinite/)
     })
 
     it('should disable the loader animation when the user prefers reduced motion', () => {
-      // The reduced-motion `@media` block must contain a `.loader` rule that sets
-      // `animation: none` so a static ring is shown.
-      const declarations = reducedMotionDeclarations(compiledCss)
+      // The reduced-motion `@media` block in `reduced-motion.scss` must contain a `.loader`
+      // rule that sets `animation: none` so a static ring is shown.
+      const declarations = reducedMotionDeclarations(reducedMotionCss)
       expect(declarations).not.toBe('')
       expect(declarations).toMatch(/\.loader\s*\{[^}]*animation:\s*none/)
+    })
+
+    it('should not define the reduced-motion override in the directive stylesheet', () => {
+      // The override must live only in `reduced-motion.scss`; a duplicate here would shadow
+      // the central rule and diverge from it.
+      expect(reducedMotionDeclarations(spinnerCss)).toBe('')
     })
   })
 })

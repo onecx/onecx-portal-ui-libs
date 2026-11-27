@@ -47,9 +47,8 @@ $loader-border-bottom-color: transparent;
 	}
 }
 
-/* WCAG 2.3.3 / 2.2.2: show a static ring instead of an infinite spin when the user prefers reduced motion */
-@media (prefers-reduced-motion: reduce) {
-	.loader {
-		animation: none;
-	}
-}
+/*
+ * Note: the `prefers-reduced-motion` override that stops this infinite spin
+ * lives in `assets/reduced-motion.scss` (`.loader { animation: none }`), so the
+ * reduced-motion handling for every Optimus component stays in one place.
+ */
