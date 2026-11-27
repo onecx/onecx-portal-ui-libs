@@ -30,10 +30,10 @@ export function consumerAiCompletionProvider(_request: AiCompletionRequest): Pro
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
-// Models often wrap JSON answers in a markdown code fence (```json ... ```) even when asked for plain JSON.
-const CODE_FENCE_PATTERN = /^```[^\n]*\n([\s\S]*?)\n?```$/
+// Models often wrap JSON answers in a markdown code fence (```json ... ```), sometimes after an introductory sentence.
+const CODE_FENCE_PATTERN = /```[^\n]*\n([\s\S]*?)\n?```/
 
-const unwrapCodeFence = (message: string): string => CODE_FENCE_PATTERN.exec(message.trim())?.[1] ?? message
+const unwrapCodeFence = (message: string): string => CODE_FENCE_PATTERN.exec(message)?.[1] ?? message
 
 /**
  * Thin service wrapper around AiCompletionGatherer that lets consumers request AI completions.
@@ -71,8 +71,8 @@ export class OneCXAiCompletionService {
     attempt: number
   ): Promise<T> {
     try {
-      const response = await this.requestCompletion(request)
-      const result = this.parseResponse(response, outputSchema)
+      const responses = await this.requestCompletions(request)
+      const result = this.parseFirstValidResponse(responses, outputSchema)
       this.logger.debug('getCompletion resolved', { agentId: request.agent.id })
       return result
     } catch (error) {
@@ -90,7 +90,7 @@ export class OneCXAiCompletionService {
     }
   }
 
-  private async requestCompletion(request: AiCompletionRequest): Promise<AiCompletionResponse> {
+  private async requestCompletions(request: AiCompletionRequest): Promise<AiCompletionResponse[]> {
     let providerResults: AiCompletionProviderResult[]
     try {
       providerResults = await withTimeout(
@@ -105,14 +105,31 @@ export class OneCXAiCompletionService {
       throw new AiProviderError('PROVIDER_ERROR', 'AI provider failed to handle the completion request')
     }
     let providerError: AiProviderError | undefined
+    const responses: AiCompletionResponse[] = []
     for (const result of providerResults) {
       if (isAiProviderError(result)) {
         providerError ??= result
       } else if (result) {
-        return result
+        responses.push(result)
       }
     }
+    if (responses.length > 0) {
+      return responses
+    }
     throw providerError ?? new AiProviderError('NO_PROVIDER', 'No AI provider responded to the completion request')
+  }
+
+  /** Returns the first response that parses and validates, so one malformed provider does not block the others. */
+  private parseFirstValidResponse<T>(responses: AiCompletionResponse[], outputSchema: ZodType<T>): T {
+    let firstError: unknown
+    for (const response of responses) {
+      try {
+        return this.parseResponse(response, outputSchema)
+      } catch (error) {
+        firstError ??= error
+      }
+    }
+    throw firstError
   }
 
   private parseResponse<T>(response: AiCompletionResponse, outputSchema: ZodType<T>): T {

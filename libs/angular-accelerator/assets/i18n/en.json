@@ -18,7 +18,6 @@
     "ACTION": "Task",
     "RUN": "Run",
     "RUNNING": "Generating result...",
-    "RESULT": "Result",
     "READY_TO_REVIEW": "Ready to review",
     "BEFORE": "Before",
     "AI_SUGGESTION": "AI suggestion · editable",
