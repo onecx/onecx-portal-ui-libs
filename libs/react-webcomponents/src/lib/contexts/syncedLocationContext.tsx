@@ -31,6 +31,7 @@ const toUrl = ({ pathname, search, hash }: { pathname: string; search: string; h
 const SHELL_SYNC_MARKER = '__onecxShellSync'
 const HISTORY_WRAPPER_MARKER = '__onecxRouterSyncWrapped'
 const TOPIC_NAVIGATION_TIMEOUT_MS = 1000
+const LATE_TOPIC_TARGET_TTL_MS = 5000
 const OWN_PUBLISH_TTL_MS = 5000
 const MAX_OWN_PUBLISHED_URLS = 10
 
@@ -142,6 +143,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigateRef = useRef(navigate)
   const topicNavigation = useRef<TopicNavigation | null>(null)
   const pendingTopicUrlRef = useRef<string | null>(null)
+  const lateTopicTargetsRef = useRef<{ target: string; expiresAt: number }[]>([])
   const ownPublishedUrlsRef = useRef<OwnPublish[]>([])
   const lastPublishedUrlRef = useRef(routerUrl)
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
@@ -167,16 +169,25 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
 
   const startTopicNavigation = (topicUrl: string) => {
     finishTopicNavigation()
+    const target = normalizeUrl(topicUrl)
     const timeout = setTimeout(() => {
       // Bounded guard: a navigation that never commits must not park later shell events.
+      // Its target is remembered so a late commit to it is still treated as topic-driven.
       topicNavigation.current = null
+      lateTopicTargetsRef.current.push({ target, expiresAt: Date.now() + LATE_TOPIC_TARGET_TTL_MS })
       flushPendingTopicUrl()
     }, TOPIC_NAVIGATION_TIMEOUT_MS)
-    topicNavigation.current = { target: normalizeUrl(topicUrl), locationKey: locationKeyRef.current, timeout }
+    topicNavigation.current = { target, locationKey: locationKeyRef.current, timeout }
     navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
   }
 
-  useEffect(() => finishTopicNavigation, [])
+  useEffect(
+    () => () => {
+      finishTopicNavigation()
+      lateTopicTargetsRef.current = []
+    },
+    []
+  )
 
   useEffect(() => {
     const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
@@ -251,6 +262,16 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
         return
       }
       // A competing navigation (not the shell target) committed: publish it below.
+    }
+
+    const now = Date.now()
+    lateTopicTargetsRef.current = lateTopicTargetsRef.current.filter((late) => late.expiresAt > now)
+    const lateIndex = lateTopicTargetsRef.current.findIndex((late) => late.target === normalizeUrl(routerUrl))
+    if (lateIndex !== -1) {
+      // The shell already knows this URL (it is the timed-out topic target), so it is not published back.
+      lateTopicTargetsRef.current.splice(lateIndex, 1)
+      lastPublishedUrlRef.current = routerUrl
+      return
     }
 
     if (routerUrl !== lastPublishedUrlRef.current) {
