@@ -781,6 +781,112 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
   })
 
+  describe('layout classes', () => {
+    it('should use the default object panel and object info layout when grid view is not set', () => {
+      expect(component.objectPanelLayoutClasses()).toBe('flex flex-col gap-y-2 md:flex-row md:justify-between')
+      expect(component.objectInfoLayoutClasses()).toBe('flex flex-row md:flex-col md:items-center md:gap-2')
+    })
+
+    it('should use grid layout classes when grid view is enabled', () => {
+      fixture.componentRef.setInput('enableGridView', true)
+      expect(component.objectPanelLayoutClasses()).toBe('grid grid-cols-12 gap-y-2 m-0')
+      expect(component.objectInfoLayoutClasses()).toBe(
+        'col-span-12 flex gap-4 md:col-span-6 items-center p-0 lg:col-span-4'
+      )
+    })
+
+    it('should divide 12 by the grid column count when gridLayoutDesktopColumns is set', () => {
+      fixture.componentRef.setInput('enableGridView', true)
+      fixture.componentRef.setInput('gridLayoutDesktopColumns', 6)
+      expect(component.objectInfoLayoutClasses()).toContain('lg:col-span-2')
+    })
+
+    it('should use column layout classes when grid view is disabled', () => {
+      fixture.componentRef.setInput('enableGridView', false)
+      expect(component.objectPanelLayoutClasses()).toBe('flex flex-row justify-between overflow-x-auto')
+      expect(component.objectInfoLayoutClasses()).toBe('flex flex-col items-center gap-2 min-w-[120px]')
+    })
+  })
+
+  describe('onAction and image error', () => {
+    it('should emit save for the save action and do nothing for unknown actions', () => {
+      const saveSpy = jest.fn()
+      component.save.subscribe(saveSpy)
+
+      component.onAction('save')
+      expect(saveSpy).toHaveBeenCalledTimes(1)
+
+      component.onAction('unknown')
+      expect(saveSpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should hide the figure image after an image load error', async () => {
+      fixture.componentRef.setInput('figureImage', 'assets/x.png')
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(fixture.nativeElement.querySelector('.figure img')).toBeTruthy()
+
+      component.handleImageError()
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(component.figureImageLoadError()).toBe(true)
+      expect(fixture.nativeElement.querySelector('.figure img')).toBeFalsy()
+    })
+  })
+
+  describe('conditional actions', () => {
+    it('should filter inline actions by showCondition when conditional is set', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'c1', label: 'Shown', show: 'always', conditional: true, showCondition: true },
+        { id: 'c2', label: 'Hidden', show: 'always', conditional: true, showCondition: false },
+        { id: 'c3', label: 'Always', show: 'always' },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(await pageHeaderHarness.getInlineActionButtonByLabel('Shown')).toBeTruthy()
+      expect(await pageHeaderHarness.getInlineActionButtonByLabel('Hidden')).toBeFalsy()
+      expect(await pageHeaderHarness.getInlineActionButtonByLabel('Always')).toBeTruthy()
+    })
+
+    it('should filter overflow actions by showCondition when conditional is set', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'c1', label: 'Shown', show: 'asOverflow', conditional: true, showCondition: true },
+        { id: 'c2', label: 'Hidden', show: 'asOverflow', conditional: true, showCondition: false },
+        { id: 'c3', label: 'Always', show: 'asOverflow' },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      expect(menuOverflowButton).toBeTruthy()
+      await menuOverflowButton?.click()
+
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(await menuItems[0].getText()).toBe('Shown')
+      expect(await menuItems[1].getText()).toBe('Always')
+      expect(menuItems).toHaveLength(2)
+    })
+
+    it('should translate an overflow action label from labelKey', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { OVERFLOW_KEY: 'Translated overflow' })
+      translate.use('en')
+
+      fixture.componentRef.setInput('actions', [{ id: 'lk', labelKey: 'OVERFLOW_KEY', show: 'asOverflow' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      expect(menuOverflowButton).toBeTruthy()
+      await menuOverflowButton?.click()
+
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(menuItems).toHaveLength(1)
+      expect(await menuItems[0].getText()).toBe('Translated overflow')
+    })
+  })
+
   describe('accessible names', () => {
     const cb = () => undefined
     let warnSpy: jest.SpyInstance
@@ -855,34 +961,58 @@ describe('PageHeaderComponent', () => {
 
     it('should resolve inline action names from translation keys and fall back through the chain', async () => {
       const translate = TestBed.inject(TranslateService)
-      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello', TITLE: 'Title key', EMPTY: '' })
+      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key' })
       translate.use('en')
-      const actions = [
-        { labelKey: 'LBL', ariaLabel: 'x' },
-        { ariaLabelKey: 'ARIA' },
-        { ariaLabelKey: 'EMPTY', titleKey: 'TITLE' },
-        {},
-      ] as Action[]
-      fixture.componentRef.setInput('actions', actions)
+      expect(component.getInlineActionAriaLabel({ labelKey: 'LBL', ariaLabel: 'x' } as Action)).toBeUndefined()
+      expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
+      expect(component.getInlineActionAriaLabel({ titleKey: 'TITLE' } as Action)).toEqual({ key: 'TITLE' })
+
+      fixture.componentRef.setInput('actions', [
+        {
+          id: 'a1',
+          icon: 'pi pi-lock',
+          ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } },
+          show: 'always',
+          actionCallback: cb,
+        },
+        { id: 'a2', icon: 'pi pi-lock', titleKey: 'TITLE', show: 'always', actionCallback: cb },
+      ])
       fixture.detectChanges()
       await fixture.whenStable()
-      expect(component.getInlineActionAriaLabel(actions[0])).toBeUndefined()
-      expect(component.getInlineActionAriaLabel(actions[1])).toBe('Hello')
-      expect(component.getInlineActionAriaLabel(actions[2])).toBe('Title key')
-      expect(component.getInlineActionAriaLabel(actions[3])).toBeUndefined()
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('#a1 button, button#a1').getAttribute('aria-label')).toBe(
+        'Hello World'
+      )
+      expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title key')
     })
 
-    it('should resolve translation keys with parameters', async () => {
+    it('should fall back to the accessible name chain for icon-only overflow actions without a label', async () => {
       const translate = TestBed.inject(TranslateService)
-      translate.setTranslation('en', { ARIA: 'Hello {{name}}' })
+      translate.setTranslation('en', { ARIA_KEY: 'Aria from key', TITLE_KEY: 'Title from key' })
       translate.use('en')
-      const details = [
-        { label: 'Status', actionItemAriaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } },
-      ] as ObjectDetailItem[]
-      fixture.componentRef.setInput('objectDetails', details)
+
+      fixture.componentRef.setInput('actions', [
+        { id: 'ov1', icon: 'pi pi-lock', ariaLabel: 'Aria', show: 'asOverflow', actionCallback: cb },
+        { id: 'ov2', icon: 'pi pi-lock', title: 'Title only', show: 'asOverflow', actionCallback: cb },
+        { id: 'ov3', icon: 'pi pi-lock', ariaLabelKey: 'ARIA_KEY', show: 'asOverflow', actionCallback: cb },
+        { id: 'ov4', icon: 'pi pi-lock', titleKey: 'TITLE_KEY', show: 'asOverflow', actionCallback: cb },
+        { id: 'ov5', icon: 'pi pi-lock', label: 'Labeled', ariaLabel: 'Aria', show: 'asOverflow', actionCallback: cb },
+      ])
       fixture.detectChanges()
       await fixture.whenStable()
-      expect(component.getActionItemAriaLabel(details[0])).toBe('Hello World')
+      fixture.detectChanges()
+
+      const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+      expect(menuOverflowButton).toBeTruthy()
+      await menuOverflowButton?.click()
+
+      const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+      expect(menuItems).toHaveLength(5)
+      expect(await menuItems[0].getText()).toBe('Aria')
+      expect(await menuItems[1].getText()).toBe('Title only')
+      expect(await menuItems[2].getText()).toBe('Aria from key')
+      expect(await menuItems[3].getText()).toBe('Title from key')
+      expect(await menuItems[4].getText()).toBe('Labeled')
     })
 
     it('should render the figure image as decorative and the subheader as plain content', async () => {
@@ -905,5 +1035,41 @@ describe('PageHeaderComponent', () => {
       fixture.detectChanges()
       expect(fixture.nativeElement.querySelector('[name="object-detail-value"] .sr-only').textContent).toBe('Confirmed')
     })
+  })
+})
+
+describe('PageHeaderComponent permission provider fallback', () => {
+  it('should filter actions by permission via the user service when no permission checker is provided', async () => {
+    const userMock = new UserServiceMock()
+    userMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
+
+    await TestBed.configureTestingModule({
+      declarations: [PageHeaderComponent, DynamicPipe, TestRouteComponent],
+      imports: [BreadcrumbModule, MenuModule, ButtonModule, TooltipModule, AngularAcceleratorModule],
+      providers: [
+        provideTranslateTestingService({
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
+        }),
+        { provide: UserService, useValue: userMock },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideAppStateServiceMock(),
+        provideRouter([{ path: '**', component: TestRouteComponent }]),
+        provideBreadcrumbServiceMock(),
+      ],
+    }).compileComponents()
+
+    const fixture = TestBed.createComponent(PageHeaderComponent)
+    fixture.componentRef.setInput('actions', [
+      { id: 'allowed', label: 'Allowed', show: 'always', permission: 'TEST#TEST_PERMISSION' },
+      { id: 'denied', label: 'Denied', show: 'always', permission: 'OTHER#PERMISSION' },
+    ])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
+    expect(await harness.getInlineActionButtonByLabel('Allowed')).toBeTruthy()
+    expect(await harness.getInlineActionButtonByLabel('Denied')).toBeFalsy()
   })
 })
