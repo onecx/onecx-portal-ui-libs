@@ -73,6 +73,21 @@
       display: none !important;
     }
   }
+  .object-info-action-button {
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
 }
 
 .badge-container {
@@ -87,12 +102,25 @@
   transform: scale(2);
 }
 
+// Long unbroken object detail labels/values wrap instead of overflowing the header (WCAG 1.4.10)
+.object-info {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .object-info-grid-label {
   flex: 1;
 }
 
 .object-info-grid-value {
   flex: 3;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.object-detail-value {
+  width: fit-content;
+  max-width: 100%;
 }
 
 .min-w-120 {
@@ -102,10 +130,10 @@
 
 // Primng Bug: Tooltip not being shown for disabled menu items
 // Keep the disabled item non-clickable while allowing the <li> to hover
-.p-menu .p-menu-item.p-disabled{
+.p-menu .p-menu-item.p-disabled {
   pointer-events: auto;
 }
 
-.p-menu .p-menu-item.p-disabled > .p-menu-item-content{
+.p-menu .p-menu-item.p-disabled > .p-menu-item-content {
   pointer-events: none;
 }
