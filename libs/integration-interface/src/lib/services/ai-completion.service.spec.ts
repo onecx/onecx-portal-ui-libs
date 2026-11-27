@@ -85,6 +85,12 @@ describe('OneCXAiCompletionService', () => {
     await expect(service.getCompletion(sampleInput)).resolves.toEqual({ answer: 'yes' })
   })
 
+  it('should keep valid JSON whose string value contains a code fence', async () => {
+    gathererMock.gather.mockResolvedValue([jsonResponse('{"answer":"use ```ts\\nfoo\\n``` here"}')])
+
+    await expect(service.getCompletion(sampleInput)).resolves.toEqual({ answer: 'use ```ts\nfoo\n``` here' })
+  })
+
   it('should use a later provider when the first response is not valid', async () => {
     gathererMock.gather.mockResolvedValue([jsonResponse('not json'), jsonResponse('{"answer":"second"}')])
 
