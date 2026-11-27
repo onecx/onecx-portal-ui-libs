@@ -159,7 +159,6 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigateRef = useRef(navigate)
   const lastPublishedUrlRef = useRef(routerUrl)
   const ownPublishedUrlsRef = useRef<OwnPublish[]>([])
-  const shellEntryKeysRef = useRef<string[]>([])
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
   useLayoutEffect(() => {
@@ -217,16 +216,14 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     if (locationHook.pathname !== currentLocation.url) {
       setCurrentLocation({ url: locationHook.pathname, isFirst: false })
     }
-    // The shell-requested navigation carries isRouterSync on the history entry it committed.
-    // That marker is consumed by its first commit: a later back/forward traversal to the same entry
-    // is an ordinary navigation of the app and must be published.
-    const entryKey = window.history.state?.key as string | undefined
-    if (
-      window.history.state?.isRouterSync === true &&
-      entryKey !== undefined &&
-      !shellEntryKeysRef.current.includes(entryKey)
-    ) {
-      shellEntryKeysRef.current = [...shellEntryKeysRef.current.slice(-49), entryKey]
+    // The shell-requested navigation marks the history entry it committed with isRouterSync.
+    // The marker is consumed here: it is removed from that entry with a native replaceState, which
+    // bypasses the wrapper and the shell patch so nothing is published. The entry is then an ordinary
+    // app entry, so back/forward to it is published, and this holds across reloads and remounts.
+    if (window.history.state?.isRouterSync === true) {
+      const entryState = { ...window.history.state }
+      delete entryState.isRouterSync
+      History.prototype.replaceState.call(window.history, entryState, '', window.location.href)
       lastPublishedUrlRef.current = routerUrl
       return
     }

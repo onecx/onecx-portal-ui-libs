@@ -736,6 +736,68 @@ describe('SyncedRouterProvider', () => {
     )
   })
 
+  it('publishes traversal to a shell entry after many shell navigations', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+    await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+
+    for (let i = 0; i < 60; i++) {
+      publishLocation({ url: `${appBase}/subpage/record-${i + 2}`, isFirst: false })
+    }
+    mockPublishedLocations.length = 0
+
+    act(() => window.history.go(-61))
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`))
+    await waitFor(() =>
+      expect(mockPublishedLocations).toContainEqual({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+    )
+  })
+
+  it('publishes traversal to a shell entry after the router remounted', async () => {
+    const first = renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+    await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    first.unmount()
+
+    renderRouter()
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockPublishedLocations.length = 0
+
+    act(() => window.history.back())
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`))
+    await waitFor(() =>
+      expect(mockPublishedLocations).toContainEqual({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+    )
+  })
+
+  it('publishes each repeated traversal to the same shell entry', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+    await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    mockPublishedLocations.length = 0
+
+    for (let round = 0; round < 2; round++) {
+      act(() => window.history.back())
+      await waitFor(() => expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`))
+      act(() => window.history.forward())
+      await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    }
+
+    expect(mockPublishedLocations.filter((p) => p.url === '/app/sample-app/subpage/record-1')).toHaveLength(2)
+  })
+
   it('still applies shell events after own echoes were consumed', async () => {
     renderRouter()
 
