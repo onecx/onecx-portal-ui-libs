@@ -27,12 +27,24 @@ export function consumerAiCompletionProvider(_request: AiCompletionRequest): Pro
   return Promise.resolve(null)
 }
 
+// The whole message is tried first, so JSON that contains a code fence inside a string value is not altered.
+const parseJson = (message: string): unknown => {
+  try {
+    return JSON.parse(message.trim())
+  } catch {
+    return JSON.parse(unwrapCodeFence(message).trim())
+  }
+}
+
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
 // Models often wrap JSON answers in a markdown code fence (```json ... ```), sometimes after an introductory sentence.
-const CODE_FENCE_PATTERN = /```[^\n]*\n([\s\S]*?)\n?```/
-
-const unwrapCodeFence = (message: string): string => CODE_FENCE_PATTERN.exec(message)?.[1] ?? message
+const unwrapCodeFence = (message: string): string => {
+  const open = message.indexOf('```')
+  const bodyStart = open === -1 ? -1 : message.indexOf('\n', open)
+  const close = bodyStart === -1 ? -1 : message.indexOf('```', bodyStart)
+  return close === -1 ? message : message.slice(bodyStart + 1, close)
+}
 
 /**
  * Thin service wrapper around AiCompletionGatherer that lets consumers request AI completions.
@@ -127,7 +139,7 @@ export class OneCXAiCompletionService {
   private parseResponse<T>(response: AiCompletionResponse, outputSchema: ZodType<T>): T {
     let parsed: unknown
     try {
-      parsed = JSON.parse(unwrapCodeFence(response.message).trim())
+      parsed = parseJson(response.message)
     } catch {
       throw new AiProviderError('INVALID_JSON', 'AI completion response is not valid JSON')
     }
