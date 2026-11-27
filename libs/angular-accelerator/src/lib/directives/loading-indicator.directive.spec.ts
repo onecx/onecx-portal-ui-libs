@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
+import * as sass from 'sass'
 import { Component, DebugElement, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
@@ -280,19 +281,48 @@ describe('LoadingIndicatorDirective', () => {
   describe('Reduced motion (WCAG 2.3.3 / 2.2.2) stylesheet coverage', () => {
     // The spinner animation and its reduced-motion override are pure CSS (no JS reads
     // `matchMedia` to toggle it), so they can only be covered by asserting on the stylesheet
-    // itself rather than the rendered DOM.
-    const stylesheet = readFileSync(join(__dirname, 'loading-indicator.directive.scss'), 'utf-8')
+    // rather than the rendered DOM. SCSS is compiled to real CSS and the
+    // declarations that actually end up *inside* the reduced-motion `@media` block are inspected, so a
+    // matching rule that accidentally leaked outside the block (or that a greedy source
+    // regex would still match) cannot make the test pass.
+    const source = readFileSync(join(__dirname, 'loading-indicator.directive.scss'), 'utf-8')
+    const compiledCss = sass.compileString(source).css
+
+    // Returns the declarations of every top-level `@media (prefers-reduced-motion: reduce)`
+    // block, extracted from balanced braces so the media query's own closing brace is never
+    // confused with an inner rule's closing brace.
+    function reducedMotionDeclarations(css: string): string {
+      const mediaPattern = /@media\s*\(\s*prefers-reduced-motion:\s*reduce\s*\)\s*\{/g
+      let declarations = ''
+      let match: RegExpExecArray | null
+      while ((match = mediaPattern.exec(css)) !== null) {
+        const bodyStart = match.index + match[0].length
+        let depth = 1
+        let cursor = bodyStart
+        while (cursor < css.length && depth > 0) {
+          const char = css[cursor]
+          if (char === '{') {
+            depth++
+          } else if (char === '}') {
+            depth--
+          }
+          cursor++
+        }
+        declarations += css.slice(bodyStart, cursor - 1)
+      }
+      return declarations
+    }
 
     it('should spin the loader by default', () => {
-      expect(stylesheet).toMatch(/animation:\s*rotation 1s linear infinite/)
+      expect(compiledCss).toMatch(/animation:\s*rotation 1s linear infinite/)
     })
 
     it('should disable the loader animation when the user prefers reduced motion', () => {
-      // The @media block must target .loader and set `animation: none` so a static ring is shown.
-      const reducedMotionRule = /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*\.loader\s*\{[\s\S]*animation:\s*none[\s\S]*\}/.exec(
-        stylesheet
-      )
-      expect(reducedMotionRule).not.toBeNull()
+      // The reduced-motion `@media` block must contain a `.loader` rule that sets
+      // `animation: none` so a static ring is shown.
+      const declarations = reducedMotionDeclarations(compiledCss)
+      expect(declarations).not.toBe('')
+      expect(declarations).toMatch(/\.loader\s*\{[^}]*animation:\s*none/)
     })
   })
 })

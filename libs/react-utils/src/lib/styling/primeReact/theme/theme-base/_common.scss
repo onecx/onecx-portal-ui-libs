@@ -85,9 +85,17 @@
  * `animationend` / `transitionend` still fire and `forwards` animations keep
  * their end state.
  *
- * `:not(#\#)` matches every element (no element has the id "#") but lifts
- * the selector to ID-level specificity, so these rules win over every
- * class-based PrimeReact animation rule without resorting to `!important`.
+ * These rules are emitted inside the `primereact` cascade layer (via
+ * `_components.scss`), so they only compete with other rules in that layer.
+ * `:not(#\#)` matches every element (no element has the id "#") but lifts the
+ * selector to ID-level specificity, so these rules win over the class-based
+ * PrimeReact animation rules in the same layer without resorting to
+ * `!important`.
+ *
+ * Limitation: rules in other layers or unlayered consumer styles still take
+ * precedence over them, as do inline styles/durations (e.g. set by a motion
+ * directive). This differs from the Angular `reduced-motion.scss` asset, which
+ * uses `!important` precisely to beat such inline/out-of-layer overrides.
  */
 @media (prefers-reduced-motion: reduce) {
   :is(.p-component, .p-progress-spinner, .p-component-overlay):not(#\#),
