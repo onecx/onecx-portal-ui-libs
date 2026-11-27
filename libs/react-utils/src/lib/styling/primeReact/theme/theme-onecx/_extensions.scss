@@ -1,10 +1,3 @@
-@mixin focused-ring($ring-color) {
-  box-shadow:
-    0 0 0 2px #ffffff,
-    0 0 0 4px $ring-color,
-    0 1px 2px 0 rgba(0, 0, 0, 1);
-}
-
 @layer primereact {
   .p-button-label {
     font-weight: 700;
@@ -67,38 +60,6 @@
     }
   }
 
-  .p-button {
-    &:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$buttonBg}));
-    }
-
-    &.p-button-secondary:enabled:focus {
-      @include focused-ring(
-        color-mix(in srgb, #fff 50%, #{$secondaryButtonBg})
-      );
-    }
-
-    &.p-button-success:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$successButtonBg}));
-    }
-
-    &.p-button-info:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$infoButtonBg}));
-    }
-
-    &.p-button-warning:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$warningButtonBg}));
-    }
-
-    &.p-button-help:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$helpButtonBg}));
-    }
-
-    &.p-button-danger:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$dangerButtonBg}));
-    }
-  }
-
   .p-datatable {
     .p-datatable-tbody {
       > tr {
@@ -115,7 +76,7 @@
 
   .p-speeddial-item {
     &.p-focus > .p-speeddial-action {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$buttonBg}));
+      @include focused();
     }
   }
 
