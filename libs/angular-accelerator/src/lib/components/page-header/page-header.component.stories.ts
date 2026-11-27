@@ -443,6 +443,74 @@ export const WithObjectDetailsAndStyledIcons = {
   },
 }
 
+// A11y: demonstrate that a visible label wins over title/ariaLabel (WCAG 2.5.3).
+// label, title and ariaLabel are intentionally all different so the accessible
+// name can be confirmed to be the visible label, not the tooltip/aria string.
+const actionsWithDifferingLabelAndTitle: Action[] = [
+  {
+    id: 'save',
+    label: 'Save',
+    title: 'Tooltip for Save',
+    ariaLabel: 'Aria label for Save',
+    actionCallback: () => {
+      console.log("you clicked 'Save'")
+      action('actionButtonClick')({ button: 'Save' })
+    },
+    show: 'always',
+  },
+  {
+    id: 'lock',
+    icon: PrimeIcons.LOCK,
+    title: 'Title only',
+    ariaLabel: 'Aria label for lock',
+    actionCallback: () => {
+      console.log("you clicked 'lock'")
+      action('actionButtonClick')({ button: 'lock' })
+    },
+    show: 'always',
+  },
+]
+
+export const ActionsWithDifferingLabelAndTitle = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'Visible labels win over title/ariaLabel; icon-only actions fall back to ariaLabel then title',
+    loading: false,
+    actions: actionsWithDifferingLabelAndTitle,
+    showBreadcrumbs: false,
+  },
+}
+
+// A11y: an icon-only object detail (no value) with a valueTooltipKey.
+// The component renders the translated tooltip as a sr-only text alternative.
+// Uses a real key so the name also resolves to German in a German-locale run.
+const objectDetailsIconOnlyWithTooltip: ObjectDetailItem[] = [
+  {
+    label: 'Event Completed',
+    icon: PrimeIcons.CHECK_CIRCLE,
+    valueTooltipKey: 'pageheader.valueTooltip',
+  },
+  {
+    label: 'Needs Review',
+    icon: PrimeIcons.INFO_CIRCLE,
+    valueTooltipKey: { key: 'pageheader.statusValueTooltip', parameters: { value: 'needs review' } },
+  },
+]
+
+export const ObjectDetailsIconOnlyWithTooltip = {
+  render: Template,
+
+  args: {
+    header: 'Test Page',
+    subheader: 'Icon-only object details expose their tooltip as a screen-reader-only text alternative',
+    loading: false,
+    objectDetails: objectDetailsIconOnlyWithTooltip,
+    showBreadcrumbs: false,
+  },
+}
+
 export const DefaultLayout = {
   render: Template,
 
