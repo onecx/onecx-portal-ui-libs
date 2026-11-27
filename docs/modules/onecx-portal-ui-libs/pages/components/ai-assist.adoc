@@ -8,7 +8,7 @@
 
 `ocx-ai-assist` is an inline AI helper for a text field. It wraps an input, adds a toggle button, and opens a panel where the user picks an AI agent and a task (Translate, Summarize, Generate, or a host-defined action), runs it on the field text, reviews the suggestion, and either replaces the text or discards it.
 
-Agents are loaded from the AI provider through the `aiAgent` gatherer. The panel loads them the first time it is opened and reuses them for 60 seconds across all assistants on the page. Empty lists are not cached, so the next open asks again. A lookup that does not answer within 15 seconds fails with a retryable timeout error.
+Agents are loaded from the AI provider through the `aiAgent` gatherer. The panel loads them the first time it is opened and reuses them for 60 seconds across all assistants on the page. Empty lists are not cached, so the next open asks again. A lookup that does not answer within 15 seconds fails with a timeout error, and the user can retry it with Try again.
 
 [#usage]
 == Usage
