@@ -25,6 +25,19 @@ describe('OneCXAiAgentService', () => {
     gathererMock = getGathererMock(service)
   })
 
+  it('should reject with a TIMEOUT error when the gatherer never answers', async () => {
+    jest.useFakeTimers()
+    try {
+      gathererMock.gather.mockReturnValue(new Promise(() => undefined))
+      const pending = service.getAgents(sampleRequest)
+      const assertion = expect(pending).rejects.toMatchObject({ code: 'TIMEOUT' })
+      jest.advanceTimersByTime(15000)
+      await assertion
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
   it('should create the aiAgentGatherer during construction', () => {
     expect(gathererMock).toBeTruthy()
     expect(getGathererMock(new OneCXAiAgentService())).not.toBe(gathererMock)
