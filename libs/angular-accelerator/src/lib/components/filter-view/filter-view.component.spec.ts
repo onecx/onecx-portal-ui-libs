@@ -147,6 +147,30 @@ describe('FilterViewComponent (class logic)', () => {
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
   })
 
+  it('should remove a chip and focus the manage button when there is no chip to focus (button display mode)', () => {
+    const focus = jest.fn()
+    ;(component as any).manageButton = () => ({ el: { nativeElement: { firstChild: { focus } } } })
+    fixture.componentRef.setInput('filters', [{ columnId: 'c1', value: 'remove' } as Filter])
+    fixture.detectChanges()
+
+    expect(component.addFilterChip()).toBeUndefined()
+    component.onChipRemoveClick({ columnId: 'c1', value: 'remove' } as Filter, 0)
+    fixture.detectChanges()
+
+    expect(component.stateService.filters()).toEqual([])
+    expect(focus).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not fail when no element is left to focus after removing a chip', () => {
+    ;(component as any).manageButton = () => undefined
+    fixture.componentRef.setInput('filters', [{ columnId: 'c1', value: 'remove' } as Filter])
+    fixture.detectChanges()
+
+    component.onChipRemoveClick({ columnId: 'c1', value: 'remove' } as Filter, 0)
+    expect(() => fixture.detectChanges()).not.toThrow()
+    expect(component.stateService.filters()).toEqual([])
+  })
+
   it('should delete filter by row valueColumnId/value by calling service setFilters when onFilterDelete is called', () => {
     const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
 
@@ -161,6 +185,21 @@ describe('FilterViewComponent (class logic)', () => {
 
     expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
+  })
+
+  describe('removeFilterValue (accessible name of the remove button)', () => {
+    it('should return printable strings and numbers', () => {
+      expect(component.removeFilterValue({ id: 'r', value: 'abc' } as any)).toBe('abc')
+      expect(component.removeFilterValue({ id: 'r', value: 42 } as any)).toBe('42')
+    })
+
+    it('should return undefined for values that are not plain text so the generic name is used', () => {
+      expect(component.removeFilterValue({ id: 'r', value: true } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: { a: 1 } } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: new Date() } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: '  ' } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r' } as any)).toBeUndefined()
+    })
   })
 
   it('should open the add filter dialog via PortalDialogService in onAddFilter', async () => {
@@ -359,6 +398,23 @@ describe('FilterViewComponent (class logic)', () => {
 
     expect(component.trigger()).toBe(event.srcElement)
     expect(panelMock.toggle).toHaveBeenCalledWith(event)
+  })
+
+  it('should prefer currentTarget over srcElement as trigger in showPanel', () => {
+    const event = { currentTarget: { id: 'button' }, srcElement: { id: 'inner-text' } } as any
+
+    component.showPanel(event)
+
+    expect(component.trigger()).toBe(event.currentTarget)
+    expect(panelMock.toggle).toHaveBeenCalledWith(event)
+  })
+
+  it('should set the trigger without a panel to toggle in showPanel', () => {
+    ;(component as any).panel = () => undefined
+    const event = { currentTarget: { id: 'button' } } as any
+
+    expect(() => component.showPanel(event)).not.toThrow()
+    expect(component.trigger()).toBe(event.currentTarget)
   })
 
   it('should expose helpers: getColumnForFilter, getColumn, resolveFieldData, row mapping helpers', () => {
