@@ -1,3 +1,6 @@
+import { readFileSync } from 'fs'
+import { join } from 'path'
+import * as sass from 'sass'
 import { Component, DebugElement } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
@@ -268,6 +271,70 @@ describe('LoadingIndicatorDirective', () => {
       fixture.detectChanges()
       expect(nativeElement.classList.contains('element-overlay')).toBe(true)
       expect(nativeElement.querySelector('.loader')).toBeTruthy()
+    })
+  })
+
+  describe('Reduced motion (WCAG 2.3.3 / 2.2.2) stylesheet coverage', () => {
+    // The spinner animation and its reduced-motion override are pure CSS (no JS reads
+    // `matchMedia` to toggle it), so they can only be covered by asserting on the stylesheet
+    // rather than the rendered DOM. The default spin is defined in the directive stylesheet,
+    // while the reduced-motion override lives in the shared `reduced-motion.scss` asset so that
+    // reduced-motion handling for every Optimus component stays in one place. SCSS is compiled to
+    // real CSS and the declarations that actually end up *inside* the reduced-motion `@media`
+    // block are inspected, so a matching rule that accidentally leaked outside the block (or that
+    // a greedy source regex would still match) cannot make the test pass.
+    const spinnerCss = sass.compileString(
+      readFileSync(join(__dirname, 'loading-indicator.directive.scss'), 'utf-8'),
+    ).css
+    const reducedMotionCss = sass.compileString(
+      readFileSync(join(__dirname, '../../../assets/reduced-motion.scss'), 'utf-8'),
+    ).css
+
+    // Returns the declarations of every top-level `@media (prefers-reduced-motion: reduce)`
+    // block, extracted from balanced braces so the media query's own closing brace is never
+    // confused with an inner rule's closing brace.
+    function reducedMotionDeclarations(css: string): string {
+      const mediaPattern = /@media\s*\(\s*prefers-reduced-motion:\s*reduce\s*\)\s*\{/g
+      let declarations = ''
+      let match: RegExpExecArray | null
+      while ((match = mediaPattern.exec(css)) !== null) {
+        const bodyStart = match.index + match[0].length
+        let depth = 1
+        let cursor = bodyStart
+        while (cursor < css.length && depth > 0) {
+          const char = css[cursor]
+          if (char === '{') {
+            depth++
+          } else if (char === '}') {
+            depth--
+          }
+          cursor++
+        }
+        declarations += css.slice(bodyStart, cursor - 1)
+      }
+      return declarations
+    }
+
+    it('should spin the loader by default', () => {
+      expect(spinnerCss).toMatch(/animation:\s*rotation 1s linear infinite/)
+    })
+
+    it('should disable the loader animation when the user prefers reduced motion', () => {
+      // The reduced-motion `@media` block in `reduced-motion.scss` must set `animation: none`
+      // on the spinner. It is scoped with the *child* combinator to the library's own overlay
+      // wrappers (`.element-overlay` for the in-element spinner, `.full-overlay > .overlay` for
+      // the full-page one) so it stops both of the library's spinners without disabling an
+      // unrelated `.loader` nested in a host's content (e.g. a table or card a consumer renders
+      // inside the host element).
+      const declarations = reducedMotionDeclarations(reducedMotionCss)
+      expect(declarations).not.toBe('')
+      // The exact child-combinator group (both spinner variants) followed by `animation: none`
+      // before the closing brace. Matching the selector list as one unit means a bare,
+      // unscoped `.loader` rule — which would leak the override onto consumer apps — cannot
+      // satisfy this.
+      expect(declarations).toMatch(
+        /\.element-overlay\s*>\s*\.loader,\s*\.full-overlay\s*>\s*\.overlay\s*>\s*\.loader\s*\{[^}]*animation:\s*none/,
+      )
     })
   })
 })

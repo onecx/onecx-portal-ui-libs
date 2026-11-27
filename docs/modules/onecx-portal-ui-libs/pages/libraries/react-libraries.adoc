@@ -29,3 +29,7 @@ The React libraries in `onecx-portal-ui-libs` provide building blocks for integr
 | **@onecx/react-webcomponents**
 | Helpers for using web components in React-based OneCX microfrontends.
 |===
+
+[#theming]
+== Theming
+The `@onecx/react-utils` PrimeReact theme (`theme-onecx`) honours `prefers-reduced-motion` for PrimeReact components out of the box: the reduced-motion rules ship with the theme, so no extra import is required. Note that these rules live inside the `primereact` cascade layer, so unlayered consumer styles and inline animation durations are not overridden by them.

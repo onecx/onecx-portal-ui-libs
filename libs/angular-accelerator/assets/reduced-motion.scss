@@ -1,0 +1,53 @@
+/*
+ * WCAG 2.3.3 (Animation from Interactions) and 2.2.2 (Pause, Stop, Hide):
+ * when the operating system asks for reduced motion, PrimeNG components run
+ * their animations and transitions in a single, near-instant step. Infinite
+ * effects (skeleton shimmer, spinning loading icons, progress spinners) stop
+ * and overlays (dialogs, popovers, dropdown panels, masks) open and close
+ * without a visible transition.
+ *
+ * A short duration is used instead of `animation: none` / `transition: none`
+ * so that `animationend` / `transitionend` still fire for code that waits for
+ * them. `!important` is needed to win over the inline animation durations set
+ * by PrimeNG's animation system.
+ *
+ * The progress spinner root does not carry `.p-component`, so it is listed
+ * explicitly. The loading-indicator spinner (`.loader`) is likewise not a
+ * `.p-component`; it is scoped to the library's own overlay wrappers (see the
+ * `.loader` rule below) so this global override does not disable unrelated
+ * `.loader` elements in a consumer app. It uses `animation: none` rather than a
+ * 1ms step so the ring reads as fully static: it is a decorative spinner with no
+ * `animationend` to resolve.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .p-component,
+  .p-component *,
+  .p-component::before,
+  .p-component::after,
+  .p-component *::before,
+  .p-component *::after,
+  .p-progressspinner,
+  .p-progressspinner *,
+  .p-progress-spinner,
+  .p-progress-spinner *,
+  .p-overlay-mask {
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }
+
+  /* Loading-indicator spinner (see `loading-indicator.directive.scss`). It is a
+   * standalone `.loader` element rather than a `.p-component`, so it is not
+   * covered by the rules above. It is scoped to the library's own overlay
+   * wrappers with the *child* combinator — `.loader` is appended as a direct
+   * child of the `.element-overlay` host (and the full-page spinner is
+   * `.full-overlay > .overlay > .loader`) — so this global override disables
+   * only the library's spinner, not an unrelated `.loader` nested in a host's
+   * content. `!important` wins over the default spin. */
+  .element-overlay > .loader,
+  .full-overlay > .overlay > .loader {
+    animation: none !important;
+  }
+}
