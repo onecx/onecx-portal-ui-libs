@@ -1,6 +1,13 @@
 import { ChangeDetectorRef, NgZone, OnDestroy, Pipe, PipeTransform, inject } from '@angular/core'
 import { TranslatePipe } from '@ngx-translate/core'
 
+interface TimeAgoTimes {
+  seconds: number
+  minutes: number
+  hours: number
+  days: number
+}
+
 @Pipe({
   name: 'timeago',
   standalone: false,
@@ -21,9 +28,23 @@ export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy, PipeTran
   }
   override transform(value: string) {
     this.removeTimer()
+    const seconds = this.getDistanceInSeconds(value)
+    this.scheduleNextUpdate(seconds)
+    if (Number.isNaN(seconds)) {
+      return ''
+    }
+    return this.translateSecondsAgo(seconds)
+  }
+  override ngOnDestroy(): void {
+    this.removeTimer()
+    super.ngOnDestroy()
+  }
+  private getDistanceInSeconds(value: string) {
     const d = new Date(value)
     const now = new Date()
-    const seconds = Math.round(Math.abs((now.getTime() - d.getTime()) / 1000))
+    return Math.round(Math.abs((now.getTime() - d.getTime()) / 1000))
+  }
+  private scheduleNextUpdate(seconds: number) {
     const timeToUpdate = Number.isNaN(seconds) ? 1000 : this.getSecondsUntilUpdate(seconds) * 1000
     this.timer = this.ngZone.runOutsideAngular(() => {
       if (typeof window !== 'undefined') {
@@ -33,42 +54,47 @@ export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy, PipeTran
       }
       return null
     })
+  }
+  private translateSecondsAgo(seconds: number) {
     const minutes = Math.round(Math.abs(seconds / 60))
     const hours = Math.round(Math.abs(minutes / 60))
     const days = Math.round(Math.abs(hours / 24))
     const months = Math.round(Math.abs(days / 30.416))
     const years = Math.round(Math.abs(days / 365))
-    let translationKey = 'UNKNOWN'
-    if (Number.isNaN(seconds)) {
-      translationKey = 'NAN'
-    } else if (seconds <= 45) {
-      translationKey = 'A_FEW_SECONDS_AGO'
-    } else if (seconds <= 90) {
-      translationKey = 'A_MINUTE_AGO'
-    } else if (minutes <= 45) {
-      translationKey = 'MINUTES_AGO'
-    } else if (minutes <= 90) {
-      translationKey = 'AN_HOUR_AGO'
-    } else if (hours <= 22) {
-      translationKey = 'HOURS_AGO'
-    } else if (hours <= 36) {
-      translationKey = 'A_DAY_AGO'
-    } else if (days <= 25) {
-      translationKey = 'DAYS_AGO'
-    } else if (days <= 45) {
-      translationKey = 'A_MONTH_AGO'
-    } else if (days <= 345) {
-      translationKey = 'MONTHS_AGO'
-    } else if (days <= 545) {
-      translationKey = 'A_YEAR_AGO'
-    } else {
-      translationKey = 'YEARS_AGO'
-    }
+    const translationKey = this.getTranslationKey({ seconds, minutes, hours, days })
     return super.transform('OCX_TIMEAGO.' + translationKey, { minutes, hours, days, months, years })
   }
-  override ngOnDestroy(): void {
-    this.removeTimer()
-    super.ngOnDestroy()
+  private getTranslationKey(times: TimeAgoTimes) {
+    if (times.hours > 36) {
+      return this.getDayKey(times)
+    }
+    return this.getSubDayKey(times)
+  }
+  private getSubDayKey(times: TimeAgoTimes) {
+    if (times.seconds <= 45) {
+      return 'A_FEW_SECONDS_AGO'
+    } else if (times.seconds <= 90) {
+      return 'A_MINUTE_AGO'
+    } else if (times.minutes <= 45) {
+      return 'MINUTES_AGO'
+    } else if (times.minutes <= 90) {
+      return 'AN_HOUR_AGO'
+    } else if (times.hours <= 22) {
+      return 'HOURS_AGO'
+    }
+    return 'A_DAY_AGO'
+  }
+  private getDayKey(times: TimeAgoTimes) {
+    if (times.days <= 25) {
+      return 'DAYS_AGO'
+    } else if (times.days <= 45) {
+      return 'A_MONTH_AGO'
+    } else if (times.days <= 345) {
+      return 'MONTHS_AGO'
+    } else if (times.days <= 545) {
+      return 'A_YEAR_AGO'
+    }
+    return 'YEARS_AGO'
   }
   private removeTimer() {
     if (this.timer) {
