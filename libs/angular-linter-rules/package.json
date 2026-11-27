@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-linter-rules",
-  "version": "8.15.1",
+  "version": "8.15.2",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
