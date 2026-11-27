@@ -202,5 +202,46 @@
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "The data could not be loaded.",
     "MESSAGE": "This may have the following reasons:\n The data does not exist or no longer exists.\n The data could not be loaded due to an error in the system.\n You do not have the necessary permission to load the data.\n Please contact the support if you think this happened due to a system error."
+  },
+  "OCX_AI_ASSIST": {
+    "TITLE": "AI assist",
+    "TOGGLE": "Open AI assist",
+    "CLOSE": "Close AI assist",
+    "AGENT": "Agent",
+    "ACTION": "Task",
+    "RUN": "Run",
+    "RUNNING": "Generating result...",
+    "READY_TO_REVIEW": "Ready to review",
+    "BEFORE": "Before",
+    "AI_SUGGESTION": "AI suggestion · editable",
+    "TRY_AGAIN": "Try again",
+    "EDIT_SETTINGS": "Edit settings",
+    "REPLACE_TEXT": "Replace text",
+    "LOADING_AGENTS": "Loading agents...",
+    "NO_AGENTS": "No AI agents are available for this application.",
+    "ACTIONS": {
+      "TRANSLATE": "Translate",
+      "SUMMARIZE": "Summarize",
+      "GENERATE": "Generate"
+    },
+    "PARAMETERS": {
+      "TARGET_LANGUAGE": "Translate field content to"
+    },
+    "LANGUAGES": {
+      "EN": "English",
+      "DE": "German",
+      "PL": "Polish",
+      "FR": "French",
+      "ES": "Spanish",
+      "IT": "Italian"
+    },
+    "ERRORS": {
+      "NO_PROVIDER": "No AI provider is configured for this application.",
+      "AGENT_NOT_FOUND": "No AI agent is configured for this context.",
+      "NO_CONTEXT": "The application context is not available yet. Please try again.",
+      "TIMEOUT": "The AI request took too long. Please try again.",
+      "PROVIDER": "The AI provider couldn't complete the request. Please try again or contact your administrator.",
+      "GENERIC": "We couldn't create a suggestion. Please try again. If the problem persists, contact your administrator."
+    }
   }
 }

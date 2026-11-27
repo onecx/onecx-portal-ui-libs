@@ -1,0 +1,217 @@
+<section class="ocx-ai-assist" [attr.aria-labelledby]="open ? uid + '-title' : null">
+  <div class="ocx-ai-assist__field">
+    <div class="ocx-ai-assist__input">
+      <ng-content></ng-content>
+    </div>
+    <div class="ocx-ai-assist__toggle">
+      <p-button
+        #toggleBtn
+        type="button"
+        icon="pi pi-sparkles"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [ariaLabel]="'OCX_AI_ASSIST.TOGGLE' | translate"
+        (onClick)="toggle()"
+      ></p-button>
+    </div>
+  </div>
+
+  @if (open) {
+  <section class="ocx-ai-assist__panel" [id]="uid + '-panel'" [attr.aria-labelledby]="uid + '-title'">
+    <header class="ocx-ai-assist__header">
+      <h3 [id]="uid + '-title'" class="ocx-ai-assist__title">
+        <i class="pi pi-sparkles" aria-hidden="true"></i>
+        {{ 'OCX_AI_ASSIST.TITLE' | translate }}
+      </h3>
+      <p-button
+        type="button"
+        icon="pi pi-times"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [ariaLabel]="'OCX_AI_ASSIST.CLOSE' | translate"
+        (onClick)="close()"
+      ></p-button>
+    </header>
+
+    @switch (loadState) { @case ('loading') {
+    <p-skeleton width="100%" height="3rem"></p-skeleton>
+    <output class="ocx-ai-assist__status">{{ 'OCX_AI_ASSIST.LOADING_AGENTS' | translate }}</output>
+    } @case ('error') {
+    <p-message severity="error" [text]="errorMessageKey | translate"></p-message>
+    <p-button
+      class="ocx-ai-assist__try-again"
+      type="button"
+      severity="secondary"
+      icon="pi pi-refresh"
+      iconPos="left"
+      [text]="true"
+      [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
+      (onClick)="loadAgents(true)"
+    ></p-button>
+    } @case ('empty') {
+    <p-message severity="info" [text]="'OCX_AI_ASSIST.NO_AGENTS' | translate"></p-message>
+    <p-button
+      class="ocx-ai-assist__try-again"
+      type="button"
+      severity="secondary"
+      icon="pi pi-refresh"
+      iconPos="left"
+      [text]="true"
+      [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
+      (onClick)="loadAgents(true)"
+    ></p-button>
+    } @case ('ready') { @if (isReviewReady) {
+    <div class="ocx-ai-assist__review">
+      <div class="ocx-ai-assist__review-status">
+        <i class="ocx-ai-assist__review-status-icon pi pi-check" aria-hidden="true"></i>
+        {{ 'OCX_AI_ASSIST.READY_TO_REVIEW' | translate }}
+      </div>
+      <div class="ocx-ai-assist__review-columns">
+        <div class="ocx-ai-assist__review-column">
+          <label [for]="uid + '-before'">{{ 'OCX_AI_ASSIST.BEFORE' | translate }}</label>
+          <textarea pTextarea [id]="uid + '-before'" class="w-full" rows="6" readonly [value]="inputText"></textarea>
+        </div>
+        <div class="ocx-ai-assist__review-column">
+          <label [for]="uid + '-suggestion'">{{ 'OCX_AI_ASSIST.AI_SUGGESTION' | translate }}</label>
+          <textarea pTextarea [id]="uid + '-suggestion'" class="w-full" rows="6" [(ngModel)]="suggestion"></textarea>
+        </div>
+      </div>
+      <div class="ocx-ai-assist__actions">
+        <p-button
+          class="ocx-ai-assist__try-again"
+          type="button"
+          severity="secondary"
+          icon="pi pi-refresh"
+          iconPos="left"
+          [text]="true"
+          [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
+          (onClick)="tryAgain()"
+        ></p-button>
+        <div class="ocx-ai-assist__review-secondary-actions">
+          <p-button
+            class="ocx-ai-assist__edit-settings"
+            type="button"
+            severity="secondary"
+            icon="pi pi-sliders-h"
+            [label]="'OCX_AI_ASSIST.EDIT_SETTINGS' | translate"
+            (onClick)="editSettings()"
+          ></p-button>
+          <p-button
+            class="ocx-ai-assist__replace"
+            type="button"
+            icon="pi pi-check"
+            [disabled]="suggestion.trim().length === 0"
+            [label]="'OCX_AI_ASSIST.REPLACE_TEXT' | translate"
+            (onClick)="replace()"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+    } @else {
+    <div class="ocx-ai-assist__selectors">
+      <p-floatlabel variant="on">
+        <p-select
+          [inputId]="uid + '-agent'"
+          [options]="agents"
+          [ngModel]="selectedAgentId"
+          (ngModelChange)="selectAgent($event)"
+          optionLabel="name"
+          optionValue="id"
+          styleClass="w-full"
+        >
+          <ng-template let-agent #item>
+            <span class="ocx-ai-assist__agent">
+              <span class="ocx-ai-assist__avatar" aria-hidden="true">{{ initials(agent.name) }}</span>
+              {{ agent.name }}
+            </span>
+          </ng-template>
+        </p-select>
+        <label [for]="uid + '-agent'">{{ 'OCX_AI_ASSIST.AGENT' | translate }}</label>
+      </p-floatlabel>
+
+      <p-floatlabel variant="on">
+        <p-select
+          [inputId]="uid + '-action'"
+          [options]="actions"
+          [ngModel]="selectedActionId"
+          (ngModelChange)="selectAction($event)"
+          optionValue="id"
+          styleClass="w-full"
+        >
+          <ng-template let-item #item>{{ item.labelKey | translate }}</ng-template>
+          <ng-template let-item #selectedItem>{{ item.labelKey | translate }}</ng-template>
+        </p-select>
+        <label [for]="uid + '-action'">{{ 'OCX_AI_ASSIST.ACTION' | translate }}</label>
+      </p-floatlabel>
+    </div>
+
+    @if (selectedAction) {
+    <div class="ocx-ai-assist__parameters">
+      @for (parameter of selectedAction.parameters ?? []; track parameter.key) {
+      <p-floatlabel variant="on" class="ocx-ai-assist__parameter">
+        @if (parameter.options) {
+        <p-select
+          [inputId]="uid + '-param-' + parameter.key"
+          [options]="parameter.options"
+          [(ngModel)]="parameterValues[parameter.key]"
+          optionValue="value"
+          styleClass="w-full"
+        >
+          <ng-template let-option #item>{{ option.label | translate }}</ng-template>
+          <ng-template let-option #selectedItem>{{ option.label | translate }}</ng-template>
+        </p-select>
+        } @else {
+        <input
+          pInputText
+          type="text"
+          class="w-full"
+          [id]="uid + '-param-' + parameter.key"
+          [(ngModel)]="parameterValues[parameter.key]"
+        />
+        }
+        <label [for]="uid + '-param-' + parameter.key">{{ parameter.labelKey | translate }}</label>
+      </p-floatlabel>
+      }
+      <p-button
+        type="button"
+        class="ocx-ai-assist__run"
+        icon="pi pi-sparkles"
+        [label]="'OCX_AI_ASSIST.RUN' | translate"
+        [disabled]="!canRun"
+        (onClick)="run()"
+      ></p-button>
+    </div>
+    } @if (runState === 'running') {
+    <output class="ocx-ai-assist__status">{{ 'OCX_AI_ASSIST.RUNNING' | translate }}</output>
+    } @if (runState === 'error') {
+    <p-message severity="error" [text]="errorMessageKey | translate"></p-message>
+    <p-button
+      class="ocx-ai-assist__try-again"
+      type="button"
+      severity="secondary"
+      icon="pi pi-refresh"
+      iconPos="left"
+      [text]="true"
+      [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
+      (onClick)="retry()"
+    ></p-button>
+    } @if (runState === 'success' && !isReviewReady) {
+    <div class="ocx-ai-assist__result">
+      <p-message severity="warn" [text]="'OCX_AI_ASSIST.ERRORS.GENERIC' | translate"></p-message>
+      <p-button
+        class="ocx-ai-assist__try-again"
+        type="button"
+        severity="secondary"
+        icon="pi pi-refresh"
+        iconPos="left"
+        [text]="true"
+        [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
+        (onClick)="tryAgain()"
+      ></p-button>
+    </div>
+    } } } }
+  </section>
+  }
+</section>
