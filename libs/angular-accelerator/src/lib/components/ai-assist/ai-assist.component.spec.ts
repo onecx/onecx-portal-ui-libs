@@ -384,8 +384,8 @@ describe('AiAssistComponent', () => {
 
     const suggestion = fixture.nativeElement.querySelector(`#${component.uid}-suggestion`) as HTMLTextAreaElement
     expect(suggestion.value).toBe('Hallo')
-    expect(fixture.nativeElement.textContent).toContain('OCX_AI_ASSIST.REPLACE_TEXT')
-    expect(fixture.nativeElement.textContent).toContain('OCX_AI_ASSIST.TRY_AGAIN')
+    expect(fixture.nativeElement.textContent).toContain('Replace text')
+    expect(fixture.nativeElement.textContent).toContain('Try again')
   })
 
   it('should render review labels above the fields and align the low-emphasis retry before replace', async () => {
@@ -685,6 +685,18 @@ describe('AiAssistComponent', () => {
 
     expect(component.hasSuggestion).toBe(false)
     expect(component.suggestion).toBe('')
+  })
+
+  it('should retry the agent lookup after a timeout when Try again is used', async () => {
+    getAgents.mockRejectedValueOnce(new AiProviderError('TIMEOUT', 'AI agent lookup timed out'))
+    await createComponent()
+    expect(component.errorCode).toBe('TIMEOUT')
+
+    component.loadAgents(true)
+    await fixture.whenStable()
+
+    expect(getAgents).toHaveBeenCalledTimes(2)
+    expect(component.loadState).toBe('ready')
   })
 
   it('should show a retryable timeout error when the agent lookup times out', async () => {
