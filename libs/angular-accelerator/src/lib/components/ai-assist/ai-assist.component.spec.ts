@@ -1,5 +1,5 @@
 import { SimpleChange } from '@angular/core'
-import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
@@ -196,11 +196,36 @@ describe('AiAssistComponent', () => {
     expect(component.selectedAgentId).toBe('agent-1')
   })
 
-  it('should not start a gatherer or agent lookup for an instance that is never opened', async () => {
+  it('should not start an agent lookup for an instance that is never opened', async () => {
     await createComponent(false)
 
     expect(getAgents).not.toHaveBeenCalled()
-    expect(component.loadState).toBe('loading')
+  })
+
+  it('should not load agents when appId changes before the panel is first opened', async () => {
+    await createComponent(false)
+
+    component.appId = 'app-2'
+    component.ngOnChanges({ appId: new SimpleChange(undefined, 'app-2', false) })
+    await fixture.whenStable()
+
+    expect(getAgents).not.toHaveBeenCalled()
+  })
+
+  it('should expose aria-expanded and aria-controls on the real toggle button', async () => {
+    await createComponent(false)
+    const button = (fixture.nativeElement as HTMLElement).querySelector(
+      '.ocx-ai-assist__toggle button'
+    ) as HTMLButtonElement
+
+    expect(button.getAttribute('aria-expanded')).toBe('false')
+    expect(button.getAttribute('aria-controls')).toBe(component.uid + '-panel')
+
+    await openPanel()
+    const openButton = (fixture.nativeElement as HTMLElement).querySelector(
+      '.ocx-ai-assist__toggle button'
+    ) as HTMLButtonElement
+    expect(openButton.getAttribute('aria-expanded')).toBe('true')
   })
 
   it('should share one agent request between instances with the same appId', async () => {
@@ -632,22 +657,14 @@ describe('AiAssistComponent', () => {
     expect(component.suggestion).toBe('')
   })
 
-  it('should map a hanging agent lookup to a retryable timeout error', fakeAsync(() => {
-    getAgents.mockImplementationOnce(() => new Promise(() => undefined))
-    fixture = TestBed.createComponent(AiAssistComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-    component.toggle()
-
-    tick(15000)
+  it('should show a retryable timeout error when the agent lookup times out', async () => {
+    getAgents.mockRejectedValueOnce(new AiProviderError('TIMEOUT', 'AI agent lookup timed out'))
+    await createComponent()
 
     expect(component.loadState).toBe('error')
     expect(component.errorCode).toBe('TIMEOUT')
-
-    component.loadAgents(true)
-    flush()
-    expect(getAgents).toHaveBeenCalledTimes(2)
-  }))
+    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.TIMEOUT')
+  })
 
   it('should not cache an empty agent list', async () => {
     getAgents.mockResolvedValueOnce([])

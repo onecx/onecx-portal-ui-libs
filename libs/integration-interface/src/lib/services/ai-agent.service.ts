@@ -1,6 +1,9 @@
 import { AiAgentGatherer } from '../gatherers/ai-agent/v1/ai-agent.gatherer'
 import type { AiAgentProviderResult, AiAgentRequest, AiAgentResponse } from '../gatherers/ai-agent/v1/ai-agent.model'
 import { AiProviderError, isAiProviderError } from '../errors/ai-provider-error'
+import { withTimeout } from '../utils/with-timeout'
+
+const AGENT_LOOKUP_TIMEOUT_MS = 15000
 
 export function consumerAiAgentProvider(_request: AiAgentRequest): Promise<AiAgentProviderResult> {
   return Promise.resolve(null)
@@ -20,7 +23,11 @@ export class OneCXAiAgentService {
   private readonly aiAgentGatherer = new AiAgentGatherer(consumerAiAgentProvider)
 
   async getAgents(request: AiAgentRequest = {}): Promise<AiAgentResponse[]> {
-    const responses = await this.aiAgentGatherer.gather(request)
+    const responses = await withTimeout(
+      this.aiAgentGatherer.gather(request),
+      AGENT_LOOKUP_TIMEOUT_MS,
+      'AI agent lookup timed out'
+    )
     const agents = new Map<string, AiAgentResponse>()
     const errors: AiProviderError[] = []
     let answeringProviders = 0
@@ -49,4 +56,3 @@ export class OneCXAiAgentService {
     this.aiAgentGatherer.destroy()
   }
 }
-
