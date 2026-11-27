@@ -1,6 +1,8 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   inject,
   Input,
@@ -9,11 +11,11 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AiAgentResponse,
-  AiProviderError,
   isAiProviderError,
   OneCXAiAgentService,
   OneCXAiCompletionService,
@@ -31,7 +33,6 @@ const UNKNOWN_ERROR_CODE = 'UNKNOWN'
 const NO_CONTEXT_ERROR_CODE = 'NO_CONTEXT'
 const MFE_CONTEXT_TIMEOUT_MS = 5000
 const AGENT_CACHE_TTL_MS = 60000
-const AGENT_LOOKUP_TIMEOUT_MS = 15000
 
 const agentCache = new Map<string, { agents: Promise<AiAgentResponse[]>; expiresAt: number }>()
 let sharedAgentService: OneCXAiAgentService | undefined
@@ -55,7 +56,7 @@ function getAgentsCached(appId: string | undefined, force: boolean): Promise<AiA
   if (!force && cached && cached.expiresAt > Date.now()) {
     return cached.agents
   }
-  const agents = withTimeout(getSharedAgentService().getAgents({ appId }), AGENT_LOOKUP_TIMEOUT_MS)
+  const agents = getSharedAgentService().getAgents({ appId })
   const entry = { agents, expiresAt: Date.now() + AGENT_CACHE_TTL_MS }
   agentCache.set(key, entry)
   const discard = (): void => {
@@ -69,14 +70,6 @@ function getAgentsCached(appId: string | undefined, force: boolean): Promise<AiA
     }
   }, discard)
   return agents
-}
-
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  let timer: ReturnType<typeof setTimeout> | undefined
-  const expired = new Promise<never>((_, reject) => {
-    timer = setTimeout(() => reject(new AiProviderError('TIMEOUT', 'AI agent lookup timed out')), ms)
-  })
-  return Promise.race([promise, expired]).finally(() => clearTimeout(timer))
 }
 
 let instanceCount = 0
@@ -104,7 +97,7 @@ let instanceCount = 0
   styleUrls: ['./ai-assist.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
 })
-export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
+export class AiAssistComponent implements AfterViewInit, OnChanges, OnInit, OnDestroy {
   /** Actions offered by default. Hosts can replace the built-in Translate, Summarize and Generate set. */
   @Input() defaultActions: AiAssistActionDefinition<unknown>[] = DEFAULT_AI_ASSIST_ACTIONS
   /** Optional actions offered in addition to the default ones. */
@@ -154,8 +147,14 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
   private agentsRequested = false
   private actionsCache?: { defaults: unknown; additions: unknown; actions: AiAssistActionDefinition<unknown>[] }
 
+  @ViewChild('toggle', { read: ElementRef, static: true }) private toggleButton!: ElementRef<HTMLElement>
+
   ngOnInit(): void {
     this.selectAction(this.actions[0]?.id)
+  }
+
+  ngAfterViewInit(): void {
+    this.syncToggleAria()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -168,6 +167,13 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
     this.runCounter++
     this.agentsLoadCounter++
     this.completionService?.destroy()
+  }
+
+  /** Sets the expanded state on the real button, because the PrimeNG host does not forward ARIA attributes. */
+  private syncToggleAria(): void {
+    const button = this.toggleButton.nativeElement.querySelector('button') as HTMLButtonElement
+    button.setAttribute('aria-expanded', String(this.open))
+    button.setAttribute('aria-controls', this.uid + '-panel')
   }
 
   private getCompletionService(): OneCXAiCompletionService {
@@ -232,6 +238,7 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
    */
   toggle(): void {
     this.open = !this.open
+    this.syncToggleAria()
     if (this.open && !this.agentsRequested) {
       this.loadAgents()
     }
@@ -240,6 +247,7 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
   /** Closes the panel and resets the action and agent selection to the first options. */
   close(): void {
     this.open = false
+    this.syncToggleAria()
     this.selectAction(this.actions[0]?.id)
     this.selectAgent(this.agents[0]?.id)
   }
