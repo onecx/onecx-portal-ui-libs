@@ -663,7 +663,7 @@ describe('SyncedRouterProvider', () => {
     mockNavigateDisabled = true
     act(() => {
       window.history.pushState({}, '', target)
-      mockLocationListeners[0]({ url: target.slice(1).replace(/^app\//, 'app/'), isFirst: false })
+      mockLocationListeners[0]({ url: 'app/sample-app/subpage/record-1?tab=details#summary', isFirst: false })
     })
     expect(screen.getByTestId('location').textContent).toBe(appBase)
     mockNavigateDisabled = false
