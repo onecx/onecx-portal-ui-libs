@@ -1,0 +1,49 @@
+[#ai-assist-zod-and-completion]
+== AI assist: zod peer dependency and `getCompletion` signature
+
+The inline AI feature (`ocx-ai-assist`) adds two changes that consuming applications must account for.
+
+[#zod-peer]
+=== `zod` is a required peer dependency
+
+`@onecx/angular-accelerator` and `@onecx/integration-interface` declare `zod` as a required peer dependency. The accelerator uses it at runtime to define the schemas of the built-in AI actions, and the public `AiAssistActionDefinition` type exposes `ZodType`.
+
+Install `zod` in the host application, with the version declared by the library:
+
+[source, bash]
+----
+npm install zod@^4.1.12
+----
+
+Applications that do not use the AI features still need `zod` installed, because the peer requirement is resolved at install time.
+
+[#get-completion]
+=== `OneCXAiCompletionService.getCompletion` has a new signature
+
+The method changed from accepting an `AiCompletionRequest` to accepting a `GetCompletionInput<T>` and returning the parsed result:
+
+[source, typescript]
+----
+// before
+getCompletion(request: AiCompletionRequest): Promise<AiCompletionResponse>
+
+// after
+getCompletion<T>(input: GetCompletionInput<T>): Promise<T>
+
+interface GetCompletionInput<T> {
+  agentId: string
+  agentName: string
+  systemPrompt: string
+  aiContext: string[]
+  message: string
+  outputSchema: ZodType<T>   // required
+}
+----
+
+The method now throws an `AiProviderError` with a stable `code` (for example `NO_PROVIDER`, `TIMEOUT`, `INVALID_JSON`, `SCHEMA_MISMATCH`) instead of resolving with an unvalidated response. Callers that used the old signature must:
+
+. pass `agentId`, `agentName` and `aiContext` as flat fields,
+. provide a zod `outputSchema` that describes the expected JSON,
+. catch `AiProviderError` where they previously handled a missing response.
+
+This is a breaking change of `@onecx/integration-interface`. Repositories outside this workspace were not checked for callers of the old signature.

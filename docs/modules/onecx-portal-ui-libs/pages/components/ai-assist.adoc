@@ -1,0 +1,93 @@
+= OneCX AiAssist
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+`ocx-ai-assist` is an inline AI helper for a text field. It wraps an input, adds a toggle button, and opens a panel where the user picks an AI agent and a task (Translate, Summarize, Generate, or a host-defined action), runs it on the field text, reviews the suggestion, and either replaces the text or discards it.
+
+Agents are loaded from the AI provider through the `aiAgent` gatherer. The panel loads them the first time it is opened and reuses them for 60 seconds across all assistants on the page.
+
+[#usage]
+== Usage
+
+[source, html]
+----
+<ocx-ai-assist [inputText]="description" (replaceText)="description = $event">
+  <input pInputText id="description" [value]="description" (input)="description = $any($event.target).value" />
+</ocx-ai-assist>
+----
+
+The content projected into `ocx-ai-assist` is the field the assistant works on.
+
+[#inputs]
+== Inputs
+
+[cols="1,2,2", options="header"]
+|===
+| Input | Type | Description
+
+| `inputText`
+| `string`
+| Text of the field. `null` or `undefined` is treated as an empty string. The action cannot run on empty text.
+
+| `appId`
+| `string`
+| Application id used to look up agents. When omitted, the `appId` of the current micro-frontend is used. When neither is available, the panel shows a retryable error after five seconds.
+
+| `defaultActions`
+| `AiAssistActionDefinition<unknown>[]`
+| Actions offered by default. Defaults to Translate, Summarize and Generate. Replacing it removes the built-in actions.
+
+| `additionalActions`
+| `AiAssistActionDefinition<unknown>[]`
+| Actions offered in addition to `defaultActions`.
+|===
+
+[#outputs]
+== Outputs
+
+[cols="1,2,2", options="header"]
+|===
+| Output | Payload | Description
+
+| `replaceText`
+| `string`
+| Emitted when the user chooses Replace text. The payload is the reviewed suggestion, which the user may have edited. A blank suggestion is never emitted.
+|===
+
+[#actions]
+== Custom actions
+
+An action is an `AiAssistActionDefinition<T>`:
+
+[source, typescript]
+----
+import { z } from 'zod'
+import { AiAssistActionDefinition } from '@onecx/angular-accelerator'
+
+const shorten: AiAssistActionDefinition<{ text: string }> = {
+  id: 'shorten',
+  labelKey: 'MY_APP.AI.SHORTEN',
+  buildInstruction: () => 'Shorten the user text without losing its meaning.',
+  outputDescription: '{"text": string} containing the shortened text',
+  outputSchema: z.object({ text: z.string() }),
+}
+----
+
+* `outputSchema` validates the JSON the agent returns. The schema is never sent to the provider.
+* `toSuggestion` maps the validated result to the text offered for replacement. It is required when the result is not `{ text: string }`. When it is omitted, or returns `undefined`, the panel shows a generic warning.
+
+[#errors]
+== Errors
+
+The panel maps the error codes of the AI services to translated messages: `NO_PROVIDER`, `AGENT_NOT_FOUND`, `TIMEOUT`, `PROVIDER_ERROR`, `RETRIES_EXHAUSTED`, `NO_CONTEXT` and `UNKNOWN`. Failed agent loads and failed runs show Try again; a load that returns no agents shows Try again as well.
+
+[#setup]
+== Setup
+
+`zod` is a required peer dependency of `@onecx/angular-accelerator` and `@onecx/integration-interface`. Install it in the host application. Use a version that matches the one declared by the library (`^4.1.12` on the current branch).
+
+Agents are only available when the AI provider micro-frontend is installed and registers the `aiAgent` gatherer. Without it the panel shows the empty state.

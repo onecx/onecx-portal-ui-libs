@@ -33,6 +33,7 @@
 *** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/index.adoc[InteractiveDataView]
 *** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/data-table-column.adoc[DataTableColumn]
 *** xref:onecx-portal-ui-libs:components/custom-group-column-selector.adoc[CustomGroupColumnSelector]
+*** xref:onecx-portal-ui-libs:components/ai-assist.adoc[AiAssist]
 
 ** Directives
 *** xref:onecx-portal-ui-libs:directives/tooltip.adoc[OcxTooltip]
