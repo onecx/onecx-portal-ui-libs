@@ -61,6 +61,22 @@ jest.mock('@onecx/react-integration-interface', () => ({
   },
 }))
 
+let mockNavigateRedirectTo: string | null = null
+let mockNavigateDisabled = false
+
+jest.mock('react-router', () => {
+  const actual = jest.requireActual<typeof import('react-router')>('react-router')
+  return {
+    ...actual,
+    useNavigate: () => {
+      const navigate = actual.useNavigate()
+      return (to: Parameters<typeof navigate>[0], options?: Parameters<typeof navigate>[1]) => {
+        if (!mockNavigateDisabled) navigate(mockNavigateRedirectTo ?? to, options)
+      }
+    },
+  }
+})
+
 jest.mock('../utils/logger.utils', () => ({
   createLogger: () => ({ error: loggerError }),
 }))
@@ -351,11 +367,20 @@ describe('SyncedRouterProvider', () => {
     expect(screen.getByTestId('synced-url').textContent).toBe(`${appBase}/subpage/record-1`)
   })
 
-  it('does not overwrite an unrelated history patch during release', () => {
+  it('does not overwrite an unrelated history patch during release and reuses the wrapper on remount', () => {
+    const markerKey = '__onecxRouterSyncWrapped'
+    const historyRecord = window.history as unknown as Record<string, unknown>
     const { unmount } = renderRouter()
+    const marker = historyRecord[markerKey]
 
-    const foreignPushState = jest.fn()
-    const foreignReplaceState = jest.fn()
+    const wrappedPushState = window.history.pushState
+    const wrappedReplaceState = window.history.replaceState
+    const foreignPushState = jest.fn(function (this: History, ...args: Parameters<History['pushState']>) {
+      return wrappedPushState.apply(this, args)
+    })
+    const foreignReplaceState = jest.fn(function (this: History, ...args: Parameters<History['replaceState']>) {
+      return wrappedReplaceState.apply(this, args)
+    })
     window.history.pushState = foreignPushState as unknown as History['pushState']
     window.history.replaceState = foreignReplaceState as unknown as History['replaceState']
 
@@ -363,9 +388,40 @@ describe('SyncedRouterProvider', () => {
 
     expect(window.history.pushState).toBe(foreignPushState)
     expect(window.history.replaceState).toBe(foreignReplaceState)
+    window.history.pushState({ usr: { __onecxShellSync: true } }, '', appBase)
+    expect(window.history.state).toEqual({ usr: { __onecxShellSync: true } })
+
+    const second = renderRouter()
+    expect(window.history.pushState).toBe(foreignPushState)
+    expect(window.history.replaceState).toBe(foreignReplaceState)
+    expect(historyRecord[markerKey]).toBe(marker)
+    second.unmount()
 
     window.history.pushState = historyMethodsBeforeContextImport.pushState
     window.history.replaceState = historyMethodsBeforeContextImport.replaceState
+    delete historyRecord[markerKey]
+  })
+
+  it('restores only the history method that is still wrapped when the other one is patched', () => {
+    const historyRecord = window.history as unknown as Record<string, unknown>
+    const { unmount } = renderRouter()
+    const wrappedReplaceState = window.history.replaceState
+    const foreignPushState = jest.fn()
+    window.history.pushState = foreignPushState as unknown as History['pushState']
+
+    unmount()
+
+    expect(window.history.pushState).toBe(foreignPushState)
+    expect(window.history.replaceState).toBe(historyMethodsBeforeContextImport.replaceState)
+    expect(wrappedReplaceState).not.toBe(historyMethodsBeforeContextImport.replaceState)
+
+    const second = renderRouter()
+    expect(window.history.pushState).toBe(foreignPushState)
+    expect(window.history.replaceState).toBe(wrappedReplaceState)
+    second.unmount()
+
+    window.history.pushState = historyMethodsBeforeContextImport.pushState
+    delete historyRecord['__onecxRouterSyncWrapped']
   })
 
   it('keeps an internal React route when the topic replays its last value on re-subscription', async () => {
@@ -509,6 +565,130 @@ describe('SyncedRouterProvider', () => {
 
     publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
     expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+
+  it('releases the pending-navigation guard when the navigation commits without changing the URL', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockNavigateRedirectTo = appBase
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    mockNavigateRedirectTo = null
+
+    publishLocation({ url: `${appBase}/subpage/record-2`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-2`)
+  })
+
+  it('keeps the original target when shell events arrive A -> B -> A before a render', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const first = `${appBase}/subpage/record-1`
+    const second = `${appBase}/subpage/record-2`
+    act(() => {
+      window.history.pushState({}, '', first)
+      mockLocationListeners[0]({ url: first, isFirst: false })
+      window.history.pushState({}, '', second)
+      mockLocationListeners[0]({ url: second, isFirst: false })
+      window.history.pushState({}, '', first)
+      mockLocationListeners[0]({ url: first, isFirst: false })
+    })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(first)
+    expect(window.location.pathname).toBe(first)
+  })
+
+  it('applies the queued shell target when a navigation never commits', () => {
+    jest.useFakeTimers()
+    try {
+      renderRouter()
+      expect(mockLocationListeners).toHaveLength(1)
+      mockNavigateDisabled = true
+      const first = `${appBase}/subpage/record-1`
+      const second = `${appBase}/subpage/record-2`
+      act(() => {
+        window.history.pushState({}, '', first)
+        mockLocationListeners[0]({ url: first, isFirst: false })
+        window.history.pushState({}, '', second)
+        mockLocationListeners[0]({ url: second, isFirst: false })
+      })
+      expect(screen.getByTestId('location').textContent).toBe(appBase)
+
+      mockNavigateDisabled = false
+      act(() => {
+        jest.advanceTimersByTime(1000)
+      })
+
+      expect(screen.getByTestId('location').textContent).toBe(second)
+    } finally {
+      mockNavigateDisabled = false
+      jest.useRealTimers()
+    }
+  })
+
+  it('applies the queued shell target when a competing navigation commits first', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const first = `${appBase}/subpage/record-1`
+    const second = `${appBase}/subpage/record-2`
+    mockNavigateDisabled = true
+    act(() => {
+      window.history.pushState({}, '', first)
+      mockLocationListeners[0]({ url: first, isFirst: false })
+      window.history.pushState({}, '', second)
+      mockLocationListeners[0]({ url: second, isFirst: false })
+    })
+    mockNavigateDisabled = false
+
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(second)
+  })
+
+  it('re-wraps a history method that was restored while the other one is still patched', () => {
+    const historyRecord = window.history as unknown as Record<string, unknown>
+    const { unmount } = renderRouter()
+    const foreignReplaceState = jest.fn()
+    window.history.replaceState = foreignReplaceState as unknown as History['replaceState']
+
+    unmount()
+    expect(window.history.pushState).toBe(historyMethodsBeforeContextImport.pushState)
+
+    const second = renderRouter()
+    expect(window.history.pushState).not.toBe(historyMethodsBeforeContextImport.pushState)
+    expect(window.history.replaceState).toBe(foreignReplaceState)
+    second.unmount()
+
+    window.history.replaceState = historyMethodsBeforeContextImport.replaceState
+    delete historyRecord['__onecxRouterSyncWrapped']
+  })
+
+  it('treats an own publish without an echo as stale after its TTL', () => {
+    jest.useFakeTimers()
+    try {
+      renderRouter()
+      expect(mockLocationListeners).toHaveLength(1)
+      mockDeferEchoes = true
+      fireEvent.click(screen.getByText('Navigate in React'))
+      fireEvent.click(screen.getByText('Navigate to root in React'))
+      mockDeferredEchoes.length = 0
+      mockDeferEchoes = false
+      act(() => {
+        jest.advanceTimersByTime(5001)
+      })
+
+      publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
+
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    } finally {
+      jest.useRealTimers()
+    }
   })
 
   it('still applies shell events after own echoes were consumed', async () => {
