@@ -106,12 +106,14 @@
     .p-listbox-item {
       &.p-highlight {
         &.p-focus {
+          @include focused-listitem();
           background: $highlightFocusBg;
         }
       }
 
       &:not(.p-highlight):not(.p-disabled) {
         &.p-focus {
+          @include focused-listitem();
           color: $inputListItemTextHoverColor;
           background: $inputListItemHoverBg;
         }
@@ -121,6 +123,7 @@
           background: $inputListItemHoverBg;
 
           &.p-focus {
+            @include focused-listitem();
             color: $inputListItemTextHoverColor;
             background: $inputListItemHoverBg;
           }
