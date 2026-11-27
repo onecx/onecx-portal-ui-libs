@@ -61,7 +61,10 @@ describe('AiAssistComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AngularAcceleratorModule],
       providers: [
-        provideTranslateTestingService({}),
+        provideTranslateTestingService({
+          en: require('../../../../assets/i18n/en.json'),
+          de: require('../../../../assets/i18n/de.json'),
+        }),
         provideNoopAnimations(),
         { provide: AppStateService, useValue: { currentMfe$: of({ appId: 'app-1' }) } },
       ],
