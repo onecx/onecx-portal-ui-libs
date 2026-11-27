@@ -25,13 +25,10 @@ const toUrl = ({ pathname, search, hash }: { pathname: string; search: string; h
 
 const SHELL_SYNC_MARKER = '__onecxShellSync'
 const HISTORY_WRAPPER_MARKER = '__onecxRouterSyncWrapped'
-const TOPIC_NAVIGATION_TIMEOUT_MS = 1000
-const LATE_TOPIC_TARGET_TTL_MS = 5000
 const OWN_PUBLISH_TTL_MS = 5000
 const MAX_OWN_PUBLISHED_URLS = 10
 
 type OwnPublish = { url: string; publishedAt: number }
-type TopicNavigation = { target: string; locationKey: string; timeout: ReturnType<typeof setTimeout> }
 
 type HistoryWrapperState = {
   referenceCount: number
@@ -138,14 +135,14 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     url: locationHook.pathname,
     isFirst: false,
   })
-  const routerUrlRef = useRef(routerUrl)
-  const locationKeyRef = useRef(locationHook.key)
+  // Latest URL this router has been asked to show. Updated synchronously when a shell
+  // navigation is requested, so a following shell event compares against it, not against
+  // React state that has not re-rendered yet.
+  const knownUrlRef = useRef(routerUrl)
   const navigateRef = useRef(navigate)
-  const topicNavigation = useRef<TopicNavigation | null>(null)
-  const pendingTopicUrlRef = useRef<string | null>(null)
-  const lateTopicTargetsRef = useRef<{ target: string; expiresAt: number }[]>([])
-  const ownPublishedUrlsRef = useRef<OwnPublish[]>([])
   const lastPublishedUrlRef = useRef(routerUrl)
+  const pendingShellTargetRef = useRef<string | null>(null)
+  const ownPublishedUrlsRef = useRef<OwnPublish[]>([])
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
   useLayoutEffect(() => {
@@ -153,41 +150,6 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   })
 
   useLayoutEffect(() => installHistorySyncMarker(), [])
-
-  const finishTopicNavigation = () => {
-    if (topicNavigation.current) clearTimeout(topicNavigation.current.timeout)
-    topicNavigation.current = null
-  }
-
-  const flushPendingTopicUrl = () => {
-    const pending = pendingTopicUrlRef.current
-    pendingTopicUrlRef.current = null
-    if (pending !== null && normalizeUrl(pending) !== normalizeUrl(routerUrlRef.current)) {
-      startTopicNavigation(pending)
-    }
-  }
-
-  const startTopicNavigation = (topicUrl: string) => {
-    finishTopicNavigation()
-    const target = normalizeUrl(topicUrl)
-    const timeout = setTimeout(() => {
-      // Bounded guard: a navigation that never commits must not park later shell events.
-      // Its target is remembered so a late commit to it is still treated as topic-driven.
-      topicNavigation.current = null
-      lateTopicTargetsRef.current.push({ target, expiresAt: Date.now() + LATE_TOPIC_TARGET_TTL_MS })
-      flushPendingTopicUrl()
-    }, TOPIC_NAVIGATION_TIMEOUT_MS)
-    topicNavigation.current = { target, locationKey: locationKeyRef.current, timeout }
-    navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
-  }
-
-  useEffect(
-    () => () => {
-      finishTopicNavigation()
-      lateTopicTargetsRef.current = []
-    },
-    []
-  )
 
   useEffect(() => {
     const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
@@ -207,8 +169,8 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       ownPublishedUrlsRef.current = ownPublishedUrlsRef.current.filter((p) => now - p.publishedAt < OWN_PUBLISH_TTL_MS)
       const ownPublishIndex = ownPublishedUrlsRef.current.findIndex((p) => normalizeUrl(p.url) === target)
       if (ownPublishIndex !== -1) {
-        // Topic delivers our own publishes back asynchronously. Drop the echo and
-        // anything published before it, otherwise it would revert newer navigation.
+        // The topic delivers our own publishes back. Drop the echo and anything published
+        // before it, otherwise a late echo would revert a newer navigation.
         ownPublishedUrlsRef.current.splice(0, ownPublishIndex + 1)
         return
       }
@@ -217,15 +179,12 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       if (location.isFirst) {
         return
       }
-      if (topicNavigation.current) {
-        // Keep only the latest shell intent. Returning to the in-flight target
-        // cancels a previously queued destination (A -> B -> A ends on A).
-        pendingTopicUrlRef.current = target === topicNavigation.current.target ? null : topicUrl
+      if (normalizeUrl(knownUrlRef.current) === target) {
         return
       }
-      if (normalizeUrl(routerUrlRef.current) !== target) {
-        startTopicNavigation(topicUrl)
-      }
+      knownUrlRef.current = topicUrl
+      pendingShellTargetRef.current = target
+      navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
     })
 
     return () => {
@@ -233,47 +192,23 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [currentLocation$])
 
-  // Publish internal navigation changes so the shell can update the browser URL.
-  // A topic-driven navigation is not published back; it is settled once React Router
-  // commits a new location (tracked by location key, so a navigation that ends on the
-  // same URL, or on a normalized form of it, still releases the guard).
+  // Publish the app's own navigations so the shell can update the browser URL.
+  // A navigation requested by the shell is not published back: the shell's target is
+  // recorded when the navigation is requested and matched at commit. This replaces the
+  // Angular connector's isRouterSync check, which React Router does not expose at top level.
   // useLayoutEffect runs synchronously after DOM mutations so there is no
   // extra render between the URL change and the publish.
   useLayoutEffect(() => {
-    routerUrlRef.current = routerUrl
-    locationKeyRef.current = locationHook.key
+    knownUrlRef.current = routerUrl
     if (locationHook.pathname !== currentLocation.url) {
       setCurrentLocation({ url: locationHook.pathname, isFirst: false })
     }
-
-    const inFlight = topicNavigation.current
-    if (inFlight) {
-      if (locationHook.key === inFlight.locationKey) {
-        return
-      }
-      finishTopicNavigation()
-      if (normalizeUrl(routerUrl) === inFlight.target) {
-        lastPublishedUrlRef.current = routerUrl
-        flushPendingTopicUrl()
-        return
-      }
-      if (pendingTopicUrlRef.current !== null) {
-        flushPendingTopicUrl()
-        return
-      }
-      // A competing navigation (not the shell target) committed: publish it below.
-    }
-
-    const now = Date.now()
-    lateTopicTargetsRef.current = lateTopicTargetsRef.current.filter((late) => late.expiresAt > now)
-    const lateIndex = lateTopicTargetsRef.current.findIndex((late) => late.target === normalizeUrl(routerUrl))
-    if (lateIndex !== -1) {
-      // The shell already knows this URL (it is the timed-out topic target), so it is not published back.
-      lateTopicTargetsRef.current.splice(lateIndex, 1)
+    const shellTarget = pendingShellTargetRef.current
+    pendingShellTargetRef.current = null
+    if (shellTarget !== null && normalizeUrl(routerUrl) === shellTarget) {
       lastPublishedUrlRef.current = routerUrl
       return
     }
-
     if (routerUrl !== lastPublishedUrlRef.current) {
       lastPublishedUrlRef.current = routerUrl
       const ownPublish: OwnPublish = { url: routerUrl, publishedAt: Date.now() }
