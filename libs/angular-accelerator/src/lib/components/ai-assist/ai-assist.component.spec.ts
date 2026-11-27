@@ -687,6 +687,18 @@ describe('AiAssistComponent', () => {
     expect(component.suggestion).toBe('')
   })
 
+  it('should retry the agent lookup after a timeout when Try again is used', async () => {
+    getAgents.mockRejectedValueOnce(new AiProviderError('TIMEOUT', 'AI agent lookup timed out'))
+    await createComponent()
+    expect(component.errorCode).toBe('TIMEOUT')
+
+    component.loadAgents(true)
+    await fixture.whenStable()
+
+    expect(getAgents).toHaveBeenCalledTimes(2)
+    expect(component.loadState).toBe('ready')
+  })
+
   it('should show a retryable timeout error when the agent lookup times out', async () => {
     getAgents.mockRejectedValueOnce(new AiProviderError('TIMEOUT', 'AI agent lookup timed out'))
     await createComponent()
