@@ -159,6 +159,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigateRef = useRef(navigate)
   const lastPublishedUrlRef = useRef(routerUrl)
   const ownPublishedUrlsRef = useRef<OwnPublish[]>([])
+  const shellEntryKeysRef = useRef<string[]>([])
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
   useLayoutEffect(() => {
@@ -217,8 +218,15 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       setCurrentLocation({ url: locationHook.pathname, isFirst: false })
     }
     // The shell-requested navigation carries isRouterSync on the history entry it committed.
-    // Decide per commit, so ordering of shell events cannot make an app navigation look shell-driven.
-    if (window.history.state?.isRouterSync === true) {
+    // That marker is consumed by its first commit: a later back/forward traversal to the same entry
+    // is an ordinary navigation of the app and must be published.
+    const entryKey = window.history.state?.key as string | undefined
+    if (
+      window.history.state?.isRouterSync === true &&
+      entryKey !== undefined &&
+      !shellEntryKeysRef.current.includes(entryKey)
+    ) {
+      shellEntryKeysRef.current = [...shellEntryKeysRef.current.slice(-49), entryKey]
       lastPublishedUrlRef.current = routerUrl
       return
     }
