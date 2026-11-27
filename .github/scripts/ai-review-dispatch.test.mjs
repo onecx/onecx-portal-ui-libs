@@ -1,157 +1,8 @@
 import assert from 'node:assert/strict'
-import { spawnSync } from 'node:child_process'
-import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
-import os from 'node:os'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import test from 'node:test'
+import { assertDispatched, fixture } from './ai-review-dispatch.test-helpers.mjs'
 
-const script = fileURLToPath(new URL('./ai-review-dispatch.mjs', import.meta.url))
-
-async function fixture(t, options = {}) {
-  const root = await mkdtemp(path.join(os.tmpdir(), 'ai-review-dispatch-'))
-  t.after(() => rm(root, { recursive: true, force: true }))
-  const bin = path.join(root, 'bin')
-  const workspace = path.join(root, 'checkout')
-  await mkdir(bin)
-  await mkdir(path.join(workspace, '.github'), { recursive: true })
-  const eventName = options.eventName ?? 'pull_request_target'
-  const actor = options.actor ?? 'maintainer'
-  const pullRequest = {
-    number: 42,
-    html_url: 'https://github.com/example/consumer/pull/42',
-    state: 'open',
-    draft: false,
-    user: { login: actor, type: 'User' },
-    base: { repo: { full_name: 'example/consumer' }, sha: 'base-sha' },
-    head: { repo: { full_name: 'example/consumer' } },
-    ...options.pullRequest,
-  }
-  const event = {
-    action: options.action ?? (eventName === 'issue_comment' ? 'created' : 'opened'),
-    sender: { login: actor, type: 'User', ...options.sender },
-    repository: { full_name: 'example/consumer', default_branch: 'main' },
-    ...(eventName === 'pull_request_target' ? { pull_request: pullRequest } : {}),
-    ...(eventName === 'workflow_dispatch' ? { inputs: { pr_number: options.prNumber ?? '42' } } : {}),
-    ...(eventName === 'issue_comment'
-      ? {
-          issue: {
-            number: 42,
-            pull_request: { html_url: pullRequest.html_url },
-            ...options.issue,
-          },
-          comment: {
-            body: options.comment ?? '@ai-review',
-            user: { login: actor, type: 'User', ...options.commentUser },
-          },
-        }
-      : {}),
-  }
-  const eventPath = path.join(root, 'event.json')
-  await writeFile(eventPath, JSON.stringify(event))
-  if (options.guidance !== undefined) {
-    await writeFile(path.join(workspace, '.github', 'ai-review.md'), options.guidance)
-  }
-  if (options.guidanceError) {
-    await mkdir(path.join(workspace, '.github', 'ai-review.md'))
-  }
-  const logPath = path.join(root, 'calls.jsonl')
-  const gh = path.join(bin, 'gh')
-  await writeFile(
-    gh,
-    `#!/usr/bin/env node
-import { appendFileSync } from 'node:fs'
-const args = process.argv.slice(2)
-appendFileSync(process.env.FAKE_LOG, JSON.stringify({ args, token: process.env.GH_TOKEN }) + '\\n')
-if (args[0] === 'api') {
-  if (process.env.FAKE_MODE === 'auth-failure') {
-    process.stderr.write('raw auth private/destination ' + process.env.GH_TOKEN)
-    process.exit(1)
-  }
-  if (args[1].endsWith('/permission')) {
-    process.stdout.write(process.env.FAKE_PERMISSION)
-  } else {
-    if (process.env.FAKE_MODE === 'pr-failure') process.exit(1)
-    process.stdout.write(process.env.FAKE_PR)
-  }
-} else {
-  process.stdout.write('raw dispatch private/destination ' + process.env.GH_TOKEN)
-  if (process.env.FAKE_MODE === 'dispatch-failure') process.exit(1)
-}
-`
-  )
-  await chmod(gh, 0o755)
-  const outputPath = path.join(root, 'github-output')
-  const result = spawnSync(process.execPath, options.check ? [script, '--check'] : [script], {
-    cwd: root,
-    encoding: 'utf8',
-    env: {
-      ...process.env,
-      PATH: `${bin}${path.delimiter}${process.env.PATH}`,
-      GITHUB_EVENT_NAME: eventName,
-      GITHUB_EVENT_PATH: eventPath,
-      GITHUB_ACTOR: actor,
-      GITHUB_REPOSITORY: 'example/consumer',
-      GITHUB_REF: options.ref ?? 'refs/heads/main',
-      GITHUB_WORKSPACE: workspace,
-      GITHUB_OUTPUT: outputPath,
-      AI_REVIEW_DISPATCH_REPOSITORY: options.target ?? 'private/destination',
-      AI_REVIEW_DISPATCH_REF: options.dispatchRef ?? '',
-      GH_TOKEN: options.dispatchToken ?? 'author-secret',
-      GH_READ_TOKEN: 'repository-read-secret',
-      FAKE_LOG: logPath,
-      FAKE_MODE: options.ghMode ?? 'success',
-      FAKE_PERMISSION: options.permissionResponse ?? JSON.stringify({ permission: options.permission ?? 'write' }),
-      FAKE_PR: options.prResponse ?? JSON.stringify({ ...pullRequest, ...options.currentPullRequest }),
-    },
-  })
-  let calls = []
-  try {
-    calls = (await readFile(logPath, 'utf8')).trim().split('\n').filter(Boolean).map(JSON.parse)
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error
-  }
-  for (const secret of ['author-secret', 'repository-read-secret', 'private/destination', 'raw auth', 'raw dispatch']) {
-    assert.equal(`${result.stdout}${result.stderr}`.includes(secret), false, `output exposed ${secret}`)
-  }
-  let output = ''
-  try {
-    output = await readFile(outputPath, 'utf8')
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error
-  }
-  return { result, calls, output }
-}
-
-function assertDispatched({ result, calls, output }, dispatchRef = 'main') {
-  assert.equal(result.status, 0, result.stderr)
-  assert.equal(output, '')
-  assert.deepEqual(
-    calls.map(({ token }) => token),
-    ['repository-read-secret', 'repository-read-secret', 'author-secret']
-  )
-  assert.deepEqual(calls[0].args, ['api', 'repos/example/consumer/collaborators/maintainer/permission'])
-  assert.deepEqual(calls[1].args, ['api', 'repos/example/consumer/pulls/42'])
-  assert.deepEqual(calls.at(-1).args, [
-    'workflow',
-    'run',
-    'hybrid-agent-pipeline.yml',
-    '--repo',
-    'private/destination',
-    '--ref',
-    dispatchRef,
-    '-f',
-    'pr_url=https://github.com/example/consumer/pull/42',
-    '-f',
-    'profile=review-gh-pr',
-    '-f',
-    'workflow_config={"version":1}',
-    '-f',
-    'post_comments=true',
-  ])
-}
-
-test('dispatches automatic reviews with the PR author’s own token', async (t) => {
+test('dispatches automatic reviews with a service token, not the event actor PAT', async (t) => {
   assertDispatched(await fixture(t))
 })
 
@@ -165,7 +16,9 @@ test('release-target PRs still dispatch the central main workflow by default', a
 })
 
 test('an explicit trusted dispatch ref overrides main without using the PR target ref', async (t) => {
-  assertDispatched(await fixture(t, { ref: 'refs/heads/v7', dispatchRef: 'release/review-v2' }), 'release/review-v2')
+  assertDispatched(await fixture(t, { ref: 'refs/heads/v7', dispatchRef: 'release/review-v2' }), {
+    dispatchRef: 'release/review-v2',
+  })
 })
 
 test('manual Actions dispatch looks up an existing PR on the default branch', async (t) => {
@@ -200,72 +53,76 @@ test('a fork requester still needs write access to the consumer repository', asy
   assert.match(result.stderr, /authorization failed/i)
 })
 
-test('skips requests from anyone but the PR author without using a dispatch token', async (t) => {
+test('accepts a team fork author reported as CONTRIBUTOR when repository permissions prove admin access', async (t) => {
   for (const eventName of ['pull_request_target', 'issue_comment', 'workflow_dispatch']) {
     await t.test(eventName, async (t) => {
-      const { result, calls } = await fixture(t, {
-        eventName,
-        pullRequest: { user: { login: 'contributor', type: 'User' } },
-        dispatchToken: '',
-      })
-      assert.equal(result.status, 0, result.stderr)
-      assert.equal(calls.length, 2)
-      assert.match(result.stdout, /only the author can request/i)
+      assertDispatched(
+        await fixture(t, {
+          eventName,
+          pullRequest: {
+            author_association: 'CONTRIBUTOR',
+            head: { repo: { full_name: 'teammate/fork' } },
+          },
+          authorPermission: 'admin',
+        }),
+        { permissionChecks: 3 }
+      )
     })
   }
 })
 
-test('the check step approves only the PR author, before any dispatch token exists', async (t) => {
-  for (const eventName of ['pull_request_target', 'issue_comment', 'workflow_dispatch']) {
-    await t.test(eventName, async (t) => {
-      const author = await fixture(t, { eventName, check: true, dispatchToken: '' })
-      assert.equal(author.result.status, 0, author.result.stderr)
-      assert.equal(author.calls.length, 2)
-      assert.equal(author.output, 'dispatch=true\n')
-
-      const other = await fixture(t, {
-        eventName,
-        check: true,
-        dispatchToken: '',
-        pullRequest: { user: { login: 'contributor', type: 'User' } },
-      })
-      assert.equal(other.result.status, 0, other.result.stderr)
-      assert.equal(other.calls.length, 2)
-      assert.equal(other.output, '')
-
-      const readOnly = await fixture(t, { eventName, check: true, dispatchToken: '', permission: 'read' })
-      assert.equal(readOnly.result.status, 1)
-      assert.equal(readOnly.output, '')
-    })
-  }
-})
-
-test('fails with the Vault path when the PR author has no dispatch token', async (t) => {
-  const { result, calls } = await fixture(t, { dispatchToken: '' })
+test('rejects an unassociated author without verified repository write access', async (t) => {
+  const { result, calls } = await fixture(t, {
+    eventName: 'workflow_dispatch',
+    pullRequest: { author_association: 'CONTRIBUTOR' },
+    authorPermission: 'read',
+  })
   assert.equal(result.status, 1)
-  assert.equal(calls.length, 2)
-  assert.match(result.stderr, /secret\/data\/users\/maintainer\/tokens/)
+  assert.equal(calls.length, 3)
+  assert.match(result.stderr, /author authorization failed/i)
 })
+
+test('reuses verified requester permissions when the CONTRIBUTOR author is the requester', async (t) => {
+  assertDispatched(
+    await fixture(t, {
+      eventName: 'workflow_dispatch',
+      pullRequest: { author_association: 'CONTRIBUTOR', user: { login: 'maintainer', type: 'User' } },
+    })
+  )
+})
+
+test('author permission lookup failures remain explicit and redacted', async (t) => {
+  const { result, calls } = await fixture(t, {
+    eventName: 'workflow_dispatch',
+    pullRequest: { author_association: 'CONTRIBUTOR' },
+    authorPermissionResponse: '{broken',
+  })
+  assert.equal(result.status, 1)
+  assert.equal(calls.length, 3)
+  assert.match(result.stderr, /author authorization failed/i)
+})
+
+const untrustedEvents = [
+  { eventName: 'pull_request' },
+  { action: 'closed' },
+  { actor: 'automation[bot]' },
+  { sender: { login: 'someone-else' } },
+  { sender: { type: 'Bot' } },
+  { eventName: 'workflow_dispatch', prNumber: '0' },
+  { eventName: 'workflow_dispatch', prNumber: '../other' },
+  { eventName: 'workflow_dispatch', prNumber: '9007199254740992' },
+  { eventName: 'workflow_dispatch', ref: 'refs/heads/untrusted' },
+  { eventName: 'issue_comment', action: 'edited' },
+  { eventName: 'issue_comment', comment: 'please @ai-review' },
+  { eventName: 'issue_comment', issue: { pull_request: undefined } },
+  { eventName: 'issue_comment', commentUser: { login: 'someone-else' } },
+  { eventName: 'issue_comment', commentUser: { type: 'Bot' } },
+  { target: '' },
+  { dispatchToken: '' },
+]
 
 test('rejects unrelated or untrusted events before using GitHub credentials', async (t) => {
-  const cases = [
-    { eventName: 'pull_request' },
-    { action: 'closed' },
-    { actor: 'automation[bot]' },
-    { sender: { login: 'someone-else' } },
-    { sender: { type: 'Bot' } },
-    { eventName: 'workflow_dispatch', prNumber: '0' },
-    { eventName: 'workflow_dispatch', prNumber: '../other' },
-    { eventName: 'workflow_dispatch', prNumber: '9007199254740992' },
-    { eventName: 'workflow_dispatch', ref: 'refs/heads/untrusted' },
-    { eventName: 'issue_comment', action: 'edited' },
-    { eventName: 'issue_comment', comment: 'please @ai-review' },
-    { eventName: 'issue_comment', issue: { pull_request: undefined } },
-    { eventName: 'issue_comment', commentUser: { login: 'someone-else' } },
-    { eventName: 'issue_comment', commentUser: { type: 'Bot' } },
-    { target: '' },
-  ]
-  for (const options of cases) {
+  for (const options of untrustedEvents) {
     await t.test(JSON.stringify(options), async (t) => {
       const { result, calls } = await fixture(t, options)
       assert.equal(result.status, 1)
