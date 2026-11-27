@@ -14,6 +14,17 @@ jest.mock('../gatherers/ai-agent/v1/ai-agent.gatherer', () => ({
 const sampleRequest: AiAgentRequest = { appId: 'app-1' }
 
 describe('OneCXAiAgentService', () => {
+  let service: OneCXAiAgentService
+  let gathererMock: { gather: jest.Mock; destroy: jest.Mock }
+
+  const getGathererMock = (instance: OneCXAiAgentService) =>
+    (instance as unknown as { aiAgentGatherer: { gather: jest.Mock; destroy: jest.Mock } }).aiAgentGatherer
+
+  beforeEach(() => {
+    service = new OneCXAiAgentService()
+    gathererMock = getGathererMock(service)
+  })
+
   it('should reject with a TIMEOUT error when the gatherer never answers', async () => {
     jest.useFakeTimers()
     try {
@@ -25,17 +36,6 @@ describe('OneCXAiAgentService', () => {
     } finally {
       jest.useRealTimers()
     }
-  })
-
-  let service: OneCXAiAgentService
-  let gathererMock: { gather: jest.Mock; destroy: jest.Mock }
-
-  const getGathererMock = (instance: OneCXAiAgentService) =>
-    (instance as unknown as { aiAgentGatherer: { gather: jest.Mock; destroy: jest.Mock } }).aiAgentGatherer
-
-  beforeEach(() => {
-    service = new OneCXAiAgentService()
-    gathererMock = getGathererMock(service)
   })
 
   it('should create the aiAgentGatherer during construction', () => {
