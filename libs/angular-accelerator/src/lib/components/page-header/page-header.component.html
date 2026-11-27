@@ -1,7 +1,6 @@
 <div class="onecx-page-header mb-4" name="ocx-page-header-wrapper">
   @if (showBreadcrumbs()) { @if (breadcrumbs$ | async ; as items) {
   <p-breadcrumb
-    #breadcrumbRef
     id="pageHeaderBreadcrumb"
     [model]="items"
     [home]="(home$ | async)?.menuItem ?? {}"
