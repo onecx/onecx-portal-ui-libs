@@ -1,7 +1,15 @@
 import { importProvidersFrom } from '@angular/core'
+import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { ButtonModule } from 'primeng/button'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputTextModule } from 'primeng/inputtext'
+import { MessageModule } from 'primeng/message'
+import { SelectModule } from 'primeng/select'
+import { SkeletonModule } from 'primeng/skeleton'
+import { TextareaModule } from 'primeng/textarea'
 import { z } from 'zod'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookThemeModule } from '../../storybook-theme.module'
@@ -21,7 +29,17 @@ export default {
     }),
     moduleMetadata({
       declarations: [AiAssistComponent],
-      imports: [StorybookTranslateModule],
+      imports: [
+        StorybookTranslateModule,
+        FormsModule,
+        ButtonModule,
+        FloatLabelModule,
+        InputTextModule,
+        MessageModule,
+        SelectModule,
+        SkeletonModule,
+        TextareaModule,
+      ],
     }),
   ],
 } as Meta<AiAssistComponent>
