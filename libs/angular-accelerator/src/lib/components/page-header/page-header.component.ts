@@ -15,6 +15,7 @@ import {
   model,
   output,
   signal,
+  isDevMode,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -241,6 +242,29 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     this.figureImageLoadError.set(true)
   }
 
+  private readonly warnedItems = new WeakSet<ObjectDetailItem>()
+
+  /**
+   * Accessible name of the object detail action button, given the translation candidates already
+   * resolved by the translate pipe in the template:
+   * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
+   */
+  resolveActionItemAria(
+    item: ObjectDetailItem,
+    ariaLabel: string | undefined,
+    tooltip: string | undefined
+  ): string {
+    const name = ariaLabel || item.actionItemAriaLabel || tooltip
+    if (name) return name
+    if (isDevMode() && !this.warnedItems.has(item)) {
+      this.warnedItems.add(item)
+      console.warn(
+        `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
+      )
+    }
+    return item.label
+  }
+
   public generateItemStyle(item: ObjectDetailItem): string {
     let style = ''
     if (item.icon) style = style.concat(style, ' ', 'gap-1 align-items-center')
@@ -290,14 +314,32 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     const translationKeys = [
       ...actions.map((a) => a.labelKey || '').filter((a) => !!a),
       ...actions.map((a) => a.titleKey || '').filter((a) => !!a),
+      ...actions.map((a) => a.ariaLabelKey || '').filter((a) => !!a),
     ]
     return translationKeys.length ? this.translateService.get(translationKeys) : of({})
+  }
+
+  /**
+   * Accessible name of an icon-only overflow action, resolved from the batched translation map:
+   * ariaLabelKey, ariaLabel, titleKey, title. Mirrors the inline branch, where a visible label
+   * always wins (WCAG 2.5.3), so this is only used when there is no label.
+   */
+  private getOverflowActionAriaLabel(action: Action, translations: { [key: string]: string }): string | undefined {
+    return (
+      (action.ariaLabelKey ? translations[action.ariaLabelKey] : undefined) ||
+      action.ariaLabel ||
+      (action.titleKey ? translations[action.titleKey] : undefined) ||
+      action.title ||
+      undefined
+    )
   }
 
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
       id: a.id,
-      label: a.labelKey ? translations[a.labelKey] : a.label,
+      // Fall back to the same ariaLabel/title chain the inline branch uses (only applied to the
+      // icon-only case, since a visible label always wins).
+      label: a.labelKey ? translations[a.labelKey] : a.label || this.getOverflowActionAriaLabel(a, translations),
       icon: a.icon,
       tooltipOptions: {
         tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
@@ -324,11 +366,13 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     breadcrumbItems.forEach((item: Element, index: number) => {
       const text = (item as HTMLElement)?.innerText?.trim()
       if (!text) return
-      
-      this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
-        this.renderer.setAttribute(item, 'aria-label', ariaLabel)
-      })
-      
+
+      this.translateService
+        .get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text })
+        .subscribe((ariaLabel) => {
+          this.renderer.setAttribute(item, 'aria-label', ariaLabel)
+        })
+
       if (index === breadcrumbItems.length - 1) {
         this.renderer.setAttribute(item, 'aria-current', 'page')
       }
