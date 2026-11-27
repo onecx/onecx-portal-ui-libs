@@ -2,7 +2,7 @@ import { Component, EventEmitter } from '@angular/core'
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { Observable } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 import { DialogContentHarness, provideTranslateTestingService } from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import {
@@ -119,7 +119,9 @@ describe('DialogContentComponent', () => {
       providers: [DynamicDialogConfig, DynamicDialogRef, provideTranslateTestingService({})],
     }).compileComponents()
 
-    jest.resetAllMocks()
+    // Clear call history only: resetAllMocks() would also drop the implementation of the
+    // global ResizeObserver mock (installed in test-setup.ts), which ngAfterViewInit relies on.
+    jest.clearAllMocks()
   })
 
   it('should ue ng-content', async () => {
@@ -403,6 +405,102 @@ describe('DialogContentComponent', () => {
         id: 'id',
         enabled: true,
       })
+    })
+  })
+  describe('scroll region', () => {
+    let resizeCallback: (() => void) | undefined
+    const observe = jest.fn()
+    const disconnect = jest.fn()
+
+    function setOverflow(region: HTMLElement, overflow: { vertical?: boolean; horizontal?: boolean }) {
+      Object.defineProperty(region, 'clientHeight', { configurable: true, value: 100 })
+      Object.defineProperty(region, 'scrollHeight', { configurable: true, value: overflow.vertical ? 300 : 100 })
+      Object.defineProperty(region, 'clientWidth', { configurable: true, value: 200 })
+      Object.defineProperty(region, 'scrollWidth', { configurable: true, value: overflow.horizontal ? 400 : 200 })
+    }
+
+    function createWithLongMessage() {
+      const dialogConfig = TestBed.inject(DynamicDialogConfig)
+      dialogConfig.data = {
+        component: DialogMessageContentComponent,
+        componentData: { message: 'Lorem ipsum dolor sit amet '.repeat(12) },
+        portalDialogServiceData: { buttonClicked$: new Subject() },
+      }
+      fixture = TestBed.createComponent(DialogContentComponent)
+      component = fixture.componentInstance
+      fixture.detectChanges()
+      return fixture.nativeElement.querySelector('.buttonDialogScrollableContent') as HTMLElement
+    }
+
+    const globalWithResizeObserver = globalThis as unknown as { ResizeObserver?: typeof ResizeObserver }
+    const originalResizeObserver = globalWithResizeObserver.ResizeObserver
+
+    beforeEach(() => {
+      resizeCallback = undefined
+      observe.mockClear()
+      disconnect.mockClear()
+      globalWithResizeObserver.ResizeObserver = jest.fn((callback: () => void) => {
+        resizeCallback = callback
+        return { observe, disconnect, unobserve: jest.fn() }
+      }) as unknown as typeof ResizeObserver
+    })
+
+    afterEach(() => {
+      globalWithResizeObserver.ResizeObserver = originalResizeObserver
+    })
+
+    it('should not be focusable or a named region while the content fits', () => {
+      const region = createWithLongMessage()
+
+      expect(component.scrollable()).toBe(false)
+      expect(region.getAttribute('tabindex')).toBeNull()
+      expect(region.getAttribute('role')).toBeNull()
+      expect(region.getAttribute('aria-label')).toBeNull()
+      expect(observe).toHaveBeenCalledTimes(2)
+    })
+
+    it('should become a keyboard focusable, named region when the content overflows vertically', () => {
+      const region = createWithLongMessage()
+
+      setOverflow(region, { vertical: true })
+      resizeCallback?.()
+      fixture.detectChanges()
+
+      expect(component.scrollable()).toBe(true)
+      expect(region.getAttribute('tabindex')).toBe('0')
+      expect(region.getAttribute('role')).toBe('region')
+      expect(region.getAttribute('aria-label')).toBeTruthy()
+      expect(region.textContent).toContain('Lorem ipsum')
+    })
+
+    it('should become focusable when the content overflows horizontally and stop when it fits again', () => {
+      const region = createWithLongMessage()
+
+      setOverflow(region, { horizontal: true })
+      resizeCallback?.()
+      fixture.detectChanges()
+      expect(region.getAttribute('tabindex')).toBe('0')
+
+      setOverflow(region, {})
+      resizeCallback?.()
+      fixture.detectChanges()
+      expect(region.getAttribute('tabindex')).toBeNull()
+    })
+
+    it('should disconnect the resize observer on destroy', () => {
+      createWithLongMessage()
+
+      fixture.destroy()
+
+      expect(disconnect).toHaveBeenCalled()
+    })
+
+    it('should evaluate the overflow once when ResizeObserver is not available', () => {
+      delete globalWithResizeObserver.ResizeObserver
+      const region = createWithLongMessage()
+
+      expect(resizeCallback).toBeUndefined()
+      expect(region.getAttribute('tabindex')).toBeNull()
     })
   })
 })

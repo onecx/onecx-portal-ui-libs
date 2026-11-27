@@ -40,12 +40,38 @@ export function combineToGuardResult(results: GuardResult[]): GuardResult {
   // Check for UrlTree or RedirectCommand
   // If any guard returned this, we need to return it to perform the redirection
   // We return the first one found
-  const redirectResult = results.find((result) => result instanceof UrlTree || result instanceof RedirectCommand)
+  const redirectResult = results.find((result) => isRedirect(result))
   if (redirectResult) {
     return redirectResult
   }
 
   return true
+}
+
+/**
+ * Combines canActivate guard results independent of the order in which the guards were registered.
+ * Returns UrlTree or RedirectCommand if any guard returned this value type (the first value is returned).
+ * Else it returns false if any guard returned false.
+ * Else it returns true.
+ *
+ * A redirect wins over false because both deny the activation and the redirect also tells where to go instead.
+ */
+export function combineToActivateGuardResult(results: GuardResult[]): GuardResult {
+  const redirectResult = results.find((result) => isRedirect(result))
+  if (redirectResult) {
+    return redirectResult
+  }
+
+  return combineToBoolean(results)
+}
+
+/**
+ * Checks if the guard result is a redirect (UrlTree or RedirectCommand).
+ * @param result - the guard result to check
+ * @returns true if the result is a redirect
+ */
+export function isRedirect(result: GuardResult): result is UrlTree | RedirectCommand {
+  return result instanceof UrlTree || result instanceof RedirectCommand
 }
 
 /**
