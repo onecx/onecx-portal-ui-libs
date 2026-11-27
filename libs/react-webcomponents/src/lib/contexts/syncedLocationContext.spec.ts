@@ -18,6 +18,18 @@ const { SyncedRouterProvider, SyncedLocationContext } =
   jest.requireActual<typeof import('./syncedLocationContext')>('./syncedLocationContext')
 
 const appBase = '/app/sample-app'
+const shellPrefix = '/app/'
+// The shell publishes deployment-relative URLs (no leading slash); tests keep writing absolute URLs.
+const toShellForm = (url: string) => (url.startsWith(shellPrefix) ? url.slice(shellPrefix.length) : url)
+const toAbsoluteForm = (url: string) => (url.startsWith('/') ? url : `${shellPrefix}${url}`)
+const toShellPayload = (payload: CurrentLocationTopicPayload): CurrentLocationTopicPayload => ({
+  ...payload,
+  url: payload.url === undefined ? undefined : toShellForm(payload.url),
+})
+const toAbsolutePayload = (payload: CurrentLocationTopicPayload): CurrentLocationTopicPayload => ({
+  ...payload,
+  url: payload.url === undefined ? undefined : toAbsoluteForm(payload.url),
+})
 const mockLocationListeners: ((location: CurrentLocationTopicPayload) => void)[] = []
 const mockPublishedLocations: CurrentLocationTopicPayload[] = []
 let mockSubscribeCalls = 0
@@ -29,11 +41,12 @@ jest.mock('@onecx/integration-interface', () => ({
   CurrentLocationTopic: class {
     subscribe(callback: (location: CurrentLocationTopicPayload) => void) {
       mockSubscribeCalls += 1
-      mockLocationListeners.push(callback)
-      callback(topicLastValue)
+      const listener = (location: CurrentLocationTopicPayload) => callback(toShellPayload(location))
+      mockLocationListeners.push(listener)
+      listener(topicLastValue)
       return {
         unsubscribe: () => {
-          const index = mockLocationListeners.indexOf(callback)
+          const index = mockLocationListeners.indexOf(listener)
           if (index >= 0) mockLocationListeners.splice(index, 1)
         },
       }
@@ -41,9 +54,9 @@ jest.mock('@onecx/integration-interface', () => ({
 
     publish(location: CurrentLocationTopicPayload) {
       topicLastValue = location
-      mockPublishedLocations.push(location)
+      mockPublishedLocations.push(toAbsolutePayload(location))
       if (mockDeferEchoes) {
-        mockDeferredEchoes.push(location)
+        mockDeferredEchoes.push(toAbsolutePayload(location))
       } else {
         mockLocationListeners.slice().forEach((listener) => listener(location))
       }
@@ -308,9 +321,23 @@ describe('SyncedRouterProvider', () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    act(() => {
+      window.history.pushState({}, '', `${appBase}/subpage/record-1`)
+      mockLocationListeners[0]({ url: 'app/sample-app/subpage/record-1', isFirst: false })
+    })
 
     expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+
+  it('publishes a redirected location outside the deployment path without the prefix', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockNavigateRedirectTo = '/elsewhere/page'
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    mockNavigateRedirectTo = null
+
+    await waitFor(() => expect(mockPublishedLocations).toContainEqual({ url: '/app/elsewhere/page', isFirst: false }))
   })
 
   it('ignores empty topic URLs', async () => {
