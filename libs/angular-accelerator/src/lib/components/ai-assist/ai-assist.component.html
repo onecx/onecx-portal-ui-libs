@@ -10,9 +10,8 @@
         severity="secondary"
         [text]="true"
         [rounded]="true"
-        [attr.aria-expanded]="open"
-        [attr.aria-controls]="uid + '-panel'"
-        [attr.aria-label]="'OCX_AI_ASSIST.TOGGLE' | translate"
+        [pt]="{ root: { 'aria-expanded': open, 'aria-controls': uid + '-panel' } }"
+        [ariaLabel]="'OCX_AI_ASSIST.TOGGLE' | translate"
         (onClick)="toggle()"
       ></p-button>
     </div>
@@ -31,7 +30,7 @@
         severity="secondary"
         [text]="true"
         [rounded]="true"
-        [attr.aria-label]="'OCX_AI_ASSIST.CLOSE' | translate"
+        [ariaLabel]="'OCX_AI_ASSIST.CLOSE' | translate"
         (onClick)="close()"
       ></p-button>
     </header>
@@ -53,6 +52,16 @@
     ></p-button>
     } @case ('empty') {
     <p-message severity="info" [text]="'OCX_AI_ASSIST.NO_AGENTS' | translate"></p-message>
+    <p-button
+      class="ocx-ai-assist__try-again"
+      type="button"
+      severity="secondary"
+      icon="pi pi-refresh"
+      iconPos="left"
+      [text]="true"
+      [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
+      (onClick)="loadAgents(true)"
+    ></p-button>
     } @case ('ready') { @if (isReviewReady) {
     <div class="ocx-ai-assist__review">
       <div class="ocx-ai-assist__review-status">

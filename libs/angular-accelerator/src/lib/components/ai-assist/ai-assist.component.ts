@@ -13,6 +13,7 @@ import {
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AiAgentResponse,
+  AiProviderError,
   isAiProviderError,
   OneCXAiAgentService,
   OneCXAiCompletionService,
@@ -30,6 +31,7 @@ const UNKNOWN_ERROR_CODE = 'UNKNOWN'
 const NO_CONTEXT_ERROR_CODE = 'NO_CONTEXT'
 const MFE_CONTEXT_TIMEOUT_MS = 5000
 const AGENT_CACHE_TTL_MS = 60000
+const AGENT_LOOKUP_TIMEOUT_MS = 15000
 
 const agentCache = new Map<string, { agents: Promise<AiAgentResponse[]>; expiresAt: number }>()
 let sharedAgentService: OneCXAiAgentService | undefined
@@ -53,15 +55,28 @@ function getAgentsCached(appId: string | undefined, force: boolean): Promise<AiA
   if (!force && cached && cached.expiresAt > Date.now()) {
     return cached.agents
   }
-  const agents = getSharedAgentService().getAgents({ appId })
+  const agents = withTimeout(getSharedAgentService().getAgents({ appId }), AGENT_LOOKUP_TIMEOUT_MS)
   const entry = { agents, expiresAt: Date.now() + AGENT_CACHE_TTL_MS }
   agentCache.set(key, entry)
-  agents.catch(() => {
+  const discard = (): void => {
     if (agentCache.get(key) === entry) {
       agentCache.delete(key)
     }
-  })
+  }
+  agents.then((list) => {
+    if (list.length === 0) {
+      discard()
+    }
+  }, discard)
   return agents
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const expired = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new AiProviderError('TIMEOUT', 'AI agent lookup timed out')), ms)
+  })
+  return Promise.race([promise, expired]).finally(() => clearTimeout(timer))
 }
 
 let instanceCount = 0
@@ -98,7 +113,13 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
   @Input() appId?: string
 
   /** Text of the field the assistant works on. The result is offered back through replaceText. */
-  @Input() inputText = ''
+  @Input()
+  set inputText(value: string | null | undefined) {
+    this.inputTextValue = value ?? ''
+  }
+  get inputText(): string {
+    return this.inputTextValue
+  }
   /** Emits the accepted AI suggestion when the user chooses Replace text. */
   @Output() replaceText = new EventEmitter<string>()
 
@@ -124,20 +145,21 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
   /** Prefix of the element ids in this instance, so several assistants can share a page. */
   readonly uid = `ocx-ai-assist-${++instanceCount}`
 
-  private readonly completionService = new OneCXAiCompletionService()
+  private completionService?: OneCXAiCompletionService
+  private inputTextValue = ''
   private readonly appStateService = inject(AppStateService)
   // Incremented whenever the action, agent, or result is reset, so a late completion can detect it is stale.
   private runCounter = 0
   private agentsLoadCounter = 0
+  private agentsRequested = false
   private actionsCache?: { defaults: unknown; additions: unknown; actions: AiAssistActionDefinition<unknown>[] }
 
   ngOnInit(): void {
     this.selectAction(this.actions[0]?.id)
-    this.loadAgents()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['appId'] && !changes['appId'].firstChange) {
+    if (changes['appId'] && !changes['appId'].firstChange && this.agentsRequested) {
       this.loadAgents()
     }
   }
@@ -145,7 +167,12 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.runCounter++
     this.agentsLoadCounter++
-    this.completionService.destroy()
+    this.completionService?.destroy()
+  }
+
+  private getCompletionService(): OneCXAiCompletionService {
+    this.completionService ??= new OneCXAiCompletionService()
+    return this.completionService
   }
 
   /** All offered actions: `defaultActions` followed by `additionalActions`. */
@@ -205,6 +232,9 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
    */
   toggle(): void {
     this.open = !this.open
+    if (this.open && !this.agentsRequested) {
+      this.loadAgents()
+    }
   }
 
   /** Closes the panel and resets the action and agent selection to the first options. */
@@ -226,6 +256,7 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
 
   /** Reloads the agent list for `appId`, or for the current MFE when `appId` is not set. */
   loadAgents(force = false): void {
+    this.agentsRequested = true
     this.loadState = 'loading'
     const loadId = ++this.agentsLoadCounter
     if (this.appId) {
@@ -285,7 +316,7 @@ export class AiAssistComponent implements OnChanges, OnInit, OnDestroy {
       `Respond only with JSON matching ${action.outputDescription}. Do not write anything outside the JSON.`,
     ].join('\n')
     try {
-      const result = await this.completionService.getCompletion({
+      const result = await this.getCompletionService().getCompletion({
         agentId: agent.id,
         agentName: agent.name,
         systemPrompt,
