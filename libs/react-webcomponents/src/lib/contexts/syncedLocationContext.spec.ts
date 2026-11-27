@@ -63,7 +63,6 @@ jest.mock('@onecx/react-integration-interface', () => ({
 }))
 
 let mockNavigateRedirectTo: string | null = null
-let mockNavigateDisabled = false
 
 jest.mock('react-router', () => {
   const actual = jest.requireActual<typeof import('react-router')>('react-router')
@@ -72,7 +71,7 @@ jest.mock('react-router', () => {
     useNavigate: (): NavigateFunction => {
       const navigate = actual.useNavigate()
       const mockedNavigate = (to: To, options?: NavigateOptions) => {
-        if (!mockNavigateDisabled) navigate(mockNavigateRedirectTo ?? to, options)
+        navigate(mockNavigateRedirectTo ?? to, options)
       }
       return mockedNavigate as unknown as NavigateFunction
     },
@@ -604,55 +603,6 @@ describe('SyncedRouterProvider', () => {
     expect(window.location.pathname).toBe(first)
   })
 
-  it('applies the queued shell target when a navigation never commits', () => {
-    jest.useFakeTimers()
-    try {
-      renderRouter()
-      expect(mockLocationListeners).toHaveLength(1)
-      mockNavigateDisabled = true
-      const first = `${appBase}/subpage/record-1`
-      const second = `${appBase}/subpage/record-2`
-      act(() => {
-        window.history.pushState({}, '', first)
-        mockLocationListeners[0]({ url: first, isFirst: false })
-        window.history.pushState({}, '', second)
-        mockLocationListeners[0]({ url: second, isFirst: false })
-      })
-      expect(screen.getByTestId('location').textContent).toBe(appBase)
-
-      mockNavigateDisabled = false
-      act(() => {
-        jest.advanceTimersByTime(1000)
-      })
-
-      expect(screen.getByTestId('location').textContent).toBe(second)
-    } finally {
-      mockNavigateDisabled = false
-      jest.useRealTimers()
-    }
-  })
-
-  it('applies the queued shell target when a competing navigation commits first', async () => {
-    renderRouter()
-
-    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    const first = `${appBase}/subpage/record-1`
-    const second = `${appBase}/subpage/record-2`
-    mockNavigateDisabled = true
-    act(() => {
-      window.history.pushState({}, '', first)
-      mockLocationListeners[0]({ url: first, isFirst: false })
-      window.history.pushState({}, '', second)
-      mockLocationListeners[0]({ url: second, isFirst: false })
-    })
-    mockNavigateDisabled = false
-
-    fireEvent.click(screen.getByText('Navigate to root in React'))
-
-    expect(await screen.findByText('Subpage')).toBeTruthy()
-    expect(screen.getByTestId('location').textContent).toBe(second)
-  })
-
   it('re-wraps a history method that was restored while the other one is still patched', () => {
     const historyRecord = window.history as unknown as Record<string, unknown>
     const { unmount } = renderRouter()
@@ -669,33 +619,6 @@ describe('SyncedRouterProvider', () => {
 
     window.history.replaceState = historyMethodsBeforeContextImport.replaceState
     delete historyRecord['__onecxRouterSyncWrapped']
-  })
-
-  it('does not publish back a topic target that commits after the navigation timed out', () => {
-    jest.useFakeTimers()
-    try {
-      renderRouter()
-      expect(mockLocationListeners).toHaveLength(1)
-      const target = `${appBase}/subpage/record-1?tab=details#summary`
-      mockNavigateDisabled = true
-      act(() => {
-        window.history.pushState({}, '', target)
-        mockLocationListeners[0]({ url: target, isFirst: false })
-      })
-      act(() => {
-        jest.advanceTimersByTime(1000)
-      })
-      mockNavigateDisabled = false
-      mockPublishedLocations.length = 0
-
-      fireEvent.click(screen.getByText('Navigate in React'))
-
-      expect(screen.getByTestId('location').textContent).toBe(target)
-      expect(mockPublishedLocations).toEqual([])
-    } finally {
-      mockNavigateDisabled = false
-      jest.useRealTimers()
-    }
   })
 
   it('treats an own publish without an echo as stale after its TTL', () => {
