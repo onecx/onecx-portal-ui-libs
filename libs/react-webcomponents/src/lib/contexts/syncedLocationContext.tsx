@@ -30,14 +30,23 @@ const toUrl = ({ pathname, search, hash }: { pathname: string; search: string; h
 
 const SHELL_SYNC_MARKER = '__onecxShellSync'
 const HISTORY_WRAPPER_MARKER = '__onecxRouterSyncWrapped'
+const TOPIC_NAVIGATION_TIMEOUT_MS = 1000
+const OWN_PUBLISH_TTL_MS = 5000
 const MAX_OWN_PUBLISHED_URLS = 10
+
+type OwnPublish = { url: string; publishedAt: number }
+type TopicNavigation = { target: string; locationKey: string; timeout: ReturnType<typeof setTimeout> }
 
 /**
  * Install only while a synced router is mounted. The shell checks top-level
  * `isRouterSync` in its history patch, while React Router nests user state under
  * `data.usr`. The shell installs its patch during bootstrap before mounting
- * React remotes, so this wrapper layers over the shell adapter and is removed
- * when the last synced router unmounts.
+ * React remotes, so this wrapper layers over the shell adapter.
+ *
+ * The wrapper is restored by the last unmount when it is still the top-most patch.
+ * If another patch was layered on top, the wrapper stays in the chain as a
+ * pass-through (`referenceCount` 0) and is reused by the next mount instead of
+ * being stacked again.
  */
 type HistoryWrapperState = {
   referenceCount: number
@@ -56,13 +65,11 @@ const releaseHistorySyncMarker = (history: History, state: HistoryWrapperState) 
   state.referenceCount -= 1
   if (state.referenceCount > 0) return
 
-  if (history.pushState === state.wrappedPushState) {
-    history.pushState = state.originalPushState
+  if (history.pushState === state.wrappedPushState) history.pushState = state.originalPushState
+  if (history.replaceState === state.wrappedReplaceState) history.replaceState = state.originalReplaceState
+  if (history.pushState === state.originalPushState && history.replaceState === state.originalReplaceState) {
+    delete (history as unknown as Record<string, unknown>)[HISTORY_WRAPPER_MARKER]
   }
-  if (history.replaceState === state.wrappedReplaceState) {
-    history.replaceState = state.originalReplaceState
-  }
-  delete (history as unknown as Record<string, unknown>)[HISTORY_WRAPPER_MARKER]
 }
 
 const installHistorySyncMarker = (): (() => void) => {
@@ -71,6 +78,10 @@ const installHistorySyncMarker = (): (() => void) => {
   const existingState = historyProperties[HISTORY_WRAPPER_MARKER] as HistoryWrapperState | undefined
   if (existingState) {
     existingState.referenceCount += 1
+    if (history.pushState === existingState.originalPushState) history.pushState = existingState.wrappedPushState
+    if (history.replaceState === existingState.originalReplaceState) {
+      history.replaceState = existingState.wrappedReplaceState
+    }
     return () => releaseHistorySyncMarker(history, existingState)
   }
 
@@ -93,22 +104,23 @@ const installHistorySyncMarker = (): (() => void) => {
 
   const originalPushState = history.pushState
   const originalReplaceState = history.replaceState
-  const wrappedPushState: History['pushState'] = function (data, unused, url) {
-    return originalPushState.call(history, propagateShellSyncMarker(data), unused, url)
-  }
-  const wrappedReplaceState: History['replaceState'] = function (data, unused, url) {
-    return originalReplaceState.call(history, propagateShellSyncMarker(data), unused, url)
-  }
-
   const wrapperState: HistoryWrapperState = {
     referenceCount: 1,
     originalPushState,
     originalReplaceState,
-    wrappedPushState,
-    wrappedReplaceState,
+    wrappedPushState: originalPushState,
+    wrappedReplaceState: originalReplaceState,
   }
-  history.pushState = wrappedPushState
-  history.replaceState = wrappedReplaceState
+  wrapperState.wrappedPushState = function (data, unused, url) {
+    const state = wrapperState.referenceCount > 0 ? propagateShellSyncMarker(data) : data
+    return originalPushState.call(history, state, unused, url)
+  }
+  wrapperState.wrappedReplaceState = function (data, unused, url) {
+    const state = wrapperState.referenceCount > 0 ? propagateShellSyncMarker(data) : data
+    return originalReplaceState.call(history, state, unused, url)
+  }
+  history.pushState = wrapperState.wrappedPushState
+  history.replaceState = wrapperState.wrappedReplaceState
   Object.defineProperty(historyProperties, HISTORY_WRAPPER_MARKER, {
     configurable: true,
     value: wrapperState,
@@ -126,10 +138,11 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     isFirst: false,
   })
   const routerUrlRef = useRef(routerUrl)
+  const locationKeyRef = useRef(locationHook.key)
   const navigateRef = useRef(navigate)
-  const skipPublishUntil = useRef<string | null>(null)
+  const topicNavigation = useRef<TopicNavigation | null>(null)
   const pendingTopicUrlRef = useRef<string | null>(null)
-  const ownPublishedUrlsRef = useRef<string[]>([])
+  const ownPublishedUrlsRef = useRef<OwnPublish[]>([])
   const lastPublishedUrlRef = useRef(routerUrl)
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
@@ -138,6 +151,32 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   })
 
   useLayoutEffect(() => installHistorySyncMarker(), [])
+
+  const finishTopicNavigation = () => {
+    if (topicNavigation.current) clearTimeout(topicNavigation.current.timeout)
+    topicNavigation.current = null
+  }
+
+  const flushPendingTopicUrl = () => {
+    const pending = pendingTopicUrlRef.current
+    pendingTopicUrlRef.current = null
+    if (pending !== null && normalizeUrl(pending) !== normalizeUrl(routerUrlRef.current)) {
+      startTopicNavigation(pending)
+    }
+  }
+
+  const startTopicNavigation = (topicUrl: string) => {
+    finishTopicNavigation()
+    const timeout = setTimeout(() => {
+      // Bounded guard: a navigation that never commits must not park later shell events.
+      topicNavigation.current = null
+      flushPendingTopicUrl()
+    }, TOPIC_NAVIGATION_TIMEOUT_MS)
+    topicNavigation.current = { target: normalizeUrl(topicUrl), locationKey: locationKeyRef.current, timeout }
+    navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
+  }
+
+  useEffect(() => finishTopicNavigation, [])
 
   useEffect(() => {
     const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
@@ -152,8 +191,10 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
         return
       }
 
-      const normalizedTargetUrl = normalizeUrl(topicUrl)
-      const ownPublishIndex = ownPublishedUrlsRef.current.indexOf(topicUrl)
+      const target = normalizeUrl(topicUrl)
+      const now = Date.now()
+      ownPublishedUrlsRef.current = ownPublishedUrlsRef.current.filter((p) => now - p.publishedAt < OWN_PUBLISH_TTL_MS)
+      const ownPublishIndex = ownPublishedUrlsRef.current.findIndex((p) => normalizeUrl(p.url) === target)
       if (ownPublishIndex !== -1) {
         // Topic delivers our own publishes back asynchronously. Drop the echo and
         // anything published before it, otherwise it would revert newer navigation.
@@ -165,17 +206,14 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       if (location.isFirst) {
         return
       }
-      if (skipPublishUntil.current !== null) {
-        // A topic-driven navigation is still pending. Keep only the latest target
-        // and apply it once the pending navigation settles (see the layout effect).
-        if (normalizedTargetUrl !== skipPublishUntil.current) {
-          pendingTopicUrlRef.current = topicUrl
-        }
+      if (topicNavigation.current) {
+        // Keep only the latest shell intent. Returning to the in-flight target
+        // cancels a previously queued destination (A -> B -> A ends on A).
+        pendingTopicUrlRef.current = target === topicNavigation.current.target ? null : topicUrl
         return
       }
-      if (normalizeUrl(routerUrlRef.current) !== normalizedTargetUrl) {
-        skipPublishUntil.current = normalizedTargetUrl
-        navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
+      if (normalizeUrl(routerUrlRef.current) !== target) {
+        startTopicNavigation(topicUrl)
       }
     })
 
@@ -185,36 +223,42 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   }, [currentLocation$])
 
   // Publish internal navigation changes so the shell can update the browser URL.
-  // skipPublishUntil prevents echoing topic-driven navigations.
+  // A topic-driven navigation is not published back; it is settled once React Router
+  // commits a new location (tracked by location key, so a navigation that ends on the
+  // same URL, or on a normalized form of it, still releases the guard).
   // useLayoutEffect runs synchronously after DOM mutations so there is no
   // extra render between the URL change and the publish.
   useLayoutEffect(() => {
     routerUrlRef.current = routerUrl
-    const currentPathname = locationHook.pathname
-    if (currentPathname !== currentLocation.url) {
-      setCurrentLocation({ url: currentPathname, isFirst: false })
+    locationKeyRef.current = locationHook.key
+    if (locationHook.pathname !== currentLocation.url) {
+      setCurrentLocation({ url: locationHook.pathname, isFirst: false })
     }
-    if (skipPublishUntil.current !== null) {
-      // React Router may normalize the topic URL (encoded chars, trailing ?/#),
-      // so we clear the guard on the render after a topic-driven navigation
-      // regardless of whether the final URL exactly matches the target.
-      // Update lastPublishedUrlRef so the topic-driven URL is not echoed back.
-      skipPublishUntil.current = null
-      lastPublishedUrlRef.current = routerUrl
-      const pendingTopicUrl = pendingTopicUrlRef.current
-      pendingTopicUrlRef.current = null
-      if (pendingTopicUrl !== null && normalizeUrl(pendingTopicUrl) !== normalizeUrl(routerUrl)) {
-        skipPublishUntil.current = normalizeUrl(pendingTopicUrl)
-        navigateRef.current(pendingTopicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
+
+    const inFlight = topicNavigation.current
+    if (inFlight) {
+      if (locationHook.key === inFlight.locationKey) {
+        return
       }
-      return
+      finishTopicNavigation()
+      if (normalizeUrl(routerUrl) === inFlight.target) {
+        lastPublishedUrlRef.current = routerUrl
+        flushPendingTopicUrl()
+        return
+      }
+      if (pendingTopicUrlRef.current !== null) {
+        flushPendingTopicUrl()
+        return
+      }
+      // A competing navigation (not the shell target) committed: publish it below.
     }
+
     if (routerUrl !== lastPublishedUrlRef.current) {
       lastPublishedUrlRef.current = routerUrl
-      const ownPublishedUrls = ownPublishedUrlsRef.current
-      ownPublishedUrls.push(routerUrl)
-      if (ownPublishedUrls.length > MAX_OWN_PUBLISHED_URLS) {
-        ownPublishedUrls.shift()
+      const ownPublish: OwnPublish = { url: routerUrl, publishedAt: Date.now() }
+      ownPublishedUrlsRef.current.push(ownPublish)
+      if (ownPublishedUrlsRef.current.length > MAX_OWN_PUBLISHED_URLS) {
+        ownPublishedUrlsRef.current.shift()
       }
       currentLocation$
         .publish({
@@ -222,14 +266,11 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
           isFirst: false,
         })
         .catch((err) => {
-          const failedIndex = ownPublishedUrlsRef.current.indexOf(routerUrl)
-          if (failedIndex !== -1) {
-            ownPublishedUrlsRef.current.splice(failedIndex, 1)
-          }
+          ownPublishedUrlsRef.current = ownPublishedUrlsRef.current.filter((p) => p !== ownPublish)
           logger.error('publish failed:', err)
         })
     }
-  }, [routerUrl, currentLocation.url, currentLocation$, locationHook.pathname])
+  }, [routerUrl, locationHook.key, currentLocation.url, currentLocation$])
 
   return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
 }
