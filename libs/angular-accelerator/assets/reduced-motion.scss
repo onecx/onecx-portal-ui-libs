@@ -11,10 +11,13 @@
  * them. `!important` is needed to win over the inline animation durations set
  * by PrimeNG's animation system.
  *
- * The progress spinner root and the loading-indicator `.loader` element do not
- * carry `.p-component`, so they are listed explicitly. `.loader` uses
- * `animation: none` rather than a 1ms step so the ring reads as fully static:
- * it is a decorative spinner with no `animationend` to resolve.
+ * The progress spinner root does not carry `.p-component`, so it is listed
+ * explicitly. The loading-indicator spinner (`.loader`) is likewise not a
+ * `.p-component`; it is scoped to the library's own overlay wrappers (see the
+ * `.loader` rule below) so this global override does not disable unrelated
+ * `.loader` elements in a consumer app. It uses `animation: none` rather than a
+ * 1ms step so the ring reads as fully static: it is a decorative spinner with no
+ * `animationend` to resolve.
  */
 @media (prefers-reduced-motion: reduce) {
   .p-component,
@@ -37,8 +40,13 @@
 
   /* Loading-indicator spinner (see `loading-indicator.directive.scss`). It is a
    * standalone `.loader` element rather than a `.p-component`, so it is not
-   * covered by the rules above; `!important` wins over its default spin. */
-  .loader {
+   * covered by the rules above. It is scoped to the library's own overlay
+   * wrappers (`.element-overlay` for the in-element spinner, `.full-overlay`
+   * for the full-page one) so this global override does not disable unrelated
+   * `.loader` elements in a consumer app; `!important` wins over the default
+   * spin. */
+  .element-overlay .loader,
+  .full-overlay .loader {
     animation: none !important;
   }
 }
