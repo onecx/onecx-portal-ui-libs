@@ -79,6 +79,25 @@ describe('OneCXAiCompletionService', () => {
     await expect(service.getCompletion(sampleInput)).resolves.toEqual({ answer: 'yes' })
   })
 
+  it('should parse JSON in a code fence that follows an introductory sentence', async () => {
+    gathererMock.gather.mockResolvedValue([jsonResponse('Here is the answer:\n```json\n{"answer":"yes"}\n```')])
+
+    await expect(service.getCompletion(sampleInput)).resolves.toEqual({ answer: 'yes' })
+  })
+
+  it('should use a later provider when the first response is not valid', async () => {
+    gathererMock.gather.mockResolvedValue([jsonResponse('not json'), jsonResponse('{"answer":"second"}')])
+
+    await expect(service.getCompletion(sampleInput)).resolves.toEqual({ answer: 'second' })
+    expect(gathererMock.gather).toHaveBeenCalledTimes(1)
+  })
+
+  it('should report the first parse error when every provider response is invalid', async () => {
+    gathererMock.gather.mockResolvedValue([jsonResponse('not json'), jsonResponse('{"answer":42}')])
+
+    await expect(service.getCompletion(sampleInput)).rejects.toMatchObject({ code: 'INVALID_JSON' })
+  })
+
   it('should parse JSON wrapped in a code fence without a language tag', async () => {
     gathererMock.gather.mockResolvedValue([jsonResponse('```\n{"answer":"yes"}\n```\n')])
 
