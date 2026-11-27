@@ -8,6 +8,7 @@ import type {
 } from '../gatherers/ai-completion/v1/ai-completion.model'
 import { AiProviderError, isAiProviderError } from '../errors/ai-provider-error'
 import { createLogger } from '../utils/logger.utils'
+import { withTimeout } from '../utils/with-timeout'
 
 export interface GetCompletionInput<T> {
   agentName: string
@@ -92,7 +93,11 @@ export class OneCXAiCompletionService {
   private async requestCompletion(request: AiCompletionRequest): Promise<AiCompletionResponse> {
     let providerResults: AiCompletionProviderResult[]
     try {
-      providerResults = await this.withTimeout(this.aiCompletionGatherer.gather(request))
+      providerResults = await withTimeout(
+        this.aiCompletionGatherer.gather(request),
+        COMPLETION_TIMEOUT_MS,
+        'AI completion request timed out'
+      )
     } catch (error) {
       if (isAiProviderError(error)) {
         throw error
@@ -122,16 +127,5 @@ export class OneCXAiCompletionService {
       throw new AiProviderError('SCHEMA_MISMATCH', 'AI completion response does not match the expected schema')
     }
     return result.data
-  }
-
-  private withTimeout<R>(promise: Promise<R>): Promise<R> {
-    let timer: ReturnType<typeof setTimeout> | undefined
-    const timeout = new Promise<never>((_, reject) => {
-      timer = setTimeout(
-        () => reject(new AiProviderError('TIMEOUT', 'AI completion request timed out')),
-        COMPLETION_TIMEOUT_MS
-      )
-    })
-    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer))
   }
 }

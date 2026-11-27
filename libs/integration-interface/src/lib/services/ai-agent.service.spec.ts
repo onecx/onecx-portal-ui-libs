@@ -14,6 +14,19 @@ jest.mock('../gatherers/ai-agent/v1/ai-agent.gatherer', () => ({
 const sampleRequest: AiAgentRequest = { appId: 'app-1' }
 
 describe('OneCXAiAgentService', () => {
+  it('should reject with a TIMEOUT error when the gatherer never answers', async () => {
+    jest.useFakeTimers()
+    try {
+      gathererMock.gather.mockReturnValue(new Promise(() => undefined))
+      const pending = service.getAgents(sampleRequest)
+      const assertion = expect(pending).rejects.toMatchObject({ code: 'TIMEOUT' })
+      jest.advanceTimersByTime(15000)
+      await assertion
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
   let service: OneCXAiAgentService
   let gathererMock: { gather: jest.Mock; destroy: jest.Mock }
 

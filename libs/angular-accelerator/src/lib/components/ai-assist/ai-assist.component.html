@@ -5,12 +5,12 @@
     </div>
     <div class="ocx-ai-assist__toggle">
       <p-button
+        #toggle
         type="button"
         icon="pi pi-sparkles"
         severity="secondary"
         [text]="true"
         [rounded]="true"
-        [pt]="{ root: { 'aria-expanded': open, 'aria-controls': uid + '-panel' } }"
         [ariaLabel]="'OCX_AI_ASSIST.TOGGLE' | translate"
         (onClick)="toggle()"
       ></p-button>
