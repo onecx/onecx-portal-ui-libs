@@ -1,11 +1,12 @@
 import { Gatherer } from "@onecx/accelerator"
 
-import type { AiCompletionRequest, AiCompletionResponse } from "./ai-completion.model"
+import type { AiCompletionProviderResult, AiCompletionRequest } from "./ai-completion.model"
 
 /**
  * This class acts as a thin communication layer for AI completions between consumers inside
  * onecx-portal-ui-libs and the AI Provider Remote Component. It publishes AI completion requests, 
  * collects responses from the registered provider instance and returns them to the caller. 
+ * Callbacks answer with a response, null (no contribution) or an AiProviderError; they must not reject.
  *
  * @example
  * ```ts
@@ -25,8 +26,8 @@ import type { AiCompletionRequest, AiCompletionResponse } from "./ai-completion.
  * // responses is an array of (AiCompletionResponse | null)
  * ```
  */
-export class AiCompletionGatherer extends Gatherer<AiCompletionRequest, AiCompletionResponse | null> {
-    constructor(callback: (request: AiCompletionRequest) => Promise<AiCompletionResponse | null>) {
+export class AiCompletionGatherer extends Gatherer<AiCompletionRequest, AiCompletionProviderResult> {
+    constructor(callback: (request: AiCompletionRequest) => Promise<AiCompletionProviderResult>) {
         super("aiCompletion", 1, callback)
     }
 }
