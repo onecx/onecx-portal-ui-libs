@@ -177,7 +177,7 @@
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       } @for (column of stateService.columns(); track column) {
         @if (columnHeaderTemplates[column.id]; as columnHeaderTemplate){
-          <th scope="col" role="columnheader">
+          <th scope="col" role="columnheader" [attr.aria-sort]="columnAriaSort(column)" [class.p-datatable-column-sorted]="columnAriaSort(column) !== null">
             <ng-container
               [ngTemplateOutlet]="columnHeaderTemplate"
               [ngTemplateOutletContext]="{ column: column, labelTemplate: columnHeaderLabel, sortTemplate: columnHeaderSortButton, filterTemplate: columnHeaderFilter }"
@@ -185,7 +185,7 @@
           </th>
         } @else { 
             @if (column.sortable || column.filterable) {
-              <th scope="col" role="columnheader">
+              <th scope="col" role="columnheader" [attr.aria-sort]="columnAriaSort(column)" [class.p-datatable-column-sorted]="columnAriaSort(column) !== null">
                 <div
                   class="table-header-wrapper flex flex-col justify-between items-start"
                   style="height: 100%"
@@ -419,7 +419,10 @@
           (onFocus)="onFilterChosen(column)"
           [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
           tooltipPosition="top"
-          [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
+          [ariaLabel]="
+                    'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL'
+                      | translate : { column: (column.nameKey | translate), count: filterAmounts()[column.id] ?? 0 }
+                  "
           [filterPlaceHolder]="'OCX_DATA_TABLE.COLUMN_FILTER_PLACEHOLDER' | translate"
           [ariaFilterLabel]="
                     'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
@@ -466,7 +469,10 @@
       (onFocus)="onFilterChosen(column)"
       [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
       tooltipPosition="top"
-      [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
+      [ariaLabel]="
+            'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL'
+              | translate : { column: (column.nameKey | translate), count: filterAmounts()[column.id] ?? 0 }
+          "
       [ariaFilterLabel]="
             'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
           "
