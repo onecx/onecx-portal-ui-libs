@@ -147,7 +147,7 @@ export class AiAssistComponent implements AfterViewInit, OnChanges, OnInit, OnDe
   private agentsRequested = false
   private actionsCache?: { defaults: unknown; additions: unknown; actions: AiAssistActionDefinition<unknown>[] }
 
-  @ViewChild('toggle', { read: ElementRef, static: true }) private toggleButton!: ElementRef<HTMLElement>
+  @ViewChild('toggleBtn', { read: ElementRef, static: true }) private toggleButton!: ElementRef<HTMLElement>
 
   ngOnInit(): void {
     this.selectAction(this.actions[0]?.id)
@@ -171,7 +171,10 @@ export class AiAssistComponent implements AfterViewInit, OnChanges, OnInit, OnDe
 
   /** Sets the expanded state on the real button, because the PrimeNG host does not forward ARIA attributes. */
   private syncToggleAria(): void {
-    const button = this.toggleButton.nativeElement.querySelector('button') as HTMLButtonElement
+    const button = this.toggleButton.nativeElement.querySelector('button')
+    if (!button) {
+      return
+    }
     button.setAttribute('aria-expanded', String(this.open))
     button.setAttribute('aria-controls', this.uid + '-panel')
   }
@@ -372,6 +375,7 @@ export class AiAssistComponent implements AfterViewInit, OnChanges, OnInit, OnDe
     this.replaceText.emit(this.suggestion)
     this.resetResult()
     this.open = false
+    this.syncToggleAria()
   }
 
   private async fetchAgents(appId: string | undefined, force: boolean, loadId: number): Promise<void> {

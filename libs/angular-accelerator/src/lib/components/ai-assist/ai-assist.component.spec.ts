@@ -212,22 +212,51 @@ describe('AiAssistComponent', () => {
     expect(getAgents).not.toHaveBeenCalled()
   })
 
-  it('should expose aria-expanded and aria-controls on the real toggle button', async () => {
+  it('should toggle the panel from the real button and keep aria-expanded in sync', async () => {
     await createComponent(false)
-    const button = (fixture.nativeElement as HTMLElement).querySelector(
-      '.ocx-ai-assist__toggle button'
-    ) as HTMLButtonElement
+    const toggleButton = (): HTMLButtonElement =>
+      (fixture.nativeElement as HTMLElement).querySelector('.ocx-ai-assist__toggle button') as HTMLButtonElement
 
-    expect(button.getAttribute('aria-expanded')).toBe('false')
-    expect(button.getAttribute('aria-controls')).toBe(component.uid + '-panel')
+    expect(toggleButton().getAttribute('aria-expanded')).toBe('false')
+    expect(toggleButton().getAttribute('aria-controls')).toBe(component.uid + '-panel')
 
-    await openPanel()
-    const openButton = (fixture.nativeElement as HTMLElement).querySelector(
-      '.ocx-ai-assist__toggle button'
-    ) as HTMLButtonElement
-    expect(openButton.getAttribute('aria-expanded')).toBe('true')
+    toggleButton().click()
+    fixture.detectChanges()
+    await fixture.whenStable()
+    expect(component.open).toBe(true)
+    expect(toggleButton().getAttribute('aria-expanded')).toBe('true')
+
+    component.close()
+    fixture.detectChanges()
+    expect(toggleButton().getAttribute('aria-expanded')).toBe('false')
   })
 
+  it('should not fail when the toggle has no rendered button', async () => {
+    await createComponent(false)
+    ;(component as unknown as { toggleButton: unknown }).toggleButton = { nativeElement: document.createElement('div') }
+
+    expect(() => component.toggle()).not.toThrow()
+  })
+
+  it('should collapse aria-expanded after a suggestion is replaced', async () => {
+    await createComponent()
+    component.selectAction('translate')
+    component.inputText = 'Hallo'
+    await component.run()
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+    const toggleButton = (fixture.nativeElement as HTMLElement).querySelector(
+      '.ocx-ai-assist__toggle button'
+    ) as HTMLButtonElement
+    expect(toggleButton.getAttribute('aria-expanded')).toBe('true')
+
+    component.replace()
+    fixture.detectChanges()
+
+    expect(component.open).toBe(false)
+    expect(toggleButton.getAttribute('aria-expanded')).toBe('false')
+  })
   it('should share one agent request between instances with the same appId', async () => {
     const instances = Array.from({ length: 10 }, () => TestBed.createComponent(AiAssistComponent))
     for (const instance of instances) {
