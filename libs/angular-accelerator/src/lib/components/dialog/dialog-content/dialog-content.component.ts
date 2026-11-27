@@ -42,7 +42,6 @@ export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @ViewChild('container', { static: true, read: ViewContainerRef })
   dialogHost!: ViewContainerRef
-  // dialogHost = viewChild('container', { read: ViewContainerRef })
   scrollRegion = viewChild.required<ElementRef<HTMLElement>>('scrollRegion')
   scrollContent = viewChild.required<ElementRef<HTMLElement>>('scrollContent')
 
