@@ -27,9 +27,9 @@
     "ngxtension": "^7.1.0",
     "rxjs": "~7.8.1",
     "primeng": "^21.0.0",
-    "@protobi/exceljs": "^4.4.0-protobi.9"
+    "@protobi/exceljs": "^4.4.0-protobi.9",
+    "zod": "^4.1.12"
   },
-  "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/styles.scss"

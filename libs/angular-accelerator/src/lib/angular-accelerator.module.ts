@@ -9,6 +9,7 @@ import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { firstValueFrom, skip } from 'rxjs'
 import { AngularAcceleratorPrimeNgModule } from './angular-accelerator-primeng.module'
+import { AiAssistComponent } from './components/ai-assist/ai-assist.component'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
 import { CustomGroupColumnSelectorComponent } from './components/custom-group-column-selector/custom-group-column-selector.component'
 import { DataLayoutSelectionComponent } from './components/data-layout-selection/data-layout-selection.component'
@@ -82,6 +83,7 @@ function appInitializer(userService: UserService) {
     OcxTooltipDirective
   ],
   declarations: [
+    AiAssistComponent,
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     DataLayoutSelectionComponent,
@@ -143,6 +145,7 @@ function appInitializer(userService: UserService) {
   ],
   exports: [
     AngularRemoteComponentsModule,
+    AiAssistComponent,
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     DataLayoutSelectionComponent,

@@ -10,6 +10,47 @@
     "AGREE": "Ich stimme zu",
     "WITHDRAW": "Zustimmung zur Anzeige dieses Inhalts widerrufen"
   },
+  "OCX_AI_ASSIST": {
+    "TITLE": "KI-Assistent",
+    "TOGGLE": "KI-Assistent öffnen",
+    "CLOSE": "KI-Assistent schließen",
+    "AGENT": "Agent",
+    "ACTION": "Aufgabe",
+    "RUN": "Ausführen",
+    "RUNNING": "Ergebnis wird erstellt...",
+    "READY_TO_REVIEW": "Bereit zur Prüfung",
+    "BEFORE": "Vorher",
+    "AI_SUGGESTION": "KI-Vorschlag · bearbeitbar",
+    "TRY_AGAIN": "Erneut versuchen",
+    "EDIT_SETTINGS": "Einstellungen bearbeiten",
+    "REPLACE_TEXT": "Text ersetzen",
+    "LOADING_AGENTS": "Agenten werden geladen...",
+    "NO_AGENTS": "Für diese Anwendung sind keine KI-Agenten verfügbar.",
+    "ACTIONS": {
+      "TRANSLATE": "Übersetzen",
+      "SUMMARIZE": "Zusammenfassen",
+      "GENERATE": "Generieren"
+    },
+    "PARAMETERS": {
+      "TARGET_LANGUAGE": "Feldinhalt übersetzen in"
+    },
+    "LANGUAGES": {
+      "EN": "Englisch",
+      "DE": "Deutsch",
+      "PL": "Polnisch",
+      "FR": "Französisch",
+      "ES": "Spanisch",
+      "IT": "Italienisch"
+    },
+    "ERRORS": {
+      "NO_PROVIDER": "Für diese Anwendung ist kein KI-Provider konfiguriert.",
+      "AGENT_NOT_FOUND": "Für diesen Kontext ist kein KI-Agent konfiguriert.",
+      "NO_CONTEXT": "Der Anwendungskontext ist noch nicht verfügbar. Bitte versuchen Sie es erneut.",
+      "TIMEOUT": "Die KI-Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut.",
+      "PROVIDER": "Der KI-Provider konnte die Anfrage nicht abschließen. Bitte versuchen Sie es erneut oder wenden Sie sich an Ihre Administration.",
+      "GENERIC": "Der Vorschlag konnte nicht erstellt werden. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an Ihre Administration."
+    }
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Spaltengruppe-Selektor",
     "DROPDOWN_LABEL": "Spaltengruppe",
