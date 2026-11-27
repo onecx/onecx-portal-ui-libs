@@ -257,6 +257,7 @@ describe('AiAssistComponent', () => {
     expect(component.open).toBe(false)
     expect(toggleButton.getAttribute('aria-expanded')).toBe('false')
   })
+
   it('should share one agent request between instances with the same appId', async () => {
     const instances = Array.from({ length: 10 }, () => TestBed.createComponent(AiAssistComponent))
     for (const instance of instances) {
