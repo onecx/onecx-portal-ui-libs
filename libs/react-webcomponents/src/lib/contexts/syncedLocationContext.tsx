@@ -144,6 +144,19 @@ const installHistorySyncMarker = (): (() => void) => {
  * @param children - nested content rendered with synced location context.
  * @returns Provider for synced location state.
  */
+/**
+ * Removes the shell marker from the history entry of the committed location. Only the entry whose key
+ * matches `locationKey` is touched, so a newer entry is never modified. The native replaceState bypasses
+ * the wrapper and the shell patch, so the rewrite is not published.
+ */
+export const consumeShellSyncMarker = (locationKey: string) => {
+  const historyState = window.history.state as Record<string, unknown> | null
+  if (historyState?.isRouterSync !== true || historyState.key !== locationKey) return
+  const entryState = { ...historyState }
+  delete entryState.isRouterSync
+  History.prototype.replaceState.call(window.history, entryState, '', window.location.href)
+}
+
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const locationHook = useLocation()
   const navigate = useNavigate()
@@ -168,17 +181,9 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   useLayoutEffect(() => installHistorySyncMarker(), [])
 
   useEffect(() => {
-    const locationSubscription = currentLocation$.subscribe((location) => {
-      // Shell URLs are relative to its deployment path and never start with a slash.
-      if (location.url?.startsWith('/')) {
-        logger.warn('ignored topic URL that is not deployment-relative:', location.url)
-        return
-      }
-      if (!location.url) {
-        return
-      }
-
-      const target = normalizeUrl(toRouterUrl(location.url))
+    let active = true
+    const applyTopicUrl = (url: string, isFirst: boolean) => {
+      const target = normalizeUrl(toRouterUrl(url))
       const now = Date.now()
       ownPublishedUrlsRef.current = ownPublishedUrlsRef.current.filter((p) => now - p.publishedAt < OWN_PUBLISH_TTL_MS)
       const ownPublishIndex = ownPublishedUrlsRef.current.findIndex((p) => normalizeUrl(p.url) === target)
@@ -190,7 +195,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       }
       // The initial replay represents the shell's current location and should
       // not overwrite the browser URL with a potentially stale value.
-      if (location.isFirst) {
+      if (isFirst) {
         return
       }
       if (normalizeUrl(knownUrlRef.current) === target) {
@@ -198,9 +203,31 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       }
       knownUrlRef.current = target
       navigateRef.current(target, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
+    }
+
+    const locationSubscription = currentLocation$.subscribe((location) => {
+      if (!location.url) {
+        return
+      }
+      if (!location.url.startsWith('/')) {
+        applyTopicUrl(location.url, location.isFirst)
+        return
+      }
+      // The shell publishes the raw absolute path of a navigation it did not start, for example a link in
+      // another app. Our own navigations produce the same event before React commits them, so the check runs
+      // after the current task, when knownUrlRef already reflects our own commit.
+      const shellUrl = toShellUrl(location.url)
+      if (shellUrl === undefined) {
+        logger.warn('ignored topic URL outside the deployment path:', location.url)
+        return
+      }
+      setTimeout(() => {
+        if (active) applyTopicUrl(shellUrl, false)
+      }, 0)
     })
 
     return () => {
+      active = false
       locationSubscription.unsubscribe()
     }
   }, [currentLocation$])
@@ -217,13 +244,11 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       setCurrentLocation({ url: locationHook.pathname, isFirst: false })
     }
     // The shell-requested navigation marks the history entry it committed with isRouterSync.
-    // The marker is consumed here: it is removed from that entry with a native replaceState, which
-    // bypasses the wrapper and the shell patch so nothing is published. The entry is then an ordinary
-    // app entry, so back/forward to it is published, and this holds across reloads and remounts.
-    if (window.history.state?.isRouterSync === true) {
-      const entryState = { ...window.history.state }
-      delete entryState.isRouterSync
-      History.prototype.replaceState.call(window.history, entryState, '', window.location.href)
+    // The marker is consumed only when window.history.state belongs to the committed location (matching key),
+    // so a newer entry is never touched. Consumption uses a native replaceState, which bypasses the wrapper
+    // and the shell patch, so nothing is published. The entry is then an ordinary app entry for later traversals.
+    if ((window.history.state as Record<string, unknown> | null)?.isRouterSync === true) {
+      consumeShellSyncMarker(locationHook.key)
       lastPublishedUrlRef.current = routerUrl
       return
     }

@@ -15,7 +15,7 @@ const historyMethodsBeforeContextImport = {
 }
 
 const { Route, Routes, useLocation, useNavigate } = jest.requireActual<typeof import('react-router')>('react-router')
-const { SyncedRouterProvider, SyncedLocationContext } =
+const { SyncedRouterProvider, SyncedLocationContext, consumeShellSyncMarker } =
   jest.requireActual<typeof import('./syncedLocationContext')>('./syncedLocationContext')
 
 const appBase = '/app/sample-app'
@@ -42,7 +42,8 @@ jest.mock('@onecx/integration-interface', () => ({
   CurrentLocationTopic: class {
     subscribe(callback: (location: CurrentLocationTopicPayload) => void) {
       mockSubscribeCalls += 1
-      const listener = (location: CurrentLocationTopicPayload) => callback(toShellPayload(location))
+      const listener = (location: CurrentLocationTopicPayload) =>
+        callback(mockRawTopicPayloads ? location : toShellPayload(location))
       mockLocationListeners.push(listener)
       listener(topicLastValue)
       return {
@@ -77,6 +78,7 @@ jest.mock('@onecx/react-integration-interface', () => ({
 }))
 
 let mockNavigateRedirectTo: string | null = null
+let mockRawTopicPayloads = false
 let mockNavigateDisabled = false
 
 jest.mock('react-router', () => {
@@ -157,6 +159,7 @@ describe('SyncedRouterProvider', () => {
     topicLastValue = { url: appBase, isFirst: true }
     loggerError.mockClear()
     loggerWarn.mockClear()
+    mockRawTopicPayloads = false
     document.querySelector('base')?.remove()
     const base = document.createElement('base')
     base.setAttribute('href', '/app/')
@@ -342,6 +345,69 @@ describe('SyncedRouterProvider', () => {
     await waitFor(() => expect(loggerWarn).toHaveBeenCalled())
     expect(mockPublishedLocations).toEqual([])
     expect(screen.getByTestId('location').textContent).toBe('/elsewhere/page')
+  })
+
+  it('applies an absolute shell path after the current task and does not publish it back', () => {
+    jest.useFakeTimers()
+    mockRawTopicPayloads = true
+    try {
+      renderRouter()
+      expect(mockLocationListeners).toHaveLength(1)
+      act(() => {
+        mockLocationListeners[0]({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+      })
+      expect(screen.getByTestId('location').textContent).toBe(appBase)
+      act(() => {
+        jest.advanceTimersByTime(0)
+      })
+
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`)
+      expect(mockPublishedLocations).toEqual([])
+    } finally {
+      mockRawTopicPayloads = false
+      jest.useRealTimers()
+    }
+  })
+
+  it('does not apply a deferred absolute shell path after the router unmounted', () => {
+    jest.useFakeTimers()
+    mockRawTopicPayloads = true
+    try {
+      const { unmount } = renderRouter()
+      act(() => {
+        mockLocationListeners[0]({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+      })
+      unmount()
+      act(() => {
+        jest.advanceTimersByTime(0)
+      })
+
+      expect(window.location.pathname).toBe(appBase)
+      expect(mockPublishedLocations).toEqual([])
+    } finally {
+      mockRawTopicPayloads = false
+      jest.useRealTimers()
+    }
+  })
+
+  it('ignores an absolute shell path outside the deployment path', () => {
+    jest.useFakeTimers()
+    mockRawTopicPayloads = true
+    try {
+      renderRouter()
+      act(() => {
+        mockLocationListeners[0]({ url: '/elsewhere/page', isFirst: false })
+      })
+      act(() => {
+        jest.advanceTimersByTime(0)
+      })
+
+      expect(screen.getByTestId('location').textContent).toBe(appBase)
+      expect(loggerWarn).toHaveBeenCalled()
+    } finally {
+      mockRawTopicPayloads = false
+      jest.useRealTimers()
+    }
   })
 
   it('ignores empty topic URLs', async () => {
@@ -736,7 +802,7 @@ describe('SyncedRouterProvider', () => {
     )
   })
 
-  it('publishes traversal to a shell entry after many shell navigations', async () => {
+  it('publishes traversal to a shell entry after repeated shell navigations', async () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
@@ -744,17 +810,61 @@ describe('SyncedRouterProvider', () => {
     expect(await screen.findByText('Subpage')).toBeTruthy()
     fireEvent.click(screen.getByText('Navigate to root in React'))
     await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
-
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 3; i++) {
       publishLocation({ url: `${appBase}/subpage/record-${i + 2}`, isFirst: false })
     }
     mockPublishedLocations.length = 0
 
-    act(() => window.history.go(-61))
+    act(() => window.history.go(-4))
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`))
     await waitFor(() =>
       expect(mockPublishedLocations).toContainEqual({ url: '/app/sample-app/subpage/record-1', isFirst: false })
     )
+  })
+
+  it('consumes the shell marker on the committed entry without publishing', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+
+    expect(window.history.state?.isRouterSync).toBeUndefined()
+    expect(window.history.state?.key).toEqual(expect.any(String))
+    expect(mockPublishedLocations).toEqual([])
+  })
+
+  it('consumes the marker of the committed entry and keeps the rest of its state', () => {
+    const replaceStateSpy = jest.spyOn(History.prototype, 'replaceState')
+    window.history.replaceState({ usr: { a: 1 }, key: 'k1', idx: 3, isRouterSync: true }, '', `${appBase}/x`)
+    replaceStateSpy.mockClear()
+
+    consumeShellSyncMarker('k1')
+
+    expect(window.history.state).toEqual({ usr: { a: 1 }, key: 'k1', idx: 3 })
+    expect(replaceStateSpy).toHaveBeenCalledTimes(1)
+    replaceStateSpy.mockRestore()
+  })
+
+  it('does not touch an entry whose key differs from the committed location', () => {
+    window.history.replaceState({ key: 'other', isRouterSync: true }, '', `${appBase}/x`)
+    const replaceStateSpy = jest.spyOn(History.prototype, 'replaceState')
+
+    consumeShellSyncMarker('committed')
+
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    expect(window.history.state).toEqual({ key: 'other', isRouterSync: true })
+    replaceStateSpy.mockRestore()
+  })
+
+  it('does nothing for an entry without the shell marker', () => {
+    window.history.replaceState({ key: 'k2' }, '', `${appBase}/x`)
+    const replaceStateSpy = jest.spyOn(History.prototype, 'replaceState')
+
+    consumeShellSyncMarker('k2')
+
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    replaceStateSpy.mockRestore()
   })
 
   it('publishes traversal to a shell entry after the router remounted', async () => {
