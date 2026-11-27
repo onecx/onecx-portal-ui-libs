@@ -1,0 +1,927 @@
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { TextDecoder, TextEncoder } from 'node:util'
+import { createElement, Fragment, useContext } from 'react'
+import type { CurrentLocationTopicPayload } from '@onecx/integration-interface'
+import type { NavigateFunction, NavigateOptions, To } from 'react-router'
+
+const loggerError = jest.fn()
+const loggerWarn = jest.fn()
+
+Object.assign(globalThis, { TextDecoder, TextEncoder })
+
+const historyMethodsBeforeContextImport = {
+  pushState: window.history.pushState,
+  replaceState: window.history.replaceState,
+}
+
+const { Route, Routes, useLocation, useNavigate } = jest.requireActual<typeof import('react-router')>('react-router')
+const { SyncedRouterProvider, SyncedLocationContext, consumeShellSyncMarker } =
+  jest.requireActual<typeof import('./syncedLocationContext')>('./syncedLocationContext')
+
+const appBase = '/app/sample-app'
+const shellPrefix = '/app/'
+// The shell publishes deployment-relative URLs (no leading slash); tests keep writing absolute URLs.
+const toShellForm = (url: string) => (url.startsWith(shellPrefix) ? url.slice(shellPrefix.length) : url)
+const toAbsoluteForm = (url: string) => (url.startsWith('/') ? url : `${shellPrefix}${url}`)
+const toShellPayload = (payload: CurrentLocationTopicPayload): CurrentLocationTopicPayload => ({
+  ...payload,
+  url: payload.url === undefined ? undefined : toShellForm(payload.url),
+})
+const toAbsolutePayload = (payload: CurrentLocationTopicPayload): CurrentLocationTopicPayload => ({
+  ...payload,
+  url: payload.url === undefined ? undefined : toAbsoluteForm(payload.url),
+})
+const mockLocationListeners: ((location: CurrentLocationTopicPayload) => void)[] = []
+const mockPublishedLocations: CurrentLocationTopicPayload[] = []
+let mockSubscribeCalls = 0
+let shouldPublishReject = false
+let mockDeferEchoes = false
+const mockDeferredEchoes: CurrentLocationTopicPayload[] = []
+let topicLastValue: CurrentLocationTopicPayload = { url: appBase, isFirst: true }
+jest.mock('@onecx/integration-interface', () => ({
+  CurrentLocationTopic: class {
+    subscribe(callback: (location: CurrentLocationTopicPayload) => void) {
+      mockSubscribeCalls += 1
+      const listener = (location: CurrentLocationTopicPayload) =>
+        callback(mockRawTopicPayloads ? location : toShellPayload(location))
+      mockLocationListeners.push(listener)
+      listener(topicLastValue)
+      return {
+        unsubscribe: () => {
+          const index = mockLocationListeners.indexOf(listener)
+          if (index >= 0) mockLocationListeners.splice(index, 1)
+        },
+      }
+    }
+
+    publish(location: CurrentLocationTopicPayload) {
+      topicLastValue = location
+      mockPublishedLocations.push(toAbsolutePayload(location))
+      if (mockDeferEchoes) {
+        mockDeferredEchoes.push(toAbsolutePayload(location))
+      } else {
+        mockLocationListeners.slice().forEach((listener) => listener(location))
+      }
+      return shouldPublishReject ? Promise.reject(new Error('publish failed')) : Promise.resolve()
+    }
+
+    destroy = jest.fn()
+  },
+}))
+
+jest.mock('@onecx/react-integration-interface', () => ({
+  useTopic: (_valueTopic: unknown, TopicClass: new () => unknown) => {
+    const React = jest.requireActual<typeof import('react')>('react')
+    const [topic] = React.useState(() => new TopicClass())
+    return topic
+  },
+}))
+
+let mockNavigateRedirectTo: string | null = null
+let mockRawTopicPayloads = false
+let mockNavigateDisabled = false
+
+jest.mock('react-router', () => {
+  const actual = jest.requireActual<typeof import('react-router')>('react-router')
+  return {
+    ...actual,
+    useNavigate: (): NavigateFunction => {
+      const navigate = actual.useNavigate()
+      const mockedNavigate = (to: To, options?: NavigateOptions) => {
+        if (!mockNavigateDisabled) navigate(mockNavigateRedirectTo ?? to, options)
+      }
+      return mockedNavigate as unknown as NavigateFunction
+    },
+  }
+})
+
+jest.mock('../utils/logger.utils', () => ({
+  createLogger: () => ({ error: loggerError, warn: loggerWarn }),
+}))
+
+const RouterContent = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  return createElement(
+    Fragment,
+    null,
+    createElement('output', { 'data-testid': 'location' }, location.pathname, location.search, location.hash),
+    createElement(
+      'button',
+      { onClick: () => navigate(`${appBase}/subpage/record-1?tab=details#summary`) },
+      'Navigate in React'
+    ),
+    createElement('button', { onClick: () => navigate(appBase) }, 'Navigate to root in React'),
+    createElement('button', { onClick: () => navigate('/elsewhere/page') }, 'Navigate outside in React'),
+    createElement(
+      Routes,
+      null,
+      createElement(Route, { path: appBase, element: createElement('div', null, 'Root page') }),
+      createElement(Route, { path: `${appBase}/subpage/:id`, element: createElement('div', null, 'Subpage') })
+    )
+  )
+}
+
+const SyncedUrlReader = () => {
+  const syncedLocation = useContext(SyncedLocationContext)
+  return createElement('output', { 'data-testid': 'synced-url' }, syncedLocation?.url ?? '')
+}
+
+const renderRouter = () => render(createElement(SyncedRouterProvider, null, createElement(RouterContent)))
+const renderRouterWithSyncedReader = () =>
+  render(createElement(SyncedRouterProvider, null, createElement(RouterContent), createElement(SyncedUrlReader)))
+
+const publishLocation = (payload: CurrentLocationTopicPayload) => {
+  act(() => {
+    if (payload.url) window.history.pushState({}, '', payload.url)
+    topicLastValue = payload
+    mockLocationListeners.slice().forEach((listener) => listener(payload))
+  })
+}
+
+const deliverDeferredEchoes = () => {
+  act(() => {
+    mockDeferredEchoes.splice(0).forEach((payload) => {
+      mockLocationListeners.slice().forEach((listener) => listener(payload))
+    })
+  })
+}
+
+describe('SyncedRouterProvider', () => {
+  beforeEach(() => {
+    mockLocationListeners.length = 0
+    mockPublishedLocations.length = 0
+    mockSubscribeCalls = 0
+    shouldPublishReject = false
+    mockDeferEchoes = false
+    mockDeferredEchoes.length = 0
+    topicLastValue = { url: appBase, isFirst: true }
+    loggerError.mockClear()
+    loggerWarn.mockClear()
+    mockRawTopicPayloads = false
+    document.querySelector('base')?.remove()
+    const base = document.createElement('base')
+    base.setAttribute('href', '/app/')
+    document.head.append(base)
+    window.history.replaceState({}, '', appBase)
+  })
+
+  it('does not patch global history when importing the context module', () => {
+    expect(window.history.pushState).toBe(historyMethodsBeforeContextImport.pushState)
+    expect(window.history.replaceState).toBe(historyMethodsBeforeContextImport.replaceState)
+  })
+
+  it('updates the React route when the shell navigates to a subpage', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    expect(mockPublishedLocations).toEqual([])
+  })
+
+  it('handles consecutive shell navigations between subpages and back to the root', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+
+    publishLocation({ url: `${appBase}/subpage/record-2`, isFirst: false })
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-2`)
+
+    publishLocation({ url: appBase, isFirst: false })
+    expect(await screen.findByText('Root page')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+  })
+
+  it('does not navigate twice for duplicate shell events while a route is pending', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const targetUrl = `${appBase}/subpage/record-1`
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+
+    act(() => {
+      window.history.pushState({}, '', targetUrl)
+      mockLocationListeners[0]({ url: targetUrl, isFirst: false })
+      mockLocationListeners[0]({ url: targetUrl, isFirst: false })
+    })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(replaceStateSpy).toHaveBeenCalledTimes(1)
+    replaceStateSpy.mockRestore()
+  })
+
+  it('ignores shell locations outside the deployment base path', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: '/elsewhere/page', isFirst: false })
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(screen.getByText('Root page')).toBeTruthy()
+  })
+
+  it('ignores topic events with an undefined URL', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: undefined, isFirst: false })
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(screen.getByText('Root page')).toBeTruthy()
+  })
+
+  it('ignores topic events that match the current React Router location', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    publishLocation({ url: appBase, isFirst: false })
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    replaceStateSpy.mockRestore()
+  })
+
+  it('marks topic-driven navigation as isRouterSync to suppress shell echo', async () => {
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    const { unmount } = renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(replaceStateSpy.mock.calls.some(([state]) => state?.isRouterSync === true)).toBe(true)
+    unmount()
+    expect(window.history.replaceState).toBe(replaceStateSpy)
+    replaceStateSpy.mockRestore()
+  })
+
+  it('does not leave shell-publish suppression stuck after URL normalization', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record one?#`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() => {
+      expect(mockPublishedLocations).toContainEqual({
+        url: `${appBase}/subpage/record-1?tab=details#summary`,
+        isFirst: false,
+      })
+    })
+  })
+
+  it('publishes React navigation with the pathname, query, and hash', async () => {
+    renderRouter()
+
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() => {
+      expect(mockPublishedLocations).toContainEqual({
+        url: `${appBase}/subpage/record-1?tab=details#summary`,
+        isFirst: false,
+      })
+    })
+
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+  })
+
+  it('logs an error when publishing an internal navigation fails', async () => {
+    renderRouter()
+    shouldPublishReject = true
+
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
+    await waitFor(() => expect(loggerError).toHaveBeenCalled())
+  })
+
+  it('normalizes a base href without a trailing slash', async () => {
+    document.querySelector('base')?.remove()
+    const base = document.createElement('base')
+    base.setAttribute('href', '/app')
+    document.head.append(base)
+    window.history.replaceState({}, '', appBase)
+
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+
+  it('falls back to root base when the base element is missing', async () => {
+    document.querySelector('base')?.remove()
+    window.history.replaceState({}, '', appBase)
+
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    act(() => {
+      window.history.pushState({}, '', `${appBase}/subpage/record-1`)
+      mockLocationListeners[0]({ url: 'app/sample-app/subpage/record-1', isFirst: false })
+    })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+
+  it('does not publish an app navigation outside the deployment path', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    fireEvent.click(screen.getByText('Navigate outside in React'))
+
+    await waitFor(() => expect(loggerWarn).toHaveBeenCalled())
+    expect(mockPublishedLocations).toEqual([])
+    expect(screen.getByTestId('location').textContent).toBe('/elsewhere/page')
+  })
+
+  it('applies an absolute shell path after the current task and does not publish it back', () => {
+    jest.useFakeTimers()
+    mockRawTopicPayloads = true
+    try {
+      renderRouter()
+      expect(mockLocationListeners).toHaveLength(1)
+      act(() => {
+        mockLocationListeners[0]({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+      })
+      expect(screen.getByTestId('location').textContent).toBe(appBase)
+      act(() => {
+        jest.advanceTimersByTime(0)
+      })
+
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`)
+      expect(mockPublishedLocations).toEqual([])
+    } finally {
+      mockRawTopicPayloads = false
+      jest.useRealTimers()
+    }
+  })
+
+  it('does not apply a deferred absolute shell path after the router unmounted', () => {
+    jest.useFakeTimers()
+    mockRawTopicPayloads = true
+    try {
+      const { unmount } = renderRouter()
+      act(() => {
+        mockLocationListeners[0]({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+      })
+      unmount()
+      act(() => {
+        jest.advanceTimersByTime(0)
+      })
+
+      expect(window.location.pathname).toBe(appBase)
+      expect(mockPublishedLocations).toEqual([])
+    } finally {
+      mockRawTopicPayloads = false
+      jest.useRealTimers()
+    }
+  })
+
+  it('ignores an absolute shell path outside the deployment path', () => {
+    jest.useFakeTimers()
+    mockRawTopicPayloads = true
+    try {
+      renderRouter()
+      act(() => {
+        mockLocationListeners[0]({ url: '/elsewhere/page', isFirst: false })
+      })
+      act(() => {
+        jest.advanceTimersByTime(0)
+      })
+
+      expect(screen.getByTestId('location').textContent).toBe(appBase)
+      expect(loggerWarn).toHaveBeenCalled()
+    } finally {
+      mockRawTopicPayloads = false
+      jest.useRealTimers()
+    }
+  })
+
+  it('ignores empty topic URLs', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: '', isFirst: false })
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(screen.getByText('Root page')).toBeTruthy()
+  })
+
+  it('does not throw when history state is not an object', () => {
+    const { unmount } = renderRouter()
+
+    expect(() => {
+      act(() => {
+        window.history.pushState(null, '', '/some-url')
+      })
+    }).not.toThrow()
+
+    unmount()
+  })
+
+  it('installs and restores the history wrapper with the mounted providers', () => {
+    const pushStateBeforeMount = window.history.pushState
+    const replaceStateBeforeMount = window.history.replaceState
+    const first = renderRouter()
+
+    expect(window.history.pushState).not.toBe(pushStateBeforeMount)
+    expect(window.history.replaceState).not.toBe(replaceStateBeforeMount)
+
+    const wrappedPushState = window.history.pushState
+    const wrappedReplaceState = window.history.replaceState
+    const second = renderRouter()
+    expect(window.history.pushState).toBe(wrappedPushState)
+    expect(window.history.replaceState).toBe(wrappedReplaceState)
+
+    first.unmount()
+    expect(window.history.pushState).toBe(wrappedPushState)
+    expect(window.history.replaceState).toBe(wrappedReplaceState)
+
+    second.unmount()
+    expect(window.history.pushState).toBe(pushStateBeforeMount)
+    expect(window.history.replaceState).toBe(replaceStateBeforeMount)
+  })
+
+  it('updates SyncedLocationContext after shell-driven navigation', async () => {
+    renderRouterWithSyncedReader()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('synced-url').textContent).toBe(`${appBase}/subpage/record-1`)
+  })
+
+  it('does not overwrite an unrelated history patch during release and reuses the wrapper on remount', () => {
+    const markerKey = '__onecxRouterSyncWrapped'
+    const historyRecord = window.history as unknown as Record<string, unknown>
+    const { unmount } = renderRouter()
+    const marker = historyRecord[markerKey]
+
+    const wrappedPushState = window.history.pushState
+    const wrappedReplaceState = window.history.replaceState
+    const foreignPushState = jest.fn(function (this: History, ...args: Parameters<History['pushState']>) {
+      return wrappedPushState.apply(this, args)
+    })
+    const foreignReplaceState = jest.fn(function (this: History, ...args: Parameters<History['replaceState']>) {
+      return wrappedReplaceState.apply(this, args)
+    })
+    window.history.pushState = foreignPushState as unknown as History['pushState']
+    window.history.replaceState = foreignReplaceState as unknown as History['replaceState']
+
+    unmount()
+
+    expect(window.history.pushState).toBe(foreignPushState)
+    expect(window.history.replaceState).toBe(foreignReplaceState)
+    window.history.pushState({ usr: { __onecxShellSync: true } }, '', appBase)
+    expect(window.history.state).toEqual({ usr: { __onecxShellSync: true } })
+
+    const second = renderRouter()
+    expect(window.history.pushState).toBe(foreignPushState)
+    expect(window.history.replaceState).toBe(foreignReplaceState)
+    expect(historyRecord[markerKey]).toBe(marker)
+    second.unmount()
+
+    window.history.pushState = historyMethodsBeforeContextImport.pushState
+    window.history.replaceState = historyMethodsBeforeContextImport.replaceState
+    delete historyRecord[markerKey]
+  })
+
+  it('restores only the history method that is still wrapped when the other one is patched', () => {
+    const historyRecord = window.history as unknown as Record<string, unknown>
+    const { unmount } = renderRouter()
+    const wrappedReplaceState = window.history.replaceState
+    const foreignPushState = jest.fn()
+    window.history.pushState = foreignPushState as unknown as History['pushState']
+
+    unmount()
+
+    expect(window.history.pushState).toBe(foreignPushState)
+    expect(window.history.replaceState).toBe(historyMethodsBeforeContextImport.replaceState)
+    expect(wrappedReplaceState).not.toBe(historyMethodsBeforeContextImport.replaceState)
+
+    const second = renderRouter()
+    expect(window.history.pushState).toBe(foreignPushState)
+    expect(window.history.replaceState).toBe(wrappedReplaceState)
+    second.unmount()
+
+    window.history.pushState = historyMethodsBeforeContextImport.pushState
+    delete historyRecord['__onecxRouterSyncWrapped']
+  })
+
+  it('keeps an internal React route when the topic replays its last value on re-subscription', async () => {
+    const { unmount } = renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    fireEvent.click(screen.getByText('Navigate in React'))
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
+    expect(mockSubscribeCalls).toBe(1)
+    expect(mockLocationListeners).toHaveLength(1)
+
+    unmount()
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    expect(mockSubscribeCalls).toBe(2)
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    expect(screen.getByText('Subpage')).toBeTruthy()
+  })
+
+  it('updates the React route on browser back and forward events', async () => {
+    renderRouter()
+
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
+
+    act(() => window.history.back())
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe(appBase))
+    expect(await screen.findByText('Root page')).toBeTruthy()
+
+    act(() => window.history.forward())
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+  it('does not navigate on the initial topic replay', async () => {
+    topicLastValue = { url: `${appBase}/subpage/record-1`, isFirst: true }
+    window.history.replaceState({}, '', appBase)
+
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(mockPublishedLocations).toEqual([])
+  })
+
+  it('exposes pathname-only url via SyncedLocationContext', async () => {
+    renderRouterWithSyncedReader()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
+    expect(screen.getByTestId('synced-url').textContent).toBe(`${appBase}/subpage/record-1`)
+  })
+
+  it('applies the latest of two different shell URLs delivered before a render', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    act(() => {
+      window.history.pushState({}, '', `${appBase}/subpage/record-1`)
+      mockLocationListeners[0]({ url: `${appBase}/subpage/record-1`, isFirst: false })
+      window.history.pushState({}, '', `${appBase}/subpage/record-2`)
+      mockLocationListeners[0]({ url: `${appBase}/subpage/record-2`, isFirst: false })
+    })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-2`)
+    expect(window.location.pathname).toBe(`${appBase}/subpage/record-2`)
+  })
+
+  it('ignores late echoes of its own publishes after a second internal navigation', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockDeferEchoes = true
+    fireEvent.click(screen.getByText('Navigate in React'))
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(mockDeferredEchoes.map((location) => location.url)).toEqual([
+      `${appBase}/subpage/record-1?tab=details#summary`,
+      appBase,
+    ])
+
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    deliverDeferredEchoes()
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(screen.getByText('Root page')).toBeTruthy()
+    expect(window.location.pathname).toBe(appBase)
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    replaceStateSpy.mockRestore()
+  })
+
+  it('ignores the newest echo after the own-publish history exceeds its limit', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockDeferEchoes = true
+    for (let i = 0; i < 11; i++) {
+      fireEvent.click(screen.getByText(i % 2 === 0 ? 'Navigate in React' : 'Navigate to root in React'))
+    }
+    const newest = mockDeferredEchoes[mockDeferredEchoes.length - 1]
+    mockDeferredEchoes.length = 0
+    mockDeferEchoes = false
+
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    act(() => {
+      mockLocationListeners.slice().forEach((listener) => listener(newest))
+    })
+
+    expect(screen.getByTestId('location').textContent).toBe(newest.url)
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    replaceStateSpy.mockRestore()
+  })
+
+  it('applies a shell event for a URL whose publish failed earlier', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockDeferEchoes = true
+    shouldPublishReject = true
+    fireEvent.click(screen.getByText('Navigate in React'))
+    shouldPublishReject = false
+    await waitFor(() => expect(loggerError).toHaveBeenCalled())
+    mockDeferredEchoes.length = 0
+    mockDeferEchoes = false
+
+    publishLocation({ url: appBase, isFirst: false })
+    expect(await screen.findByText('Root page')).toBeTruthy()
+
+    publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+
+  it('releases the pending-navigation guard when the navigation commits without changing the URL', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockNavigateRedirectTo = appBase
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    mockNavigateRedirectTo = null
+
+    publishLocation({ url: `${appBase}/subpage/record-2`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-2`)
+  })
+
+  it('keeps the original target when shell events arrive A -> B -> A before a render', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const first = `${appBase}/subpage/record-1`
+    const second = `${appBase}/subpage/record-2`
+    act(() => {
+      window.history.pushState({}, '', first)
+      mockLocationListeners[0]({ url: first, isFirst: false })
+      window.history.pushState({}, '', second)
+      mockLocationListeners[0]({ url: second, isFirst: false })
+      window.history.pushState({}, '', first)
+      mockLocationListeners[0]({ url: first, isFirst: false })
+    })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(first)
+    expect(window.location.pathname).toBe(first)
+  })
+
+  it('applies a shell target that commits before the next shell event', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const first = `${appBase}/subpage/record-1`
+    const second = `${appBase}/subpage/record-2`
+    act(() => {
+      window.history.pushState({}, '', first)
+      mockLocationListeners[0]({ url: first, isFirst: false })
+    })
+    expect(screen.getByTestId('location').textContent).toBe(first)
+    act(() => {
+      window.history.pushState({}, '', second)
+      mockLocationListeners[0]({ url: second, isFirst: false })
+    })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(second)
+    expect(mockPublishedLocations).toEqual([])
+  })
+
+  it('publishes an app navigation to the URL of a shell navigation that never committed', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const target = `${appBase}/subpage/record-1?tab=details#summary`
+    mockNavigateDisabled = true
+    act(() => {
+      window.history.pushState({}, '', target)
+      mockLocationListeners[0]({ url: 'app/sample-app/subpage/record-1?tab=details#summary', isFirst: false })
+    })
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    mockNavigateDisabled = false
+
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() =>
+      expect(mockPublishedLocations).toContainEqual({
+        url: '/app/sample-app/subpage/record-1?tab=details#summary',
+        isFirst: false,
+      })
+    )
+  })
+
+  it('re-wraps a history method that was restored while the other one is still patched', () => {
+    const historyRecord = window.history as unknown as Record<string, unknown>
+    const { unmount } = renderRouter()
+    const foreignReplaceState = jest.fn()
+    window.history.replaceState = foreignReplaceState as unknown as History['replaceState']
+
+    unmount()
+    expect(window.history.pushState).toBe(historyMethodsBeforeContextImport.pushState)
+
+    const second = renderRouter()
+    expect(window.history.pushState).not.toBe(historyMethodsBeforeContextImport.pushState)
+    expect(window.history.replaceState).toBe(foreignReplaceState)
+    second.unmount()
+
+    window.history.replaceState = historyMethodsBeforeContextImport.replaceState
+    delete historyRecord['__onecxRouterSyncWrapped']
+  })
+
+  it('treats an own publish without an echo as stale after its TTL', () => {
+    jest.useFakeTimers()
+    try {
+      renderRouter()
+      expect(mockLocationListeners).toHaveLength(1)
+      mockDeferEchoes = true
+      fireEvent.click(screen.getByText('Navigate in React'))
+      fireEvent.click(screen.getByText('Navigate to root in React'))
+      mockDeferredEchoes.length = 0
+      mockDeferEchoes = false
+      act(() => {
+        jest.advanceTimersByTime(5001)
+      })
+
+      publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
+
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
+  it('publishes back and forward traversal to an entry that the shell navigation created', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+    await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    mockPublishedLocations.length = 0
+
+    act(() => window.history.back())
+    await waitFor(() => expect(screen.getByText('Subpage')).toBeTruthy())
+
+    await waitFor(() =>
+      expect(mockPublishedLocations).toContainEqual({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+    )
+  })
+
+  it('publishes traversal to a shell entry after repeated shell navigations', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+    await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    for (let i = 0; i < 3; i++) {
+      publishLocation({ url: `${appBase}/subpage/record-${i + 2}`, isFirst: false })
+    }
+    mockPublishedLocations.length = 0
+
+    act(() => window.history.go(-4))
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`))
+    await waitFor(() =>
+      expect(mockPublishedLocations).toContainEqual({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+    )
+  })
+
+  it('consumes the shell marker on the committed entry without publishing', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+
+    expect(window.history.state?.isRouterSync).toBeUndefined()
+    expect(window.history.state?.key).toEqual(expect.any(String))
+    expect(mockPublishedLocations).toEqual([])
+  })
+
+  it('consumes the marker of the committed entry and keeps the rest of its state', () => {
+    const replaceStateSpy = jest.spyOn(History.prototype, 'replaceState')
+    window.history.replaceState({ usr: { a: 1 }, key: 'k1', idx: 3, isRouterSync: true }, '', `${appBase}/x`)
+    replaceStateSpy.mockClear()
+
+    consumeShellSyncMarker('k1')
+
+    expect(window.history.state).toEqual({ usr: { a: 1 }, key: 'k1', idx: 3 })
+    expect(replaceStateSpy).toHaveBeenCalledTimes(1)
+    replaceStateSpy.mockRestore()
+  })
+
+  it('does not touch an entry whose key differs from the committed location', () => {
+    window.history.replaceState({ key: 'other', isRouterSync: true }, '', `${appBase}/x`)
+    const replaceStateSpy = jest.spyOn(History.prototype, 'replaceState')
+
+    consumeShellSyncMarker('committed')
+
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    expect(window.history.state).toEqual({ key: 'other', isRouterSync: true })
+    replaceStateSpy.mockRestore()
+  })
+
+  it('does nothing for an entry without the shell marker', () => {
+    window.history.replaceState({ key: 'k2' }, '', `${appBase}/x`)
+    const replaceStateSpy = jest.spyOn(History.prototype, 'replaceState')
+
+    consumeShellSyncMarker('k2')
+
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    replaceStateSpy.mockRestore()
+  })
+
+  it('publishes traversal to a shell entry after the router remounted', async () => {
+    const first = renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+    await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    first.unmount()
+
+    renderRouter()
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockPublishedLocations.length = 0
+
+    act(() => window.history.back())
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`))
+    await waitFor(() =>
+      expect(mockPublishedLocations).toContainEqual({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+    )
+  })
+
+  it('publishes each repeated traversal to the same shell entry', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+    await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    mockPublishedLocations.length = 0
+
+    for (let round = 0; round < 2; round++) {
+      act(() => window.history.back())
+      await waitFor(() => expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1`))
+      act(() => window.history.forward())
+      await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    }
+
+    expect(mockPublishedLocations.filter((p) => p.url === '/app/sample-app/subpage/record-1')).toHaveLength(2)
+  })
+
+  it('still applies shell events after own echoes were consumed', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockDeferEchoes = true
+    fireEvent.click(screen.getByText('Navigate in React'))
+    deliverDeferredEchoes()
+    mockDeferEchoes = false
+
+    publishLocation({ url: appBase, isFirst: false })
+    expect(await screen.findByText('Root page')).toBeTruthy()
+
+    publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+  })
+})

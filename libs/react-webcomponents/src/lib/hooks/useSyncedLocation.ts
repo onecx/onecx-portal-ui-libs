@@ -4,6 +4,7 @@ import { SyncedLocationContext } from '../contexts/syncedLocationContext'
 /**
  * Hook to access the synced location payload.
  * Must be used within SyncedRouterProvider.
+ * `url` is the router pathname only (no query or hash).
  *
  * @returns Current location payload from the synced router.
  * @throws Error when used outside SyncedRouterProvider.
