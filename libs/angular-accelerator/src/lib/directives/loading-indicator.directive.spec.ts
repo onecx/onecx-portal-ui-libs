@@ -325,16 +325,19 @@ describe('LoadingIndicatorDirective', () => {
 
     it('should disable the loader animation when the user prefers reduced motion', () => {
       // The reduced-motion `@media` block in `reduced-motion.scss` must set `animation: none`
-      // on the spinner. It is scoped to the library's own overlay wrappers (`.element-overlay`
-      // for the in-element spinner, `.full-overlay` for the full-page one) so it stops both of
-      // the library's spinners without disabling an unrelated `.loader` in a consumer app.
+      // on the spinner. It is scoped with the *child* combinator to the library's own overlay
+      // wrappers (`.element-overlay` for the in-element spinner, `.full-overlay > .overlay` for
+      // the full-page one) so it stops both of the library's spinners without disabling an
+      // unrelated `.loader` nested in a host's content (e.g. a table or card a consumer renders
+      // inside the host element).
       const declarations = reducedMotionDeclarations(reducedMotionCss)
       expect(declarations).not.toBe('')
-      // The exact scoped group (both overlay wrappers) followed by `animation: none` before the
-      // closing brace. Matching the selector list as one unit means a bare, unscoped `.loader`
-      // rule — which would leak the override onto consumer apps — cannot satisfy this.
+      // The exact child-combinator group (both spinner variants) followed by `animation: none`
+      // before the closing brace. Matching the selector list as one unit means a bare,
+      // unscoped `.loader` rule — which would leak the override onto consumer apps — cannot
+      // satisfy this.
       expect(declarations).toMatch(
-        /\.element-overlay\s+\.loader,\s*\.full-overlay\s+\.loader\s*\{[^}]*animation:\s*none/,
+        /\.element-overlay\s*>\s*\.loader,\s*\.full-overlay\s*>\s*\.overlay\s*>\s*\.loader\s*\{[^}]*animation:\s*none/,
       )
     })
   })
