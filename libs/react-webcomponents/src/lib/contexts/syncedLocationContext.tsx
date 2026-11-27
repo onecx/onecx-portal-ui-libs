@@ -18,11 +18,6 @@ import { createLogger } from '../utils/logger.utils'
  */
 export const SyncedLocationContext = createContext<CurrentLocationTopicPayload | undefined>(undefined)
 
-/**
- * Internal router sync component subscribing to current location topic.
- * @param children - nested content rendered with synced location context.
- * @returns Provider for synced location state.
- */
 const logger = createLogger('RouterSync')
 
 const toUrl = ({ pathname, search, hash }: { pathname: string; search: string; hash: string }) =>
@@ -38,17 +33,6 @@ const MAX_OWN_PUBLISHED_URLS = 10
 type OwnPublish = { url: string; publishedAt: number }
 type TopicNavigation = { target: string; locationKey: string; timeout: ReturnType<typeof setTimeout> }
 
-/**
- * Install only while a synced router is mounted. The shell checks top-level
- * `isRouterSync` in its history patch, while React Router nests user state under
- * `data.usr`. The shell installs its patch during bootstrap before mounting
- * React remotes, so this wrapper layers over the shell adapter.
- *
- * The wrapper is restored by the last unmount when it is still the top-most patch.
- * If another patch was layered on top, the wrapper stays in the chain as a
- * pass-through (`referenceCount` 0) and is reused by the next mount instead of
- * being stacked again.
- */
 type HistoryWrapperState = {
   referenceCount: number
   originalPushState: History['pushState']
@@ -73,6 +57,17 @@ const releaseHistorySyncMarker = (history: History, state: HistoryWrapperState) 
   }
 }
 
+/**
+ * Install only while a synced router is mounted. The shell checks top-level
+ * `isRouterSync` in its history patch, while React Router nests user state under
+ * `data.usr`. The shell installs its patch during bootstrap before mounting
+ * React remotes, so this wrapper layers over the shell adapter.
+ *
+ * The wrapper is restored by the last unmount when it is still the top-most patch.
+ * If another patch was layered on top, the wrapper stays in the chain as a
+ * pass-through (`referenceCount` 0) and is reused by the next mount instead of
+ * being stacked again.
+ */
 const installHistorySyncMarker = (): (() => void) => {
   const history = window.history
   const historyProperties = history as unknown as Record<string, unknown>
@@ -130,6 +125,11 @@ const installHistorySyncMarker = (): (() => void) => {
   return () => releaseHistorySyncMarker(history, wrapperState)
 }
 
+/**
+ * Internal router sync component subscribing to current location topic.
+ * @param children - nested content rendered with synced location context.
+ * @returns Provider for synced location state.
+ */
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const locationHook = useLocation()
   const navigate = useNavigate()
