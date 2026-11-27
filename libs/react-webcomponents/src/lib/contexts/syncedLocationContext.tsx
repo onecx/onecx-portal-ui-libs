@@ -11,6 +11,7 @@ import {
 import { BrowserRouter, useLocation, useNavigate } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
 import { useTopic } from '@onecx/react-integration-interface'
+import { getLocation } from '@onecx/accelerator'
 import { createLogger } from '../utils/logger.utils'
 
 /**
@@ -22,6 +23,26 @@ const logger = createLogger('RouterSync')
 
 const toUrl = ({ pathname, search, hash }: { pathname: string; search: string; hash: string }) =>
   `${pathname}${search}${hash}`
+
+/**
+ * The shell publishes URLs relative to its deployment path (see `_constructCurrentURL` in the shell),
+ * while React Router works with absolute paths. These helpers convert between the two forms.
+ */
+/**
+ * The shell publishes URLs as `location.pathname.substring(deploymentPath.length)` (see `_constructCurrentURL`
+ * in the shell and the Angular connector), so they have no leading slash. These helpers use the same rule.
+ */
+const getDeploymentPrefix = () => {
+  const deploymentPath = getLocation().deploymentPath
+  return deploymentPath.endsWith('/') ? deploymentPath : `${deploymentPath}/`
+}
+
+const toRouterUrl = (shellUrl: string) => `${getDeploymentPrefix()}${shellUrl.replace(/^\//, '')}`
+
+const toShellUrl = (routerUrl: string) => {
+  const prefix = getDeploymentPrefix()
+  return routerUrl.startsWith(prefix) ? routerUrl.slice(prefix.length) : routerUrl.slice(1)
+}
 
 const SHELL_SYNC_MARKER = '__onecxShellSync'
 const HISTORY_WRAPPER_MARKER = '__onecxRouterSyncWrapped'
@@ -135,7 +156,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     url: locationHook.pathname,
     isFirst: false,
   })
-  // Latest URL this router has been asked to show. Updated synchronously when a shell
+  // Latest absolute URL this router has been asked to show. Updated synchronously when a shell
   // navigation is requested, so a following shell event compares against it, not against
   // React state that has not re-rendered yet.
   const knownUrlRef = useRef(routerUrl)
@@ -152,19 +173,13 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   useLayoutEffect(() => installHistorySyncMarker(), [])
 
   useEffect(() => {
-    const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
-    const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`
-
     const locationSubscription = currentLocation$.subscribe((location) => {
-      const topicUrl = location.url
-      if (!topicUrl) {
-        return
-      }
-      if (topicUrl !== '/' && !topicUrl.startsWith(normalizedBaseHref)) {
+      // Shell URLs are relative to its deployment path and never start with a slash.
+      if (!location.url || location.url.startsWith('/')) {
         return
       }
 
-      const target = normalizeUrl(topicUrl)
+      const target = normalizeUrl(toRouterUrl(location.url))
       const now = Date.now()
       ownPublishedUrlsRef.current = ownPublishedUrlsRef.current.filter((p) => now - p.publishedAt < OWN_PUBLISH_TTL_MS)
       const ownPublishIndex = ownPublishedUrlsRef.current.findIndex((p) => normalizeUrl(p.url) === target)
@@ -182,9 +197,9 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       if (normalizeUrl(knownUrlRef.current) === target) {
         return
       }
-      knownUrlRef.current = topicUrl
+      knownUrlRef.current = target
       pendingShellTargetRef.current = target
-      navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
+      navigateRef.current(target, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
     })
 
     return () => {
@@ -193,9 +208,9 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   }, [currentLocation$])
 
   // Publish the app's own navigations so the shell can update the browser URL.
-  // A navigation requested by the shell is not published back: the shell's target is
-  // recorded when the navigation is requested and matched at commit. This replaces the
-  // Angular connector's isRouterSync check, which React Router does not expose at top level.
+  // A navigation requested by the shell is not published back: its target is recorded when the
+  // navigation is requested and matched at commit. Published URLs are shell-relative, like the
+  // URLs the shell publishes.
   // useLayoutEffect runs synchronously after DOM mutations so there is no
   // extra render between the URL change and the publish.
   useLayoutEffect(() => {
@@ -218,7 +233,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       }
       currentLocation$
         .publish({
-          url: routerUrl,
+          url: toShellUrl(routerUrl),
           isFirst: false,
         })
         .catch((err) => {
@@ -226,7 +241,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
           logger.error('publish failed:', err)
         })
     }
-  }, [routerUrl, locationHook.key, currentLocation.url, currentLocation$])
+  }, [routerUrl, locationHook.pathname, currentLocation.url, currentLocation$])
 
   return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
 }
