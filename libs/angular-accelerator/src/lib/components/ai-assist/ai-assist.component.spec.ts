@@ -186,10 +186,9 @@ describe('AiAssistComponent', () => {
     expect(fixture.nativeElement.querySelector(panelSelector)).toBeNull()
   })
 
-  it('should prefetch agents on init, before the panel is opened, and reuse them when it opens', async () => {
+  it('should load agents on the first open and reuse them when the panel reopens', async () => {
     await createComponent(false)
-    expect(getAgents).toHaveBeenCalledTimes(1)
-    expect(component.loadState).toBe('ready')
+    expect(getAgents).not.toHaveBeenCalled()
 
     await openPanel()
     component.close()
@@ -199,10 +198,18 @@ describe('AiAssistComponent', () => {
     expect(component.selectedAgentId).toBe('agent-1')
   })
 
+  it('should not start a gatherer or agent lookup for an instance that is never opened', async () => {
+    await createComponent(false)
+
+    expect(getAgents).not.toHaveBeenCalled()
+    expect(component.loadState).toBe('loading')
+  })
+
   it('should share one agent request between instances with the same appId', async () => {
     const instances = Array.from({ length: 10 }, () => TestBed.createComponent(AiAssistComponent))
     for (const instance of instances) {
       instance.detectChanges()
+      instance.componentInstance.toggle()
       await instance.whenStable()
     }
 
@@ -211,10 +218,11 @@ describe('AiAssistComponent', () => {
   })
 
   it('should request agents separately for another appId', async () => {
-    await createComponent(false)
+    await createComponent()
     const other = TestBed.createComponent(AiAssistComponent)
     other.componentInstance.appId = 'app-2'
     other.detectChanges()
+    other.componentInstance.toggle()
     await other.whenStable()
 
     expect(getAgents).toHaveBeenCalledTimes(2)
@@ -223,17 +231,17 @@ describe('AiAssistComponent', () => {
 
   it('should not cache a failed agent request', async () => {
     getAgents.mockRejectedValueOnce(new Error('network down'))
-    await createComponent(false)
+    await createComponent()
     expect(component.loadState).toBe('error')
 
-    await createComponent(false)
+    await createComponent()
 
     expect(getAgents).toHaveBeenCalledTimes(2)
     expect(component.loadState).toBe('ready')
   })
 
   it('should bypass the cache when Try again is used', async () => {
-    await createComponent(false)
+    await createComponent()
     component.loadAgents(true)
     await fixture.whenStable()
 
@@ -243,9 +251,9 @@ describe('AiAssistComponent', () => {
   it('should request agents again after the cache time to live has passed', async () => {
     let now = 0
     jest.spyOn(Date, 'now').mockImplementation(() => now)
-    await createComponent(false)
+    await createComponent()
     now = 60001
-    await createComponent(false)
+    await createComponent()
 
     expect(getAgents).toHaveBeenCalledTimes(2)
   })
@@ -256,10 +264,11 @@ describe('AiAssistComponent', () => {
     fixture = TestBed.createComponent(AiAssistComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
+    component.toggle()
 
     component.appId = 'app-2'
     component.loadAgents(true)
-    flush()
+    tick(5000)
 
     expect(getAgents).toHaveBeenCalledWith({ appId: 'app-2' })
     expect(component.loadState).toBe('ready')
@@ -273,6 +282,7 @@ describe('AiAssistComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
 
+    component.loadAgents()
     component.loadAgents(true)
     await fixture.whenStable()
     rejectStale(new Error('stale failure'))
@@ -289,6 +299,7 @@ describe('AiAssistComponent', () => {
     fixture = TestBed.createComponent(AiAssistComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
+    component.toggle()
     expect(component.loadState).toBe('loading')
 
     tick(5000)
@@ -599,7 +610,7 @@ describe('AiAssistComponent', () => {
   })
 
   it('should reload agents when the appId input changes after init', async () => {
-    await createComponent(false)
+    await createComponent()
 
     component.appId = 'app-2'
     component.ngOnChanges({ appId: new SimpleChange('app-1', 'app-2', false) })
@@ -617,10 +628,49 @@ describe('AiAssistComponent', () => {
 
     component.appId = 'app-2'
     component.ngOnChanges({ appId: new SimpleChange('app-1', 'app-2', false) })
-    await fixture.whenStable()
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     expect(component.hasSuggestion).toBe(false)
     expect(component.suggestion).toBe('')
+  })
+
+  it('should map a hanging agent lookup to a retryable timeout error', fakeAsync(() => {
+    getAgents.mockImplementationOnce(() => new Promise(() => undefined))
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    component.toggle()
+
+    tick(15000)
+
+    expect(component.loadState).toBe('error')
+    expect(component.errorCode).toBe('TIMEOUT')
+
+    component.loadAgents(true)
+    flush()
+    expect(getAgents).toHaveBeenCalledTimes(2)
+  }))
+
+  it('should not cache an empty agent list', async () => {
+    getAgents.mockResolvedValueOnce([])
+    await createComponent()
+    expect(component.loadState).toBe('empty')
+
+    await createComponent()
+
+    expect(getAgents).toHaveBeenCalledTimes(2)
+    expect(component.loadState).toBe('ready')
+  })
+
+  it('should treat a null or undefined inputText as an empty text', async () => {
+    await createComponent(false)
+
+    component.inputText = null as unknown as string
+    expect(component.inputText).toBe('')
+    expect(component.canRun).toBe(false)
+
+    component.inputText = undefined as unknown as string
+    expect(component.inputText).toBe('')
   })
 
   it('should keep the same actions array between change detection passes', async () => {
@@ -636,6 +686,7 @@ describe('AiAssistComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
 
+    component.loadAgents()
     component.loadAgents(true)
     await fixture.whenStable()
     resolveStale([{ ...agent, id: 'stale-agent', name: 'Stale' }])
