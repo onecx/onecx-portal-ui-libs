@@ -5,6 +5,7 @@ import type { CurrentLocationTopicPayload } from '@onecx/integration-interface'
 import type { NavigateFunction, NavigateOptions, To } from 'react-router'
 
 const loggerError = jest.fn()
+const loggerWarn = jest.fn()
 
 Object.assign(globalThis, { TextDecoder, TextEncoder })
 
@@ -76,6 +77,7 @@ jest.mock('@onecx/react-integration-interface', () => ({
 }))
 
 let mockNavigateRedirectTo: string | null = null
+let mockNavigateDisabled = false
 
 jest.mock('react-router', () => {
   const actual = jest.requireActual<typeof import('react-router')>('react-router')
@@ -84,7 +86,7 @@ jest.mock('react-router', () => {
     useNavigate: (): NavigateFunction => {
       const navigate = actual.useNavigate()
       const mockedNavigate = (to: To, options?: NavigateOptions) => {
-        navigate(mockNavigateRedirectTo ?? to, options)
+        if (!mockNavigateDisabled) navigate(mockNavigateRedirectTo ?? to, options)
       }
       return mockedNavigate as unknown as NavigateFunction
     },
@@ -92,7 +94,7 @@ jest.mock('react-router', () => {
 })
 
 jest.mock('../utils/logger.utils', () => ({
-  createLogger: () => ({ error: loggerError }),
+  createLogger: () => ({ error: loggerError, warn: loggerWarn }),
 }))
 
 const RouterContent = () => {
@@ -109,6 +111,7 @@ const RouterContent = () => {
       'Navigate in React'
     ),
     createElement('button', { onClick: () => navigate(appBase) }, 'Navigate to root in React'),
+    createElement('button', { onClick: () => navigate('/elsewhere/page') }, 'Navigate outside in React'),
     createElement(
       Routes,
       null,
@@ -153,6 +156,7 @@ describe('SyncedRouterProvider', () => {
     mockDeferredEchoes.length = 0
     topicLastValue = { url: appBase, isFirst: true }
     loggerError.mockClear()
+    loggerWarn.mockClear()
     document.querySelector('base')?.remove()
     const base = document.createElement('base')
     base.setAttribute('href', '/app/')
@@ -329,15 +333,15 @@ describe('SyncedRouterProvider', () => {
     expect(await screen.findByText('Subpage')).toBeTruthy()
   })
 
-  it('publishes a redirected location outside the deployment path without the prefix', async () => {
+  it('does not publish an app navigation outside the deployment path', async () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    mockNavigateRedirectTo = '/elsewhere/page'
-    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
-    mockNavigateRedirectTo = null
+    fireEvent.click(screen.getByText('Navigate outside in React'))
 
-    await waitFor(() => expect(mockPublishedLocations).toContainEqual({ url: '/app/elsewhere/page', isFirst: false }))
+    await waitFor(() => expect(loggerWarn).toHaveBeenCalled())
+    expect(mockPublishedLocations).toEqual([])
+    expect(screen.getByTestId('location').textContent).toBe('/elsewhere/page')
   })
 
   it('ignores empty topic URLs', async () => {
@@ -628,6 +632,50 @@ describe('SyncedRouterProvider', () => {
     expect(await screen.findByText('Subpage')).toBeTruthy()
     expect(screen.getByTestId('location').textContent).toBe(first)
     expect(window.location.pathname).toBe(first)
+  })
+
+  it('applies a shell target that commits before the next shell event', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const first = `${appBase}/subpage/record-1`
+    const second = `${appBase}/subpage/record-2`
+    act(() => {
+      window.history.pushState({}, '', first)
+      mockLocationListeners[0]({ url: first, isFirst: false })
+    })
+    expect(screen.getByTestId('location').textContent).toBe(first)
+    act(() => {
+      window.history.pushState({}, '', second)
+      mockLocationListeners[0]({ url: second, isFirst: false })
+    })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(second)
+    expect(mockPublishedLocations).toEqual([])
+  })
+
+  it('publishes an app navigation to the URL of a shell navigation that never committed', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const target = `${appBase}/subpage/record-1?tab=details#summary`
+    mockNavigateDisabled = true
+    act(() => {
+      window.history.pushState({}, '', target)
+      mockLocationListeners[0]({ url: target.slice(1).replace(/^app\//, 'app/'), isFirst: false })
+    })
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    mockNavigateDisabled = false
+
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() =>
+      expect(mockPublishedLocations).toContainEqual({
+        url: '/app/sample-app/subpage/record-1?tab=details#summary',
+        isFirst: false,
+      })
+    )
   })
 
   it('re-wraps a history method that was restored while the other one is still patched', () => {

@@ -25,10 +25,6 @@ const toUrl = ({ pathname, search, hash }: { pathname: string; search: string; h
   `${pathname}${search}${hash}`
 
 /**
- * The shell publishes URLs relative to its deployment path (see `_constructCurrentURL` in the shell),
- * while React Router works with absolute paths. These helpers convert between the two forms.
- */
-/**
  * The shell publishes URLs as `location.pathname.substring(deploymentPath.length)` (see `_constructCurrentURL`
  * in the shell and the Angular connector), so they have no leading slash. These helpers use the same rule.
  */
@@ -41,7 +37,7 @@ const toRouterUrl = (shellUrl: string) => `${getDeploymentPrefix()}${shellUrl.re
 
 const toShellUrl = (routerUrl: string) => {
   const prefix = getDeploymentPrefix()
-  return routerUrl.startsWith(prefix) ? routerUrl.slice(prefix.length) : routerUrl.slice(1)
+  return routerUrl.startsWith(prefix) ? routerUrl.slice(prefix.length) : undefined
 }
 
 const SHELL_SYNC_MARKER = '__onecxShellSync'
@@ -162,7 +158,6 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const knownUrlRef = useRef(routerUrl)
   const navigateRef = useRef(navigate)
   const lastPublishedUrlRef = useRef(routerUrl)
-  const pendingShellTargetRef = useRef<string | null>(null)
   const ownPublishedUrlsRef = useRef<OwnPublish[]>([])
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
@@ -175,7 +170,11 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const locationSubscription = currentLocation$.subscribe((location) => {
       // Shell URLs are relative to its deployment path and never start with a slash.
-      if (!location.url || location.url.startsWith('/')) {
+      if (location.url?.startsWith('/')) {
+        logger.warn('ignored topic URL that is not deployment-relative:', location.url)
+        return
+      }
+      if (!location.url) {
         return
       }
 
@@ -198,7 +197,6 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
         return
       }
       knownUrlRef.current = target
-      pendingShellTargetRef.current = target
       navigateRef.current(target, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
     })
 
@@ -218,29 +216,35 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     if (locationHook.pathname !== currentLocation.url) {
       setCurrentLocation({ url: locationHook.pathname, isFirst: false })
     }
-    const shellTarget = pendingShellTargetRef.current
-    pendingShellTargetRef.current = null
-    if (shellTarget !== null && normalizeUrl(routerUrl) === shellTarget) {
+    // The shell-requested navigation carries isRouterSync on the history entry it committed.
+    // Decide per commit, so ordering of shell events cannot make an app navigation look shell-driven.
+    if (window.history.state?.isRouterSync === true) {
       lastPublishedUrlRef.current = routerUrl
       return
     }
-    if (routerUrl !== lastPublishedUrlRef.current) {
-      lastPublishedUrlRef.current = routerUrl
-      const ownPublish: OwnPublish = { url: routerUrl, publishedAt: Date.now() }
-      ownPublishedUrlsRef.current.push(ownPublish)
-      if (ownPublishedUrlsRef.current.length > MAX_OWN_PUBLISHED_URLS) {
-        ownPublishedUrlsRef.current.shift()
-      }
-      currentLocation$
-        .publish({
-          url: toShellUrl(routerUrl),
-          isFirst: false,
-        })
-        .catch((err) => {
-          ownPublishedUrlsRef.current = ownPublishedUrlsRef.current.filter((p) => p !== ownPublish)
-          logger.error('publish failed:', err)
-        })
+    if (routerUrl === lastPublishedUrlRef.current) {
+      return
     }
+    lastPublishedUrlRef.current = routerUrl
+    const shellUrl = toShellUrl(routerUrl)
+    if (shellUrl === undefined) {
+      logger.warn('not published, URL is outside the deployment path:', routerUrl)
+      return
+    }
+    const ownPublish: OwnPublish = { url: routerUrl, publishedAt: Date.now() }
+    ownPublishedUrlsRef.current.push(ownPublish)
+    if (ownPublishedUrlsRef.current.length > MAX_OWN_PUBLISHED_URLS) {
+      ownPublishedUrlsRef.current.shift()
+    }
+    currentLocation$
+      .publish({
+        url: shellUrl,
+        isFirst: false,
+      })
+      .catch((err) => {
+        ownPublishedUrlsRef.current = ownPublishedUrlsRef.current.filter((p) => p !== ownPublish)
+        logger.error('publish failed:', err)
+      })
   }, [routerUrl, locationHook.pathname, currentLocation.url, currentLocation$])
 
   return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
