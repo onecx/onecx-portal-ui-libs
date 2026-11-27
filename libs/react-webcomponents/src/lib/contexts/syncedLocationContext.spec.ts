@@ -718,6 +718,24 @@ describe('SyncedRouterProvider', () => {
     }
   })
 
+  it('publishes back and forward traversal to an entry that the shell navigation created', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+    await waitFor(() => expect(screen.getByText('Root page')).toBeTruthy())
+    mockPublishedLocations.length = 0
+
+    act(() => window.history.back())
+    await waitFor(() => expect(screen.getByText('Subpage')).toBeTruthy())
+
+    await waitFor(() =>
+      expect(mockPublishedLocations).toContainEqual({ url: '/app/sample-app/subpage/record-1', isFirst: false })
+    )
+  })
+
   it('still applies shell events after own echoes were consumed', async () => {
     renderRouter()
 
