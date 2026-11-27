@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, useCallback, type ReactNode } from 'react'
 import {
   MessageTopic,
   buildPortalMessagePayload,
@@ -6,6 +6,7 @@ import {
   type PortalMessage,
   type TranslateFn,
 } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 type Message = PortalMessage
 
@@ -52,16 +53,7 @@ const usePortalMessage = (): PortalMessageContextValue => {
  * @returns Provider wrapping the given children.
  */
 const PortalMessageProvider: React.FC<PortalMessageProviderProps> = ({ children, value, translate }) => {
-  const message$ = useMemo(() => value?.message$ ?? new MessageTopic(), [value?.message$])
-  const isInternalMessageTopic = !value?.message$
-
-  useEffect(() => {
-    return () => {
-      if (isInternalMessageTopic) {
-        message$.destroy()
-      }
-    }
-  }, [isInternalMessageTopic, message$])
+  const message$ = useTopic(value?.message$, MessageTopic)
 
   const addTranslated = useCallback(
     async (severity: string, msg: Message) => {

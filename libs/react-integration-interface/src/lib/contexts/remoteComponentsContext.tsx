@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { RemoteComponentsTopic } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 /**
  * Remote components context value shape.
@@ -38,19 +39,7 @@ const useRemoteComponents = (): RemoteComponentsContextValue => {
  * @returns Provider wrapping the given children.
  */
 const RemoteComponentsProvider: React.FC<RemoteComponentsProviderProps> = ({ children, value }) => {
-  const remoteComponents$ = useMemo(
-    () => value?.remoteComponents$ ?? new RemoteComponentsTopic(),
-    [value?.remoteComponents$]
-  )
-  const isInternalRemoteComponentsTopic = !value?.remoteComponents$
-
-  useEffect(() => {
-    return () => {
-      if (isInternalRemoteComponentsTopic) {
-        remoteComponents$.destroy()
-      }
-    }
-  }, [isInternalRemoteComponentsTopic, remoteComponents$])
+  const remoteComponents$ = useTopic(value?.remoteComponents$, RemoteComponentsTopic)
 
   const contextValue = useMemo(
     () => ({
