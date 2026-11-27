@@ -145,7 +145,7 @@ export class AiAssistComponent implements AfterViewInit, OnChanges, OnInit, OnDe
   private agentsRequested = false
   private actionsCache?: { defaults: unknown; additions: unknown; actions: AiAssistActionDefinition<unknown>[] }
 
-  @ViewChild('toggleBtn', { read: ElementRef, static: true }) private toggleButton!: ElementRef<HTMLElement>
+  @ViewChild('toggleBtn', { read: ElementRef, static: true }) private readonly toggleButton!: ElementRef<HTMLElement>
 
   ngOnInit(): void {
     this.selectAction(this.actions[0]?.id)
