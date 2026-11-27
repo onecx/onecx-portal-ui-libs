@@ -46,3 +46,11 @@ $loader-border-bottom-color: transparent;
 		left: 45%;
 	}
 }
+
+/*
+ * Note: the `prefers-reduced-motion` override that stops this infinite spin lives
+ * in `assets/reduced-motion.scss` (`.element-overlay > .loader, .full-overlay >
+ * .overlay > .loader { animation: none }`), so the reduced-motion handling for
+ * every Optimus component stays in one place and does not leak onto unrelated
+ * `.loader` elements.
+ */
