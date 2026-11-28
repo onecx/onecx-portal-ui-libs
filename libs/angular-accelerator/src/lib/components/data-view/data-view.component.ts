@@ -77,6 +77,8 @@ export class DataViewComponent implements OnInit {
   
   name = input<string>('')
   titleLineId = input<string | undefined>()
+  /** Heading level (1-6) of the item titles. Defaults to 2. */
+  itemTitleHeadingLevel = input<number>(2)
   subtitleLineIds = input<string[]>()
   
   @Input()

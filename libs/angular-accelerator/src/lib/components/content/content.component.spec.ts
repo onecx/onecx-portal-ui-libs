@@ -64,6 +64,18 @@ describe('OcxContentComponent', () => {
       expect(await ocxContentHarness.getTitle(titleBaseId)).toEqual(testComponentTitle)
       expect(await ocxContentHarness.getTitleClasses(titleBaseId)).toEqual(expectedTitleClasses)
     })
+    it('should expose the title as a level 2 heading by default and allow configuring the level', () => {
+      fixture.componentRef.setInput('title', testComponentTitle)
+      fixture.detectChanges()
+      const title = fixture.nativeElement.querySelector(`#${titleBaseId}`) as HTMLElement
+      expect(title.tagName).toBe('P')
+      expect(title.getAttribute('role')).toBe('heading')
+      expect(title.getAttribute('aria-level')).toBe('2')
+
+      fixture.componentRef.setInput('titleHeadingLevel', 3)
+      fixture.detectChanges()
+      expect(title.getAttribute('aria-level')).toBe('3')
+    })
     it('should apply classes specified via input', async () => {
       fixture.componentRef.setInput('styleClass', 'py-4 mt-2')
       fixture.detectChanges()

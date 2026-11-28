@@ -2,13 +2,20 @@
   <div class="self-center mt-auto mb-auto">
     <div class="pages-panel card flex flex-col">
       <div class="pages-header px-3 py-1">
-        <h2>ERROR</h2>
+        <h1 class="m-0">{{ 'OCX_GLOBAL_ERROR.TITLE' | translate }}</h1>
       </div>
       <div class="card mt-3 px-6">
         <img src="assets/images/error.png" alt="" />
       </div>
       <div class="pages-detail pb-6">{{ errCode() }}</div>
-      <button pButton pRipple type="button" label="Try Again" (click)="reload()" class="p-button-text"></button>
+      <button
+        pButton
+        pRipple
+        type="button"
+        [label]="'OCX_GLOBAL_ERROR.TRY_AGAIN' | translate"
+        (click)="reload()"
+        class="p-button-text"
+      ></button>
     </div>
   </div>
 </div>
